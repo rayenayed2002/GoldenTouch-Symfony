@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+
+{% block content %}
+<form action="/submit-form" method="POST">
+        <!-- Full Name -->
+        <label for="fullName">Nom Complet:</label>
+        <input type="text" id="fullName" name="fullName" required><br><br>
+
+        <!-- Email -->
+        <label for="email">Adresse E-mail:</label>
+        <input type="email" id="email" name="email" required><br><br>
+
+        <!-- Phone -->
+        <label for="phone">Numéro de Téléphone:</label>
+        <input type="tel" id="phone" name="phone"><br><br>
+
+        <!-- Message -->
+        <label for="message">Message:</label><br>
+        <textarea id="message" name="message" rows="4" cols="50" required></textarea><br><br>
+
+        <!-- Submit Button -->
+        <button type="submit">Envoyer</button>
+    </form>
+{% endblock %}
