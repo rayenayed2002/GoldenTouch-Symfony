@@ -1,0 +1,374 @@
+<?php
+
+namespace App\Entity;
+
+use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+
+use App\Repository\EventRepository;
+
+#[ORM\Entity(repositoryClass: EventRepository::class)]
+#[ORM\Table(name: 'event')]
+class Event
+{
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
+    private ?int $id = null;
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function setId(int $id): self
+    {
+        $this->id = $id;
+        return $this;
+    }
+
+    #[ORM\Column(type: 'string', nullable: true)]
+    private ?string $nom = null;
+
+    public function getNom(): ?string
+    {
+        return $this->nom;
+    }
+
+    public function setNom(?string $nom): static
+    {
+        $this->nom = $nom;
+
+        return $this;
+    }
+
+    #[ORM\ManyToOne(targetEntity: Utilisateur::class, inversedBy: 'events')]
+    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id')]
+    private ?Utilisateur $utilisateur = null;
+
+    public function getUtilisateur(): ?Utilisateur
+    {
+        return $this->utilisateur;
+    }
+
+    public function setUtilisateur(?Utilisateur $utilisateur): static
+    {
+        $this->utilisateur = $utilisateur;
+
+        return $this;
+    }
+
+    #[ORM\Column(type: 'string', nullable: false)]
+    private ?string $categorie = null;
+
+    public function getCategorie(): ?string
+    {
+        return $this->categorie;
+    }
+
+    public function setCategorie(string $categorie): static
+    {
+        $this->categorie = $categorie;
+
+        return $this;
+    }
+
+    #[ORM\Column(type: 'string', nullable: false)]
+    private ?string $photo = null;
+
+    public function getPhoto(): ?string
+    {
+        return $this->photo;
+    }
+
+    public function setPhoto(string $photo): static
+    {
+        $this->photo = $photo;
+
+        return $this;
+    }
+
+    #[ORM\Column(type: 'date', nullable: true)]
+    private ?\DateTimeInterface $date = null;
+
+    public function getDate(): ?\DateTimeInterface
+    {
+        return $this->date;
+    }
+
+    public function setDate(?\DateTimeInterface $date): static
+    {
+        $this->date = $date;
+
+        return $this;
+    }
+
+    #[ORM\Column(type: 'string', nullable: false)]
+    private ?string $type = null;
+
+    public function getType(): ?string
+    {
+        return $this->type;
+    }
+
+    public function setType(string $type): static
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+    #[ORM\OneToMany(targetEntity: DemandePack::class, mappedBy: 'event')]
+    private Collection $demandePacks;
+
+    /**
+     * @return Collection<int, DemandePack>
+     */
+    public function getDemandePacks(): Collection
+    {
+        return $this->demandePacks;
+    }
+
+    public function addDemandePack(DemandePack $demandePack): static
+    {
+        if (!$this->demandePacks->contains($demandePack)) {
+            $this->demandePacks->add($demandePack);
+            $demandePack->setEvent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDemandePack(DemandePack $demandePack): static
+    {
+        if ($this->demandePacks->removeElement($demandePack)) {
+            // set the owning side to null (unless already changed)
+            if ($demandePack->getEvent() === $this) {
+                $demandePack->setEvent(null);
+            }
+        }
+
+        return $this;
+    }
+
+    #[ORM\OneToMany(targetEntity: Pack::class, mappedBy: 'event')]
+    private Collection $packs;
+
+    /**
+     * @return Collection<int, Pack>
+     */
+    public function getPacks(): Collection
+    {
+        return $this->packs;
+    }
+
+    public function addPack(Pack $pack): static
+    {
+        if (!$this->packs->contains($pack)) {
+            $this->packs->add($pack);
+            $pack->setEvent($this);
+        }
+
+        return $this;
+    }
+
+    public function removePack(Pack $pack): static
+    {
+        if ($this->packs->removeElement($pack)) {
+            // set the owning side to null (unless already changed)
+            if ($pack->getEvent() === $this) {
+                $pack->setEvent(null);
+            }
+        }
+
+        return $this;
+    }
+
+    #[ORM\OneToMany(targetEntity: Pack2::class, mappedBy: 'event')]
+    private Collection $pack2s;
+
+    /**
+     * @return Collection<int, Pack2>
+     */
+    public function getPack2s(): Collection
+    {
+        return $this->pack2s;
+    }
+
+    public function addPack2(Pack2 $pack2): static
+    {
+        if (!$this->pack2s->contains($pack2)) {
+            $this->pack2s->add($pack2);
+            $pack2->setEvent($this);
+        }
+
+        return $this;
+    }
+
+    public function removePack2(Pack2 $pack2): static
+    {
+        if ($this->pack2s->removeElement($pack2)) {
+            // set the owning side to null (unless already changed)
+            if ($pack2->getEvent() === $this) {
+                $pack2->setEvent(null);
+            }
+        }
+
+        return $this;
+    }
+
+    #[ORM\OneToMany(targetEntity: Panier::class, mappedBy: 'event')]
+    private Collection $paniers;
+
+    /**
+     * @return Collection<int, Panier>
+     */
+    public function getPaniers(): Collection
+    {
+        return $this->paniers;
+    }
+
+    public function addPanier(Panier $panier): static
+    {
+        if (!$this->paniers->contains($panier)) {
+            $this->paniers->add($panier);
+            $panier->setEvent($this);
+        }
+
+        return $this;
+    }
+
+    public function removePanier(Panier $panier): static
+    {
+        if ($this->paniers->removeElement($panier)) {
+            // set the owning side to null (unless already changed)
+            if ($panier->getEvent() === $this) {
+                $panier->setEvent(null);
+            }
+        }
+
+        return $this;
+    }
+
+    #[ORM\ManyToMany(targetEntity: Payment::class, inversedBy: 'events')]
+    #[ORM\JoinTable(
+        name: 'detailpaiment',
+        joinColumns: [
+            new ORM\JoinColumn(name: 'idEvent', referencedColumnName: 'id')
+        ],
+        inverseJoinColumns: [
+            new ORM\JoinColumn(name: 'idPaiment', referencedColumnName: 'id')
+        ]
+    )]
+    private Collection $payments;
+
+    /**
+     * @return Collection<int, Payment>
+     */
+    public function getPayments(): Collection
+    {
+        return $this->payments;
+    }
+
+    public function addPayment(Payment $payment): static
+    {
+        if (!$this->payments->contains($payment)) {
+            $this->payments->add($payment);
+        }
+
+        return $this;
+    }
+
+    public function removePayment(Payment $payment): static
+    {
+        $this->payments->removeElement($payment);
+
+        return $this;
+    }
+
+    #[ORM\ManyToMany(targetEntity: Personnel::class, inversedBy: 'events')]
+    #[ORM\JoinTable(
+        name: 'reservation_perso',
+        joinColumns: [
+            new ORM\JoinColumn(name: 'id', referencedColumnName: 'id')
+        ],
+        inverseJoinColumns: [
+            new ORM\JoinColumn(name: 'idP', referencedColumnName: 'idP')
+        ]
+    )]
+    private Collection $personnels;
+
+    /**
+     * @return Collection<int, Personnel>
+     */
+    public function getPersonnels(): Collection
+    {
+        return $this->personnels;
+    }
+
+    public function addPersonnel(Personnel $personnel): static
+    {
+        if (!$this->personnels->contains($personnel)) {
+            $this->personnels->add($personnel);
+        }
+
+        return $this;
+    }
+
+    public function removePersonnel(Personnel $personnel): static
+    {
+        $this->personnels->removeElement($personnel);
+
+        return $this;
+    }
+
+    #[ORM\ManyToMany(targetEntity: Utilisateur::class, inversedBy: 'events')]
+    #[ORM\JoinTable(
+        name: 'reserve_mat',
+        joinColumns: [
+            new ORM\JoinColumn(name: 'id_event', referencedColumnName: 'id')
+        ],
+        inverseJoinColumns: [
+            new ORM\JoinColumn(name: 'IdUser', referencedColumnName: 'id')
+        ]
+    )]
+    private Collection $utilisateurs;
+
+    public function __construct()
+    {
+        $this->demandePacks = new ArrayCollection();
+        $this->packs = new ArrayCollection();
+        $this->pack2s = new ArrayCollection();
+        $this->paniers = new ArrayCollection();
+        $this->payments = new ArrayCollection();
+        $this->personnels = new ArrayCollection();
+        $this->utilisateurs = new ArrayCollection();
+    }
+
+    /**
+     * @return Collection<int, Utilisateur>
+     */
+    public function getUtilisateurs(): Collection
+    {
+        return $this->utilisateurs;
+    }
+
+    public function addUtilisateur(Utilisateur $utilisateur): static
+    {
+        if (!$this->utilisateurs->contains($utilisateur)) {
+            $this->utilisateurs->add($utilisateur);
+        }
+
+        return $this;
+    }
+
+    public function removeUtilisateur(Utilisateur $utilisateur): static
+    {
+        $this->utilisateurs->removeElement($utilisateur);
+
+        return $this;
+    }
+
+}
