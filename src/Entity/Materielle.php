@@ -7,9 +7,12 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
 use App\Repository\MaterielleRepository;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: MaterielleRepository::class)]
 #[ORM\Table(name: 'materielles')]
+#[ORM\HasLifecycleCallbacks]
+
 class Materielle
 {
     #[ORM\Id]
@@ -29,8 +32,9 @@ class Materielle
     }
 
     #[ORM\Column(type: 'string', nullable: false)]
+    #[Assert\NotBlank(message: 'Le nom du matériel est obligatoire.')]
+    #[Assert\Length(min: 3, max: 100, minMessage: 'Le nom doit comporter au moins {{ limit }} caractères.')]
     private ?string $nom_mat = null;
-
     public function getNom_mat(): ?string
     {
         return $this->nom_mat;
@@ -85,6 +89,8 @@ class Materielle
     }
 
     #[ORM\Column(type: 'float', nullable: false)]
+    #[Assert\NotBlank(message: 'Le prix est obligatoire.')]
+    #[Assert\Positive(message: 'Le prix doit être un nombre positif.')]
     private ?float $prix_mat = null;
 
     public function getPrix_mat(): ?float
@@ -113,7 +119,7 @@ class Materielle
 
         return $this;
     }
-
+    
     #[ORM\ManyToMany(targetEntity: Utilisateur::class, inversedBy: 'materielles')]
     #[ORM\JoinTable(
         name: 'reserve_mat',
@@ -129,6 +135,7 @@ class Materielle
     public function __construct()
     {
         $this->utilisateurs = new ArrayCollection();
+
     }
 
     /**
@@ -219,5 +226,7 @@ class Materielle
 
         return $this;
     }
+   
+    
 
 }
