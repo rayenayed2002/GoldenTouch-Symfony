@@ -174,7 +174,9 @@ class Pack
 
     public function getCategorie(): ?string
     {
-        return $this->event ? $this->event->getCategorie() : null;
+        if (!$this->event) return null;
+        $categorie = $this->event->getCategorie();
+        return $categorie ? $categorie->value : null;
     }
 
     public function equals(Pack $pack): bool
