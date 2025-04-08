@@ -335,7 +335,7 @@
                                 <a href="#">Event Planner</a>
                                 <ul class="sub-menu">
                                     <li><a href="#">Ajout Event</a></li>
-            <li><a href="{{ path('app_draft_events') }}">Liste Event</a></li>
+                                    <li><a href="#">Liste Event</a></li>
                                 </ul>
                             </li>
                             <li class="menu-item-has-children">
@@ -387,67 +387,18 @@
     </header>
 
 
-<div class="position-relative space">
-    <div class="container">
-        <div class="row">
-            <div class="col-xl-12">
-                <div class="card mb-4">
-                    <div class="booking-title-area">
-                        <h4 class="booking-title">Planifiez Votre Événement</h4>
-                        <p class="booking-desc">Créez des expériences mémorables avec GoldenTouch. Remplissez les détails de votre événement et laissez-nous nous occuperz du reste.</p>
-                    </div>
-                    <div class="card-body">
-                        {{ form_start(form) }}
-                        <div class="ajax-booking">
-                            <div class="row">
-                                <!-- Nom -->
-                                <div class="form-group col-sm-6">
-                                    {{ form_label(form.nom) }}
-                                    {{ form_widget(form.nom, {'attr': {'class': 'form-control', 'placeholder': 'Nom de l\'événement'}}) }}
-                                </div>
 
-                                <!-- Catégorie -->
-                                <div class="form-group col-sm-6">
-                                    {{ form_label(form.categorie) }}
-                                    {{ form_widget(form.categorie, {'attr': {'class': 'form-select nice-select'}}) }}
-                                </div>
+<div>
 
-                                <!-- Date -->
-                                <div class="form-group col-sm-6">
-                                    {{ form_label(form.date) }}
-                                    {{ form_widget(form.date, {'attr': {'class': 'date-pick form-control', 'placeholder': 'Sélectionnez une date'}}) }}
-                                </div>
+<h1>empty</h1>
+<h1>empty</h1>
 
-                                <!-- Photo -->
-                                <div class="form-group col-sm-6">
-                                    <div class="file-upload-wrapper">
-                                        {{ form_label(form.photo) }}
-                                        {{ form_widget(form.photo, {'attr': {'class': 'form-control'}}) }}
-                                    </div>
-                                </div>
+<h1>empty</h1>
 
-                                <!-- Submit Button -->
-                                <div class="form-btn col-12 mt-4">
-                                    {{ form_widget(form.save, {
-                                        'label': 'Créer l\'événement',
-                                        'attr': {
-                                            'class': 'th-btn fw-btn',
-                                        }
-                                    }) }}
-                                    <i class="fa-regular fa-arrow-right"></i>
-                                </div>
-                            </div>
-                        </div>
-                        <p class="form-messages mb-0 mt-3"></p>
-                        {{ form_end(form) }}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+<h1>empty</h1>
+
+
 </div>
-
-
 
 
 
@@ -573,15 +524,3 @@
 </body>
 
 </html>
-
-
-
-
-
-<script>
-$(document).ready(function(){
-    $('.date-pick').datepicker({
-        dateFormat: 'yy-mm-dd' // Matches Symfony's expected format
-    });
-});
-</script>

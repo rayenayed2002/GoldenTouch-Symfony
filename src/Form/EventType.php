@@ -71,9 +71,11 @@ class EventType extends AbstractType
             ->add('date', DateType::class, [
                 'label' => 'Date de l\'événement',
                 'widget' => 'single_text',
+                'html5' => false, // Renders as a text input
                 'attr' => [
-                    'class' => 'form-control'
-                ]
+                    'class' => 'date-pick form-control',
+                    'placeholder' => 'Sélectionnez une date'
+                ],
             ])
             
             // Bouton de soumission

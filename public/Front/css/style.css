@@ -14760,7 +14760,8 @@ span.select2-selection.select2-selection--single:focus {
 
 .blog-grid-wrap {
   display: grid;
-  grid-template-areas: "one one one one one one one one one two two two" "one one one one one one one one one three three three";
+  grid-template-areas: "one one one one one one one one one two two two"
+ "one one one one one one one one one three three three";
 }
 
 .blog-grid .category {
@@ -14923,7 +14924,9 @@ span.select2-selection.select2-selection--single:focus {
 /* Medium devices */
 @media (max-width: 991px) {
   .blog-grid-wrap {
-    grid-template-areas: "one one one" "two two two" "three three three";
+    grid-template-areas: "one one one"
+ "two two two"
+ "three three three";
   }
   .blog-grid .blog-content {
     padding: 30px;
@@ -24917,7 +24920,15 @@ hr.style1 {
   margin: auto;
   margin-bottom: -40px;
 }
+/* Remove the taxi icon on submenu items */
+.main-menu ul.sub-menu li a:before {
+  display: none !important; /* Hides the taxi icon */
+}
 
+/* Prevent text shifting on hover */
+.main-menu ul.sub-menu li a:hover {
+  padding-left: 0 !important; /* Keeps text aligned */
+}
 /* -------------------------- Process End ---------------------------------- */
 /*------------------- Contact -------------------*/
 /* -------------------------- Contact Start ---------------------------------- */

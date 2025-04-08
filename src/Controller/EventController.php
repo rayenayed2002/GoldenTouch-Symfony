@@ -80,7 +80,7 @@ class EventController extends AbstractController
             CategorieEvent::ATELIER->value => 'Atelier',
         ];
     
-        return $this->render('GestionEvent/Draft.html.twig', [
+        return $this->render('GestionEvent/eventhh.html.twig', [
             'events' => $events,
             'categoryLabels' => $categoryLabels, // Pass the category labels to the template
         ]);
@@ -333,5 +333,7 @@ public function processPayment(Request $request, EntityManagerInterface $em): Js
         return new JsonResponse(['success' => false, 'error' => $e->getMessage()]);
     }
 }
+
+
 }
 
