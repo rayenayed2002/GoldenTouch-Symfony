@@ -84,6 +84,9 @@ class Utilisateur
     #[ORM\OneToMany(targetEntity: Event::class, mappedBy: 'utilisateur')]
     private Collection $createdEvents;
 
+    #[ORM\Column(type: 'blob', nullable: false)]
+    private $salt;
+
     public function __construct()
     {
         $this->participatedEvents = new ArrayCollection();
@@ -100,6 +103,20 @@ class Utilisateur
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getSalt(): string
+    {
+        if (is_resource($this->salt)) {
+            return stream_get_contents($this->salt);
+        }
+        return $this->salt;
+    }
+    
+    public function setSalt(string $salt): static
+    {
+        $this->salt = $salt;
+        return $this;
     }
 
     public function getNom(): ?string
@@ -222,12 +239,15 @@ class Utilisateur
         return $this;
     }
 
-    public function getImageData()
+    public function getImageData(): ?string 
     {
+        if (is_resource($this->imageData)) {
+            return stream_get_contents($this->imageData);
+        }
         return $this->imageData;
     }
-
-    public function setImageData($imageData): static
+    
+    public function setImageData(?string $imageData): static
     {
         $this->imageData = $imageData;
         return $this;
@@ -462,10 +482,5 @@ class Utilisateur
             }
         }
         return $this;
-    }
-
-    public function getSalt(): ?string
-    {
-        return null;
     }
 }

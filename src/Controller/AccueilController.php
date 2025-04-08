@@ -33,7 +33,7 @@ final class AccueilController extends AbstractController{
     #[Route('/form', name: 'app_form')]
     public function form(): Response
     {
-        return $this->render('form.html.twig', [
+        return $this->render('vitrine.html.twig', [
             'controller_name' => 'AccueilController',
         ]);
     }
