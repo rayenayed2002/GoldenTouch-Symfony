@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\PackRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -37,13 +39,23 @@ class Pack
     #[ORM\Column(name: 'admin_id')]
     private ?int $adminId = null;
 
+    #[ORM\OneToMany(mappedBy: 'pack', targetEntity: Avis::class)]
+    private Collection $avis;
+
     public function __construct()
     {
+        $this->avis = new ArrayCollection();
     }
 
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function setId(int $id): self
+    {
+        $this->id = $id;
+        return $this;
     }
 
     public function getDescription(): ?string
@@ -120,6 +132,33 @@ class Pack
     public function setAdminId(int $adminId): self
     {
         $this->adminId = $adminId;
+        return $this;
+    }
+
+    public function getAvis(): Collection
+    {
+        return $this->avis;
+    }
+
+    public function addAvis(Avis $avis): self
+    {
+        if (!$this->avis->contains($avis)) {
+            $this->avis[] = $avis;
+            $avis->setPack($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAvis(Avis $avis): self
+    {
+        if ($this->avis->removeElement($avis)) {
+            // set the owning side to null (unless already changed)
+            if ($avis->getPack() === $this) {
+                $avis->setPack(null);
+            }
+        }
+
         return $this;
     }
 

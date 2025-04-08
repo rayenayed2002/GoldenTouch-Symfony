@@ -5,7 +5,6 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-
 use App\Repository\PersonnelRepository;
 
 #[ORM\Entity(repositoryClass: PersonnelRepository::class)]
@@ -14,180 +13,153 @@ class Personnel
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(type: 'integer')]
+    #[ORM\Column(name: 'idP')]
     private ?int $idP = null;
+
+    #[ORM\Column(name: 'nomP', length: 255)]
+    private ?string $nomP = null;
+
+    #[ORM\Column(name: 'prenomP', length: 255)]
+    private ?string $prenomP = null;
+
+    #[ORM\Column(name: 'serviceP', length: 255)]
+    private ?string $serviceP = null;
+
+    #[ORM\Column(name: 'statutP', length: 255)]
+    private ?string $statutP = null;
+
+    #[ORM\Column(name: 'imageUrl', length: 255)]
+    private ?string $imageUrl = null;
+
+    #[ORM\Column(name: 'descriptionP', length: 255)]
+    private ?string $descriptionP = null;
+
+    #[ORM\Column(name: 'tarifP')]
+    private ?int $tarifP = null;
+
+    #[ORM\Column(name: 'id', nullable: true)]
+    private ?int $utilisateurId = null;
+
+    #[ORM\ManyToMany(targetEntity: Event::class, mappedBy: "personnels")]
+    private Collection $assignedEvents;
+
+    public function __construct()
+    {
+        $this->assignedEvents = new ArrayCollection();
+    }
 
     public function getIdP(): ?int
     {
         return $this->idP;
     }
 
-    public function setIdP(int $idP): self
-    {
-        $this->idP = $idP;
-        return $this;
-    }
-
-    #[ORM\Column(type: 'string', nullable: false)]
-    private ?string $nomP = null;
-
     public function getNomP(): ?string
     {
         return $this->nomP;
     }
 
-    public function setNomP(string $nomP): static
+    public function setNomP(string $nomP): self
     {
         $this->nomP = $nomP;
-
         return $this;
     }
-
-    #[ORM\Column(type: 'string', nullable: false)]
-    private ?string $prenomP = null;
 
     public function getPrenomP(): ?string
     {
         return $this->prenomP;
     }
 
-    public function setPrenomP(string $prenomP): static
+    public function setPrenomP(string $prenomP): self
     {
         $this->prenomP = $prenomP;
-
         return $this;
     }
-
-    #[ORM\Column(type: 'string', nullable: false)]
-    private ?string $serviceP = null;
 
     public function getServiceP(): ?string
     {
         return $this->serviceP;
     }
 
-    public function setServiceP(string $serviceP): static
+    public function setServiceP(string $serviceP): self
     {
         $this->serviceP = $serviceP;
-
         return $this;
     }
-
-    #[ORM\Column(type: 'string', nullable: false)]
-    private ?string $statutP = null;
 
     public function getStatutP(): ?string
     {
         return $this->statutP;
     }
 
-    public function setStatutP(string $statutP): static
+    public function setStatutP(string $statutP): self
     {
         $this->statutP = $statutP;
-
         return $this;
     }
-
-    #[ORM\Column(type: 'string', nullable: false)]
-    private ?string $imageUrl = null;
 
     public function getImageUrl(): ?string
     {
         return $this->imageUrl;
     }
 
-    public function setImageUrl(string $imageUrl): static
+    public function setImageUrl(string $imageUrl): self
     {
         $this->imageUrl = $imageUrl;
-
         return $this;
     }
-
-    #[ORM\ManyToOne(targetEntity: Utilisateur::class, inversedBy: 'personnels')]
-    #[ORM\JoinColumn(name: 'id', referencedColumnName: 'id')]
-    private ?Utilisateur $utilisateur = null;
-
-    public function getUtilisateur(): ?Utilisateur
-    {
-        return $this->utilisateur;
-    }
-
-    public function setUtilisateur(?Utilisateur $utilisateur): static
-    {
-        $this->utilisateur = $utilisateur;
-
-        return $this;
-    }
-
-    #[ORM\Column(type: 'string', nullable: false)]
-    private ?string $descriptionP = null;
 
     public function getDescriptionP(): ?string
     {
         return $this->descriptionP;
     }
 
-    public function setDescriptionP(string $descriptionP): static
+    public function setDescriptionP(string $descriptionP): self
     {
         $this->descriptionP = $descriptionP;
-
         return $this;
     }
-
-    #[ORM\Column(type: 'integer', nullable: false)]
-    private ?int $tarifP = null;
 
     public function getTarifP(): ?int
     {
         return $this->tarifP;
     }
 
-    public function setTarifP(int $tarifP): static
+    public function setTarifP(int $tarifP): self
     {
         $this->tarifP = $tarifP;
-
         return $this;
     }
 
-    #[ORM\ManyToMany(targetEntity: Event::class, inversedBy: 'personnels')]
-    #[ORM\JoinTable(
-        name: 'reservation_perso',
-        joinColumns: [
-            new ORM\JoinColumn(name: 'idP', referencedColumnName: 'idP')
-        ],
-        inverseJoinColumns: [
-            new ORM\JoinColumn(name: 'id', referencedColumnName: 'id')
-        ]
-    )]
-    private Collection $events;
-
-    public function __construct()
+    public function getUtilisateurId(): ?int
     {
-        $this->events = new ArrayCollection();
+        return $this->utilisateurId;
     }
 
-    /**
-     * @return Collection<int, Event>
-     */
-    public function getEvents(): Collection
+    public function setUtilisateurId(?int $utilisateurId): self
     {
-        return $this->events;
+        $this->utilisateurId = $utilisateurId;
+        return $this;
     }
 
-    public function addEvent(Event $event): static
+    public function getAssignedEvents(): Collection
     {
-        if (!$this->events->contains($event)) {
-            $this->events->add($event);
+        return $this->assignedEvents;
+    }
+
+    public function addAssignedEvent(Event $event): self
+    {
+        if (!$this->assignedEvents->contains($event)) {
+            $this->assignedEvents[] = $event;
+            $event->addPersonnel($this);
         }
-
         return $this;
     }
 
-    public function removeEvent(Event $event): static
+    public function removeAssignedEvent(Event $event): self
     {
-        $this->events->removeElement($event);
-
+        if ($this->assignedEvents->removeElement($event)) {
+            $event->removePersonnel($this);
+        }
         return $this;
     }
-
 }
