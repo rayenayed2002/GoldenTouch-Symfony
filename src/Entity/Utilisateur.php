@@ -60,17 +60,19 @@ class Utilisateur
     }
 
     #[ORM\Column(type: 'blob', nullable: false)]
-    private ?string $salt = null;
-
-    public function getSalt(): mixed
+    private $salt; // Remove the typehint or use 'mixed'
+    
+    public function getSalt(): string
     {
+        if (is_resource($this->salt)) {
+            return stream_get_contents($this->salt);
+        }
         return $this->salt;
     }
-
-    public function setSalt(mixed $salt): static
+    
+    public function setSalt(string $salt): static
     {
         $this->salt = $salt;
-
         return $this;
     }
 
@@ -164,17 +166,19 @@ class Utilisateur
     }
 
     #[ORM\Column(type: 'blob', nullable: true)]
-    private ?string $ImageData = null;
-
-    public function getImageData(): mixed
+    private $imageData; // No typehint or use 'mixed'
+    
+    public function getImageData(): ?string 
     {
-        return $this->ImageData;
+        if (is_resource($this->imageData)) {
+            return stream_get_contents($this->imageData);
+        }
+        return $this->imageData;
     }
-
-    public function setImageData(mixed $ImageData): static
+    
+    public function setImageData(?string $imageData): static
     {
-        $this->ImageData = $ImageData;
-
+        $this->imageData = $imageData;
         return $this;
     }
 
