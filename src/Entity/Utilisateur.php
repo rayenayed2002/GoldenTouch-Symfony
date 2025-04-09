@@ -59,8 +59,10 @@ class Utilisateur
         return $this;
     }
 
-    #[ORM\Column(type: 'blob', nullable: false)]
-    private ?string $salt = null;
+
+
+    #[ORM\Column(name: 'salt', type: 'blob', nullable: true)]
+    private $salt = null;
 
     public function getSalt(): mixed
     {
@@ -133,7 +135,7 @@ class Utilisateur
         return $this;
     }
 
-    #[ORM\Column(type: 'date', nullable: true)]
+    #[ORM\Column(name: 'dateJoined', type: 'date', nullable: true)]
     private ?\DateTimeInterface $dateJoined = null;
 
     public function getDateJoined(): ?\DateTimeInterface
@@ -163,18 +165,31 @@ class Utilisateur
         return $this;
     }
 
-    #[ORM\Column(type: 'blob', nullable: true)]
-    private ?string $ImageData = null;
 
+
+    #[ORM\Column(name: 'ImageData', type: 'blob', nullable: true)]
+    private $ImageData = null; // Suppression du typehint ?string car le blob retourne une ressource
+    
     public function getImageData(): mixed
     {
+        if (is_resource($this->ImageData)) {
+            rewind($this->ImageData); // On rembobine la ressource si nécessaire
+            return stream_get_contents($this->ImageData);
+        }
         return $this->ImageData;
     }
-
+    
     public function setImageData(mixed $ImageData): static
     {
-        $this->ImageData = $ImageData;
-
+        // Conversion automatique des strings en ressource
+        if (is_string($ImageData)) {
+            $this->ImageData = fopen('php://memory', 'r+');
+            fwrite($this->ImageData, $ImageData);
+            rewind($this->ImageData);
+        } else {
+            $this->ImageData = $ImageData;
+        }
+        
         return $this;
     }
 
@@ -587,4 +602,5 @@ class Utilisateur
 
         return $this;
     }
+    
 }

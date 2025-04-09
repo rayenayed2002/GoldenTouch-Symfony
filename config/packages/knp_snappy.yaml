@@ -1,0 +1,10 @@
+knp_snappy:
+    pdf:
+        enabled: true
+        binary: 'C:\wkhtmltopdf\bin\wkhtmltopdf.exe'  # Chemin Windows (adaptez-le !)
+        # binary: '/usr/bin/wkhtmltopdf'               # Chemin Linux/Mac
+        options:
+            encoding: 'utf-8'
+            margin-top: 10
+            margin-bottom: 10
+            

@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Liste du Personnel - GoldenTouch</title>
+    <style>
+        @page {
+            margin: 0;
+            size: A4;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 10mm;
+            background-color: #ffffff;
+            color: #333;
+            line-height: 1.6;
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        .header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            margin-bottom: 60px;
+        }
+
+        .logo {
+            position: absolute;
+            top: 0mm;
+            left: 0mm;
+            width: 200px;
+            height: auto;
+
+        }
+
+        .header-content {
+        /* Décalage vers le bas */
+            text-align: center;
+        }
+
+        .company-name {
+            color: #D4AF37;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .document-title {
+            font-size: 16px;
+            color: #555;
+            margin-bottom: 15px;
+        }
+
+        .export-info {
+            font-size: 12px;
+            color: #777;
+            margin-bottom: 25px;
+        }
+
+        .personnel-list {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            padding: 10px;
+        }
+
+        .personnel-card {
+            display: flex;
+            align-items: center;
+            border: 1px solid #e1e1e1;
+            border-left: 5px solid #D4AF37;
+            border-radius: 8px;
+            overflow: hidden;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            padding: 15px;
+            gap: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .personnel-card:hover {
+            transform: scale(1.02);
+        }
+
+        .image-column {
+            width: 120px;
+            height: 120px;
+            flex-shrink: 0;
+            border-radius: 6px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f5f5f5;
+            border: 1px solid #D4AF37;
+        }
+
+        .personnel-avatar, .default-avatar {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .default-avatar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            color: #aaa;
+            background-color: #eaeaea;
+            font-weight: bold;
+        }
+
+        .info-column {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .personnel-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #222;
+        }
+
+        .personnel-service {
+            font-size: 14px;
+            color: #555;
+            background: #eee;
+            padding: 5px 10px;
+            border-radius: 4px;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        .detail-row {
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            color: #444;
+            margin-bottom: 5px;
+        }
+
+        .detail-label {
+            font-weight: bold;
+            color: #777;
+            margin-right: 5px;
+        }
+
+        .tarif {
+            font-weight: bold;
+            color: #D4AF37;
+        }
+
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .status-available {
+            background-color: #e0f7e9;
+            color: #2e7d32;
+        }
+
+        .status-other {
+            background-color: #fff4e0;
+            color: #e65100;
+        }
+
+        .description {
+            margin-top: 5px;
+            font-size: 13px;
+            color: #555;
+            border-top: 1px dashed #ddd;
+            padding-top: 5px;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 15px;
+            color: #777;
+            font-size: 12px;
+            border-top: 1px solid #f0f0f0;
+        }
+    </style>
+</head>
+<body>
+        <div class="logo">
+        <img src="{{ absolute_url(asset('uploads/personnel/logo.png')) }}" alt="GoldenTouch Logo" class="logo">
+    </div>
+    <div class="header">
+        <div class="header-content">
+            <div class="company-name">GOLDENTOUCH</div>
+            <div class="document-title">Liste du Personnel</div>
+            <div class="export-info">
+                Exporté le {{ date|date('d/m/Y à H:i') }} • {{ personnels|length }} membres
+            </div>
+        </div>
+    </div>
+
+    <div class="personnel-list">
+        {% for personnel in personnels %}
+        <div class="personnel-card">
+            <div class="image-column">
+                {% if personnel.imageUrl %}
+                <img src="{{ absolute_url(asset('uploads/personnel/' ~ personnel.imageUrl)) }}"
+                     class="personnel-avatar"
+                     alt="{{ personnel.nomP }} {{ personnel.prenomP }}"
+                     onerror="this.parentElement.innerHTML='<div class=\'default-avatar\'>{{ personnel.prenomP|first|upper }}{{ personnel.nomP|first|upper }}</div>'">
+                {% else %}
+                <div class="default-avatar">
+                    {{ personnel.prenomP|first|upper }}{{ personnel.nomP|first|upper }}
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="info-column">
+                <div class="personnel-name">{{ personnel.prenomP }} {{ personnel.nomP }}</div>
+                <div class="personnel-service">{{ personnel.serviceP }}</div>
+
+                <div class="detail-row">
+                    <div class="detail-label">Tarif :</div>
+                    <div class="detail-value tarif">{{ personnel.tarifP }} €</div>
+                </div>
+
+                <div class="detail-row">
+                    <div class="detail-label">Statut :</div>
+                    <div class="status-badge {% if personnel.statutP == 'disponible' %}status-available{% else %}status-other{% endif %}">
+                        {{ personnel.statutP }}
+                    </div>
+                </div>
+
+                {% if personnel.descriptionP %}
+                <div class="description">
+                    {{ personnel.descriptionP }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="footer">
+        GoldenTouch &copy; {{ date|date('Y') }} • Document généré le {{ date|date('d/m/Y à H:i') }}
+    </div>
+</body>
+</html>
