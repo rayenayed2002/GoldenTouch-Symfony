@@ -15,10 +15,11 @@ class MaterielleRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Materielle::class);
     }
-    public function searchByName(string $query): array
+    public function findBySearchQuery($query)
     {
         return $this->createQueryBuilder('m')
-            ->where('m.nom_mat LIKE :query')
+            ->where('m.nomMat LIKE :query')
+            ->orWhere('m.descriptionMat LIKE :query')
             ->setParameter('query', '%' . $query . '%')
             ->getQuery()
             ->getResult();

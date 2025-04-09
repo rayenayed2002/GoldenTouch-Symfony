@@ -133,7 +133,7 @@
   </li>
 
   <!-- Gestion Matérielle -->
-  <li class="menu-item active ">
+  <li class="menu-item active">
     <a href="javascript:void(0);" class="menu-link menu-toggle">
       <i class="menu-icon tf-icons ti ti-tools"></i>
       <div data-i18n="Gestion Matérielle">Gestion Matérielle</div>
@@ -149,12 +149,6 @@
 <a href="{{ path('app_materielss') }}" class="menu-link">
           <i class="menu-icon tf-icons ti ti-circle"></i>
           <div data-i18n="Liste Matériel">Liste Matériel</div>
-        </a>
-      </li>
-      <li class="menu-item ">
-<a href="{{ path('app_reservations') }}" class="menu-link">
-          <i class="menu-icon tf-icons ti ti-circle"></i>
-          <div data-i18n="Liste Reservation">Liste Matériel</div>
         </a>
       </li>
     </ul>
@@ -274,16 +268,14 @@
 
             <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
               <!-- Search -->
-            <div class="navbar-nav align-items-center">
-  <div class="nav-item navbar-search-wrapper mb-0">
-    <input
-      type="text"
-      id="searchInput"
-      class="form-control"
-      placeholder="Rechercher un matériel..."
-    />
-  </div>
-</div>
+              <div class="navbar-nav align-items-center">
+                <div class="nav-item navbar-search-wrapper mb-0">
+                  <a class="nav-item nav-link search-toggler d-flex align-items-center px-0" href="javascript:void(0);">
+                    <i class="ti ti-search ti-md me-2"></i>
+                    <span class="d-none d-md-inline-block text-muted">Search (Ctrl+/)</span>
+                  </a>
+                </div>
+              </div>
               <!-- /Search -->
 
               <ul class="navbar-nav flex-row align-items-center ms-auto">
@@ -764,56 +756,33 @@
           </nav>
 
           <!-- / Navbar -->
-   <!-- Content wrapper -->
 <div class="content-wrapper">
-    <!-- Content -->
     <div class="container-xxl flex-grow-1 container-p-y">
-        <h4 class="fw-bold py-3 mb-4">Materiels</h4>
 
-        <!-- Packs Grid -->
-        <div class="row g-4">
-            {% for materiel in materiels %}
-                <div class="col-xl-4 col-lg-6 col-md-6">
-                    <a href="{{ path('app_materiels_show', {'id': materiel.idMat}) }}" class="text-decoration-none text-dark">
-                        <div class="card pack-card h-100">
-                            <div class="card-body">
-                                <div class="pack-image-wrapper mb-3">
-                                    <img src="{{ asset('uploads/materiels/' ~ materiel.photoMat|default('default.jpg')) }}" 
-                                         class="pack-image" 
-                                         alt="{{ materiel.nomMat }}">
-                                </div>
-                                <div class="pack-content">
-                                    <h5 class="pack-title mb-1">{{ materiel.nomMat }}</h5>
-                                    <p class="pack-description mb-3">
-                                        {{ materiel.descriptionMat|default('No description available.')|slice(0, 100) }}...
-                                    </p>
-                                    <div class="pack-details">
-                                        <div class="d-flex justify-content-between align-items-center mb-2">
-                                            <h6 class="mb-0">Prix</h6>
-                                            <h6 class="mb-0 text-primary">
-                                                {{ materiel.prixMat|number_format(2, '.', ',') }} TND
-                                            </h6>
-                                        </div>
-                                        <div class="d-flex justify-content-between align-items-center mb-2">
-                                            <h6 class="mb-0">Quantité</h6>
-                                            <span>{{ materiel.quantiteMat }} unités</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </a>
+        <div class="container mt-5">
+            <div class="card shadow p-4">
+                <div class="row">
+                    <div class="col-md-5 text-center">
+                        <img src="{{ asset('uploads/materiels/' ~ materiel.photoMat|default('default.jpg')) }}" 
+                             alt="{{ materiel.nomMat }}" class="img-fluid rounded mb-3" style="max-width: 100%; height: auto;">
+                    </div>
+                    <div class="col-md-7">
+                        <h2 class="mb-4">{{ materiel.nomMat }}</h2>
+                        <p><strong>Description :</strong><br>{{ materiel.descriptionMat }}</p>
+                        <p><strong>Prix :</strong> {{ materiel.prixMat }} TND</p>
+                        <p><strong>Quantité :</strong> {{ materiel.quantiteMat }} unités</p>
+
+
+
+                 
+                    </div>
                 </div>
-            {% endfor %}
-        </div> <!-- Fin .row -->
+            </div>
+        </div>
+
     </div>
 </div>
 
-      
-
-
-    </div> <!-- Fin .container-xxl -->
-</div> <!-- Fin .content-wrapper -->
 
 
                           <!-- Action Buttons -->
@@ -821,7 +790,9 @@
                             <button type="button" class="btn btn-primary me-2">
                               <i class="ti ti-eye me-1"></i> Voir les détails
                             </button>
-                            
+                            <button type="button" class="btn btn-outline-primary">
+                              <i class="ti ti-calendar me-1"></i> Réserver maintenant
+                            </button>
                           </div>
                         </div>
                       </div>
@@ -862,18 +833,5 @@
 <!-- Main JS -->
 <script src="{{ asset('/js/main.js') }}"></script>
 <script src="{{ asset('/js/dashboards-analytics.js') }}"></script>
-
-<script>
-function sortMateriels(order) {
-    fetch('/materiels/sort?order=' + order)
-        .then(response => response.text())
-        .then(html => {
-            document.getElementById('materiel-results').innerHTML = html;
-        })
-        .catch(error => console.error('Erreur AJAX:', error));
-}
-</script>
-
-
   </body>
 </html>

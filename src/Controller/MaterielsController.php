@@ -16,10 +16,11 @@ use Picqer\Barcode\BarcodeGeneratorPNG;
 use Picqer\Barcode\BarcodeGeneratorSVG;  // si tu veux générer du SVG
 use Picqer\Barcode\BarcodeGeneratorHTML;
 use Symfony\Component\HttpFoundation\StreamedResponse;
-
+use Dompdf\Dompdf;
+use Dompdf\Options;
 final class MaterielsController extends AbstractController
 {
-    #[Route('/materielss', name: 'app_materiels')]
+    #[Route('/materielss', name: 'app_materielss')]
     public function index(MaterielleRepository $materielleRepository, EntityManagerInterface $entityManager): Response
     {
         $entityManager->clear(); // ✅ Use the passed entityManager, not $this->entityManager
@@ -30,18 +31,11 @@ final class MaterielsController extends AbstractController
             'materiels' => $materiels,
         ]);
     }
+ 
+
     
 
-    #[Route('/materiels/search', name: 'app_materiels_search', methods: ['GET'])]
-    public function search(Request $request, MaterielleRepository $materielleRepository): Response
-    {
-        $query = $request->query->get('q', ''); // Récupère la valeur du champ "q"
-        $materiels = $materielleRepository->searchByName($query);
-
-        return $this->render('materiels/index.html.twig', [
-            'materiels' => $materiels,
-        ]);
-    }
+  
 
     #[Route('/materiels/new', name: 'app_materiels_new')]
     public function new(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
@@ -71,8 +65,7 @@ final class MaterielsController extends AbstractController
                 } catch (FileException $e) {
                     throw new \Exception('Erreur lors de l\'upload du fichier.');
                 }
-    
-                $materiel->setPhotoMat('/uploads' . $newFilename); // Stocker le chemin relatif
+                $materiel->setPhotoMat($newFilename);
             }
     
             $entityManager->persist($materiel);
@@ -94,7 +87,7 @@ public function delete(Request $request, Materielle $materiel, EntityManagerInte
         $entityManager->flush();
     }
 
-    return $this->redirectToRoute('app_materiels');
+    return $this->redirectToRoute('app_materielss');
 }
 #[Route('/materiels/{id}/edit', name: 'app_materiels_edit')]
 public function edit(Request $request, Materielle $materiel, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
@@ -135,8 +128,9 @@ public function show(Materielle $materielle): Response
     $barcodeContent = sprintf(
         "Nom: %s\nUnité: %s\nPrix: %.2f DT",
         $materielle->getNomMat(),
-        $materielle->getPrixMat(),
-        $materielle->getQuantiteMat()
+        $materielle->getQuantiteMat(),
+        $materielle->getPrixMat()
+        
     );
 
     // Générer le code-barres en base64
@@ -151,5 +145,87 @@ public function show(Materielle $materielle): Response
         'barcode' => $barcode,
     ]);
 }
+#[Route('/materiels/{id}/generate-pdf', name: 'app_materiels_generate_pdf', methods: ['POST'])]
+public function generatePdf(Request $request, Materielle $materielle): Response
+{
+    $quantity = (int) $request->request->get('quantity', 1);
+
+    $barcodeContent = sprintf(
+        "Nom: %s | Qté: %s | Prix: %.2f DT",
+        $materielle->getNomMat(),
+        $materielle->getQuantiteMat(),
+        $materielle->getPrixMat()
+    );
+
+    $generator = new BarcodeGeneratorPNG();
+    $barcodeImage = base64_encode(
+        $generator->getBarcode($barcodeContent, $generator::TYPE_CODE_128)
+    );
+
+    // Générer le HTML
+    $html = '
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .ticket {
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+            width: 80%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .ticket img {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+    <h2>Tickets - ' . htmlspecialchars($materielle->getNomMat()) . '</h2>
+    ';
+    
+    for ($i = 0; $i < $quantity; $i++) {
+        $html .= sprintf(
+            '<div class="ticket"><img src="data:image/png;base64,%s" /></div>',
+            $barcodeImage
+        );
+    }
+
+    // Générer le PDF avec Dompdf
+    $options = new Options();
+    $options->set('defaultFont', 'Arial');
+    $dompdf = new Dompdf($options);
+    $dompdf->loadHtml($html);
+    $dompdf->setPaper('A4', 'portrait');
+    $dompdf->render();
+
+    return new Response($dompdf->output(), 200, [
+        'Content-Type' => 'application/pdf',
+        'Content-Disposition' => 'inline; filename="tickets.pdf"',
+    ]);
+}
+#[Route('/materiels/sort', name: 'app_materiels_sort', methods: ['GET'])]
+public function sort(Request $request, MaterielleRepository $repo): Response
+{
+    $order = $request->query->get('order', 'asc'); // 'asc' ou 'desc'
+
+    $materiels = $repo->createQueryBuilder('m')
+        ->orderBy('m.prix_mat', $order)
+        ->getQuery()
+        ->getResult();
+
+    return $this->render('materiels/_search_results.html.twig', [
+        'materiels' => $materiels,
+    ]);
+}
+
+
 
 }

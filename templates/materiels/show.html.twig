@@ -129,6 +129,7 @@
           <div data-i18n="Liste Événements">Liste Événements</div>
         </a>
       </li>
+      
     </ul>
   </li>
 
@@ -146,9 +147,15 @@
         </a>
       </li>
       <li class="menu-item">
-<a href="{{ path('app_materiels') }}" class="menu-link">
+<a href="{{ path('app_materielss') }}" class="menu-link">
           <i class="menu-icon tf-icons ti ti-circle"></i>
           <div data-i18n="Liste Matériel">Liste Matériel</div>
+        </a>
+      </li>
+        <li class="menu-item ">
+<a href="{{ path('app_reservations') }}" class="menu-link">
+          <i class="menu-icon tf-icons ti ti-circle"></i>
+          <div data-i18n="Liste Reservation">Liste Matériel</div>
         </a>
       </li>
     </ul>
@@ -769,67 +776,125 @@
 <div class="container mt-4">
     <h1 class="text-center mb-4">Ajouter un matériel</h1>
 
-    {{ form_start(form, {'attr': {'enctype': 'multipart/form-data'}}) }}
-    <div class="row g-3">
-        <div class="col-md-6">
-            <div class="form-group text-center">
-                 <div class="form-group text-center">
-        {{ form_label(form.nom_mat, null, {'label_attr': {'class': 'form-label fw-bold'}}) }}
-        {{ form_widget(form.nom_mat, {'attr': {'class': 'form-control'}}) }}
-        {{ form_errors(form.nom_mat) }} {# ✅ Affiche les erreurs du nom #}
-    </div>
-            </div>
-        </div>
-
-        <div class="col-md-6">
-            <div class="form-group text-center">
-                {{ form_label(form.quantite_mat, null, {'label_attr': {'class': 'form-label fw-bold'}}) }}
-                {{ form_widget(form.quantite_mat, {'attr': {'class': 'form-control'}}) }}
-            </div>
-        </div>
-
-        <div class="col-md-6">
-            <div class="form-group text-center">
-                {{ form_label(form.prix_mat, null, {'label_attr': {'class': 'form-label fw-bold'}}) }}
-                {{ form_widget(form.prix_mat, {'attr': {'class': 'form-control'}}) }}
-                        {{ form_errors(form.prix_mat) }}
-
-            </div>
-        </div>
-
-        <div class="col-md-6">
-            <div class="form-group text-center">
-                {{ form_label(form.categorie, null, {'label_attr': {'class': 'form-label fw-bold'}}) }}
-                {{ form_widget(form.categorie, {'attr': {'class': 'form-select'}}) }}
-            </div>
-        </div>
-
-        <div class="col-12">
-            <div class="form-group text-center">
-                {{ form_label(form.description_mat, null, {'label_attr': {'class': 'form-label fw-bold'}}) }}
-                {{ form_widget(form.description_mat, {'attr': {'class': 'form-control', 'rows': 5}}) }}
-            </div>
-        </div>
-
-        <div class="col-12">
-            <div class="form-group text-center">
-                {{ form_label(form.photo_mat, null, {'label_attr': {'class': 'form-label fw-bold'}}) }}
-                {{ form_widget(form.photo_mat, {'attr': {'class': 'form-control'}}) }}
-                
-            </div>
-        </div>
-
-      <div class="col-12 text-center">
-    <button type="submit" class="btn btn-success mt-4">➕ Ajouter</button>
+    {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate', 'enctype': 'multipart/form-data'}}) }}
     
-    <a href="{{ path('app_materiels') }}" class="btn btn-secondary mt-4 ms-2">
-        ⬅️ Retour à la liste
-    </a>
-</div>
+    
+
+    <div class="row g-3">
+        <!-- Nom -->
+        <div class="col-md-6">
+            <div class="form-group">
+                {{ form_label(form.nom_mat, null, {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                {{ form_widget(form.nom_mat, {
+                    'attr': {
+                        'class': 'form-control' ~ (form.nom_mat.vars.errors|length ? ' is-invalid' : ''),
+                        'required': 'required'
+                    }
+                }) }}
+                {{ form_errors(form.nom_mat) }}
+            </div>
+        </div>
+
+        <!-- Quantité -->
+        <div class="col-md-6">
+            <div class="form-group">
+                {{ form_label(form.quantite_mat, null, {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                {{ form_widget(form.quantite_mat, {
+                    'attr': {
+                        'class': 'form-control' ~ (form.quantite_mat.vars.errors|length ? ' is-invalid' : ''),
+                        'required': 'required'
+                    }
+                }) }}
+                {{ form_errors(form.quantite_mat) }}
+            </div>
+        </div>
+
+        <!-- Prix -->
+        <div class="col-md-6">
+            <div class="form-group">
+                {{ form_label(form.prix_mat, null, {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                {{ form_widget(form.prix_mat, {
+                    'attr': {
+                        'class': 'form-control' ~ (form.prix_mat.vars.errors|length ? ' is-invalid' : ''),
+                        'required': 'required'
+                    }
+                }) }}
+                {{ form_errors(form.prix_mat) }}
+            </div>
+        </div>
+
+        <!-- Catégorie -->
+        <div class="col-md-6">
+            <div class="form-group">
+                {{ form_label(form.categorie, null, {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                {{ form_widget(form.categorie, {
+                    'attr': {
+                        'class': 'form-select' ~ (form.categorie.vars.errors|length ? ' is-invalid' : ''),
+                        'required': 'required'
+                    }
+                }) }}
+                {{ form_errors(form.categorie) }}
+            </div>
+        </div>
+
+        <!-- Description -->
+        <div class="col-12">
+            <div class="form-group">
+                {{ form_label(form.description_mat, null, {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                {{ form_widget(form.description_mat, {
+                    'attr': {
+                        'class': 'form-control' ~ (form.description_mat.vars.errors|length ? ' is-invalid' : ''),
+                        'rows': 5,
+                        'required': 'required'
+                    }
+                }) }}
+                {{ form_errors(form.description_mat) }}
+            </div>
+        </div>
+
+        <!-- Photo -->
+        <div class="col-12">
+            <div class="form-group">
+                {{ form_label(form.photo_mat, null, {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                {{ form_widget(form.photo_mat, {
+                    'attr': {
+                        'class': 'form-control' ~ (form.photo_mat.vars.errors|length ? ' is-invalid' : ''),
+                        'required': 'required'
+                    }
+                }) }}
+                {{ form_errors(form.photo_mat) }}
+            </div>
+        </div>
+
+        <!-- Boutons -->
+        <div class="col-12 text-center mt-4">
+            <button type="submit" class="btn btn-primary btn-lg">Ajouter</button>
+            <a href="{{ path('app_materielss') }}" class="btn btn-outline-secondary btn-lg ms-3">
+                Retour
+            </a>
+        </div>
+    </div>
     {{ form_end(form) }}
 </div>
-{% endblock %}
 
+<style>
+    .form-control.is-invalid, .form-select.is-invalid {
+        border-color: #dc3545;
+        padding-right: calc(1.5em + 0.75rem);
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right calc(0.375em + 0.1875rem) center;
+        background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+    }
+    .invalid-feedback {
+        display: block;
+        width: 100%;
+        margin-top: 0.25rem;
+        font-size: 0.875em;
+        color: #dc3545;
+    }
+</style>
+{% endblock %}
 
 
     </div>

@@ -60,12 +60,15 @@ class Utilisateur
     }
 
     #[ORM\Column(type: 'blob', nullable: false)]
-    private ?string $salt = null;
+    private  $salt = null;
 
-    public function getSalt(): mixed
-    {
-        return $this->salt;
+    public function getSalt(): ?string
+{
+    if (is_resource($this->salt)) {
+        return stream_get_contents($this->salt);
     }
+    return $this->salt;
+}
 
     public function setSalt(mixed $salt): static
     {
@@ -163,21 +166,23 @@ class Utilisateur
         return $this;
     }
 
-    #[ORM\Column(type: 'blob', nullable: true)]
-    private ?string $ImageData = null;
+    private $ImageData = null; // Remove the `?string` type
 
-    public function getImageData(): mixed
+    public function getImageData(): ?string
     {
+        if (is_resource($this->ImageData)) {
+            return stream_get_contents($this->ImageData);
+        }
         return $this->ImageData;
     }
-
-    public function setImageData(mixed $ImageData): static
+    
+    public function setImageData($ImageData): static
     {
         $this->ImageData = $ImageData;
-
+    
         return $this;
     }
-
+    
     #[ORM\Column(type: 'datetime', nullable: false)]
     private ?\DateTimeInterface $created_at = null;
 

@@ -146,7 +146,7 @@
         </a>
       </li>
       <li class="menu-item active">
-<a href="{{ path('app_materiels') }}" class="menu-link">
+<a href="{{ path('app_materielss') }}" class="menu-link">
           <i class="menu-icon tf-icons ti ti-circle"></i>
           <div data-i18n="Liste Matériel">Liste Matériel</div>
         </a>
@@ -772,6 +772,11 @@
                         <p><strong>Prix :</strong> {{ materiel.prixMat }} TND</p>
                         <p><strong>Quantité :</strong> {{ materiel.quantiteMat }} unités</p>
 <img src="data:image/png;base64,{{ barcode }}" alt="Code-barres" style="width: 500px; height: auto;" />
+<form action="{{ path('app_materiels_generate_pdf', {id: materiel.idMat}) }}" method="post">
+    <label for="quantity">Nombre de tickets :</label>
+    <input type="number" name="quantity" min="1" value="1" required>
+    <button type="submit">Générer PDF</button>
+</form>
 
 
                         <div class="d-flex justify-content-start mt-4">
