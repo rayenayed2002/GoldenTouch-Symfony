@@ -1,0 +1,101 @@
+<!doctype html>
+<html class="no-js" lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>GoldenTouch - {{ pack.nom }}</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Radio+Canada:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- All CSS Files -->
+    <link rel="stylesheet" href="{{ asset('Front/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('Front/css/fontawesome.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('Front/css/magnific-popup.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('Front/css/slick.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('Front/css/style.css') }}">
+</head>
+
+<body>
+    {% include 'Front/partials/header.html.twig' %}
+
+    <!-- Page Title -->
+    <div class="breadcumb-wrapper" data-bg-src="{{ asset('Front/img/breadcumb/breadcumb-bg.jpg') }}" style="padding: 15px 0;">
+        <div class="container">
+            <div class="breadcumb-content" style="padding: 10px 0;">
+                <h1 class="breadcumb-title" style="font-size: 1.5rem; margin-bottom: 5px;">{{ pack.nom }}</h1>
+                <ul class="breadcumb-menu" style="font-size: 0.9rem;">
+                    <li><a href="{{ path('front_index') }}">Accueil</a></li>
+                    <li><a href="{{ path('app_pack_index') }}">Packs</a></li>
+                    <li>Détails</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pack Details Section -->
+    <section class="space-top space-extra-bottom">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="pack-card">
+                        {% if pack.getPhoto() %}
+                            <img src="{{ asset('uploads/packs/' ~ pack.getPhoto()) }}" alt="{{ pack.getNom() }}" class="pack-image">
+                        {% else %}
+                            <img src="{{ asset('Front/img/placeholder.jpg') }}" alt="Pack Image" class="pack-image">
+                        {% endif %}
+                        
+                        <div class="pack-content">
+                            <h2 class="pack-title">{{ pack.nom }}</h2>
+                            <p class="pack-description">{{ pack.description }}</p>
+                            
+                            <div class="pack-meta">
+                                <span class="pack-capacity">
+                                    <i class="fas fa-users mr-1"></i> {{ pack.capacite }} personnes
+                                </span>
+                                <span class="price-badge">
+                                    {{ pack.prix }} €
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h3 class="card-title">Réservation</h3>
+                            <a href="#" class="th-btn style2 btn-block">Réserver ce pack</a>
+                            
+                            {% if is_granted('ROLE_ADMIN') %}
+                                <div class="mt-3">
+                                    <a href="{{ path('app_pack_edit', {'id': pack.id}) }}" class="th-btn style3">
+                                        <i class="fas fa-edit"></i> Modifier
+                                    </a>
+                                    <form method="post" action="{{ path('app_pack_delete', {'id': pack.id}) }}" class="d-inline" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce pack ?');">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ pack.id) }}">
+                                        <button class="th-btn style4">
+                                            <i class="fas fa-trash-alt"></i> Supprimer
+                                        </button>
+                                    </form>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {% include 'Front/partials/footer.html.twig' %}
+
+    <!-- All JavaScript Files -->
+    <script src="{{ asset('Front/js/jquery-3.6.0.min.js') }}"></script>
+    <script src="{{ asset('Front/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ asset('Front/js/jquery.magnific-popup.min.js') }}"></script>
+    <script src="{{ asset('Front/js/slick.min.js') }}"></script>
+    <script src="{{ asset('Front/js/main.js') }}"></script>
+</body>
+</html>

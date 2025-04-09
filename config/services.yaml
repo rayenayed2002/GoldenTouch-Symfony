@@ -6,6 +6,12 @@
 parameters:
         materiel_directory: '%kernel.project_dir%/public/uploads/materiels'
 
+    packs_images_directory: '%kernel.project_dir%/public/uploads/packs/Images'
+    uploads_directory: '%kernel.project_dir%/public/uploads'
+
+    photos_directory: '%kernel.project_dir%/public/uploads/photos'
+
+
 services:
     # default configuration for services in *this* file
     _defaults:

@@ -1,0 +1,14 @@
+<?php
+
+namespace App\Enum;
+
+enum StatusEnum: string
+{
+    case EN_ATTENTE = 'EN_ATTENTE';
+    case EN_ATTENTE_CONFIRMATION_UTILISATEUR = 'EN_ATTENTE_CONFIRMATION_UTILISATEUR';
+    case EN_PERSONNALISATION = 'EN_PERSONNALISATION';
+    case CONFIRME = 'CONFIRME';
+    case EN_COURS = 'EN_COURS';
+    case TERMINE = 'TERMINE';
+    case ANNULE = 'ANNULE';
+}
