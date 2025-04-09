@@ -104,7 +104,7 @@ class Lieu
         return $this;
     }
 
-    #[ORM\Column(name: 'imageUrl', type: 'text', nullable: true)]
+    #[ORM\Column(name: 'imageUrl' ,type: 'text', nullable: true)]
     private ?string $imageUrl = null;
 
     public function getImageUrl(): ?string
