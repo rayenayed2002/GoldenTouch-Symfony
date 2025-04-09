@@ -3,10 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Pack;
-use App\Entity\Avis;
 use App\Repository\PackRepository;
-use App\Repository\AvisRepository;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,9 +12,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class PackController extends AbstractController
 {
     public function __construct(
-        private PackRepository $packRepository,
-        private AvisRepository $avisRepository,
-        private EntityManagerInterface $entityManager
+        private PackRepository $packRepository
     ) {}
 
     #[Route('/packs', name: 'app_packs')]
@@ -51,14 +46,10 @@ class PackController extends AbstractController
             3
         );
 
-        // Get reviews for this specific pack with user information
-        $avis = $this->entityManager->getRepository(Avis::class)->findAvisWithUserInfo($pack->getId());
-
         return $this->render('pack/details.html.twig', [
             'pack' => $pack,
             'similarPacks' => $similarPacks,
-            'trendingPacks' => $this->packRepository->findBy([], ['prix' => 'DESC'], 3),
-            'avis' => $avis
+            'trendingPacks' => $this->packRepository->findBy([], ['prix' => 'DESC'], 3)
         ]);
     }
 }

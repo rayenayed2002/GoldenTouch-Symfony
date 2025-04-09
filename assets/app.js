@@ -1,16 +1,10 @@
 import './bootstrap.js';
+/*
+ * Welcome to your app's main JavaScript file!
+ *
+ * This file will be included onto the page via the importmap() Twig function,
+ * which should already be in your base.html.twig.
+ */
+import './styles/app.css';
 
-// Import Chart.js
-import { Chart } from 'chart.js/auto';
-import 'chartjs-adapter-date-fns';
-import { fr } from 'date-fns/locale';
-
-// Configure Chart.js defaults
-Chart.defaults.locale = fr;
-Chart.defaults.responsive = true;
-Chart.defaults.maintainAspectRatio = false;
-
-// Import Stimulus controllers
-import './controllers/dashboard_controller';
-
-console.log('This log comes from assets/app.js - welcome to AssetMapper! ');
+console.log('This log comes from assets/app.js - welcome to AssetMapper! 🎉');

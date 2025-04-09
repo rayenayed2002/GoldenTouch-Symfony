@@ -6,6 +6,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+
 use App\Repository\UtilisateurRepository;
 
 #[ORM\Entity(repositoryClass: UtilisateurRepository::class)]
@@ -14,115 +15,22 @@ class Utilisateur
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column]
+    #[ORM\Column(type: 'integer')]
     private ?int $id = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $nom = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $prenom = null;
-
-    #[ORM\Column(length: 255, unique: true)]
-    private ?string $email = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $password = null;
-
-    #[ORM\ManyToMany(targetEntity: Event::class, inversedBy: "utilisateurs")]
-    #[ORM\JoinTable(name: "utilisateur_event")]
-    private Collection $participatedEvents;
-
-    #[ORM\Column(type: "string", nullable: true)]
-    private ?string $address = null;
-
-    #[ORM\Column(type: "string", nullable: true)]
-    private ?string $num_tel = null;
-
-    #[ORM\Column(type: "string", nullable: true)]
-    private ?string $reset_token = null;
-
-    #[ORM\Column(name: 'dateJoined', type: Types::DATE_MUTABLE, nullable: true)]
-    private ?\DateTimeInterface $dateJoined = null;
-
-    #[ORM\Column(type: Types::BLOB, nullable: true)]
-    private $hash = null;
-
-    #[ORM\Column(name: 'created_at', type: 'datetime', nullable: false, options: ['default' => 'CURRENT_TIMESTAMP'])]
-    private ?\DateTimeInterface $createdAt = null;
-
-    #[ORM\Column(name: 'updated_at', type: 'datetime', nullable: false, options: ['default' => 'CURRENT_TIMESTAMP', 'on_update' => 'CURRENT_TIMESTAMP'])]
-    private ?\DateTimeInterface $updatedAt = null;
-
-    #[ORM\Column(name: 'token_expiry', type: 'datetime', nullable: true)]
-    private ?\DateTimeInterface $tokenExpiry = null;
-
-    #[ORM\Column(type: 'string', nullable: false)]
-    private ?string $role = null;
-
-    #[ORM\Column(name: 'ImageData', type: Types::BLOB, nullable: true)]
-    private $imageData = null;
-
-    #[ORM\OneToMany(targetEntity: Avi::class, mappedBy: 'utilisateur')]
-    private Collection $avis;
-
-    #[ORM\OneToMany(targetEntity: DemandePack::class, mappedBy: 'utilisateur')]
-    private Collection $demandePacks;
-
-    #[ORM\OneToMany(targetEntity: NotificationsAdmin::class, mappedBy: 'utilisateur')]
-    private Collection $notificationsAdmins;
-
-    #[ORM\OneToMany(targetEntity: Pack::class, mappedBy: 'utilisateur')]
-    private Collection $packs;
-
-    #[ORM\OneToMany(targetEntity: Panier::class, mappedBy: 'utilisateur')]
-    private Collection $paniers;
-
-    #[ORM\OneToMany(targetEntity: Personnel::class, mappedBy: 'utilisateur')]
-    private Collection $personnels;
-
-    #[ORM\OneToMany(targetEntity: Event::class, mappedBy: 'utilisateur')]
-    private Collection $createdEvents;
-
-    public function __construct()
-    {
-        $this->participatedEvents = new ArrayCollection();
-        $this->createdEvents = new ArrayCollection();
-        $this->role = 'ROLE_USER';
-        $this->avis = new ArrayCollection();
-        $this->demandePacks = new ArrayCollection();
-        $this->notificationsAdmins = new ArrayCollection();
-        $this->packs = new ArrayCollection();
-        $this->paniers = new ArrayCollection();
-        $this->personnels = new ArrayCollection();
-    }
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getNom(): ?string
+    public function setId(int $id): self
     {
-        return $this->nom;
-    }
-
-    public function setNom(string $nom): static
-    {
-        $this->nom = $nom;
+        $this->id = $id;
         return $this;
     }
 
-    public function getPrenom(): ?string
-    {
-        return $this->prenom;
-    }
-
-    public function setPrenom(string $prenom): static
-    {
-        $this->prenom = $prenom;
-        return $this;
-    }
+    #[ORM\Column(type: 'string', nullable: false)]
+    private ?string $email = null;
 
     public function getEmail(): ?string
     {
@@ -132,19 +40,74 @@ class Utilisateur
     public function setEmail(string $email): static
     {
         $this->email = $email;
+
         return $this;
     }
 
-    public function getPassword(): ?string
+    #[ORM\Column(type: 'string', nullable: false)]
+    private ?string $hash = null;
+
+    public function getHash(): ?string
     {
-        return $this->password;
+        return $this->hash;
     }
 
-    public function setPassword(string $password): static
+    public function setHash(string $hash): static
     {
-        $this->password = $password;
+        $this->hash = $hash;
+
         return $this;
     }
+
+    #[ORM\Column(type: 'blob', nullable: false)]
+    private $salt; // Remove the typehint or use 'mixed'
+    
+    public function getSalt(): string
+    {
+        if (is_resource($this->salt)) {
+            return stream_get_contents($this->salt);
+        }
+        return $this->salt;
+    }
+    
+    public function setSalt(string $salt): static
+    {
+        $this->salt = $salt;
+        return $this;
+    }
+
+    #[ORM\Column(type: 'string', nullable: false)]
+    private ?string $nom = null;
+
+    public function getNom(): ?string
+    {
+        return $this->nom;
+    }
+
+    public function setNom(string $nom): static
+    {
+        $this->nom = $nom;
+
+        return $this;
+    }
+
+    #[ORM\Column(type: 'string', nullable: false)]
+    private ?string $prenom = null;
+
+    public function getPrenom(): ?string
+    {
+        return $this->prenom;
+    }
+
+    public function setPrenom(string $prenom): static
+    {
+        $this->prenom = $prenom;
+
+        return $this;
+    }
+
+    #[ORM\Column(type: 'string', nullable: true)]
+    private ?string $address = null;
 
     public function getAddress(): ?string
     {
@@ -154,51 +117,26 @@ class Utilisateur
     public function setAddress(?string $address): static
     {
         $this->address = $address;
+
         return $this;
     }
 
-    public function getNumTel(): ?string
+    #[ORM\Column(type: 'string', nullable: true)]
+    private ?string $num_tel = null;
+
+    public function getNum_tel(): ?string
     {
         return $this->num_tel;
     }
 
-    public function setNumTel(?string $num_tel): static
+    public function setNum_tel(?string $num_tel): self
     {
         $this->num_tel = $num_tel;
         return $this;
     }
 
-    public function getResetToken(): ?string
-    {
-        return $this->reset_token;
-    }
-
-    public function setResetToken(?string $reset_token): static
-    {
-        $this->reset_token = $reset_token;
-        return $this;
-    }
-
-    public function getRoles(): array
-    {
-        $roles = ['ROLE_USER'];
-        if ($this->role) {
-            $roles[] = $this->role;
-        }
-        return array_unique($roles);
-    }
-
-    public function setRoles(array $roles): static
-    {
-        if (in_array('ROLE_ADMIN', $roles)) {
-            $this->role = 'ROLE_ADMIN';
-        } elseif (count($roles) > 0) {
-            $this->role = end($roles);
-        } else {
-            $this->role = 'ROLE_USER';
-        }
-        return $this;
-    }
+    #[ORM\Column(type: 'date', nullable: true)]
+    private ?\DateTimeInterface $dateJoined = null;
 
     public function getDateJoined(): ?\DateTimeInterface
     {
@@ -208,8 +146,12 @@ class Utilisateur
     public function setDateJoined(?\DateTimeInterface $dateJoined): static
     {
         $this->dateJoined = $dateJoined;
+
         return $this;
     }
+
+    #[ORM\Column(type: 'string', nullable: false)]
+    private ?string $role = null;
 
     public function getRole(): ?string
     {
@@ -219,83 +161,104 @@ class Utilisateur
     public function setRole(string $role): static
     {
         $this->role = $role;
+
         return $this;
     }
 
-    public function getImageData()
+    #[ORM\Column(type: 'blob', nullable: true)]
+    private $imageData; // No typehint or use 'mixed'
+    
+    public function getImageData(): ?string 
     {
+        if (is_resource($this->imageData)) {
+            return stream_get_contents($this->imageData);
+        }
         return $this->imageData;
     }
-
-    public function setImageData($imageData): static
+    
+    public function setImageData(?string $imageData): static
     {
         $this->imageData = $imageData;
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeInterface
+    #[ORM\Column(type: 'datetime', nullable: false)]
+    private ?\DateTimeInterface $created_at = null;
+
+    public function getCreated_at(): ?\DateTimeInterface
     {
-        return $this->createdAt;
+        return $this->created_at;
     }
 
-    public function setCreatedAt(\DateTimeInterface $createdAt): static
+    public function setCreated_at(\DateTimeInterface $created_at): self
     {
-        $this->createdAt = $createdAt;
+        $this->created_at = $created_at;
         return $this;
     }
 
-    public function getUpdatedAt(): ?\DateTimeInterface
+    #[ORM\Column(type: 'datetime', nullable: false)]
+    private ?\DateTimeInterface $updated_at = null;
+
+    public function getUpdated_at(): ?\DateTimeInterface
     {
-        return $this->updatedAt;
+        return $this->updated_at;
     }
 
-    public function setUpdatedAt(\DateTimeInterface $updatedAt): static
+    public function setUpdated_at(\DateTimeInterface $updated_at): self
     {
-        $this->updatedAt = $updatedAt;
+        $this->updated_at = $updated_at;
         return $this;
     }
 
-    public function getTokenExpiry(): ?\DateTimeInterface
+    #[ORM\Column(type: 'string', nullable: true)]
+    private ?string $password = null;
+
+    public function getPassword(): ?string
     {
-        return $this->tokenExpiry;
+        return $this->password;
     }
 
-    public function setTokenExpiry(?\DateTimeInterface $tokenExpiry): static
+    public function setPassword(?string $password): static
     {
-        $this->tokenExpiry = $tokenExpiry;
+        $this->password = $password;
+
         return $this;
     }
 
-    public function getHash()
+    #[ORM\Column(type: 'string', nullable: true)]
+    private ?string $reset_token = null;
+
+    public function getReset_token(): ?string
     {
-        return $this->hash;
+        return $this->reset_token;
     }
 
-    public function setHash($hash): static
+    public function setReset_token(?string $reset_token): self
     {
-        $this->hash = $hash;
+        $this->reset_token = $reset_token;
         return $this;
     }
 
-    public function getParticipatedEvents(): Collection
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private ?\DateTimeInterface $token_expiry = null;
+
+    public function getToken_expiry(): ?\DateTimeInterface
     {
-        return $this->participatedEvents;
+        return $this->token_expiry;
     }
 
-    public function addParticipatedEvent(Event $event): static
+    public function setToken_expiry(?\DateTimeInterface $token_expiry): self
     {
-        if (!$this->participatedEvents->contains($event)) {
-            $this->participatedEvents->add($event);
-        }
+        $this->token_expiry = $token_expiry;
         return $this;
     }
 
-    public function removeParticipatedEvent(Event $event): static
-    {
-        $this->participatedEvents->removeElement($event);
-        return $this;
-    }
+    #[ORM\OneToMany(targetEntity: Avi::class, mappedBy: 'utilisateur')]
+    private Collection $avis;
 
+    /**
+     * @return Collection<int, Avi>
+     */
     public function getAvis(): Collection
     {
         return $this->avis;
@@ -307,19 +270,28 @@ class Utilisateur
             $this->avis->add($avi);
             $avi->setUtilisateur($this);
         }
+
         return $this;
     }
 
     public function removeAvi(Avi $avi): static
     {
         if ($this->avis->removeElement($avi)) {
+            // set the owning side to null (unless already changed)
             if ($avi->getUtilisateur() === $this) {
                 $avi->setUtilisateur(null);
             }
         }
+
         return $this;
     }
 
+    #[ORM\OneToMany(targetEntity: DemandePack::class, mappedBy: 'utilisateur')]
+    private Collection $demandePacks;
+
+    /**
+     * @return Collection<int, DemandePack>
+     */
     public function getDemandePacks(): Collection
     {
         return $this->demandePacks;
@@ -331,19 +303,61 @@ class Utilisateur
             $this->demandePacks->add($demandePack);
             $demandePack->setUtilisateur($this);
         }
+
         return $this;
     }
 
     public function removeDemandePack(DemandePack $demandePack): static
     {
         if ($this->demandePacks->removeElement($demandePack)) {
+            // set the owning side to null (unless already changed)
             if ($demandePack->getUtilisateur() === $this) {
                 $demandePack->setUtilisateur(null);
             }
         }
+
         return $this;
     }
 
+    #[ORM\OneToMany(targetEntity: Event::class, mappedBy: 'utilisateur')]
+    private Collection $events;
+
+    /**
+     * @return Collection<int, Event>
+     */
+    public function getEvents(): Collection
+    {
+        return $this->events;
+    }
+
+    public function addEvent(Event $event): static
+    {
+        if (!$this->events->contains($event)) {
+            $this->events->add($event);
+            $event->setUtilisateur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEvent(Event $event): static
+    {
+        if ($this->events->removeElement($event)) {
+            // set the owning side to null (unless already changed)
+            if ($event->getUtilisateur() === $this) {
+                $event->setUtilisateur(null);
+            }
+        }
+
+        return $this;
+    }
+
+    #[ORM\OneToMany(targetEntity: NotificationsAdmin::class, mappedBy: 'utilisateur')]
+    private Collection $notificationsAdmins;
+
+    /**
+     * @return Collection<int, NotificationsAdmin>
+     */
     public function getNotificationsAdmins(): Collection
     {
         return $this->notificationsAdmins;
@@ -355,19 +369,28 @@ class Utilisateur
             $this->notificationsAdmins->add($notificationsAdmin);
             $notificationsAdmin->setUtilisateur($this);
         }
+
         return $this;
     }
 
     public function removeNotificationsAdmin(NotificationsAdmin $notificationsAdmin): static
     {
         if ($this->notificationsAdmins->removeElement($notificationsAdmin)) {
+            // set the owning side to null (unless already changed)
             if ($notificationsAdmin->getUtilisateur() === $this) {
                 $notificationsAdmin->setUtilisateur(null);
             }
         }
+
         return $this;
     }
 
+    #[ORM\OneToMany(targetEntity: Pack::class, mappedBy: 'utilisateur')]
+    private Collection $packs;
+
+    /**
+     * @return Collection<int, Pack>
+     */
     public function getPacks(): Collection
     {
         return $this->packs;
@@ -379,19 +402,28 @@ class Utilisateur
             $this->packs->add($pack);
             $pack->setUtilisateur($this);
         }
+
         return $this;
     }
 
     public function removePack(Pack $pack): static
     {
         if ($this->packs->removeElement($pack)) {
+            // set the owning side to null (unless already changed)
             if ($pack->getUtilisateur() === $this) {
                 $pack->setUtilisateur(null);
             }
         }
+
         return $this;
     }
 
+    #[ORM\OneToMany(targetEntity: Panier::class, mappedBy: 'utilisateur')]
+    private Collection $paniers;
+
+    /**
+     * @return Collection<int, Panier>
+     */
     public function getPaniers(): Collection
     {
         return $this->paniers;
@@ -403,19 +435,28 @@ class Utilisateur
             $this->paniers->add($panier);
             $panier->setUtilisateur($this);
         }
+
         return $this;
     }
 
     public function removePanier(Panier $panier): static
     {
         if ($this->paniers->removeElement($panier)) {
+            // set the owning side to null (unless already changed)
             if ($panier->getUtilisateur() === $this) {
                 $panier->setUtilisateur(null);
             }
         }
+
         return $this;
     }
 
+    #[ORM\OneToMany(targetEntity: Personnel::class, mappedBy: 'utilisateur')]
+    private Collection $personnels;
+
+    /**
+     * @return Collection<int, Personnel>
+     */
     public function getPersonnels(): Collection
     {
         return $this->personnels;
@@ -427,45 +468,127 @@ class Utilisateur
             $this->personnels->add($personnel);
             $personnel->setUtilisateur($this);
         }
+
         return $this;
     }
 
     public function removePersonnel(Personnel $personnel): static
     {
         if ($this->personnels->removeElement($personnel)) {
+            // set the owning side to null (unless already changed)
             if ($personnel->getUtilisateur() === $this) {
                 $personnel->setUtilisateur(null);
             }
         }
+
         return $this;
     }
 
-    public function getCreatedEvents(): Collection
+    #[ORM\ManyToMany(targetEntity: Event::class, inversedBy: 'utilisateurs')]
+    #[ORM\JoinTable(
+        name: 'reserve_mat',
+        joinColumns: [
+            new ORM\JoinColumn(name: 'IdUser', referencedColumnName: 'id')
+        ],
+        inverseJoinColumns: [
+            new ORM\JoinColumn(name: 'id_event', referencedColumnName: 'id')
+        ]
+    )]
+    private Collection $reservedEvents;
+
+    public function __construct()
     {
-        return $this->createdEvents;
+        $this->avis = new ArrayCollection();
+        $this->demandePacks = new ArrayCollection();
+        $this->events = new ArrayCollection();
+        $this->notificationsAdmins = new ArrayCollection();
+        $this->packs = new ArrayCollection();
+        $this->paniers = new ArrayCollection();
+        $this->personnels = new ArrayCollection();
+        $this->reservedEvents = new ArrayCollection();
     }
 
-    public function addCreatedEvent(Event $event): static
+    /**
+     * @return Collection<int, Event>
+     */
+    public function getReservedEvents(): Collection
     {
-        if (!$this->createdEvents->contains($event)) {
-            $this->createdEvents->add($event);
-            $event->setUtilisateur($this);
+        return $this->reservedEvents;
+    }
+
+    public function addReservedEvent(Event $reservedEvent): static
+    {
+        if (!$this->reservedEvents->contains($reservedEvent)) {
+            $this->reservedEvents->add($reservedEvent);
         }
+
         return $this;
     }
 
-    public function removeCreatedEvent(Event $event): static
+    public function removeReservedEvent(Event $reservedEvent): static
     {
-        if ($this->createdEvents->removeElement($event)) {
-            if ($event->getUtilisateur() === $this) {
-                $event->setUtilisateur(null);
-            }
-        }
+        $this->reservedEvents->removeElement($reservedEvent);
+
         return $this;
     }
 
-    public function getSalt(): ?string
+    public function getNumTel(): ?string
     {
-        return null;
+        return $this->num_tel;
+    }
+
+    public function setNumTel(?string $num_tel): static
+    {
+        $this->num_tel = $num_tel;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeInterface
+    {
+        return $this->created_at;
+    }
+
+    public function setCreatedAt(\DateTimeInterface $created_at): static
+    {
+        $this->created_at = $created_at;
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeInterface
+    {
+        return $this->updated_at;
+    }
+
+    public function setUpdatedAt(\DateTimeInterface $updated_at): static
+    {
+        $this->updated_at = $updated_at;
+
+        return $this;
+    }
+
+    public function getResetToken(): ?string
+    {
+        return $this->reset_token;
+    }
+
+    public function setResetToken(?string $reset_token): static
+    {
+        $this->reset_token = $reset_token;
+
+        return $this;
+    }
+
+    public function getTokenExpiry(): ?\DateTimeInterface
+    {
+        return $this->token_expiry;
+    }
+
+    public function setTokenExpiry(?\DateTimeInterface $token_expiry): static
+    {
+        $this->token_expiry = $token_expiry;
+
+        return $this;
     }
 }

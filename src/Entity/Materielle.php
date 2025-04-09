@@ -28,7 +28,7 @@ class Materielle
         return $this;
     }
 
-    #[ORM\Column(type: 'string', length: 255, nullable: false)]
+    #[ORM\Column(type: 'string', nullable: false)]
     private ?string $nom_mat = null;
 
     public function getNom_mat(): ?string
@@ -42,7 +42,7 @@ class Materielle
         return $this;
     }
 
-    #[ORM\Column(type: 'string', length: 255, nullable: false)]
+    #[ORM\Column(type: 'string', nullable: false)]
     private ?string $description_mat = null;
 
     public function getDescription_mat(): ?string
@@ -56,7 +56,7 @@ class Materielle
         return $this;
     }
 
-    #[ORM\Column(type: 'string', length: 255, nullable: false)]
+    #[ORM\Column(type: 'string', nullable: false)]
     private ?string $photo_mat = null;
 
     public function getPhoto_mat(): ?string
@@ -98,17 +98,19 @@ class Materielle
         return $this;
     }
 
-    #[ORM\Column(type: 'integer', nullable: false)]
-    private ?int $categorie_mat = null;
+    #[ORM\ManyToOne(targetEntity: Categorie::class, inversedBy: 'materielles')]
+    #[ORM\JoinColumn(name: 'categorie_mat', referencedColumnName: 'id_cat')]
+    private ?Categorie $categorie = null;
 
-    public function getCategorie_mat(): ?int
+    public function getCategorie(): ?Categorie
     {
-        return $this->categorie_mat;
+        return $this->categorie;
     }
 
-    public function setCategorie_mat(int $categorie_mat): self
+    public function setCategorie(?Categorie $categorie): static
     {
-        $this->categorie_mat = $categorie_mat;
+        $this->categorie = $categorie;
+
         return $this;
     }
 
@@ -217,4 +219,5 @@ class Materielle
 
         return $this;
     }
+
 }

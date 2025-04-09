@@ -34,9 +34,6 @@
     <link rel="stylesheet" href="{{ asset('vendor/css/rtl/theme-default.css') }}" class="template-customizer-theme-css" />
     <link rel="stylesheet" href="{{ asset('css/demo.css') }}" />
 
-    <!-- SweetAlert2 CSS -->
-    <link rel="stylesheet" href="{{ asset('vendor/libs/sweetalert2/sweetalert2.css') }}" />
-
     <!-- Vendors CSS -->
     <link rel="stylesheet" href="{{ asset('vendor/libs/perfect-scrollbar/perfect-scrollbar.css') }}" />
     <link rel="stylesheet" href="{{ asset('vendor/libs/node-waves/node-waves.css') }}" />
@@ -54,48 +51,6 @@
     <script src="{{ asset('vendor/js/helpers.js') }}"></script>
     <script src="{{ asset('vendor/js/template-customizer.js') }}"></script>
     <script src="{{ asset('js/config.js') }}"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <style>
-        .flatpickr-input {
-            background-color: #fff !important;
-            border: 1px solid #dee2e6 !important;
-            padding: 0.5rem 0.75rem !important;
-            border-radius: 0.375rem !important;
-        }
-        
-        .flatpickr-calendar {
-            position: absolute !important;
-            z-index: 1000;
-            background: #fff;
-            border-radius: 0.375rem;
-            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
-        }
-        
-        .flatpickr-calendar:hover {
-            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
-        }
-        
-        .flatpickr-calendar .flatpickr-months {
-            background: #fff !important;
-        }
-        
-        .flatpickr-calendar .flatpickr-day {
-            border-radius: 0.375rem !important;
-        }
-        
-        .flatpickr-calendar .flatpickr-day:hover {
-            background: #e9ecef !important;
-        }
-        
-        .flatpickr-calendar .flatpickr-day.selected {
-            background: #0d6efd !important;
-            color: #fff !important;
-        }
-        
-        .flatpickr-calendar .flatpickr-day.today {
-            border: 1px solid #0d6efd !important;
-        }
-    </style>
 </head>
 
 <body>
@@ -252,105 +207,61 @@
                         </div>
 
                         <div class="card-body">
-                            {% if avis is defined and avis|length > 0 %}
-                                <div class="pack-rating-overview mb-4">
-                                    <div class="row align-items-center">
-                                        <div class="col-md-3 text-center">
-                                            {% set total_rating = 0 %}
-                                            {% set review_count = avis|length %}
-                                            {% for review in avis %}
-                                                {% set total_rating = total_rating + review.note %}
-                                            {% endfor %}
-                                            {% set average_rating = review_count > 0 ? (total_rating / review_count)|round(1) : 0 %}
-                                            <h1 class="display-3 mb-0">{{ average_rating }}</h1>
-                                            <div class="text-warning mb-2">
-                                                {% for i in 1..5 %}
-                                                    {% if i <= average_rating %}
-                                                        <i class="ti ti-star-filled"></i>
-                                                    {% elseif i <= average_rating + 0.5 %}
-                                                        <i class="ti ti-star-half-filled"></i>
-                                                    {% else %}
-                                                        <i class="ti ti-star"></i>
-                                                    {% endif %}
-                                                {% endfor %}
-                                            </div>
-                                            <p class="text-muted mb-0">Based on {{ review_count }} reviews</p>
+                            <!-- Pack Rating Overview -->
+                            <div class="pack-rating-overview mb-4">
+                                <div class="row align-items-center">
+                                    <div class="col-md-3 text-center">
+                                        <h1 class="display-3 mb-0">4.8</h1>
+                                        <div class="text-warning mb-2">
+                                            <i class="ti ti-star-filled"></i>
+                                            <i class="ti ti-star-filled"></i>
+                                            <i class="ti ti-star-filled"></i>
+                                            <i class="ti ti-star-filled"></i>
+                                            <i class="ti ti-star-half-filled"></i>
                                         </div>
-                                        <div class="col-md-9">
-                                            <div class="rating-progress">
-                                                {% for rating in 5..1 %}
-                                                    {% set rating_count = avis|filter(a => a.note == rating)|length %}
-                                                    {% set rating_percentage = review_count > 0 ? (rating_count / review_count * 100)|round : 0 %}
-                                                    <div class="d-flex align-items-center mb-2">
-                                                        <div class="text-warning me-2"><i class="ti ti-star-filled"></i> {{ rating }}</div>
-                                                        <div class="progress flex-grow-1" style="height: 8px;">
-                                                            <div class="progress-bar bg-warning" role="progressbar" 
-                                                                 style="width: {{ rating_percentage }}%" 
-                                                                 aria-valuenow="{{ rating_percentage }}" 
-                                                                 aria-valuemin="0" 
-                                                                 aria-valuemax="100"></div>
-                                                        </div>
-                                                        <span class="ms-2">{{ rating_percentage }}%</span>
-                                                    </div>
-                                                {% endfor %}
+                                        <p class="text-muted mb-0">Based on 124 reviews</p>
+                                    </div>
+                                    <div class="col-md-9">
+                                        <div class="rating-progress">
+                                            <div class="d-flex align-items-center mb-2">
+                                                <div class="text-warning me-2"><i class="ti ti-star-filled"></i> 5</div>
+                                                <div class="progress flex-grow-1" style="height: 8px;">
+                                                    <div class="progress-bar bg-warning" role="progressbar" style="width: 75%" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
+                                                </div>
+                                                <span class="ms-2">75%</span>
+                                            </div>
+                                            <div class="d-flex align-items-center mb-2">
+                                                <div class="text-warning me-2"><i class="ti ti-star-filled"></i> 4</div>
+                                                <div class="progress flex-grow-1" style="height: 8px;">
+                                                    <div class="progress-bar bg-warning" role="progressbar" style="width: 15%" aria-valuenow="15" aria-valuemin="0" aria-valuemax="100"></div>
+                                                </div>
+                                                <span class="ms-2">15%</span>
+                                            </div>
+                                            <div class="d-flex align-items-center mb-2">
+                                                <div class="text-warning me-2"><i class="ti ti-star-filled"></i> 3</div>
+                                                <div class="progress flex-grow-1" style="height: 8px;">
+                                                    <div class="progress-bar bg-warning" role="progressbar" style="width: 5%" aria-valuenow="5" aria-valuemin="0" aria-valuemax="100"></div>
+                                                </div>
+                                                <span class="ms-2">5%</span>
+                                            </div>
+                                            <div class="d-flex align-items-center mb-2">
+                                                <div class="text-warning me-2"><i class="ti ti-star-filled"></i> 2</div>
+                                                <div class="progress flex-grow-1" style="height: 8px;">
+                                                    <div class="progress-bar bg-warning" role="progressbar" style="width: 3%" aria-valuenow="3" aria-valuemin="0" aria-valuemax="100"></div>
+                                                </div>
+                                                <span class="ms-2">3%</span>
+                                            </div>
+                                            <div class="d-flex align-items-center">
+                                                <div class="text-warning me-2"><i class="ti ti-star-filled"></i> 1</div>
+                                                <div class="progress flex-grow-1" style="height: 8px;">
+                                                    <div class="progress-bar bg-warning" role="progressbar" style="width: 2%" aria-valuenow="2" aria-valuemin="0" aria-valuemax="100"></div>
+                                                </div>
+                                                <span class="ms-2">2%</span>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-
-                                <div class="reviews-list">
-                                    {% for review in avis %}
-                                        <div class="review-item {% if review.note >= 4 %}review-positive{% elseif review.note <= 2 %}review-negative{% endif %}">
-                                            <div class="review-header">
-                                                <div class="review-avatar">
-                                                    {% if review.utilisateur is defined and review.utilisateur.avatar is defined %}
-                                                        <img src="{{ review.utilisateur.avatar }}" alt="User avatar">
-                                                    {% else %}
-                                                        <span>{{ review.utilisateur.prenom|first }}{{ review.utilisateur.nom|first }}</span>
-                                                    {% endif %}
-                                                </div>
-                                                <div class="review-meta">
-                                                    <div class="review-user">{% if review.utilisateur is defined %}{{ review.utilisateur.prenom }} {{ review.utilisateur.nom }}{% else %}Anonymous{% endif %}</div>
-                                                    <div class="review-date">{{ review.dateCreation|date('d/m/Y H:i') }}</div>
-                                                </div>
-                                            </div>
-                                            
-                                            <div class="review-rating">
-                                                {% for i in 1..5 %}
-                                                    {% if review.note is defined and i <= review.note %}
-                                                        <i class="ti ti-star-filled"></i>
-                                                    {% elseif review.note is defined and i <= review.note + 0.5 %}
-                                                        <i class="ti ti-star-half-filled"></i>
-                                                    {% else %}
-                                                        <i class="ti ti-star"></i>
-                                                    {% endif %}
-                                                {% endfor %}
-                                            </div>
-
-                                            <div class="review-content">
-                                                {% if review.commentaire is defined and review.commentaire is not empty %}
-                                                    {{ review.commentaire }}
-                                                {% else %}
-                                                    <span class="text-muted">No comment provided</span>
-                                                {% endif %}
-                                            </div>
-
-                                            <div class="review-helpful">
-                                                <span class="review-badge">{{ review.note }}/5</span>
-                                                <button class="btn btn-link p-0" onclick="toggleHelpful(this)">
-                                                    <i class="ti ti-thumb-up me-1"></i> Helpful
-                                                </button>
-                                            </div>
-                                        </div>
-                                    {% endfor %}
-                                </div>
-                            {% else %}
-                                <div class="text-center py-4">
-                                    <i class="ti ti-message-circle-off fs-3 mb-2 text-muted"></i>
-                                    <p class="mb-0">Aucun avis pour ce pack pour le moment.</p>
-                                    <p class="text-muted">Soyez le premier à donner votre avis !</p>
-                                </div>
-                            {% endif %}
+                            </div>
                             <div class="row">
                                 <!-- Left Column: Details -->
                                 <div class="col-lg-8">
@@ -430,6 +341,73 @@
                                         </div>
                                     </div>
 
+                                    <!-- Reviews -->
+                                    <div class="card mb-4">
+                                        <div class="card-header d-flex justify-content-between align-items-center">
+                                            <h5 class="mb-0">User Reviews</h5>
+                                            <button class="btn btn-primary btn-sm" onclick="openReviewModal()">
+                                                <i class="ti ti-plus me-1"></i> Write a Review
+                                            </button>
+                                        </div>
+                                        <div class="card-body">
+                                            <!-- Review Item 1 -->
+                                            <div class="review-item mb-4 pb-4 border-bottom">
+                                                <div class="d-flex mb-3">
+                                                    <div class="flex-shrink-0">
+                                                        <div class="avatar me-3">
+                                                            <img src="{{ asset('img/avatars/5.png') }}" alt="Avatar" class="rounded-circle">
+                                                        </div>
+                                                    </div>
+                                                    <div class="flex-grow-1">
+                                                        <div class="d-flex justify-content-between align-items-start">
+                                                            <div>
+                                                                <h6 class="mb-0">Sarah Johnson</h6>
+                                                                <div class="text-warning mb-1">
+                                                                    <i class="ti ti-star-filled"></i>
+                                                                    <i class="ti ti-star-filled"></i>
+                                                                    <i class="ti ti-star-filled"></i>
+                                                                    <i class="ti ti-star-filled"></i>
+                                                                    <i class="ti ti-star-filled"></i>
+                                                                </div>
+                                                            </div>
+                                                            <small class="text-muted">2 days ago</small>
+                                                        </div>
+                                                        <p class="mb-0">Amazing experience! The pack exceeded our expectations. The staff was professional and everything was perfectly organized.</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- Review Item 2 -->
+                                            <div class="review-item mb-4 pb-4 border-bottom">
+                                                <div class="d-flex mb-3">
+                                                    <div class="flex-shrink-0">
+                                                        <div class="avatar me-3">
+                                                            <img src="{{ asset('img/avatars/12.png') }}" alt="Avatar" class="rounded-circle">
+                                                        </div>
+                                                    </div>
+                                                    <div class="flex-grow-1">
+                                                        <div class="d-flex justify-content-between align-items-start">
+                                                            <div>
+                                                                <h6 class="mb-0">Michael Chen</h6>
+                                                                <div class="text-warning mb-1">
+                                                                    <i class="ti ti-star-filled"></i>
+                                                                    <i class="ti ti-star-filled"></i>
+                                                                    <i class="ti ti-star-filled"></i>
+                                                                    <i class="ti ti-star-filled"></i>
+                                                                    <i class="ti ti-star"></i>
+                                                                </div>
+                                                            </div>
+                                                            <small class="text-muted">1 week ago</small>
+                                                        </div>
+                                                        <p class="mb-0">Great value for money. Would definitely recommend this pack to others looking for a well-organized event.</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="text-center">
+                                                <button class="btn btn-outline-primary">Load More Reviews</button>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                     <!-- Features -->
                                     <div class="card mb-4">
                                         <div class="card-header">
@@ -478,23 +456,15 @@
                                             <form id="bookingForm" class="row g-3">
                                                 <div class="col-12">
                                                     <label class="form-label">Date de l'événement</label>
-                                                    <div class="position-relative">
-                                                        <input type="text" 
-                                                               name="dateEvent" 
-                                                               class="form-control flatpickr-input" 
-                                                               required
-                                                               data-input
-                                                               placeholder="Choisissez une date">
-                                                        <div class="flatpickr-calendar"></div>
-                                                    </div>
+                                                    <input type="date" class="form-control" required>
                                                 </div>
                                                 <div class="col-12">
                                                     <label class="form-label">Nombre de personnes</label>
-                                                    <input type="number" name="nbPersonnes" class="form-control" min="1" max="{{ pack.capacite }}" required>
+                                                    <input type="number" class="form-control" min="1" max="{{ pack.capacite }}" required>
                                                 </div>
                                                 <div class="col-12">
                                                     <label class="form-label">Notes spéciales</label>
-                                                    <textarea name="notes" class="form-control" rows="3"></textarea>
+                                                    <textarea class="form-control" rows="3"></textarea>
                                                 </div>
                                                 <div class="col-12">
                                                     <button type="submit" class="btn btn-primary w-100 booking-btn">
@@ -549,40 +519,6 @@
     </div>
     <!-- / Layout wrapper -->
 
-    <!-- Review Modal -->
-    <div class="modal fade" id="reviewModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Écrire un avis</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="reviewForm">
-                        <div class="mb-3">
-                            <label class="form-label">Note</label>
-                            <div class="rating-stars mb-2">
-                                <i class="ti ti-star rating-star" data-value="1"></i>
-                                <i class="ti ti-star rating-star" data-value="2"></i>
-                                <i class="ti ti-star rating-star" data-value="3"></i>
-                                <i class="ti ti-star rating-star" data-value="4"></i>
-                                <i class="ti ti-star rating-star" data-value="5"></i>
-                                <input type="hidden" name="rating" id="ratingInput" value="0">
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Votre avis</label>
-                            <textarea class="form-control" rows="4" placeholder="Partagez votre expérience avec ce pack..."></textarea>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Annuler</button>
-                    <button type="button" class="btn btn-primary" onclick="submitReview()">Soumettre l'avis</button>
-                </div>
-            </div>
-        </div>
-    </div>
     <style>
     .floating-action-button {
         position: fixed;
@@ -643,280 +579,45 @@
         background: rgba(115, 103, 240, 0.1);
         text-decoration: none;
     }
-
-    .review-item {
-        background: #fff;
-        border-radius: 12px;
-        padding: 20px;
-        margin-bottom: 20px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    .review-item:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 12px rgba(0, 0, 0, 0.1);
-    }
-
-    .review-header {
-        display: flex;
-        align-items: center;
-        margin-bottom: 15px;
-    }
-
-    .review-avatar {
-        width: 48px;
-        height: 48px;
-        border-radius: 50%;
-        margin-right: 12px;
-        background: #f8f9fa;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 600;
-        font-size: 1.2rem;
-    }
-
-    .review-avatar img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        border-radius: 50%;
-    }
-
-    .review-meta {
-        flex: 1;
-    }
-
-    .review-user {
-        font-weight: 600;
-        color: #212529;
-        margin-bottom: 4px;
-    }
-
-    .review-date {
-        font-size: 0.875rem;
-        color: #6c757d;
-    }
-
-    .review-rating {
-        display: flex;
-        align-items: center;
-        margin-bottom: 12px;
-    }
-
-    .review-rating .ti-star-filled {
-        color: #ffc107;
-        transition: color 0.3s ease;
-    }
-
-    .review-rating .ti-star-half-filled {
-        color: #ffc107;
-    }
-
-    .review-rating .ti-star {
-        color: #e9ecef;
-        transition: color 0.3s ease;
-    }
-
-    .review-rating .ti-star-filled:hover ~ .ti-star,
-    .review-rating .ti-star-half-filled:hover ~ .ti-star {
-        color: #ffc107;
-    }
-
-    .review-content {
-        font-size: 0.95rem;
-        line-height: 1.6;
-        color: #495057;
-    }
-
-    .review-helpful {
-        display: flex;
-        align-items: center;
-        font-size: 0.875rem;
-        color: #6c757d;
-        margin-top: 12px;
-    }
-
-    .review-helpful button {
-        background: none;
-        border: none;
-        color: #6c757d;
-        cursor: pointer;
-        padding: 0;
-        margin-left: 8px;
-    }
-
-    .review-helpful button:hover {
-        color: #0d6efd;
-    }
-
-    .review-badge {
-        background: #e9ecef;
-        color: #495057;
-        padding: 4px 8px;
-        border-radius: 12px;
-        font-size: 0.75rem;
-        margin-left: 8px;
-    }
-
-    .review-positive {
-        border-left: 4px solid #28a745;
-    }
-
-    .review-negative {
-        border-left: 4px solid #dc3545;
-    }
-
-    @media (max-width: 768px) {
-        .review-item {
-            padding: 15px;
-            margin-bottom: 15px;
-        }
-
-        .review-avatar {
-            width: 40px;
-            height: 40px;
-            margin-right: 8px;
-        }
-
-        .review-user {
-            font-size: 0.95rem;
-        }
-    }
 </style>
 
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/fr.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initialize Flatpickr
-            flatpickr('.flatpickr-input', {
-                locale: 'fr',
-                dateFormat: 'Y-m-d',
-                minDate: 'today',
-                theme: 'light',
-                allowInput: true,
-                monthSelectorType: 'static',
-                static: true,
-                position: 'below',
-                prevArrow: '<svg class="icon" viewBox="0 0 24 24"><path d="M15.41 16.09l-4.58-4.59 4.58-4.59L14 5.5l-6 6 6 6z"></path></svg>',
-                nextArrow: '<svg class="icon" viewBox="0 0 24 24"><path d="M8.59 16.34l4.58-4.59-4.58-4.59L10 5.75l6 6-6 6z"></path></svg>',
-                onReady: function(selectedDates, dateStr, instance) {
-                    // Add custom styling to the calendar
-                    instance.calendarContainer.classList.add('shadow-lg', 'border', 'border-gray-200', 'rounded-lg');
-                    instance.calendarContainer.querySelector('.flatpickr-months').classList.add('bg-white');
-                    instance.calendarContainer.querySelector('.flatpickr-current-month').classList.add('text-lg', 'font-semibold');
-                }
-            });
-
-            // Handle booking form submission
-            const bookingForm = document.getElementById('bookingForm');
-            if (bookingForm) {
-                bookingForm.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    
-                    // Get form data
-                    const formData = new FormData(bookingForm);
-                    const date = formData.get('dateEvent');
-                    const nbPersonnes = formData.get('nbPersonnes');
-                    const notes = formData.get('notes');
-                    
-                    // Prepare data for API call
-                    const data = {
-                        packId: {{ pack.id }},
-                        utilisateurId: 25, // Temporarily hardcoded user ID
-                        prix: {{ pack.prix }},
-                        statut: 'EN_ATTENTE',
-                        dateDemande: new Date().toISOString(),
-                        dateEvent: date,
-                        nbPersonnes: nbPersonnes,
-                        notes: notes
-                    };
-
-                    console.log('Form data:', data);
-
-                    // Send request to create demande pack
-                    fetch('{{ path('app_demande_pack_create') }}', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-Requested-With': 'XMLHttpRequest'
-                        },
-                        body: JSON.stringify(data)
-                    })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Network response was not ok');
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        if (data.success) {
-                            // Show success message
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Succès',
-                                text: 'Votre demande de réservation a été envoyée avec succès !',
-                                confirmButtonText: 'OK',
-                                customClass: {
-                                    confirmButton: 'btn btn-primary'
-                                },
-                                buttonsStyling: false
-                            });
-                        } else {
-                            // Show error message
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Erreur',
-                                text: data.message || 'Une erreur est survenue lors de la réservation.',
-                                confirmButtonText: 'OK',
-                                customClass: {
-                                    confirmButton: 'btn btn-danger'
-                                },
-                                buttonsStyling: false
-                            });
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Erreur',
-                            text: 'Une erreur est survenue lors de la réservation.',
-                            confirmButtonText: 'OK',
-                            customClass: {
-                                confirmButton: 'btn btn-danger'
-                            },
-                            buttonsStyling: false
-                        });
-                    });
-                });
-            }
-
-            // Initialize rating stars
-            const stars = document.querySelectorAll('.rating-star');
-            const ratingInput = document.getElementById('ratingInput');
-            
-            stars.forEach(star => {
-                star.addEventListener('click', function() {
-                    const value = parseInt(this.getAttribute('data-value'));
-                    ratingInput.value = value;
-                    
-                    // Update stars UI
-                    stars.forEach((s, index) => {
-                        if (index < value) {
-                            s.classList.add('active', 'ti-star-filled');
-                            s.classList.remove('ti-star');
-                        } else {
-                            s.classList.remove('active', 'ti-star-filled');
-                            s.classList.add('ti-star');
-                        }
-                    });
-                });
-            });
-        });
-    </script>
+<!-- Review Modal -->
+    <div class="modal fade" id="reviewModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Write a Review</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="reviewForm">
+                        <div class="mb-3">
+                            <label class="form-label">Rating</label>
+                            <div class="rating-stars mb-2">
+                                <i class="ti ti-star rating-star" data-rating="1"></i>
+                                <i class="ti ti-star rating-star" data-rating="2"></i>
+                                <i class="ti ti-star rating-star" data-rating="3"></i>
+                                <i class="ti ti-star rating-star" data-rating="4"></i>
+                                <i class="ti ti-star rating-star" data-rating="5"></i>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Your Review</label>
+                            <textarea class="form-control" rows="4" placeholder="Share your experience with this pack..."></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Photos (optional)</label>
+                            <input type="file" class="form-control" multiple accept="image/*">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="submitReview()">Submit Review</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Core JS -->
     <script src="{{ asset('/vendor/libs/jquery/jquery.js') }}"></script>
@@ -927,10 +628,6 @@
     <script src="{{ asset('/vendor/libs/hammer/hammer.js') }}"></script>
     <script src="{{ asset('/vendor/libs/i18n/i18n.js') }}"></script>
     <script src="{{ asset('/vendor/libs/typeahead-js/typeahead.js') }}"></script>
-
-    <!-- SweetAlert2 JS -->
-    <script src="{{ asset('vendor/libs/sweetalert2/sweetalert2.js') }}"></script>
-
     <script src="{{ asset('/vendor/js/menu.js') }}"></script>
 
     <!-- Custom JS -->
@@ -950,71 +647,43 @@
         }
 
         function toggleFavorite(btn) {
+            btn.classList.toggle('btn-label-danger');
+            btn.classList.toggle('btn-danger');
             const icon = btn.querySelector('i');
-            if (icon.classList.contains('ti-heart')) {
-                icon.classList.remove('ti-heart');
-                icon.classList.add('ti-heart-filled');
-                btn.classList.remove('btn-label-danger');
-                btn.classList.add('btn-danger');
-            } else {
-                icon.classList.remove('ti-heart-filled');
-                icon.classList.add('ti-heart');
-                btn.classList.remove('btn-danger');
-                btn.classList.add('btn-label-danger');
-            }
+            icon.classList.toggle('ti-heart');
+            icon.classList.toggle('ti-heart-filled');
+            btn.classList.add('animate__animated', 'animate__heartBeat');
+            setTimeout(() => btn.classList.remove('animate__animated', 'animate__heartBeat'), 1000);
         }
 
         function openReviewModal() {
             const modal = new bootstrap.Modal(document.getElementById('reviewModal'));
             modal.show();
-            
-            // Initialize rating stars
-            const stars = document.querySelectorAll('.rating-star');
-            const ratingInput = document.getElementById('ratingInput');
-            
-            stars.forEach(star => {
-                star.addEventListener('click', function() {
-                    const value = parseInt(this.getAttribute('data-value'));
-                    ratingInput.value = value;
-                    
-                    // Update stars UI
-                    stars.forEach((s, index) => {
-                        if (index < value) {
-                            s.classList.add('active', 'ti-star-filled');
-                            s.classList.remove('ti-star');
-                        } else {
-                            s.classList.remove('active', 'ti-star-filled');
-                            s.classList.add('ti-star');
-                        }
-                    });
-                });
-            });
         }
 
         function submitReview() {
             const form = document.getElementById('reviewForm');
-            // Here you would normally validate and submit the form
-            
+            // Add animation to the submit button
             const submitBtn = document.querySelector('#reviewModal .btn-primary');
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status"></span>Submitting...';
             submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i class="ti ti-check me-1"></i>Avis soumis';
             
+            // Simulate API call
             setTimeout(() => {
-                const modal = bootstrap.Modal.getInstance(document.getElementById('reviewModal'));
-                modal.hide();
-                
-                // Show success message
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Merci!',
-                    text: 'Votre avis a été soumis avec succès.',
-                    confirmButtonText: 'OK',
-                    customClass: {
-                        confirmButton: 'btn btn-primary'
-                    },
-                    buttonsStyling: false
-                });
-            }, 1500);
+                submitBtn.innerHTML = '<i class="ti ti-check me-1"></i>Review Submitted';
+                setTimeout(() => {
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('reviewModal'));
+                    modal.hide();
+                    // Show success notification
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Thank you!',
+                        text: 'Your review has been submitted successfully.',
+                        showConfirmButton: false,
+                        timer: 2000
+                    });
+                }, 1000);
+            }, 2000);
         }
 
         // Rating stars interaction
@@ -1071,38 +740,5 @@
 
     <!-- Page JS -->
     <script src="{{ asset('/js/dashboards-analytics.js') }}"></script>
-
-    <script>
-        function toggleHelpful(button) {
-            const icon = button.querySelector('i');
-            if (icon.classList.contains('ti-thumb-up')) {
-                icon.classList.remove('ti-thumb-up');
-                icon.classList.add('ti-thumb-up-filled');
-                button.style.color = '#0d6efd';
-            } else {
-                icon.classList.remove('ti-thumb-up-filled');
-                icon.classList.add('ti-thumb-up');
-                button.style.color = '#6c757d';
-            }
-        }
-
-        // Add smooth scroll behavior for reviews
-        document.addEventListener('DOMContentLoaded', function() {
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('fade-in');
-                    }
-                });
-            }, {
-                threshold: 0.1
-            });
-
-            document.querySelectorAll('.review-item').forEach(review => {
-                review.classList.add('opacity-0');
-                observer.observe(review);
-            });
-        });
-    </script>
 </body>
 </html>

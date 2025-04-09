@@ -15,114 +15,141 @@ class Payment
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column]
+    #[ORM\Column(type: 'integer')]
     private ?int $id = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $paymentId = null;
-
-    #[ORM\Column(type: "float")]
-    private ?float $amount = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $currency = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $status = null;
-
-    #[ORM\Column(type: "datetime")]
-    private ?\DateTimeInterface $createdAt = null;
-
-    #[ORM\ManyToMany(targetEntity: Event::class, mappedBy: "payments")]
-    private Collection $associatedEvents;
-
-    public function __construct()
-    {
-        $this->associatedEvents = new ArrayCollection();
-    }
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getPaymentId(): ?string
+    public function setId(int $id): self
     {
-        return $this->paymentId;
-    }
-
-    public function setPaymentId(string $paymentId): static
-    {
-        $this->paymentId = $paymentId;
+        $this->id = $id;
         return $this;
     }
 
-    public function getAmount(): ?float
+    #[ORM\Column(type: 'integer', nullable: false)]
+    private ?int $user_id = null;
+
+    public function getUser_id(): ?int
     {
-        return $this->amount;
+        return $this->user_id;
     }
 
-    public function setAmount(float $amount): static
+    public function setUser_id(int $user_id): self
     {
-        $this->amount = $amount;
+        $this->user_id = $user_id;
         return $this;
     }
 
-    public function getCurrency(): ?string
+    #[ORM\Column(type: 'integer', nullable: false)]
+    private ?int $montant = null;
+
+    public function getMontant(): ?int
     {
-        return $this->currency;
+        return $this->montant;
     }
 
-    public function setCurrency(string $currency): static
+    public function setMontant(int $montant): static
     {
-        $this->currency = $currency;
+        $this->montant = $montant;
+
         return $this;
     }
 
-    public function getStatus(): ?string
+    #[ORM\Column(type: 'string', nullable: false)]
+    private ?string $mode_de_paiment = null;
+
+    public function getMode_de_paiment(): ?string
     {
-        return $this->status;
+        return $this->mode_de_paiment;
     }
 
-    public function setStatus(string $status): static
+    public function setMode_de_paiment(string $mode_de_paiment): self
     {
-        $this->status = $status;
+        $this->mode_de_paiment = $mode_de_paiment;
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeInterface
+    #[ORM\Column(type: 'date', nullable: false)]
+    private ?\DateTimeInterface $date = null;
+
+    public function getDate(): ?\DateTimeInterface
     {
-        return $this->createdAt;
+        return $this->date;
     }
 
-    public function setCreatedAt(\DateTimeInterface $createdAt): static
+    public function setDate(\DateTimeInterface $date): static
     {
-        $this->createdAt = $createdAt;
+        $this->date = $date;
+
         return $this;
+    }
+
+    #[ORM\ManyToMany(targetEntity: Event::class, inversedBy: 'payments')]
+    #[ORM\JoinTable(
+        name: 'detailpaiment',
+        joinColumns: [
+            new ORM\JoinColumn(name: 'idPaiment', referencedColumnName: 'id')
+        ],
+        inverseJoinColumns: [
+            new ORM\JoinColumn(name: 'idEvent', referencedColumnName: 'id')
+        ]
+    )]
+    private Collection $events;
+
+    public function __construct()
+    {
+        $this->events = new ArrayCollection();
     }
 
     /**
      * @return Collection<int, Event>
      */
-    public function getAssociatedEvents(): Collection
+    public function getEvents(): Collection
     {
-        return $this->associatedEvents;
+        return $this->events;
     }
 
-    public function addAssociatedEvent(Event $event): static
+    public function addEvent(Event $event): static
     {
-        if (!$this->associatedEvents->contains($event)) {
-            $this->associatedEvents->add($event);
-            $event->addPayment($this);
+        if (!$this->events->contains($event)) {
+            $this->events->add($event);
         }
+
         return $this;
     }
 
-    public function removeAssociatedEvent(Event $event): static
+    public function removeEvent(Event $event): static
     {
-        if ($this->associatedEvents->removeElement($event)) {
-            $event->removePayment($this);
-        }
+        $this->events->removeElement($event);
+
         return $this;
     }
+
+    public function getUserId(): ?int
+    {
+        return $this->user_id;
+    }
+
+    public function setUserId(int $user_id): static
+    {
+        $this->user_id = $user_id;
+
+        return $this;
+    }
+
+    public function getModeDePaiment(): ?string
+    {
+        return $this->mode_de_paiment;
+    }
+
+    public function setModeDePaiment(string $mode_de_paiment): static
+    {
+        $this->mode_de_paiment = $mode_de_paiment;
+
+        return $this;
+    }
+
 }
