@@ -7,9 +7,12 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
 use App\Repository\MaterielleRepository;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: MaterielleRepository::class)]
 #[ORM\Table(name: 'materielles')]
+#[ORM\HasLifecycleCallbacks]
+
 class Materielle
 {
     #[ORM\Id]
@@ -28,9 +31,20 @@ class Materielle
         return $this;
     }
 
+    #[ORM\Column(type: 'string', length: 100, nullable: false)]
+    #[Assert\NotBlank(message: 'Le nom du matériel est obligatoire.')]
+    #[Assert\Length(
+        min: 3, 
+        max: 100, 
+        minMessage: 'Le nom doit comporter au moins {{ limit }} caractères.',
+        maxMessage: 'Le nom ne peut pas dépasser {{ limit }} caractères.'
+    )]
+    #[Assert\Regex(
+        pattern: '/^[a-zA-Z0-9\s\-_]+$/',
+        message: 'Le nom ne peut contenir que des lettres, chiffres, espaces, tirets et underscores.'
+    )]
     #[ORM\Column(type: 'string', length: 255, nullable: false)]
     private ?string $nom_mat = null;
-
     public function getNom_mat(): ?string
     {
         return $this->nom_mat;
@@ -42,6 +56,15 @@ class Materielle
         return $this;
     }
 
+
+    #[ORM\Column(type: 'text', nullable: false)]
+    #[Assert\NotBlank(message: 'La description est obligatoire.')]
+    #[Assert\Length(
+        min: 10,
+        max: 1000,
+        minMessage: 'La description doit comporter au moins {{ limit }} caractères.',
+        maxMessage: 'La description ne peut pas dépasser {{ limit }} caractères.'
+    )]    
     #[ORM\Column(type: 'string', length: 255, nullable: false)]
     private ?string $description_mat = null;
 
@@ -71,7 +94,12 @@ class Materielle
     }
 
     #[ORM\Column(type: 'integer', nullable: false)]
-    private ?int $quantite_mat = null;
+    #[Assert\NotBlank(message: 'La quantité est obligatoire.')]
+    #[Assert\PositiveOrZero(message: 'La quantité doit être un nombre positif ou zéro.')]
+    #[Assert\LessThanOrEqual(
+        value: 1000,
+        message: 'La quantité ne peut pas dépasser {{ value }}.'
+    )]    private ?int $quantite_mat = null;
 
     public function getQuantite_mat(): ?int
     {
@@ -85,6 +113,8 @@ class Materielle
     }
 
     #[ORM\Column(type: 'float', nullable: false)]
+    #[Assert\NotBlank(message: 'Le prix est obligatoire.')]
+    #[Assert\Positive(message: 'Le prix doit être un nombre positif.')]
     private ?float $prix_mat = null;
 
     public function getPrix_mat(): ?float
@@ -111,7 +141,7 @@ class Materielle
         $this->categorie_mat = $categorie_mat;
         return $this;
     }
-
+    
     #[ORM\ManyToMany(targetEntity: Utilisateur::class, inversedBy: 'materielles')]
     #[ORM\JoinTable(
         name: 'reserve_mat',
@@ -127,6 +157,7 @@ class Materielle
     public function __construct()
     {
         $this->utilisateurs = new ArrayCollection();
+
     }
 
     /**
@@ -217,4 +248,5 @@ class Materielle
 
         return $this;
     }
+
 }
