@@ -42,6 +42,55 @@ class PackController extends AbstractController
     }
 
 
+    #[Route('/pack/reserver/{id}', name: 'app_pack_reserver')]
+    public function reserver(Pack $pack): Response
+    {
+        $allPacks = $this->packRepository->findAll();
+        return $this->render('pack/reserver_pack.html.twig', [
+            'pack' => $pack,
+            'packs' => $allPacks
+        ]);
+    }
+
+    #[Route('/pack/reserve', name: 'app_pack_reserve', methods: ['POST'])]
+    public function reserve(Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $data = json_decode($request->getContent(), true);
+        
+        // Validate required fields
+        if (!isset($data['packId']) || !isset($data['dateEvent']) || !isset($data['nbPersonnes'])) {
+            return $this->json(['success' => false, 'message' => 'Missing required fields'], Response::HTTP_BAD_REQUEST);
+        }
+        
+        try {
+            $pack = $this->packRepository->find($data['packId']);
+            if (!$pack) {
+                return $this->json(['success' => false, 'message' => 'Pack not found'], Response::HTTP_NOT_FOUND);
+            }
+            
+            // Create and persist the reservation
+            $reservation = new DemandePack();
+            $reservation->setPack($pack);
+            $reservation->setUtilisateur($this->getUser());
+            $reservation->setPrix($pack->getPrix());
+            $reservation->setStatut('EN_ATTENTE');
+            $reservation->setDateDemande(new \DateTime());
+            $reservation->setDateEvent(new \DateTime($data['dateEvent']));
+            $reservation->setNbPersonnes($data['nbPersonnes']);
+            $reservation->setNotes($data['notes'] ?? null);
+            
+            $entityManager->persist($reservation);
+            $entityManager->flush();
+            
+            return $this->json(['success' => true, 'message' => 'Reservation created successfully']);
+        } catch (\Exception $e) {
+            return $this->json(
+                ['success' => false, 'message' => 'Error creating reservation: ' . $e->getMessage()], 
+                Response::HTTP_INTERNAL_SERVER_ERROR
+            );
+        }
+    }
+
     #[Route('/pack', name: 'app_pack_index')]
     public function indexpack(Request $request): Response
     {
@@ -81,6 +130,28 @@ class PackController extends AbstractController
 
         return $this->render('pack/details.html.twig', [
             'pack' => $pack,
+            'similarPacks' => $similarPacks,
+            'trendingPacks' => $this->packRepository->findBy([], ['prix' => 'DESC'], 3),
+            'avis' => $avis
+        ]);
+    }
+
+    #[Route('/pack/shop/{id}', name: 'app_pack_shop_details')]
+    public function shopDetails(Pack $pack): Response
+    {
+        // Get similar packs based on category
+        $similarPacks = $this->packRepository->findBy(
+            ['event' => $pack->getEvent()], 
+            ['prix' => 'ASC'], 
+            3
+        );
+
+        // Get reviews for this specific pack with user information
+        $avis = $this->entityManager->getRepository(Avis::class)->findAvisWithUserInfo($pack->getId());
+
+        return $this->render('pack/shop-details.html.twig', [
+            'pack' => $pack,
+            'packs' => $this->packRepository->findAll(),
             'similarPacks' => $similarPacks,
             'trendingPacks' => $this->packRepository->findBy([], ['prix' => 'DESC'], 3),
             'avis' => $avis

@@ -48,6 +48,11 @@ class Utilisateur
     #[ORM\Column(type: Types::BLOB, nullable: true)]
     private $hash = null;
 
+    public function __toString(): string
+    {
+        return $this->prenom.' '.$this->nom;
+    }
+
     #[ORM\Column(name: 'created_at', type: 'datetime', nullable: false, options: ['default' => 'CURRENT_TIMESTAMP'])]
     private ?\DateTimeInterface $createdAt = null;
 
