@@ -40,4 +40,49 @@ class EventRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+
+    public function findByTopPerformance(int $limit = 5): array
+    {
+        try {
+            $result = $this->createQueryBuilder('e')
+                ->select('e.id, e.nom as event_name, 
+                         COUNT(DISTINCT p.id) as total_packs,
+                         COUNT(DISTINCT dp.id) as total_sales,
+                         SUM(p.prix) as total_revenue,
+                         AVG(COALESCE(a.note, 0)) as avg_rating,
+                         COUNT(DISTINCT dp.utilisateur) as unique_customers')
+                ->leftJoin('App\Entity\Pack', 'p', 'WITH', 'p.event = e.id')
+                ->leftJoin('p.demandePacks', 'dp')
+                ->leftJoin('App\Entity\Avis', 'a', 'WITH', 'a.idPack = p.id')
+                ->groupBy('e.id, e.nom')
+                ->orderBy('total_sales', 'DESC')
+                ->setMaxResults($limit)
+                ->getQuery()
+                ->getResult();
+            
+            return $result;
+        } catch (\Exception $e) {
+            error_log('Error in findByTopPerformance: ' . $e->getMessage());
+            return [];
+        }
+    }
+    
+    public function findActiveEvents(): int
+    {
+        try {
+            $now = new \DateTime();
+            $count = $this->createQueryBuilder('e')
+                ->select('COUNT(e.id)')
+                ->where('e.dateDebut <= :now')
+                ->andWhere('e.dateFin >= :now')
+                ->setParameter('now', $now)
+                ->getQuery()
+                ->getSingleScalarResult();
+                
+            return $count ? (int)$count : 0;
+        } catch (\Exception $e) {
+            error_log('Error in findActiveEvents: ' . $e->getMessage());
+            return 0;
+        }
+    }
 }

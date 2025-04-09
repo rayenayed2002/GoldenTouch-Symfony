@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+        "target": "es6",
+        "module": "commonjs",
+        "strict": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true,
+        "outDir": "./public/build",
+        "rootDir": "./assets",
+        "moduleResolution": "node",
+        "lib": ["dom", "es6", "dom.iterable", "scripthost"],
+        "allowJs": true
+    },
+    "include": ["assets/**/*.ts", "assets/**/*.js"],
+    "exclude": ["node_modules", "public", "vendor"]
+}

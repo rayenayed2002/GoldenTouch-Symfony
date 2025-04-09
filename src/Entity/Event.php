@@ -6,7 +6,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use App\Enum\CategorieEvent;
+
 use App\Repository\EventRepository;
 
 #[ORM\Entity(repositoryClass: EventRepository::class)]
@@ -60,22 +60,20 @@ class Event
         return $this;
     }
 
-    #[ORM\Column(type: 'string', length: 50, nullable: false)]
+    #[ORM\Column(type: 'string', nullable: false)]
     private ?string $categorie = null;
-    
-    // Getter: Returns the enum instance or null if no value is set
-    public function getCategorie(): ?CategorieEvent
+
+    public function getCategorie(): ?string
     {
-        return $this->categorie ? CategorieEvent::from($this->categorie) : null;
+        return $this->categorie;
     }
-    
-    // Setter: Accepts the enum and stores its value (string) in the database
-    public function setCategorie(CategorieEvent $categorie): static
+
+    public function setCategorie(string $categorie): static
     {
-        $this->categorie = $categorie->value; // Store the enum value as a string
+        $this->categorie = $categorie;
+
         return $this;
     }
-    
 
     #[ORM\Column(type: 'string', nullable: false)]
     private ?string $photo = null;
