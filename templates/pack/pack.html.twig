@@ -113,49 +113,134 @@
             </div>
 
             <!-- Pack Grid -->
-            <div class="row">
-                {% for pack in packs.results %}
-                <div class="col-md-6 col-lg-4">
-                    <div class="pack-card">
-                        <div class="pack-image-wrapper">
-                            {% if pack.getPhoto() %}
-                                <img src="{{ asset('uploads/packs/' ~ pack.getPhoto()) }}" alt="{{ pack.getNom() }}" class="pack-image">
-                            {% else %}
-                                <img src="{{ asset('Front/img/placeholder.jpg') }}" alt="Pack Image" class="pack-image">
-                            {% endif %}
+           <!--==============================
+Breadcrumb Area  
+==============================-->
+<!--==============================
+    Breadcumb
+============================== -->
+<div class="breadcumb-wrapper" data-bg-src="assets/img/breadcumb/breadcumb-bg.jpg">
+    <div class="container z-index-common">
+        <h1 class="breadcumb-title">Our Packs</h1>
+        <ul class="breadcumb-menu">
+            <li><a href="index.html">Home</a></li>
+            <li>Packs</li>
+        </ul>
+    </div>
+</div>
+
+<!--==============================
+Pack Area  
+==============================-->
+<section class="space-top space-extra-bottom">
+    <div class="container">
+        <div class="row flex-row-reverse">
+            <div class="col-xl-9 col-lg-8">
+                <div class="th-sort-bar">
+                    <div class="row justify-content-between align-items-center">
+                        <div class="col-md">
+                            <p class="woocommerce-result-count">Showing {{ packs.results|length }} packs</p>
                         </div>
-                        <div class="pack-content p-6">
-                            <div class="flex items-center justify-between mb-4">
-                                <h3 class="pack-title !text-2xl !font-bold !mb-0">{{ pack.nom }}</h3>
-                            </div>
-                            <p class="pack-description !text-gray-600 !mb-6">{{ pack.description|slice(0, 150) }}...</p>
-image.png                            
-                            <div class="pack-meta !mt-auto">
-                                <div class="flex items-center gap-2">
-                                    <span class="pack-capacity !bg-gray-100 !text-gray-700 !px-4 !py-2 !rounded-full">
-                                        <i class="fas fa-users mr-1"></i> {{ pack.capacite }} personnes
-                                    </span>
-                                    <span class="price-badge bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
-                                        {{ pack.prix }} €
-                                    </span>
+                        <div class="col-md-auto">
+                            <form class="woocommerce-ordering" method="get">
+                                <select name="orderby" class="orderby" aria-label="Pack order">
+                                    <option value="menu_order" selected="selected">Default Sorting</option>
+                                    <option value="popularity">Sort by popularity</option>
+                                    <option value="price">Sort by price: low to high</option>
+                                    <option value="price-desc">Sort by price: high to low</option>
+                                </select>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row gy-40">
+                    {% for pack in packs.results %}
+                    <div class="col-xl-4 col-sm-6">
+                        <div class="th-product">
+                            <div class="product-img">
+                                {% if pack.getPhoto() %}
+                                    <img src="{{ asset('uploads/packs/' ~ pack.getPhoto()) }}" alt="{{ pack.getNom() }}">
+                                {% else %}
+                                    <img src="{{ asset('Front/img/placeholder.jpg') }}" alt="Pack Image">
+                                {% endif %}
+                                <div class="actions">
+                                    <a href="{{ path('app_pack_shop_details', {'id': pack.id}) }}" class="icon-btn"><i class="far fa-eye"></i></a>
+                                    <a href="#" class="icon-btn"><i class="far fa-cart-plus"></i></a>
+                                    <a href="#" class="icon-btn"><i class="far fa-heart"></i></a>
                                 </div>
-                                <div class="pack-actions">
-                                    <a href="{{ path('app_pack_show', {'id': pack.id}) }}" class="th-btn style2">Voir détails</a>
-                                    {% if is_granted('ROLE_ADMIN') %}
-                                        <a href="{{ path('app_pack_edit', {'id': pack.id}) }}" class="th-btn style3"><i class="fas fa-edit"></i></a>
-                                        <form method="post" action="{{ path('app_pack_delete', {'id': pack.id}) }}" style="display: inline-block;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce pack ?');">
-                                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ pack.id) }}">
-                                            <button class="th-btn style4"><i class="fas fa-trash-alt"></i></button>
-                                        </form>
-                                    {% endif %}
+                            </div>
+                            <div class="product-content">
+                                <div class="star-rating" role="img" aria-label="Rated 5.00 out of 5">
+                                    <span>Rated <strong class="rating">5.00</strong> out of 5</span>
+                                </div>
+                                <h3 class="product-title"><a href="{{ path('app_pack_shop_details', {'id': pack.id}) }}">{{ pack.nom }}</a></h3>
+                                <div class="pack-meta">
+                                    <span class="price">{{ pack.prix }} €</span>
+                                    <span class="pack-capacity"><i class="fas fa-users"></i> {{ pack.capacite }} persons</span>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    {% endfor %}
                 </div>
-                {% endfor %}
+                
+                <div class="th-pagination text-center pt-50">
+                    <ul>
+                        <li><a href="blog.html">1</a></li>
+                        <li><a href="blog.html">2</a></li>
+                        <li><a href="blog.html">3</a></li>
+                        <li><a href="blog.html"><i class="far fa-arrow-right"></i></a></li>
+                    </ul>
+                </div>
             </div>
-
+            
+            <div class="col-xl-3 col-lg-4">
+                <aside class="sidebar-area sidebar-shop">
+                    <div class="widget widget_search">
+                        <form class="search-form">
+                            <input type="text" placeholder="Search packs...">
+                            <button type="submit"><i class="far fa-search"></i></button>
+                        </form>
+                    </div>
+                    
+                    <div class="widget widget_categories">
+                        <h3 class="widget_title">Categories</h3>
+                        <ul>
+                            <li><a href="blog.html">Adventure</a> <span>(8)</span></li>
+                            <li><a href="blog.html">Family</a> <span>(6)</span></li>
+                            <li><a href="blog.html">Luxury</a> <span>(5)</span></li>
+                            <li><a href="blog.html">Weekend</a> <span>(2)</span></li>
+                            <li><a href="blog.html">Custom</a> <span>(7)</span></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="widget widget_price_filter">
+                        <h4 class="widget_title">Filter By Price</h4>
+                        <div class="price_slider_wrapper">
+                            <div class="price_label">
+                                Price: <span class="from">$0</span> — <span class="to">$1000</span>
+                            </div>
+                            <div class="price_slider"></div>
+                            <button type="submit" class="button">Filter</button>
+                        </div>
+                    </div>
+                    
+                    <div class="widget widget_tag_cloud">
+                        <h3 class="widget_title">Popular Tags</h3>
+                        <div class="tagcloud">
+                            <a href="blog.html">Adventure</a>
+                            <a href="blog.html">Family</a>
+                            <a href="blog.html">Luxury</a>
+                            <a href="blog.html">Weekend</a>
+                            <a href="blog.html">Custom</a>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </div>
+</section>
             <!-- Pagination -->
             <div class="th-pagination text-center">
                 <ul>
