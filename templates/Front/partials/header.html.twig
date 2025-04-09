@@ -1,5 +1,5 @@
 
-    <div class="th-menu-wrapper">
+<div class="th-menu-wrapper">
         <div class="th-menu-area text-center">
             <button class="th-menu-toggle "><i class="fal fa-times"></i></button>
             <div class="mobile-logo">
@@ -8,7 +8,7 @@
             <div class="th-mobile-menu">
                 <ul>
                     <li class="menu-item-has-children">
-                        <a href="index.html">Home</a>
+                        <a href="{{ path('app_pack_index') }}">Packs</a>
                         <ul class="sub-menu">
                             <li><a href="index.html">Home One </a></li>
                             <li><a href="index-2.html">Home Two </a></li>
@@ -251,7 +251,7 @@
                     <nav class="main-menu d-none d-lg-block">
                         <ul>
                             <li>
-                                <a href="index.html">Pack</a>
+                                <a href="{{ path('app_pack_index') }}">Pack</a>
                             </li>
                             <li class="menu-item-has-children">
                                 <a href="#">Event Planner</a>

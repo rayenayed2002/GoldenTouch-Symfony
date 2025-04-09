@@ -1,0 +1,194 @@
+<!doctype html>
+<html class="no-js" lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>GoldenTouch - Nos Packs</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Radio+Canada:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- All CSS Files -->
+    <link rel="stylesheet" href="{{ asset('Front/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('Front/css/fontawesome.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('Front/css/magnific-popup.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('Front/css/slick.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('Front/css/style.css') }}">
+
+    <style>
+        .pack-card {
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            margin-bottom: 30px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        .pack-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+        .pack-image {
+            height: 250px;
+            object-fit: cover;
+            border-radius: 10px 10px 0 0;
+        }
+        .pack-content {
+            padding: 25px;
+        }
+        .pack-title {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: #1C1C1C;
+        }
+        .pack-description {
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        .pack-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        .pack-capacity {
+            background: #f8f9fa;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+        .pack-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .search-section {
+            margin-bottom: 50px;
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+        }
+    </style>
+</head>
+
+<body>
+    {% include 'Front/partials/header.html.twig' %}
+
+    <!-- Page Title -->
+    <div class="breadcumb-wrapper" data-bg-src="{{ asset('Front/img/breadcumb/breadcumb-bg.jpg') }}" style="padding: 15px 0;">
+        <div class="container">
+            <div class="breadcumb-content" style="padding: 10px 0;">
+                <h1 class="breadcumb-title" style="font-size: 1.5rem; margin-bottom: 5px;">Nos Packs</h1>
+                <ul class="breadcumb-menu" style="font-size: 0.9rem;">
+                    <li><a href="{{ path('front_index') }}">Accueil</a></li>
+                    <li>Packs</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pack List Section -->
+    <section class="space-top space-extra-bottom">
+        <div class="container">
+            <!-- Search Section -->
+            <div class="search-section">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                        <form class="search-form">
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="Rechercher un pack...">
+                                <button class="th-btn style3"><i class="fas fa-search"></i></button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pack Grid -->
+            <div class="row">
+                {% for pack in packs.results %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="pack-card">
+                        <div class="pack-image-wrapper">
+                            {% if pack.getPhoto() %}
+                                <img src="{{ asset('uploads/packs/' ~ pack.getPhoto()) }}" alt="{{ pack.getNom() }}" class="pack-image">
+                            {% else %}
+                                <img src="{{ asset('Front/img/placeholder.jpg') }}" alt="Pack Image" class="pack-image">
+                            {% endif %}
+                        </div>
+                        <div class="pack-content p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="pack-title !text-2xl !font-bold !mb-0">{{ pack.nom }}</h3>
+                            </div>
+                            <p class="pack-description !text-gray-600 !mb-6">{{ pack.description|slice(0, 150) }}...</p>
+image.png                            
+                            <div class="pack-meta !mt-auto">
+                                <div class="flex items-center gap-2">
+                                    <span class="pack-capacity !bg-gray-100 !text-gray-700 !px-4 !py-2 !rounded-full">
+                                        <i class="fas fa-users mr-1"></i> {{ pack.capacite }} personnes
+                                    </span>
+                                    <span class="price-badge bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+                                        {{ pack.prix }} €
+                                    </span>
+                                </div>
+                                <div class="pack-actions">
+                                    <a href="{{ path('app_pack_show', {'id': pack.id}) }}" class="th-btn style2">Voir détails</a>
+                                    {% if is_granted('ROLE_ADMIN') %}
+                                        <a href="{{ path('app_pack_edit', {'id': pack.id}) }}" class="th-btn style3"><i class="fas fa-edit"></i></a>
+                                        <form method="post" action="{{ path('app_pack_delete', {'id': pack.id}) }}" style="display: inline-block;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce pack ?');">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ pack.id) }}">
+                                            <button class="th-btn style4"><i class="fas fa-trash-alt"></i></button>
+                                        </form>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Pagination -->
+            <div class="th-pagination text-center">
+                <ul>
+                    {% if packs.hasPreviousPage %}
+                        <li><a href="{{ path('app_pack_index', {'page': packs.currentPage - 1}) }}"><i class="fas fa-arrow-left"></i></a></li>
+                    {% endif %}
+                    
+                    {% for i in 1..packs.lastPage %}
+                        <li><a href="{{ path('app_pack_index', {'page': i}) }}" {% if i == packs.currentPage %}class="active"{% endif %}>{{ i }}</a></li>
+                    {% endfor %}
+                    
+                    {% if packs.hasNextPage %}
+                        <li><a href="{{ path('app_pack_index', {'page': packs.currentPage + 1}) }}"><i class="fas fa-arrow-right"></i></a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    {% include 'Front/partials/footer.html.twig' %}
+
+    <!-- Scroll Top -->
+    <div class="scroll-top">
+        <svg class="progress-circle svg-content" width="100%" height="100%" viewBox="-1 -1 102 102">
+            <path d="M50,1 a49,49 0 0,1 0,98 a49,49 0 0,1 0,-98" style="transition: stroke-dashoffset 10ms linear 0s; stroke-dasharray: 307.919, 307.919; stroke-dashoffset: 307.919;"></path>
+        </svg>
+    </div>
+
+    <!-- All JavaScript Files -->
+    <script src="{{ asset('Front/js/jquery-3.6.0.min.js') }}"></script>
+    <script src="{{ asset('Front/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ asset('Front/js/jquery.magnific-popup.min.js') }}"></script>
+    <script src="{{ asset('Front/js/slick.min.js') }}"></script>
+    <script src="{{ asset('Front/js/main.js') }}"></script>
+</body>
+</html>
