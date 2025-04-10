@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+  class="light-style layout-navbar-fixed layout-menu-fixed"
+  dir="ltr"
+  data-theme="theme-default"
+  data-assets-path="{{ asset('') }}"
+  data-template="vertical-menu-template">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+    <title>Customize Pack - Admin Dashboard</title>
+    <meta name="description" content="" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{{ asset('img/favicon/favicon.ico') }}" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="{{ asset('vendor/fonts/fontawesome.css') }}" />
+    <link rel="stylesheet" href="{{ asset('vendor/fonts/tabler-icons.css') }}" />
+    <link rel="stylesheet" href="{{ asset('vendor/fonts/flag-icons.css') }}" />
+
+    <!-- Core CSS -->
+    <link rel="stylesheet" href="{{ asset('vendor/css/rtl/core.css') }}" class="template-customizer-core-css" />
+    <link rel="stylesheet" href="{{ asset('vendor/css/rtl/theme-default.css') }}" class="template-customizer-theme-css" />
+    <link rel="stylesheet" href="{{ asset('css/demo.css') }}" />
+
+    <!-- Vendors CSS -->
+    <link rel="stylesheet" href="{{ asset('assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css') }}" />
+    <link rel="stylesheet" href="{{ asset('assets/vendor/libs/node-waves/node-waves.css') }}" />
+    <link rel="stylesheet" href="{{ asset('/vendor/libs/typeahead-js/typeahead.css') }}" />
+    <link rel="stylesheet" href="{{ asset('vendor/libs/apex-charts/apex-charts.css') }}" />
+    <link rel="stylesheet" href="{{ asset('vendor/libs/swiper/swiper.css') }}" />
+    <link rel="stylesheet" href="{{ asset('vendor/libs/datatables-bs5/datatables.bootstrap5.css') }}" />
+    <link rel="stylesheet" href="{{ asset('vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.css') }}" />
+    <link rel="stylesheet" href="{{ asset('vendor/libs/flatpickr/flatpickr.css') }}" />
+    <link rel="stylesheet" href="{{ asset('vendor/libs/select2/select2.css') }}" />
+    
+    <!-- Page CSS -->
+    <link rel="stylesheet" href="{{ asset('vendor/css/pages/cards-advance.css') }}" />
+    <link rel="stylesheet" href="{{ asset('css/glassmorphism.css') }}">
+
+    <style>
+        .glassmorphism-ui {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+            transition: all 0.3s ease;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 16px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .glass-panel:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 35px rgba(0, 0, 0, 0.15);
+        }
+
+        .form-control, .form-select {
+            backdrop-filter: blur(4px);
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus, .form-select:focus {
+            box-shadow: 0 0 0 0.25rem rgba(115, 103, 240, 0.15);
+            border-color: #7367f0;
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        .btn {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            background-image: radial-gradient(circle, #fff 10%, transparent 10.01%);
+            transform: scale(10, 10);
+            opacity: 0;
+            transition: transform .5s, opacity 1s;
+        }
+
+        .btn:active::after {
+            transform: scale(0, 0);
+            opacity: .3;
+            transition: 0s;
+        }
+
+        .table {
+            border-collapse: separate;
+            border-spacing: 0 8px;
+        }
+
+        .table tr {
+            transition: transform 0.2s ease;
+        }
+
+        .table tr:hover {
+            transform: scale(1.01);
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -1000px 0; }
+            100% { background-position: 1000px 0; }
+        }
+
+        .loading {
+            animation: shimmer 2s infinite linear;
+            background: linear-gradient(to right, #f6f7f8 8%, #edeef1 18%, #f6f7f8 33%);
+            background-size: 1000px 100%;
+        }
+
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            z-index: 1000;
+            background: linear-gradient(to right, #7367f0, #9754cb);
+            transform-origin: 0 50%;
+            transition: transform 0.2s ease;
+        }
+
+        @media (max-width: 768px) {
+            .glass-panel {
+                margin: 10px;
+                padding: 15px;
+            }
+            
+            .row.g-3 {
+                margin: 0 5px;
+            }
+            
+            .btn {
+                width: 100%;
+                margin: 5px 0;
+            }
+        }
+    </style>
+
+    <!-- Helpers -->
+    <script src="{{ asset('vendor/js/helpers.js') }}"></script>
+    <script src="{{ asset('vendor/js/template-customizer.js') }}"></script>
+    <script src="{{ asset('js/config.js') }}"></script>
+</head>
+
+<body>
+    <!-- Layout wrapper -->
+    <div class="layout-wrapper layout-content-navbar">
+        <div class="layout-container">
+            <!-- Temporary Menu Placeholder -->
+            <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
+                <div class="app-brand demo">
+                    <a href="{{ path('admin_dashboard') }}" class="app-brand-link">
+                        <span class="app-brand-text demo menu-text fw-bold">Golden Touch</span>
+                    </a>
+                </div>
+                <div class="menu-inner-shadow"></div>
+                <ul class="menu-inner py-1">
+                    <!-- Dashboard -->
+                    <li class="menu-item">
+                        <a href="{{ path('admin_dashboard') }}" class="menu-link">
+                            <i class="menu-icon tf-icons ti ti-smart-home"></i>
+                            <div>Dashboard</div>
+                        </a>
+                    </li>
+                </ul>
+            </aside>
+
+            <!-- Layout page -->
+            <div class="layout-page">
+                <!-- Temporary Navbar Placeholder -->
+                <nav class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme">
+                    <div class="navbar-nav-right d-flex align-items-center">
+                        <div class="navbar-nav align-items-center">
+                            <div class="nav-item navbar-search-wrapper mb-0">
+                                <span class="d-none d-md-inline-block">Golden Touch Admin</span>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+
+                <!-- Content wrapper -->
+                <div class="content-wrapper">
+                    <!-- Content -->
+                    <div class="container-xxl flex-grow-1 container-p-y">
+                        <div class="scroll-progress" id="scrollProgress"></div>
+
+                        <!-- Client Info Card -->
+                        <div class="card mb-4 glassmorphism-ui" data-aos="fade-up">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h5 class="mb-3">Client Information</h5>
+                                        <p><strong>Name:</strong> {{ client.nom }} {{ client.prenom }}</p>
+                                        <p><strong>Event Date:</strong> {{ eventDate|date('Y-m-d') }}</p>
+                                        <p><strong>Status:</strong> <span class="badge bg-{{ demandePack.statut == 'NON_LU' ? 'warning' : 'info' }}">{{ demandePack.statut }}</span></p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h5 class="mb-3">Original Pack Details</h5>
+                                        <p><strong>Name:</strong> {{ originalPack.nom }}</p>
+                                        <p><strong>Base Price:</strong> ${{ originalPack.prix }}</p>
+                                        <p><strong>Category:</strong> {{ originalPack.categorie }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Pack Details Section -->
+                        <div class="card mb-4 glass-panel" data-aos="fade-up" data-aos-delay="200">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0 d-flex align-items-center">
+                                    <i class="ti ti-package me-2"></i>
+                                    Détails du Pack
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-3">
+                                    <!-- Pack Name -->
+                                    <div class="col-md-6">
+                                        <div class="form-floating mb-3">
+                                            <input type="text" class="form-control" id="packName" name="packName" 
+                                                value="{{ originalPack ? originalPack.nom : '' }}" placeholder="Nom du Pack" required>
+                                            <label for="packName">Nom du Pack</label>
+                                        </div>
+                                    </div>
+
+                                    <!-- Pack Price -->
+                                    <div class="col-md-6">
+                                        <label class="form-label">Prix (€)</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">€</span>
+                                            <input type="number" step="0.01" class="form-control" id="packPrice" name="packPrice"
+                                                value="{{ originalPack ? originalPack.prix : '' }}" required>
+                                        </div>
+                                    </div>
+
+                                    <!-- Description -->
+                                    <div class="col-12">
+                                        <div class="form-floating mb-3">
+                                            <textarea class="form-control" id="packDescription" name="packDescription" 
+                                                style="height: 100px" required>{{ originalPack ? originalPack.description : '' }}</textarea>
+                                            <label for="packDescription">Description du Pack</label>
+                                        </div>
+                                    </div>
+
+                                    <!-- Capacity & Category -->
+                                    <div class="col-md-6">
+                                        <label class="form-label">Capacité</label>
+                                        <input type="number" class="form-control" id="packCapacity" name="packCapacity"
+                                            value="{{ originalPack ? originalPack.capacite : '' }}" required>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">Catégorie</label>
+                                        <select class="form-select select2" id="packCategory" name="packCategory" required>
+                                            <option value="">Sélectionnez une catégorie</option>
+                                            <option value="Mariage" {{ originalPack and originalPack.categorie == 'Mariage' ? 'selected' : '' }}>Mariage</option>
+                                            <option value="Anniversaire" {{ originalPack and originalPack.categorie == 'Anniversaire' ? 'selected' : '' }}>Anniversaire</option>
+                                            <option value="Conférence" {{ originalPack and originalPack.categorie == 'Conférence' ? 'selected' : '' }}>Conférence</option>
+                                            <option value="Séminaire" {{ originalPack and originalPack.categorie == 'Séminaire' ? 'selected' : '' }}>Séminaire</option>
+                                            <option value="Autre" {{ originalPack and originalPack.categorie == 'Autre' ? 'selected' : '' }}>Autre</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Selected Items Section -->
+                        <div class="card mb-4 glass-panel" data-aos="fade-up" data-aos-delay="300">
+                            <div class="card-header">
+                                <h5 class="card-title"><i class="ti ti-list"></i> Éléments sélectionnés</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table" id="selectedItemsTable">
+                                        <thead>
+                                            <tr>
+                                                <th>Type</th>
+                                                <th>Nom</th>
+                                                <th>Détails</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="selectedItemsBody">
+                                            <tr class="no-items-row">
+                                                <td colspan="4" class="text-center">Aucun élément sélectionné</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Materielle Section -->
+                        <div class="card mb-4 glass-panel" data-aos="fade-up" data-aos-delay="400">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="card-title mb-0"><i class="ti ti-box"></i> Matériels</h5>
+                                <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="collapse" data-bs-target="#materielsCollapse" aria-expanded="true">
+                                    <i class="ti ti-chevron-down"></i>
+                                </button>
+                            </div>
+                            <div class="card-body collapse show" id="materielsCollapse">
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <select class="form-select select2" id="materielSelect">
+                                            <option value="">Sélectionnez un matériel</option>
+                                            {% for materiel in materielles %}
+                                                <option value="{{ materiel.id_mat }}" 
+                                                        data-name="{{ materiel.nom_mat }}" 
+                                                        data-price="{{ materiel.prix_mat }}"
+                                                        data-available="{{ materiel.quantite_mat }}">
+                                                    {{ materiel.nom_mat }} ({{ materiel.quantite_mat }} disponible)
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <input type="number" class="form-control" id="materielQuantity" min="1" max="100" value="1" placeholder="Quantité">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <button class="btn btn-primary w-100" type="button" id="addMaterielBtn">
+                                            <i class="ti ti-plus"></i> Ajouter
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="selected-materiels mt-4">
+                                    <h6>Matériels Sélectionnés</h6>
+                                    <div class="table-responsive">
+                                        <table class="table table-hover" id="selectedMaterielsTable">
+                                            <thead>
+                                                <tr>
+                                                    <th>Matériel</th>
+                                                    <th>Quantité</th>
+                                                    <th>Prix</th>
+                                                    <th>Total</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Locations Section -->
+                        <div class="card mb-4 glass-panel" data-aos="fade-up" data-aos-delay="500">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="card-title mb-0"><i class="ti ti-map-pin"></i> Emplacements</h5>
+                                <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="collapse" data-bs-target="#locationsCollapse" aria-expanded="true">
+                                    <i class="ti ti-chevron-down"></i>
+                                </button>
+                            </div>
+                            <div class="card-body collapse show" id="locationsCollapse">
+                                <div class="row mb-3">
+                                    <div class="col-md-9">
+                                        <select class="form-select select2" id="locationSelect">
+                                            <option value="">Sélectionnez un emplacement</option>
+                                            {% for location in locations %}
+                                                <option value="{{ location.id }}" 
+                                                        data-name="{{ location.name }}" 
+                                                        data-price="{{ location.price }}">
+                                                    {{ location.name }} (Capacity: {{ location.capacity }})
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <button class="btn btn-primary w-100" type="button" id="addLocationBtn">
+                                            <i class="ti ti-plus"></i> Ajouter
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Personnel Section -->
+                        <div class="card mb-4 glass-panel" data-aos="fade-up" data-aos-delay="600">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="card-title mb-0"><i class="ti ti-users"></i> Personnel</h5>
+                                <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="collapse" data-bs-target="#personnelCollapse" aria-expanded="true">
+                                    <i class="ti ti-chevron-down"></i>
+                                </button>
+                            </div>
+                            <div class="card-body collapse show" id="personnelCollapse">
+                                <div class="row">
+                                    {% for person in personnel %}
+                                        <div class="col-md-4 mb-3">
+                                            <div class="card h-100">
+                                                <img src="{% if person.imageUrl starts with '/uploads/' %}{{ person.imageUrl }}{% else %}{{ asset('uploads/packs/' ~ person.imageUrl|replace({'/Images/': ''}) ) }}{% endif %}" class="card-img-top" alt="{{ person.nomP }}">
+                                                <div class="card-body">
+                                                    <h5 class="card-title">{{ person.nomP }} {{ person.prenomP }}</h5>
+                                                    <p class="card-text">
+                                                        <strong>Service:</strong> {{ person.serviceP }}<br>
+                                                        <strong>Statut:</strong> {{ person.statutP }}<br>
+                                                        <strong>Description:</strong> {{ person.descriptionP }}<br>
+                                                        <strong>Tarif:</strong> {{ person.tarifP }}€
+                                                    </p>
+                                                    <button type="button" 
+                                                            class="btn btn-primary select-personnel" 
+                                                            data-id="{{ person.idP }}"
+                                                            data-name="{{ person.nomP }} {{ person.prenomP }}"
+                                                            data-service="{{ person.serviceP }}"
+                                                            data-price="{{ person.tarifP }}">
+                                                        <i class="ti ti-plus"></i> Sélectionner
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                                <div class="selected-personnel mt-4">
+                                    <h6>Personnel Sélectionné</h6>
+                                    <div class="table-responsive">
+                                        <table class="table table-hover" id="selectedPersonnelTable">
+                                            <thead>
+                                                <tr>
+                                                    <th>Nom</th>
+                                                    <th>Service</th>
+                                                    <th>Tarif</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Footer Actions -->
+                        <div class="card-footer">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <button type="button" class="btn btn-secondary" onclick="window.location.href='{{ path('admin_notifications') }}'">
+                                    <i class="ti ti-x"></i> Annuler
+                                </button>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="ti ti-device-floppy"></i> Enregistrer les modifications
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- / Content -->
+
+                    <!-- Temporary Footer Placeholder -->
+                    <footer class="content-footer footer bg-footer-theme">
+                        <div class="container-xxl">
+                            <div class="footer-container d-flex align-items-center justify-content-between py-2 flex-md-row flex-column">
+                                <div>
+                                    &copy; <script>document.write(new Date().getFullYear())</script> Golden Touch
+                                </div>
+                            </div>
+                        </div>
+                    </footer>
+                    <!-- / Footer -->
+
+                    <div class="content-backdrop fade"></div>
+                </div>
+                <!-- Content wrapper -->
+            </div>
+            <!-- / Layout page -->
+        </div>
+    </div>
+    <!-- / Layout wrapper -->
+
+    <!-- Core JS -->
+    <script src="{{ asset('/vendor/libs/jquery/jquery.js') }}"></script>
+    <script src="{{ asset('/vendor/libs/popper/popper.js') }}"></script>
+    <script src="{{ asset('/vendor/js/bootstrap.js') }}"></script>
+    <script src="{{ asset('/vendor/libs/perfect-scrollbar/perfect-scrollbar.js') }}"></script>
+    <script src="{{ asset('/vendor/libs/node-waves/node-waves.js') }}"></script>
+    <script src="{{ asset('/vendor/libs/hammer/hammer.js') }}"></script>
+    <script src="{{ asset('/vendor/libs/i18n/i18n.js') }}"></script>
+    <script src="{{ asset('/vendor/libs/typeahead-js/typeahead.js') }}"></script>
+    <script src="{{ asset('/vendor/js/menu.js') }}"></script>
+
+    <!-- Vendors JS -->
+    <script src="{{ asset('/vendor/libs/apex-charts/apexcharts.js') }}"></script>
+    <script src="{{ asset('/vendor/libs/swiper/swiper.js') }}"></script>
+    <script src="{{ asset('/vendor/libs/datatables-bs5/datatables-bootstrap5.js') }}"></script>
+    <script src="{{ asset('/vendor/libs/select2/select2.full.min.js') }}"></script>
+    <script src="{{ asset('/vendor/libs/flatpickr/flatpickr.min.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize variables
+        let selectedPersonnel = new Map();
+
+        // Handle personnel selection
+        document.querySelectorAll('.select-personnel').forEach(button => {
+            button.addEventListener('click', function() {
+                const id = this.dataset.id;
+                const name = this.dataset.name;
+                const service = this.dataset.service;
+                const price = parseFloat(this.dataset.price);
+
+                if (selectedPersonnel.has(id)) {
+                    showToast('warning', 'Ce personnel est déjà sélectionné');
+                    return;
+                }
+
+                selectedPersonnel.set(id, {
+                    id: id,
+                    name: name,
+                    service: service,
+                    price: price
+                });
+
+                updatePersonnelTable();
+                calculateTotal();
+            });
+        });
+
+        function updatePersonnelTable() {
+            const tbody = document.querySelector('#selectedPersonnelTable tbody');
+            tbody.innerHTML = '';
+            
+            selectedPersonnel.forEach(person => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${person.name}</td>
+                    <td>${person.service}</td>
+                    <td>${person.price}€</td>
+                    <td>
+                        <button class="btn btn-sm btn-danger" onclick="removePersonnel('${person.id}')">
+                            <i class="ti ti-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        window.removePersonnel = function(id) {
+            selectedPersonnel.delete(id);
+            updatePersonnelTable();
+            calculateTotal();
+        };
+
+        // Form submission
+        document.querySelector('form').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const formData = {
+                packId: '{{ originalPack.id }}',
+                name: document.getElementById('packName').value,
+                price: document.getElementById('packPrice').value,
+                description: document.getElementById('packDescription').value,
+                capacity: document.getElementById('packCapacity').value,
+                category: document.getElementById('packCategory').value,
+                materielles: Array.from(selectedMaterielles.values()).map(m => ({
+                    id: m.id,
+                    quantity: m.quantity
+                })),
+                personnel: Array.from(selectedPersonnel.values()).map(p => ({
+                    id: p.id
+                })),
+                location: selectedLocation ? selectedLocation.id : null
+            };
+
+            fetch('{{ path("admin_customize_pack_update", {id: demandePack.id}) }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token("customize_pack") }}'
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Succès',
+                        text: 'Pack personnalisé enregistré avec succès',
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(() => {
+                        window.location.href = '{{ path("admin_notifications") }}';
+                    });
+                } else {
+                    throw new Error(data.message || 'Erreur lors de l\'enregistrement');
+                }
+            })
+            .catch(error => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erreur',
+                    text: error.message || 'Erreur lors de l\'enregistrement',
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000
+                });
+            });
+        });
+    });
+    </script>
+</body>
+</html>

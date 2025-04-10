@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Pack;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 
 class PackRepository extends ServiceEntityRepository
 {
@@ -38,6 +39,36 @@ class PackRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('p')
             ->orderBy('p.capacity', 'DESC')
             ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findAllPaginated(int $page, int $limit): array
+    {
+        $query = $this->createQueryBuilder('p')
+            ->getQuery();
+            
+        $paginator = new Paginator($query);
+        $totalItems = count($paginator);
+        $pagesCount = ceil($totalItems / $limit);
+        
+        $query->setFirstResult(($page - 1) * $limit)
+              ->setMaxResults($limit);
+        
+        return [
+            'results' => $query->getResult(),
+            'currentPage' => $page,
+            'lastPage' => $pagesCount,
+            'limit' => $limit,
+            'totalItems' => $totalItems,
+            'hasPreviousPage' => $page > 1,
+            'hasNextPage' => $page < $pagesCount
+        ];
+    }
+    
+    public function findAll(): array
+    {
+        return $this->createQueryBuilder('p')
             ->getQuery()
             ->getResult();
     }

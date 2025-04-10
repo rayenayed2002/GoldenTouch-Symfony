@@ -1,0 +1,279 @@
+<!doctype html>
+<html class="no-js" lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>GoldenTouch - Nos Packs</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Radio+Canada:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- All CSS Files -->
+    <link rel="stylesheet" href="{{ asset('Front/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('Front/css/fontawesome.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('Front/css/magnific-popup.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('Front/css/slick.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('Front/css/style.css') }}">
+
+    <style>
+        .pack-card {
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            margin-bottom: 30px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        .pack-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+        .pack-image {
+            height: 250px;
+            object-fit: cover;
+            border-radius: 10px 10px 0 0;
+        }
+        .pack-content {
+            padding: 25px;
+        }
+        .pack-title {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: #1C1C1C;
+        }
+        .pack-description {
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        .pack-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        .pack-capacity {
+            background: #f8f9fa;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+        .pack-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .search-section {
+            margin-bottom: 50px;
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+        }
+    </style>
+</head>
+
+<body>
+    {% include 'Front/partials/header.html.twig' %}
+
+    <!-- Page Title -->
+    <div class="breadcumb-wrapper" data-bg-src="{{ asset('Front/img/breadcumb/breadcumb-bg.jpg') }}" style="padding: 15px 0;">
+        <div class="container">
+            <div class="breadcumb-content" style="padding: 10px 0;">
+                <h1 class="breadcumb-title" style="font-size: 1.5rem; margin-bottom: 5px;">Nos Packs</h1>
+                <ul class="breadcumb-menu" style="font-size: 0.9rem;">
+                    <li><a href="{{ path('front_index') }}">Accueil</a></li>
+                    <li>Packs</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pack List Section -->
+    <section class="space-top space-extra-bottom">
+        <div class="container">
+            <!-- Search Section -->
+            <div class="search-section">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                        <form class="search-form">
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="Rechercher un pack...">
+                                <button class="th-btn style3"><i class="fas fa-search"></i></button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pack Grid -->
+           <!--==============================
+Breadcrumb Area  
+==============================-->
+<!--==============================
+    Breadcumb
+============================== -->
+<div class="breadcumb-wrapper" data-bg-src="assets/img/breadcumb/breadcumb-bg.jpg">
+    <div class="container z-index-common">
+        <h1 class="breadcumb-title">Our Packs</h1>
+        <ul class="breadcumb-menu">
+            <li><a href="index.html">Home</a></li>
+            <li>Packs</li>
+        </ul>
+    </div>
+</div>
+
+<!--==============================
+Pack Area  
+==============================-->
+<section class="space-top space-extra-bottom">
+    <div class="container">
+        <div class="row flex-row-reverse">
+            <div class="col-xl-9 col-lg-8">
+                <div class="th-sort-bar">
+                    <div class="row justify-content-between align-items-center">
+                        <div class="col-md">
+                            <p class="woocommerce-result-count">Showing {{ packs.results|length }} packs</p>
+                        </div>
+                        <div class="col-md-auto">
+                            <form class="woocommerce-ordering" method="get">
+                                <select name="orderby" class="orderby" aria-label="Pack order">
+                                    <option value="menu_order" selected="selected">Default Sorting</option>
+                                    <option value="popularity">Sort by popularity</option>
+                                    <option value="price">Sort by price: low to high</option>
+                                    <option value="price-desc">Sort by price: high to low</option>
+                                </select>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row gy-40">
+                    {% for pack in packs.results %}
+                    <div class="col-xl-4 col-sm-6">
+                        <div class="th-product">
+                            <div class="product-img">
+                                {% if pack.getPhoto() %}
+                                    <img src="{{ asset('uploads/packs/' ~ pack.getPhoto()) }}" alt="{{ pack.getNom() }}">
+                                {% else %}
+                                    <img src="{{ asset('Front/img/placeholder.jpg') }}" alt="Pack Image">
+                                {% endif %}
+                                <div class="actions">
+                                    <a href="{{ path('app_pack_shop_details', {'id': pack.id}) }}" class="icon-btn"><i class="far fa-eye"></i></a>
+                                    <a href="#" class="icon-btn"><i class="far fa-cart-plus"></i></a>
+                                    <a href="#" class="icon-btn"><i class="far fa-heart"></i></a>
+                                </div>
+                            </div>
+                            <div class="product-content">
+                                <div class="star-rating" role="img" aria-label="Rated 5.00 out of 5">
+                                    <span>Rated <strong class="rating">5.00</strong> out of 5</span>
+                                </div>
+                                <h3 class="product-title"><a href="{{ path('app_pack_shop_details', {'id': pack.id}) }}">{{ pack.nom }}</a></h3>
+                                <div class="pack-meta">
+                                    <span class="price">{{ pack.prix }} €</span>
+                                    <span class="pack-capacity"><i class="fas fa-users"></i> {{ pack.capacite }} persons</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <div class="th-pagination text-center pt-50">
+                    <ul>
+                        <li><a href="blog.html">1</a></li>
+                        <li><a href="blog.html">2</a></li>
+                        <li><a href="blog.html">3</a></li>
+                        <li><a href="blog.html"><i class="far fa-arrow-right"></i></a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="col-xl-3 col-lg-4">
+                <aside class="sidebar-area sidebar-shop">
+                    <div class="widget widget_search">
+                        <form class="search-form">
+                            <input type="text" placeholder="Search packs...">
+                            <button type="submit"><i class="far fa-search"></i></button>
+                        </form>
+                    </div>
+                    
+                    <div class="widget widget_categories">
+                        <h3 class="widget_title">Categories</h3>
+                        <ul>
+                            <li><a href="blog.html">Adventure</a> <span>(8)</span></li>
+                            <li><a href="blog.html">Family</a> <span>(6)</span></li>
+                            <li><a href="blog.html">Luxury</a> <span>(5)</span></li>
+                            <li><a href="blog.html">Weekend</a> <span>(2)</span></li>
+                            <li><a href="blog.html">Custom</a> <span>(7)</span></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="widget widget_price_filter">
+                        <h4 class="widget_title">Filter By Price</h4>
+                        <div class="price_slider_wrapper">
+                            <div class="price_label">
+                                Price: <span class="from">$0</span> — <span class="to">$1000</span>
+                            </div>
+                            <div class="price_slider"></div>
+                            <button type="submit" class="button">Filter</button>
+                        </div>
+                    </div>
+                    
+                    <div class="widget widget_tag_cloud">
+                        <h3 class="widget_title">Popular Tags</h3>
+                        <div class="tagcloud">
+                            <a href="blog.html">Adventure</a>
+                            <a href="blog.html">Family</a>
+                            <a href="blog.html">Luxury</a>
+                            <a href="blog.html">Weekend</a>
+                            <a href="blog.html">Custom</a>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </div>
+</section>
+            <!-- Pagination -->
+            <div class="th-pagination text-center">
+                <ul>
+                    {% if packs.hasPreviousPage %}
+                        <li><a href="{{ path('app_pack_index', {'page': packs.currentPage - 1}) }}"><i class="fas fa-arrow-left"></i></a></li>
+                    {% endif %}
+                    
+                    {% for i in 1..packs.lastPage %}
+                        <li><a href="{{ path('app_pack_index', {'page': i}) }}" {% if i == packs.currentPage %}class="active"{% endif %}>{{ i }}</a></li>
+                    {% endfor %}
+                    
+                    {% if packs.hasNextPage %}
+                        <li><a href="{{ path('app_pack_index', {'page': packs.currentPage + 1}) }}"><i class="fas fa-arrow-right"></i></a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    {% include 'Front/partials/footer.html.twig' %}
+
+    <!-- Scroll Top -->
+    <div class="scroll-top">
+        <svg class="progress-circle svg-content" width="100%" height="100%" viewBox="-1 -1 102 102">
+            <path d="M50,1 a49,49 0 0,1 0,98 a49,49 0 0,1 0,-98" style="transition: stroke-dashoffset 10ms linear 0s; stroke-dasharray: 307.919, 307.919; stroke-dashoffset: 307.919;"></path>
+        </svg>
+    </div>
+
+    <!-- All JavaScript Files -->
+    <script src="{{ asset('Front/js/jquery-3.6.0.min.js') }}"></script>
+    <script src="{{ asset('Front/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ asset('Front/js/jquery.magnific-popup.min.js') }}"></script>
+    <script src="{{ asset('Front/js/slick.min.js') }}"></script>
+    <script src="{{ asset('Front/js/main.js') }}"></script>
+</body>
+</html>

@@ -43,6 +43,7 @@ class Materielle
         pattern: '/^[a-zA-Z0-9\s\-_]+$/',
         message: 'Le nom ne peut contenir que des lettres, chiffres, espaces, tirets et underscores.'
     )]
+    #[ORM\Column(type: 'string', length: 255, nullable: false)]
     private ?string $nom_mat = null;
     public function getNom_mat(): ?string
     {
@@ -64,6 +65,7 @@ class Materielle
         minMessage: 'La description doit comporter au moins {{ limit }} caractères.',
         maxMessage: 'La description ne peut pas dépasser {{ limit }} caractères.'
     )]    
+    #[ORM\Column(type: 'string', length: 255, nullable: false)]
     private ?string $description_mat = null;
 
     public function getDescription_mat(): ?string
@@ -77,7 +79,7 @@ class Materielle
         return $this;
     }
 
-    #[ORM\Column(type: 'string', nullable: false)]
+    #[ORM\Column(type: 'string', length: 255, nullable: false)]
     private ?string $photo_mat = null;
 
     public function getPhoto_mat(): ?string
@@ -126,19 +128,17 @@ class Materielle
         return $this;
     }
 
-    #[ORM\ManyToOne(targetEntity: Categorie::class, inversedBy: 'materielles')]
-    #[ORM\JoinColumn(name: 'categorie_mat', referencedColumnName: 'id_cat')]
-    private ?Categorie $categorie = null;
+    #[ORM\Column(type: 'integer', nullable: false)]
+    private ?int $categorie_mat = null;
 
-    public function getCategorie(): ?Categorie
+    public function getCategorie_mat(): ?int
     {
-        return $this->categorie;
+        return $this->categorie_mat;
     }
 
-    public function setCategorie(?Categorie $categorie): static
+    public function setCategorie_mat(int $categorie_mat): self
     {
-        $this->categorie = $categorie;
-
+        $this->categorie_mat = $categorie_mat;
         return $this;
     }
     
@@ -248,7 +248,5 @@ class Materielle
 
         return $this;
     }
-   
-    
 
 }
