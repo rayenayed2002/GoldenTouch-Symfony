@@ -176,19 +176,19 @@ final class PersoController extends AbstractController
 
 
     //metieeer
-    #[Route('/perso/export-pdf', name: 'app_personnel_export_pdf', methods: ['GET'])]
+    #[Route('/export-pdf', name: 'app_personnel_export_pdf')]
     public function exportPdf(PersonnelRepository $personnelRepository, PdfGenerator $pdfGenerator): Response
     {
         $personnels = $personnelRepository->findAll();
         
-        $pdfContent = $pdfGenerator->generatePersonnelListPdf($personnels);
-    
+        $pdfContent = $pdfGenerator->generatePersonnelPdf($personnels);
+        
         return new Response(
             $pdfContent,
-            Response::HTTP_OK,
+            200,
             [
                 'Content-Type' => 'application/pdf',
-                'Content-Disposition' => 'attachment; filename="liste_personnel.pdf"'
+                'Content-Disposition' => 'attachment; filename="personnels_export_'.date('Y-m-d').'.pdf"'
             ]
         );
     }

@@ -36,49 +36,49 @@
     <link rel="stylesheet" href="{{ asset('vendor/css/pages/cards-advance.css') }}" />
 
     <!-- FullCalendar CSS -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css">
     
     <style>
     #calendar-holder {
-    background: white;
-    border-radius: 10px;
-    box-shadow: 0 0 20px rgba(0,0,0,0.1);
-    padding: 20px;
-    margin-bottom: 30px;
-}
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        padding: 20px;
+        margin-bottom: 30px;
+    }
 
-.fc-event-custom {
-    border-radius: 4px;
-    font-weight: 500;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    transition: all 0.2s ease;
-}
+    .fc-event-custom {
+        border-radius: 4px;
+        font-weight: 500;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        transition: all 0.2s ease;
+    }
 
-.fc-event-custom:hover {
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-    transform: translateY(-2px);
-}
+    .fc-event-custom:hover {
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        transform: translateY(-2px);
+    }
 
-.fc-toolbar {
-    margin-bottom: 1.5em !important;
-}
+    .fc-toolbar {
+        margin-bottom: 1.5em !important;
+    }
 
-.fc-daygrid-event {
-    padding: 3px 6px;
-}
+    .fc-daygrid-event {
+        padding: 3px 6px;
+    }
 
-.fc-day-today {
-    background-color: rgba(55, 136, 216, 0.1) !important;
-}
+    .fc-day-today {
+        background-color: rgba(55, 136, 216, 0.1) !important;
+    }
 
-.fc-col-header-cell {
-    background: #f8f9fa;
-    padding: 10px 0;
-}
+    .fc-col-header-cell {
+        background: #f8f9fa;
+        padding: 10px 0;
+    }
 
-.event-popup {
-    border-radius: 12px;
-}
+    .event-popup {
+        border-radius: 12px;
+    }
     :root {
         --profile-primary: #7367F0;
         --profile-primary-light: rgba(115, 103, 240, 0.1);
@@ -348,277 +348,273 @@
         font-size: 1.1em;
     }
     
-    /* Enhanced Modal Styles */
-.reservations-modal {
-    border: none;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-}
-
-.reservations-modal .modal-header {
-    border-bottom: 1px solid rgba(0,0,0,0.05);
-    background-color: #f8fafc;
-}
-
-.reservations-modal .modal-title {
-    font-weight: 600;
-    color: #2d3748;
-    font-size: 1.25rem;
-}
-
-.reservations-modal .modal-body {
-    padding: 0;
-}
-
-.reservations-modal .reservation-card {
-    transition: all 0.2s ease;
-    border-radius: 0.5rem;
-}
-
-.reservations-modal .reservation-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 12px rgba(0,0,0,0.08);
-}
-
-.reservations-modal .no-reservations-placeholder {
-    padding: 3rem;
-}
-
-.reservations-modal .no-reservations-placeholder .icon-lg {
-    font-size: 3rem;
-    opacity: 0.5;
-}
-
-.reservations-modal .modal-footer {
-    border-top: 1px solid rgba(0,0,0,0.05);
-    background-color: #f8fafc;
-}
-
-/* Custom scrollbar for reservations container */
-.reservations-container::-webkit-scrollbar {
-    width: 6px;
-}
-
-.reservations-container::-webkit-scrollbar-track {
-    background: #f1f1f1;
-}
-
-.reservations-container::-webkit-scrollbar-thumb {
-    background: #c1c1c1;
-    border-radius: 3px;
-}
-
-/* Calendar styling */
-#calendar-holder {
-    border-bottom: 1px solid rgba(0,0,0,0.05);
-}
-    
-    /* New Reservations Grid */
-    .reservations-container {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-        gap: 1.5rem;
-        margin-top: 1.5rem;
-    }
-
-    .reservation-card {
-        background: white;
-        border-radius: 0.75rem;
+    /* Modal personnalisé */
+    .reservations-modal {
+        border: none;
+        border-radius: 16px;
         overflow: hidden;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        transition: all 0.3s ease;
-        border: 1px solid var(--profile-border-color);
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        background: white;
+        height: 80vh; /* Hauteur relative à la vue */
+        display: flex;
+        flex-direction: column;
     }
 
-    .reservation-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    .reservations-modal .modal-header {
+        border-bottom: 1px solid rgba(0,0,0,0.1);
+        background: white;
+        padding: 1rem 1.5rem;
+        position: relative;
+        flex-shrink: 0;
+    }
+
+    .reservations-modal .modal-title {
+        font-weight: 600;
+        color: #2d3748;
+        font-size: 1.25rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .reservations-modal .modal-title i {
+        font-size: 1.5rem;
+        color: #7367F0;
+    }
+
+    .reservations-modal .modal-title .badge {
+        font-weight: 500;
+        font-size: 0.8rem;
+        padding: 0.25rem 0.5rem;
+        background: rgba(115, 103, 240, 0.15);
+        color: #7367F0;
+    }
+
+    .reservations-modal .modal-body {
+        padding: 0;
+        overflow-y: auto;
+        flex-grow: 1;
+        position: relative;
+    }
+
+    /* Style compact pour le calendrier */
+    #calendar-holder {
+        background: transparent;
+        border-radius: 0;
+        padding: 0.5rem 1rem;
+        position: relative;
+        z-index: 1;
+        height: 100%;
+    }
+
+    .fc .fc-toolbar {
+        flex-direction: row;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.5rem !important;
+        padding: 0.5rem 1rem;
+    }
+
+    .fc .fc-toolbar-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #2d3748;
+        margin: 0;
+    }
+
+    .fc .fc-button {
+        border-radius: 6px !important;
+        padding: 0.35rem 0.75rem !important;
+        font-weight: 500 !important;
+        font-size: 0.8rem !important;
+        border: none !important;
+        box-shadow: none !important;
+    }
+
+    .fc .fc-button-primary {
+        background-color: #7367F0 !important;
+    }
+
+    .fc .fc-button-primary:hover {
+        background-color: #5e50e9 !important;
+    }
+
+    .fc .fc-button-group {
+        display: flex;
+        gap: 0.25rem;
+    }
+
+    .fc .fc-daygrid-day-number {
+        font-weight: 500;
+        font-size: 0.8rem;
+    }
+
+    .fc .fc-daygrid-day.fc-day-today {
+        background-color: rgba(115, 103, 240, 0.1) !important;
+    }
+
+    .fc .fc-daygrid-day.fc-day-today .fc-daygrid-day-number {
+        color: #7367F0;
+        font-weight: 600;
+    }
+
+    .fc .fc-event {
+        border-radius: 4px;
+        padding: 1px 3px;
+        font-size: 0.7rem;
+        border: none !important;
+        margin: 1px 2px;
+    }
+
+    .fc .fc-col-header-cell {
+        padding: 0.25rem 0;
+    }
+
+    .fc .fc-col-header-cell-cushion {
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+
+    /* Style pour la liste des réservations */
+    .reservations-list-container {
+        height: 100%;
+        overflow-y: auto;
+        padding: 1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .reservation-item {
+        background: white;
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        border-left: 3px solid #7367F0;
     }
 
     .reservation-header {
-        padding: 1rem 1.5rem;
-        background: var(--profile-primary);
-        color: white;
         display: flex;
         justify-content: space-between;
         align-items: center;
+        margin-bottom: 0.5rem;
     }
 
-    .reservation-id {
+    .reservation-title {
         font-weight: 600;
         font-size: 0.9rem;
-        opacity: 0.9;
+        color: #2d3748;
     }
 
-    .reservation-type {
-        font-size: 0.75rem;
-        padding: 0.25rem 0.75rem;
-        border-radius: 2rem;
-        background: rgba(255,255,255,0.2);
+    .reservation-badge {
+        font-size: 0.7rem;
+        padding: 0.2rem 0.5rem;
+        border-radius: 10px;
+        background: rgba(115, 103, 240, 0.1);
+        color: #7367F0;
     }
 
-    .reservation-body {
-        padding: 1.5rem;
+    .reservation-details {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
     }
 
-    .reservation-event {
-        font-weight: 600;
-        margin-bottom: 0.5rem;
-        color: #495057;
-    }
-
-    .reservation-date {
+    .reservation-detail {
         display: flex;
         align-items: center;
-        margin-bottom: 0.5rem;
-        color: var(--profile-text-muted);
+        font-size: 0.8rem;
+        color: #64748B;
     }
 
-    .reservation-date i {
+    .reservation-detail i {
         margin-right: 0.5rem;
-        color: var(--profile-primary);
+        color: #7367F0;
+        font-size: 0.9rem;
     }
 
-    .reservation-time {
+    /* View switcher */
+    .view-switcher {
+        display: flex;
+        background: rgba(115, 103, 240, 0.1);
+        border-radius: 8px;
+        padding: 2px;
+        margin: 0.5rem 1rem;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .view-switcher-btn {
+        flex: 1;
+        border: none;
+        background: transparent;
+        padding: 0.4rem 0.75rem;
+        font-weight: 500;
+        font-size: 0.8rem;
+        color: #64748B;
+        border-radius: 6px;
+        transition: all 0.3s ease;
         display: flex;
         align-items: center;
-        color: var(--profile-text-muted);
+        justify-content: center;
+        gap: 0.25rem;
     }
 
-    .reservation-time i {
-        margin-right: 0.5rem;
-        color: var(--profile-primary);
+    .view-switcher-btn.active {
+        background: white;
+        color: #7367F0;
+        box-shadow: 0 1px 3px rgba(115, 103, 240, 0.2);
     }
-    
-    /* Breadcrumb customization */
-    .breadcrumb-dark .breadcrumb-item a {
-        color: rgba(255,255,255,0.8);
-        text-decoration: none;
-        transition: color 0.2s;
+
+    /* Ajustements pour le modal footer */
+    .reservations-modal .modal-footer {
+        border-top: 1px solid rgba(0,0,0,0.1);
+        background: white;
+        padding: 0.75rem 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        flex-shrink: 0;
     }
-    
-    .breadcrumb-dark .breadcrumb-item a:hover {
-        color: white;
-    }
-    
-    /* No reservations placeholder */
-    .no-reservations-placeholder {
-        padding: 3rem 0;
+
+    /* Aucune réservation */
+    .no-reservations {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
         text-align: center;
-        background: #f8f9fa;
-        border-radius: 0.75rem;
+        padding: 2rem;
     }
-    
-    .no-reservations-placeholder i {
+
+    .no-reservations i {
         font-size: 3rem;
-        color: var(--profile-text-muted);
+        color: #CBD5E1;
         margin-bottom: 1rem;
     }
-    
-    /* Responsive Adjustments */
-    @media (max-width: 1199.98px) {
-        .profile-header {
-            height: 280px;
-        }
-    }
-    
-    @media (max-width: 991.98px) {
-        .profile-header {
-            height: 240px;
-        }
-        
-        .profile-title {
-            font-size: 2rem;
-        }
-        
-        .unified-info-section {
-            padding: 2rem;
-        }
 
-        .btn-reservations {
-            padding: 0.6rem 1.2rem;
-            font-size: 0.9rem;
-        }
+    .no-reservations h5 {
+        font-weight: 600;
+        color: #2d3748;
+        margin-bottom: 0.5rem;
     }
-    
-    @media (max-width: 767.98px) {
-        .profile-header {
-            height: 200px;
-        }
-        
-        .profile-overlay {
-            padding: 1.75rem;
-        }
-        
-        .profile-title {
-            font-size: 1.75rem;
-        }
-        
-        .unified-info-section {
-            padding: 1.5rem;
-        }
-        
-        .professional-grid {
-            grid-template-columns: 1fr;
-        }
-        
-        .action-buttons .btn {
-            flex: 1 1 100%;
-        }
 
-        .btn-reservations {
-            top: 1rem;
-            left: 1rem;
-            padding: 0.5rem 1rem;
-            font-size: 0.85rem;
-        }
+    .no-reservations p {
+        color: #64748B;
+        font-size: 0.9rem;
+        margin-bottom: 1.5rem;
+    }
 
-        .reservations-container {
-            grid-template-columns: 1fr;
-        }
+    /* Alignement des boutons jour/mois/année avec aujourd'hui */
+    .fc-toolbar-chunk {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
     }
-    
-    @media (max-width: 575.98px) {
-        .profile-header {
-            height: 180px;
-        }
-        
-        .profile-overlay {
-            padding: 1.25rem;
-        }
-        
-        .profile-title {
-            font-size: 1.5rem;
-        }
-        
-        .profile-actions {
-            top: 1rem;
-            right: 1rem;
-        }
-        
-        .profile-actions .btn {
-            width: 36px;
-            height: 36px;
-            font-size: 0.9rem;
-        }
-        
-        .reservations-modal .modal-body {
-            padding: 1.25rem;
-        }
+
+    .fc-today-button {
+        margin-left: auto;
     }
-    
-    /* Animations */
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(20px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-    
-    .animate-fade-in {
-        animation: fadeIn 0.6s ease-out forwards;
-    }
-    
-    .delay-1 { animation-delay: 0.1s; }
-    .delay-2 { animation-delay: 0.2s; }
-    .delay-3 { animation-delay: 0.3s; }
     </style>
 </head>
 
@@ -666,144 +662,143 @@
           </div>
 
           <div class="menu-inner-shadow"></div>
-       <div class="menu-inner-shadow"></div>
 
-        <ul class="menu-inner py-1">
-          <!-- Packs -->
-          <li class="menu-item ">
-            <a href="packs.html" class="menu-link">
-              <i class="menu-icon tf-icons ti ti-package"></i>
-              <div data-i18n="Packs">Packs</div>
-            </a>
-          </li>
+          <ul class="menu-inner py-1">
+            <!-- Packs -->
+            <li class="menu-item">
+              <a href="packs.html" class="menu-link">
+                <i class="menu-icon tf-icons ti ti-package"></i>
+                <div data-i18n="Packs">Packs</div>
+              </a>
+            </li>
 
-          <!-- Gestion Événements -->
-          <li class="menu-item">
-            <a href="javascript:void(0);" class="menu-link menu-toggle">
-              <i class="menu-icon tf-icons ti ti-calendar-event"></i>
-              <div data-i18n="Gestion Événements">Gestion Événements</div>
-            </a>
-            <ul class="menu-sub">
-              <li class="menu-item">
-                <a href="ajouter-evenement.html" class="menu-link">
-                  <i class="menu-icon tf-icons ti ti-circle"></i>
-                  <div data-i18n="Ajouter Événement">Ajouter Événement</div>
-                </a>
-              </li>
-              <li class="menu-item">
-                <a href="liste-evenements.html" class="menu-link">
-                  <i class="menu-icon tf-icons ti ti-circle"></i>
-                  <div data-i18n="Liste Événements">Liste Événements</div>
-                </a>
-              </li>
-            </ul>
-          </li>
+            <!-- Gestion Événements -->
+            <li class="menu-item">
+              <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons ti ti-calendar-event"></i>
+                <div data-i18n="Gestion Événements">Gestion Événements</div>
+              </a>
+              <ul class="menu-sub">
+                <li class="menu-item">
+                  <a href="ajouter-evenement.html" class="menu-link">
+                    <i class="menu-icon tf-icons ti ti-circle"></i>
+                    <div data-i18n="Ajouter Événement">Ajouter Événement</div>
+                  </a>
+                </li>
+                <li class="menu-item">
+                  <a href="liste-evenements.html" class="menu-link">
+                    <i class="menu-icon tf-icons ti ti-circle"></i>
+                    <div data-i18n="Liste Événements">Liste Événements</div>
+                  </a>
+                </li>
+              </ul>
+            </li>
 
-          <!-- Gestion Matérielle -->
-          <li class="menu-item">
-            <a href="javascript:void(0);" class="menu-link menu-toggle">
-              <i class="menu-icon tf-icons ti ti-tools"></i>
-              <div data-i18n="Gestion Matérielle">Gestion Matérielle</div>
-            </a>
-            <ul class="menu-sub">
-              <li class="menu-item">
-                <a href="ajouter-materiel.html" class="menu-link">
-                  <i class="menu-icon tf-icons ti ti-circle"></i>
-                  <div data-i18n="Ajouter Matériel">Ajouter Matériel</div>
-                </a>
-              </li>
-              <li class="menu-item">
-                <a href="liste-materiel.html" class="menu-link">
-                  <i class="menu-icon tf-icons ti ti-circle"></i>
-                  <div data-i18n="Liste Matériel">Liste Matériel</div>
-                </a>
-              </li>
-            </ul>
-          </li>
+            <!-- Gestion Matérielle -->
+            <li class="menu-item">
+              <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons ti ti-tools"></i>
+                <div data-i18n="Gestion Matérielle">Gestion Matérielle</div>
+              </a>
+              <ul class="menu-sub">
+                <li class="menu-item">
+                  <a href="ajouter-materiel.html" class="menu-link">
+                    <i class="menu-icon tf-icons ti ti-circle"></i>
+                    <div data-i18n="Ajouter Matériel">Ajouter Matériel</div>
+                  </a>
+                </li>
+                <li class="menu-item">
+                  <a href="liste-materiel.html" class="menu-link">
+                    <i class="menu-icon tf-icons ti ti-circle"></i>
+                    <div data-i18n="Liste Matériel">Liste Matériel</div>
+                  </a>
+                </li>
+              </ul>
+            </li>
 
-          <!-- Gestion Lieu -->
-          <li class="menu-item">
-            <a href="javascript:void(0);" class="menu-link menu-toggle">
-              <i class="menu-icon tf-icons ti ti-map-pin"></i>
-              <div data-i18n="Gestion Lieu">Gestion Lieu</div>
-            </a>
-            <ul class="menu-sub">
-              <li class="menu-item">
-                <a href="ajouter-lieu.html" class="menu-link">
-                  <i class="menu-icon tf-icons ti ti-circle"></i>
-                  <div data-i18n="Ajouter Lieu">Ajouter Lieu</div>
-                </a>
-              </li>
-              <li class="menu-item">
-                <a href="liste-lieux.html" class="menu-link">
-                  <i class="menu-icon tf-icons ti ti-circle"></i>
-                  <div data-i18n="Liste Lieux">Liste Lieux</div>
-                </a>
-              </li>
-            </ul>
-          </li>
+            <!-- Gestion Lieu -->
+            <li class="menu-item">
+              <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons ti ti-map-pin"></i>
+                <div data-i18n="Gestion Lieu">Gestion Lieu</div>
+              </a>
+              <ul class="menu-sub">
+                <li class="menu-item">
+                  <a href="ajouter-lieu.html" class="menu-link">
+                    <i class="menu-icon tf-icons ti ti-circle"></i>
+                    <div data-i18n="Ajouter Lieu">Ajouter Lieu</div>
+                  </a>
+                </li>
+                <li class="menu-item">
+                  <a href="liste-lieux.html" class="menu-link">
+                    <i class="menu-icon tf-icons ti ti-circle"></i>
+                    <div data-i18n="Liste Lieux">Liste Lieux</div>
+                  </a>
+                </li>
+              </ul>
+            </li>
 
-          <!-- Gestion Personnels -->
+            <!-- Gestion Personnels -->
             <li class="menu-item active">
-            <a href="packs.html" class="menu-link">
-              <i class="menu-icon tf-icons ti ti-package"></i>
-              <div data-i18n="Personnels">Personnels</div>
-            </a>
-          </li>
+              <a href="packs.html" class="menu-link">
+                <i class="menu-icon tf-icons ti ti-package"></i>
+                <div data-i18n="Personnels">Personnels</div>
+              </a>
+            </li>
 
-          <!-- Gestion Commandes -->
-          <li class="menu-item">
-            <a href="javascript:void(0);" class="menu-link menu-toggle">
-              <i class="menu-icon tf-icons ti ti-shopping-cart"></i>
-              <div data-i18n="Gestion Commandes">Gestion Commandes</div>
-            </a>
-            <ul class="menu-sub">
-              <li class="menu-item">
-                <a href="panier.html" class="menu-link">
-                  <i class="menu-icon tf-icons ti ti-circle"></i>
-                  <div data-i18n="Panier">Panier</div>
-                  <div class="badge bg-label-primary rounded-pill ms-auto">3</div>
-                </a>
-              </li>
-              <li class="menu-item">
-                <a href="liste-commandes.html" class="menu-link">
-                  <i class="menu-icon tf-icons ti ti-circle"></i>
-                  <div data-i18n="Liste Commandes">Liste Commandes</div>
-                </a>
-              </li>
-              <li class="menu-item">
-                <a href="liste-reclamations.html" class="menu-link">
-                  <i class="menu-icon tf-icons ti ti-circle"></i>
-                  <div data-i18n="Liste Réclamations">Liste Réclamations</div>
-                  <div class="badge bg-label-warning rounded-pill ms-auto">2</div>
-                </a>
-              </li>
-            </ul>
-          </li>
+            <!-- Gestion Commandes -->
+            <li class="menu-item">
+              <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons ti ti-shopping-cart"></i>
+                <div data-i18n="Gestion Commandes">Gestion Commandes</div>
+              </a>
+              <ul class="menu-sub">
+                <li class="menu-item">
+                  <a href="panier.html" class="menu-link">
+                    <i class="menu-icon tf-icons ti ti-circle"></i>
+                    <div data-i18n="Panier">Panier</div>
+                    <div class="badge bg-label-primary rounded-pill ms-auto">3</div>
+                  </a>
+                </li>
+                <li class="menu-item">
+                  <a href="liste-commandes.html" class="menu-link">
+                    <i class="menu-icon tf-icons ti ti-circle"></i>
+                    <div data-i18n="Liste Commandes">Liste Commandes</div>
+                  </a>
+                </li>
+                <li class="menu-item">
+                  <a href="liste-reclamations.html" class="menu-link">
+                    <i class="menu-icon tf-icons ti ti-circle"></i>
+                    <div data-i18n="Liste Réclamations">Liste Réclamations</div>
+                    <div class="badge bg-label-warning rounded-pill ms-auto">2</div>
+                  </a>
+                </li>
+              </ul>
+            </li>
 
-          <!-- Divider -->
-          <li class="menu-header small text-uppercase">
-            <span class="menu-header-text">Compte</span>
-          </li>
+            <!-- Divider -->
+            <li class="menu-header small text-uppercase">
+              <span class="menu-header-text">Compte</span>
+            </li>
 
-          <!-- Compte -->
-          <li class="menu-item">
-            <a href="compte.html" class="menu-link">
-              <i class="menu-icon tf-icons ti ti-user"></i>
-              <div data-i18n="Mon Compte">Mon Compte</div>
-            </a>
-          </li>
+            <!-- Compte -->
+            <li class="menu-item">
+              <a href="compte.html" class="menu-link">
+                <i class="menu-icon tf-icons ti ti-user"></i>
+                <div data-i18n="Mon Compte">Mon Compte</div>
+              </a>
+            </li>
 
-          <!-- Déconnexion -->
-          <li class="menu-item">
-            <a href="deconnexion.html" class="menu-link">
-              <i class="menu-icon tf-icons ti ti-logout"></i>
-              <div data-i18n="Déconnexion">Déconnexion</div>
-            </a>
-          </li>
-        </ul>
-         
+            <!-- Déconnexion -->
+            <li class="menu-item">
+              <a href="deconnexion.html" class="menu-link">
+                <i class="menu-icon tf-icons ti ti-logout"></i>
+                <div data-i18n="Déconnexion">Déconnexion</div>
+              </a>
+            </li>
+          </ul>
         </aside>
+        <!-- / Menu -->
 
         <!-- Layout container -->
         <div class="layout-page">
@@ -997,7 +992,7 @@
                           <div class="d-flex">
                             <div class="flex-shrink-0 me-3">
                               <div class="avatar">
-       <img src="{{ asset('img/avatars/1.png') }}" alt class="h-auto rounded-circle" />
+                                <img src="{{ asset('img/avatars/1.png') }}" alt class="h-auto rounded-circle" />
                               </div>
                             </div>
                             <div class="flex-grow-1">
@@ -1041,7 +1036,7 @@
                           <div class="d-flex">
                             <div class="flex-shrink-0 me-3">
                               <div class="avatar">
-    <img src="{{ asset('img/avatars/2.png') }}" alt class="h-auto rounded-circle" />
+                                <img src="{{ asset('img/avatars/2.png') }}" alt class="h-auto rounded-circle" />
                               </div>
                             </div>
                             <div class="flex-grow-1">
@@ -1087,7 +1082,7 @@
                           <div class="d-flex">
                             <div class="flex-shrink-0 me-3">
                               <div class="avatar">
-    <img src="{{ asset('img/avatars/9.png') }}" alt class="h-auto rounded-circle" />
+                                <img src="{{ asset('img/avatars/9.png') }}" alt class="h-auto rounded-circle" />
                               </div>
                             </div>
                             <div class="flex-grow-1">
@@ -1133,7 +1128,7 @@
                           <div class="d-flex">
                             <div class="flex-shrink-0 me-3">
                               <div class="avatar">
-    <img src="{{ asset('img/avatars/5.png') }}" alt class="h-auto rounded-circle" />
+                                <img src="{{ asset('img/avatars/5.png') }}" alt class="h-auto rounded-circle" />
                               </div>
                             </div>
                             <div class="flex-grow-1">
@@ -1155,7 +1150,7 @@
                           <div class="d-flex">
                             <div class="flex-shrink-0 me-3">
                               <div class="avatar">
-    <img src="{{ asset('img/avatars/6.png') }}" alt class="h-auto rounded-circle" />
+                                <img src="{{ asset('img/avatars/6.png') }}" alt class="h-auto rounded-circle" />
                               </div>
                             </div>
                             <div class="flex-grow-1">
@@ -1214,7 +1209,7 @@
                 <li class="nav-item navbar-dropdown dropdown-user dropdown">
                   <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
                     <div class="avatar avatar-online">
-    <img src="{{ asset('img/avatars/1.png') }}" alt class="h-auto rounded-circle" />
+                      <img src="{{ asset('img/avatars/1.png') }}" alt class="h-auto rounded-circle" />
                     </div>
                   </a>
                   <ul class="dropdown-menu dropdown-menu-end">
@@ -1223,7 +1218,7 @@
                         <div class="d-flex">
                           <div class="flex-shrink-0 me-3">
                             <div class="avatar avatar-online">
-    <img src="{{ asset('img/avatars/1.png') }}" alt class="h-auto rounded-circle" />
+                              <img src="{{ asset('img/avatars/1.png') }}" alt class="h-auto rounded-circle" />
                             </div>
                           </div>
                           <div class="flex-grow-1">
@@ -1305,6 +1300,7 @@
               <i class="ti ti-x ti-sm search-toggler cursor-pointer"></i>
             </div>
           </nav>
+
           <!-- / Navbar -->
 
           <!-- Content wrapper -->
@@ -1313,244 +1309,220 @@
             <div class="container-xxl flex-grow-1 container-p-y">
               <div class="row animate-fade-in">
                 <div class="col-12">
-                  <!-- Profile Header -->
-                  <div class="profile-header position-relative">
-                    <!-- New Reservations Button -->
-                    <button type="button" class="btn-reservations" data-bs-toggle="modal" data-bs-target="#reservationsModal">
-                        <i class="ti ti-calendar"></i> Voir les réservations ({{ reservations|length }})
-                    </button>
-                    
-                    <div class="profile-actions">
-                      <a href="{{ path('app_perso_edit', {'idP': personnel.idP}) }}" class="btn btn-icon btn-label-primary" data-bs-toggle="tooltip" title="Modifier">
-                        <i class="ti ti-edit"></i>
-                      </a>
-                      <form method="post" action="{{ path('app_perso_delete', {'idP': personnel.idP}) }}" onsubmit="return confirmDelete(event)" class="d-inline">
-                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ personnel.idP) }}">
-                        <button type="submit" class="btn btn-icon btn-label-danger" data-bs-toggle="tooltip" title="Supprimer">
-                          <i class="ti ti-trash"></i>
+                    <!-- Profile Header -->
+                    <div class="profile-header position-relative">
+                        <!-- New Reservations Button -->
+                        <button type="button" class="btn-reservations" data-bs-toggle="modal" data-bs-target="#reservationsModal">
+                            <i class="ti ti-calendar"></i> Voir les réservations ({{ reservations|length }})
                         </button>
-                      </form>
-                    </div>
-                    
-                    {% if personnel.imageUrl %}
-                    <img src="{{ asset('uploads/personnel/' ~ personnel.imageUrl) }}" class="profile-cover" alt="{{ personnel.nomP }}">
-                    {% else %}
-                    <div class="profile-cover bg-secondary d-flex align-items-center justify-content-center">
-                      <i class="ti ti-user text-white" style="font-size: 5rem;"></i>
-                    </div>
-                    {% endif %}
-                    
-                    <div class="profile-overlay">
-                      <nav aria-label="breadcrumb">
-                        <ol class="breadcrumb breadcrumb-dark">
-                          <li class="breadcrumb-item"><a href="{{ path('app_perso_index') }}" class="text-white-50">Personnel</a></li>
-                          <li class="breadcrumb-item active text-white">{{ personnel.nomP }}</li>
-                        </ol>
-                      </nav>
-                      <h1 class="profile-title">{{ personnel.nomP }} {{ personnel.prenomP }}</h1>
-                      <div class="status-indicator mt-2">
-                        <div class="status-bubble {{ personnel.statutP == 'Disponible' ? 'available' : 'unavailable' }}"></div>
-                        <span>{{ personnel.statutP }}</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- Unified Information Section -->
-                  <div class="unified-info-section delay-1">
-                    <!-- Professional Info Block -->
-                    <div class="info-block">
-                      <h5 class="section-header">Informations professionnelles</h5>
-                      <div class="professional-grid">
-                        <!-- Service -->
-                        <div class="info-box">
-                          <div class="info-box-icon">
-                            <i class="ti ti-briefcase"></i>
-                          </div>
-                          <div class="info-box-content">
-                            <h6 class="mb-1">Service</h6>
-                            <p class="mb-0">{{ personnel.serviceP }}</p>
-                          </div>
+                        
+                        <div class="profile-actions">
+                            <a href="{{ path('app_perso_edit', {'idP': personnel.idP}) }}" class="btn btn-icon btn-label-primary" data-bs-toggle="tooltip" title="Modifier">
+                                <i class="ti ti-edit"></i>
+                            </a>
+                            <form method="post" action="{{ path('app_perso_delete', {'idP': personnel.idP}) }}" onsubmit="return confirmDelete(event)" class="d-inline">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ personnel.idP) }}">
+                                <button type="submit" class="btn btn-icon btn-label-danger" data-bs-toggle="tooltip" title="Supprimer">
+                                    <i class="ti ti-trash"></i>
+                                </button>
+                            </form>
                         </div>
                         
-                        <!-- Tarif -->
-                        <div class="info-box">
-                          <div class="info-box-icon">
-                            <i class="ti ti-currency-dollar"></i>
-                          </div>
-                          <div class="info-box-content">
-                            <h6 class="mb-1">Tarif Horaire</h6>
-                            <p class="mb-0">{{ personnel.tarifP|number_format(0, ',', ' ') }} TND</p>
-                          </div>
+                        {% if personnel.imageUrl %}
+                        <img src="{{ asset('uploads/personnel/' ~ personnel.imageUrl) }}" class="profile-cover" alt="{{ personnel.nomP }}">
+                        {% else %}
+                        <div class="profile-cover bg-secondary d-flex align-items-center justify-content-center">
+                            <i class="ti ti-user text-white" style="font-size: 5rem;"></i>
                         </div>
+                        {% endif %}
                         
-                        <!-- Statut -->
-                        <div class="info-box">
-                          <div class="info-box-icon">
-                            <i class="ti ti-user-check"></i>
-                          </div>
-                          <div class="info-box-content">
-                            <h6 class="mb-1">Statut</h6>
-                            <p class="mb-0">
-                              <span class="badge bg-{{ personnel.statutP == 'Disponible' ? 'success' : 'warning' }}">
-                                {{ personnel.statutP }}
-                              </span>
-                            </p>
-                          </div>
+                        <div class="profile-overlay">
+                            <nav aria-label="breadcrumb">
+                                <ol class="breadcrumb breadcrumb-dark">
+                                    <li class="breadcrumb-item"><a href="{{ path('app_perso_index') }}" class="text-white-50">Personnel</a></li>
+                                    <li class="breadcrumb-item active text-white">{{ personnel.nomP }}</li>
+                                </ol>
+                            </nav>
+                            <h1 class="profile-title">{{ personnel.nomP }} {{ personnel.prenomP }}</h1>
+                            <div class="status-indicator mt-2">
+                                <div class="status-bubble {{ personnel.statutP == 'Disponible' ? 'available' : 'unavailable' }}"></div>
+                                <span>{{ personnel.statutP }}</span>
+                            </div>
                         </div>
-                      </div>
                     </div>
 
-                    <!-- Description Block -->
-                    <div class="info-block delay-2">
-                      <h5 class="section-header">Description</h5>
-                      <div class="description-box">
-                        {{ personnel.descriptionP ? personnel.descriptionP|nl2br : 'Aucune description disponible pour ce membre du personnel.' }}
-                      </div>
-                    </div>
+                    <!-- Unified Information Section -->
+                    <div class="unified-info-section delay-1">
+                        <!-- Professional Info Block -->
+                        <div class="info-block">
+                            <h5 class="section-header">Informations professionnelles</h5>
+                            <div class="professional-grid">
+                                <!-- Service -->
+                                <div class="info-box">
+                                    <div class="info-box-icon">
+                                        <i class="ti ti-briefcase"></i>
+                                    </div>
+                                    <div class="info-box-content">
+                                        <h6 class="mb-1">Service</h6>
+                                        <p class="mb-0">{{ personnel.serviceP }}</p>
+                                    </div>
+                                </div>
+                                
+                                <!-- Tarif -->
+                                <div class="info-box">
+                                    <div class="info-box-icon">
+                                        <i class="ti ti-currency-dollar"></i>
+                                    </div>
+                                    <div class="info-box-content">
+                                        <h6 class="mb-1">Tarif Horaire</h6>
+                                        <p class="mb-0">{{ personnel.tarifP|number_format(0, ',', ' ') }} TND</p>
+                                    </div>
+                                </div>
+                                
+                                <!-- Statut -->
+                                <div class="info-box">
+                                    <div class="info-box-icon">
+                                        <i class="ti ti-user-check"></i>
+                                    </div>
+                                    <div class="info-box-content">
+                                        <h6 class="mb-1">Statut</h6>
+                                        <p class="mb-0">
+                                            <span class="badge bg-{{ personnel.statutP == 'Disponible' ? 'success' : 'warning' }}">
+                                                {{ personnel.statutP }}
+                                            </span>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-                    <!-- Action Buttons -->
-                    <div class="action-buttons delay-3">
-                      <a href="{{ path('app_perso_index') }}" class="btn btn-outline-secondary">
-                        <i class="ti ti-arrow-left me-1"></i> Retour à la liste
-                      </a>
-                      <a href="{{ path('app_perso_edit', {'idP': personnel.idP}) }}" class="btn btn-primary">
-                        <i class="ti ti-edit me-1"></i> Modifier
-                      </a>
-                      <form method="post" action="{{ path('app_perso_delete', {'idP': personnel.idP}) }}" onsubmit="return confirmDelete(event)" class="d-inline">
-                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ personnel.idP) }}">
-                        <button type="submit" class="btn btn-outline-danger">
-                          <i class="ti ti-trash me-1"></i> Supprimer
-                        </button>
-                      </form>
+                        <!-- Description Block -->
+                        <div class="info-block delay-2">
+                            <h5 class="section-header">Description</h5>
+                            <div class="description-box">
+                                {{ personnel.descriptionP ? personnel.descriptionP|nl2br : 'Aucune description disponible pour ce membre du personnel.' }}
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="action-buttons delay-3">
+                            <a href="{{ path('app_perso_index') }}" class="btn btn-outline-secondary">
+                                <i class="ti ti-arrow-left me-1"></i> Retour à la liste
+                            </a>
+                            <a href="{{ path('app_perso_edit', {'idP': personnel.idP}) }}" class="btn btn-primary">
+                                <i class="ti ti-edit me-1"></i> Modifier
+                            </a>
+                            <form method="post" action="{{ path('app_perso_delete', {'idP': personnel.idP}) }}" onsubmit="return confirmDelete(event)" class="d-inline">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ personnel.idP) }}">
+                                <button type="submit" class="btn btn-outline-danger">
+                                    <i class="ti ti-trash me-1"></i> Supprimer
+                                </button>
+                            </form>
+                        </div>
                     </div>
-                  </div>
                 </div>
-              </div>
             </div>
-            <!-- / Content -->
-          </div>
-          <!-- / Content wrapper -->
         </div>
-      </div>
+        <!-- / Content -->
     </div>
+    <!-- / Content wrapper -->
 
     <!-- Modal pour afficher les réservations -->
     <div class="modal fade" id="reservationsModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-        <div class="modal-content reservations-modal">
-            <div class="modal-header">
-                <h5 class="modal-title d-flex align-items-center">
-                    <i class="ti ti-calendar-filled me-2 fs-4"></i>
-                    <span>Réservations pour {{ personnel.nomP }} {{ personnel.prenomP }}</span>
-                    <span class="badge bg-primary-soft text-primary ms-2 fs-6">{{ reservations|length }}</span>
-                </h5>
-                <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body p-0">
-                {% if reservations|length > 0 %}
-                    <div id="calendar-holder" class="p-4" style="height: 500px;"></div>
-                    
-                    <div class="reservations-container p-4 d-none" style="max-height: 500px; overflow-y: auto;">
-                        <div class="row g-3">
+        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+            <div class="modal-content reservations-modal">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="ti ti-calendar-stats"></i>
+                        <span>Planning de {{ personnel.nomP }} {{ personnel.prenomP }}</span>
+                        <span class="badge">{{ reservations|length }} réservation(s)</span>
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                
+                <div class="modal-body">
+                    {% if reservations|length > 0 %}
+                        <!-- Sélecteur de vue -->
+                        <div class="view-switcher">
+                            <button type="button" class="view-switcher-btn active" data-view="calendar">
+                                <i class="ti ti-calendar"></i> Calendrier
+                            </button>
+                            <button type="button" class="view-switcher-btn" data-view="list">
+                                <i class="ti ti-list"></i> Liste
+                            </button>
+                        </div>
+                        
+                        <!-- Vue Calendrier -->
+                        <div id="calendar-holder"></div>
+                        
+                        <!-- Vue Liste -->
+                        <div class="reservations-list-container d-none">
                             {% for reservation in reservations %}
-                            <div class="col-md-6">
-                                <div class="reservation-card card border-0 shadow-sm h-100">
-                                    <div class="card-body">
-                                        <div class="d-flex justify-content-between align-items-start mb-3">
-                                            <span class="badge bg-dark text-white rounded-pill">#{{ reservation.idR }}</span>
-                                            {% if reservation.event %}
-                                                {% set eventType = reservation.event.type|lower %}
-                                                <span class="badge bg-{{ eventType == 'meeting' ? 'info' : 
-                                                                       eventType == 'conference' ? 'danger' : 
-                                                                       eventType == 'training' ? 'success' : 
-                                                                       eventType == 'vacation' ? 'warning' : 'secondary' }} rounded-pill">
-                                                    {{ reservation.event.type ?? 'N/A' }}
-                                                </span>
-                                            {% endif %}
-                                        </div>
-                                        <h5 class="card-title text-truncate">{{ reservation.event.nom ?? 'N/A' }}</h5>
-                                        {% if reservation.event and reservation.event.date %}
-                                        <div class="d-flex flex-column gap-2 mt-3">
-                                            <div class="d-flex align-items-center text-muted">
-                                                <i class="ti ti-calendar me-2"></i>
-                                                <span>{{ reservation.event.date|date('l d F Y')|capitalize }}</span>
-                                            </div>
-                                            <div class="d-flex align-items-center text-muted">
-                                                <i class="ti ti-clock me-2"></i>
-                                                <span>{{ reservation.event.date|date('H:i') }}</span>
-                                            </div>
-                                        </div>
-                                        {% endif %}
+                            <div class="reservation-item">
+                                <div class="reservation-header">
+                                    <h6 class="reservation-title">{{ reservation.event.nom ?? 'N/A' }}</h6>
+                                    {% if reservation.event %}
+                                        <span class="reservation-badge">{{ reservation.event.type ?? 'N/A' }}</span>
+                                    {% endif %}
+                                </div>
+                                <div class="reservation-details">
+                                    {% if reservation.event and reservation.event.date %}
+                                    <div class="reservation-detail">
+                                        <i class="ti ti-calendar"></i>
+                                        <span>{{ reservation.event.date|date('d/m/Y') }}</span>
                                     </div>
-                                    <div class="card-footer bg-transparent border-top-0 d-flex justify-content-end">
-                                        <button class="btn btn-sm btn-outline-primary">Détails</button>
+                                    <div class="reservation-detail">
+                                        <i class="ti ti-clock"></i>
+                                        <span>{{ reservation.event.date|date('H:i') }}</span>
                                     </div>
+                                    <div class="reservation-detail">
+                                        <i class="ti ti-user"></i>
+                                        <span>{{ reservation.client.nom ?? 'N/A' }}</span>
+                                    </div>
+                                    {% endif %}
                                 </div>
                             </div>
                             {% endfor %}
                         </div>
-                    </div>
-                {% else %}
-                    <div class="no-reservations-placeholder text-center py-5">
-                        <div class="icon-lg text-muted mb-3">
+                    {% else %}
+                        <!-- Aucune réservation -->
+                        <div class="no-reservations">
                             <i class="ti ti-calendar-off"></i>
+                            <h5>Aucune réservation enregistrée</h5>
+                            <p>Ce membre du personnel n'a aucune réservation prévue pour le moment.</p>
+                            <button class="btn btn-sm btn-primary">
+                                <i class="ti ti-plus me-1"></i>Créer une réservation
+                            </button>
                         </div>
-                        <h4 class="mb-2">Aucune réservation trouvée</h4>
-                        <p class="text-muted mb-4">Ce membre du personnel n'a aucune réservation enregistrée.</p>
-                        <button class="btn btn-primary">Créer une réservation</button>
-                    </div>
-                {% endif %}
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-                    <i class="ti ti-x me-1"></i> Fermer
-                </button>
-                {% if reservations|length > 0 %}
-                <button type="button" class="btn btn-outline-primary toggle-view">
-                    <i class="ti ti-list me-1"></i> Voir la liste
-                </button>
-                <div class="btn-group">
-                    <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown">
-                        <i class="ti ti-download me-1"></i> Exporter
-                    </button>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#"><i class="ti ti-file-text me-2"></i> PDF</a></li>
-                        <li><a class="dropdown-item" href="#"><i class="ti ti-file-spreadsheet me-2"></i> Excel</a></li>
-                    </ul>
+                    {% endif %}
                 </div>
-                {% endif %}
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">
+                        <i class="ti ti-x me-1"></i> Fermer
+                    </button>
+                    {% if reservations|length > 0 %}
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-outline-primary">
+                            <i class="ti ti-download me-1"></i> Exporter
+                        </button>
+                        <button type="button" class="btn btn-primary">
+                            <i class="ti ti-plus me-1"></i> Nouvelle réservation
+                        </button>
+                    </div>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>
-</div>
-</div>
-</div>
+        </div>
+      </div>
 
-{% block stylesheets %}
-    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
-    <style>
-        #calendar-holder {
-            height: 500px;
-        }
-        .fc-event {
-            cursor: pointer;
-        }
-        .reservation-card {
-            /* Add your card styling here */
-            margin-bottom: 1rem;
-            padding: 1rem;
-            border: 1px solid #ddd;
-            border-radius: 0.25rem;
-        }
-    </style>
-{% endblock %}
+      <!-- Overlay -->
+      <div class="layout-overlay layout-menu-toggle"></div>
+      <div class="drag-target"></div>
+    </div>
 
-{% block javascripts %}
-    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales/fr.min.js"></script>
-  
-  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales/fr.min.js"></script>
     <!-- Core JS -->
     <script src="{{ asset('vendor/libs/jquery/jquery.js') }}"></script>
     <script src="{{ asset('vendor/libs/popper/popper.js') }}"></script>
@@ -1558,157 +1530,136 @@
     <script src="{{ asset('vendor/libs/perfect-scrollbar/perfect-scrollbar.js') }}"></script>
     <script src="{{ asset('vendor/libs/node-waves/node-waves.js') }}"></script>
     <script src="{{ asset('vendor/libs/hammer/hammer.js') }}"></script>
-
-
     <script src="{{ asset('vendor/libs/i18n/i18n.js') }}"></script>
     <script src="{{ asset('vendor/libs/typeahead-js/typeahead.js') }}"></script>
     <script src="{{ asset('vendor/js/menu.js') }}"></script>
     <script src="{{ asset('vendor/libs/sweetalert2/sweetalert2.js') }}"></script>
-
-    <!-- Vendors JS -->
     <script src="{{ asset('vendor/libs/apex-charts/apexcharts.js') }}"></script>
-
-    <!-- Main JS -->
     <script src="{{ asset('js/main.js') }}"></script>
-    
-    <script>
-    // Confirmation de suppression avec SweetAlert
-    function confirmDelete(event) {
-        event.preventDefault();
-        const form = event.target;
-        
-        Swal.fire({
-            title: 'Êtes-vous sûr ?',
-            text: "Vous ne pourrez pas annuler cette action !",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#7367F0',
-            cancelButtonColor: '#82868B',
-            confirmButtonText: 'Oui, supprimer !',
-            cancelButtonText: 'Annuler',
-            customClass: {
-                confirmButton: 'btn btn-primary me-2',
-                cancelButton: 'btn btn-label-secondary'
-            },
-            buttonsStyling: false
-        }).then((result) => {
-            if (result.isConfirmed) {
-                form.submit();
-            }
-        });
-    }
-    
-    // Animation pour les éléments de la page
-    $(document).ready(function() {
-        // Initialisation des tooltips
-        $('[data-bs-toggle="tooltip"]').tooltip({
-            trigger: 'hover',
-            placement: 'bottom'
-        });
-        
-        // Animation pour la modal lorsqu'elle s'ouvre
-        $('#reservationsModal').on('show.bs.modal', function () {
-            $(this).find('.modal-content').css({
-                'transform': 'translateY(20px)',
-                'opacity': 0
-            }).animate({
-                'transform': 'translateY(0)',
-                'opacity': 1
-            }, 300);
-        });
-        
-        // Animation des lignes du tableau
-        $('.reservations-table tbody tr').each(function(i) {
-            $(this).delay(i * 100).animate({
-                opacity: 1
-            }, 200);
-        });
-    });
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales/fr.min.js"></script>
 
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const calendarEl = document.getElementById('calendar-holder');
-    const calendar = new FullCalendar.Calendar(calendarEl, {
-        // Basic Configuration
-        initialView: 'dayGridMonth',
-        locale: 'fr',
-        firstDay: 1, // Start week on Monday
-        navLinks: true, // Clickable week/day names
-        nowIndicator: true, // Shows current time indicator
-        weekNumbers: true, // Show week numbers
-        editable: true, // Allow event dragging
-        
-        // Header Toolbar
-        headerToolbar: {
-            left: 'prev,next today',
-            center: 'title',
-            right: 'dayGridMonth,timeGridWeek,timeGridDay listMonth'
-        },
-        
-        // Events Configuration
-        events: {{ calendar_events|json_encode|raw }},
-        eventDisplay: 'block',
-        eventTimeFormat: { // Format time display
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: false
-        },
-        
-        // Styling Options
-        themeSystem: 'bootstrap5',
-        height: 'auto', // Adjusts to content
-        contentHeight: 650, // Fixed height with scroll
-        aspectRatio: 2, // Width/height ratio
-        
-        // Event Styling
-        eventColor: '#3788d8',
-        eventTextColor: '#ffffff',
-        eventBorderColor: 'rgba(0,0,0,0.1)',
-        eventClassNames: 'fc-event-custom',
-        
-        // Event Interactions
-        eventClick: function(info) {
-            const event = info.event;
-            const eventDetails = `
-                <div class="event-details">
-                    <h5>${event.title}</h5>
-                    <p><strong>Date:</strong> ${event.start.toLocaleString('fr-FR')}</p>
-                    ${event.extendedProps.type ? `<p><strong>Type:</strong> ${event.extendedProps.type}</p>` : ''}
-                </div>
-            `;
-            
-            Swal.fire({
-                title: 'Détails de la réservation',
-                html: eventDetails,
-                confirmButtonText: 'Fermer',
-                customClass: {
-                    popup: 'event-popup'
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialisation du calendrier
+            const calendarEl = document.getElementById('calendar-holder');
+            const calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                locale: 'fr',
+                events: {{ calendar_events|json_encode|raw }},
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
+                height: 'auto',
+                eventBackgroundColor: '#7367F0',
+                eventBorderColor: '#7367F0',
+                eventTextColor: '#ffffff',
+                navLinks: true,
+                nowIndicator: true,
+                dayMaxEvents: true,
+                buttonText: {
+                    today: 'Aujourd\'hui',
+                    month: 'Mois',
+                    week: 'Semaine',
+                    day: 'Jour'
+                },
+                eventDidMount: function(info) {
+                    const eventEl = info.el;
+                    eventEl.style.boxShadow = '0 2px 6px rgba(115, 103, 240, 0.3)';
+                    
+                    if (info.event.extendedProps.description) {
+                        new bootstrap.Tooltip(eventEl, {
+                            title: info.event.extendedProps.description,
+                            placement: 'top',
+                            trigger: 'hover',
+                            container: 'body'
+                        });
+                    }
+                },
+                eventClick: function(info) {
+                    const event = info.event;
+                    const eventType = event.extendedProps.type ? 
+                        `<span class="badge bg-primary-soft text-primary">${event.extendedProps.type}</span>` : '';
+                    
+                    const eventDetails = `
+                        <div class="text-start">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h5 class="mb-0">${event.title}</h5>
+                                ${eventType}
+                            </div>
+                            <div class="d-flex align-items-center mb-1 text-muted">
+                                <i class="ti ti-calendar me-2"></i>
+                                <span>${event.start.toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
+                            </div>
+                            <div class="d-flex align-items-center mb-2 text-muted">
+                                <i class="ti ti-clock me-2"></i>
+                                <span>${event.start.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}</span>
+                            </div>
+                            ${event.extendedProps.description ? `<p class="mb-0">${event.extendedProps.description}</p>` : ''}
+                        </div>
+                    `;
+                    
+                    Swal.fire({
+                        title: 'Détails de la réservation',
+                        html: eventDetails,
+                        confirmButtonText: 'Fermer',
+                        customClass: {
+                            popup: 'border-radius-16',
+                            confirmButton: 'btn btn-primary'
+                        },
+                        buttonsStyling: false
+                    });
                 }
             });
-        },
-        
-        // Date Click
-        dateClick: function(info) {
-            // Add new event functionality here
-            console.log('Clicked on: ' + info.dateStr);
-        },
-        
-        // View Render
-        viewDidMount: function(view) {
-            // Custom view handling
-            console.log('View changed to: ' + view.type);
-        }
-    });
+            calendar.render();
+            
+            // Gestion du basculement entre calendrier et liste
+            const viewSwitcherBtns = document.querySelectorAll('.view-switcher-btn');
+            const calendarHolder = document.getElementById('calendar-holder');
+            const reservationsList = document.querySelector('.reservations-list-container');
+            
+            viewSwitcherBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const view = this.getAttribute('data-view');
+                    
+                    viewSwitcherBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    if (view === 'calendar') {
+                        calendarHolder.classList.remove('d-none');
+                        reservationsList.classList.add('d-none');
+                        calendar.updateSize();
+                    } else {
+                        calendarHolder.classList.add('d-none');
+                        reservationsList.classList.remove('d-none');
+                    }
+                });
+            });
 
-    calendar.render();
-    
-    // Add responsive behavior
-    window.addEventListener('resize', function() {
-        calendar.updateSize();
-    });
-});
-</script>
-{% endblock %}
+            // Fonction de confirmation de suppression
+            function confirmDelete(event) {
+                event.preventDefault();
+                Swal.fire({
+                    title: 'Êtes-vous sûr?',
+                    text: "Vous ne pourrez pas annuler cette action!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Oui, supprimer!',
+                    cancelButtonText: 'Annuler',
+                    customClass: {
+                        confirmButton: 'btn btn-primary me-2',
+                        cancelButton: 'btn btn-label-secondary'
+                    },
+                    buttonsStyling: false
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        event.target.closest('form').submit();
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>
