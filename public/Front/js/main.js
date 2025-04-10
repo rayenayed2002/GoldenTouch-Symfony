@@ -974,4 +974,490 @@ popupSideMenu('.shopping-cart', '.sideMenuToggler2', '.sideMenuCls', 'show');
 //     }
 //   }
  
+/*---------- Form Submission Handler ----------*/
+$(document).ready(function() {
+    $('.ajax-booking').on('submit', function(e) {
+        e.preventDefault();
+        
+        let form = $(this);
+        let formData = new FormData(this);
+        
+        $.ajax({
+            url: form.attr('action'),
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                Swal.fire({
+                    title: 'Success!',
+                    text: 'Your booking has been confirmed!',
+                    icon: 'success',
+                    confirmButtonText: 'OK'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.reload();
+                    }
+                });
+            },
+            error: function(xhr) {
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Something went wrong. Please try again.',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            }
+        });
+    });
+});
+
+ 
+  /*---------- 11. Search Box Popup ----------*/
+  function popupSarchBox($searchBox, $searchOpen, $searchCls, $toggleCls) {
+    $($searchOpen).on('click', function (e) {
+      e.preventDefault();
+      $($searchBox).addClass($toggleCls);
+    });
+    $($searchBox).on('click', function (e) {
+      e.stopPropagation();
+      $($searchBox).removeClass($toggleCls);
+    });
+    $($searchBox).find('form').on('click', function (e) {
+      e.stopPropagation();
+      $($searchBox).addClass($toggleCls);
+    });
+    $($searchCls).on('click', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      $($searchBox).removeClass($toggleCls);
+    });
+  };
+  popupSarchBox('.popup-search-box', '.searchBoxToggler', '.searchClose', 'show');
+
+    /*---------- 12. Popup Sidemenu ----------*/
+    function popupSideMenu($sideMenu, $sideMunuOpen, $sideMenuCls, $toggleCls) {
+      // Sidebar Popup
+      $($sideMunuOpen).on('click', function (e) {
+          e.preventDefault();
+          $($sideMenu).addClass($toggleCls);
+      });
+      $($sideMenu).on('click', function (e) {
+          e.stopPropagation();
+          $($sideMenu).removeClass($toggleCls)
+      });
+      var sideMenuChild = $sideMenu + ' > div';
+      $(sideMenuChild).on('click', function (e) {
+          e.stopPropagation();
+          $($sideMenu).addClass($toggleCls)
+      });
+      $($sideMenuCls).on('click', function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          $($sideMenu).removeClass($toggleCls);
+      });
+  };
+  popupSideMenu('.sidemenu-wrapper', '.sideMenuToggler', '.sideMenuCls', 'show');
+  
+/*---------- 12. Popup Sidemenu ----------*/
+function popupSideMenu($sideMenu2, $sideMunuOpen2, $sideMenuCls2, $toggleCls2) {
+  // Sidebar Popup
+  $($sideMunuOpen2).on('click', function (e) {
+      e.preventDefault();
+      $($sideMenu2).addClass($toggleCls2);
+  });
+  $($sideMenu2).on('click', function (e) {
+      e.stopPropagation();
+      $($sideMenu2).removeClass($toggleCls2)
+  });
+  var sideMenuChild = $sideMenu2 + ' > div';
+  $(sideMenuChild).on('click', function (e) {
+      e.stopPropagation();
+      $($sideMenu2).addClass($toggleCls2)
+  });
+  $($sideMenuCls2).on('click', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      $($sideMenu2).removeClass($toggleCls2);
+  });
+};
+popupSideMenu('.shopping-cart', '.sideMenuToggler2', '.sideMenuCls', 'show'); 
+
+
+  /*----------- 12. Magnific Popup ----------*/
+  /* magnificPopup img view */
+  $('.popup-image').magnificPopup({
+    type: 'image',
+    gallery: {
+      enabled: true
+    }
+  });
+
+  /* magnificPopup video view */
+  $('.popup-video').magnificPopup({
+    type: 'iframe'
+  });
+
+  /* magnificPopup content view */
+  $('.popup-content').magnificPopup({
+    type: 'inline',
+    midClick: true,
+  });
+
+  /*----------- 13. Filter ----------*/
+  $('.filter-active').imagesLoaded(function () {
+    var $filter = '.filter-active',
+      $filterItem = '.filter-item',
+      $filterMenu = '.filter-menu-active';
+
+    if ($($filter).length > 0) {
+      var $grid = $($filter).isotope({
+        itemSelector: $filterItem,
+        filter: '*',
+        masonry: {
+          // use outer width of grid-sizer for columnWidth
+          columnWidth: 1
+        }
+      });
+
+      // filter items on button click
+      $($filterMenu).on('click', 'button', function () {
+        var filterValue = $(this).attr('data-filter');
+        $grid.isotope({
+          filter: filterValue
+        });
+      });
+
+      // Menu Active Class 
+      $($filterMenu).on('click', 'button', function (event) {
+        event.preventDefault();
+        $(this).addClass('active');
+        $(this).siblings('.active').removeClass('active');
+      });
+    };
+  });
+
+
+  // Active specifix
+  $('.filter-active-cat1').imagesLoaded(function () {
+    var $filter = '.filter-active-cat1',
+      $filterItem = '.filter-item',
+      $filterMenu = '.filter-menu-active';
+
+    if ($($filter).length > 0) {
+      var $grid = $($filter).isotope({
+        itemSelector: $filterItem,
+        filter: '.cat1',
+        masonry: {
+          // use outer width of grid-sizer for columnWidth
+          columnWidth: 1
+        }
+      });
+
+      // filter items on button click
+      $($filterMenu).on('click', 'button', function () {
+        var filterValue = $(this).attr('data-filter');
+        $grid.isotope({
+          filter: filterValue
+        });
+      });
+
+      // Menu Active Class 
+      $($filterMenu).on('click', 'button', function (event) {
+        event.preventDefault();
+        $(this).addClass('active');
+        $(this).siblings('.active').removeClass('active');
+      });
+    };
+  });
+
+  /*----------- 14. Date Time Picker ----------*/
+  // Only Date Picker
+  $('.date-pick').datetimepicker({
+    timepicker: false,
+    datepicker: true,
+    format: 'd-m-y',
+    step: 10
+  });
+
+  // Only Time Picker
+  $('.time-pick').datetimepicker({
+    datepicker:false,
+    format:'H:i',
+    step:30
+  });
+
+     //======wow js======= 
+     new WOW().init();
+
+
+  /*----------- 15. Counter Up ----------*/ 
+  $('.counter-number').counterUp({
+    delay: 10,
+    time: 1000
+  });
+
+  /*---------- 16. VS Tab ----------*/
+  $.fn.vsTab = function (options) {
+    var opt = $.extend({
+      sliderTab: false,
+      tabButton: 'button'
+    }, options);
+
+    $(this).each(function () {
+      var $menu = $(this);
+      var $button = $menu.find(opt.tabButton);
+
+      // Append indicator
+      $menu.append('<span class="indicator"></span>');
+      var $line = $menu.find('.indicator');
+
+      // On Click Button Class Remove and indecator postion set
+      $button.on('click', function (e) {
+        e.preventDefault();
+        var cBtn = $(this);
+        cBtn.addClass('active').siblings().removeClass('active');
+        if (opt.sliderTab) {
+          $(slider).slick('slickGoTo', cBtn.data('slide-go-to'));
+        } else {
+          linePos();
+        }
+      })
+
+      // Work With slider
+      if (opt.sliderTab) {
+        var slider = $menu.data('asnavfor'); // select slider
+
+        // Select All button and set attribute
+        var i = 0;
+        $button.each(function () {
+          var slideBtn = $(this);
+          slideBtn.attr('data-slide-go-to', i)
+          i++
+
+          // Active Slide On load > Actived Button
+          if (slideBtn.hasClass('active')) {
+            $(slider).slick('slickGoTo', slideBtn.data('slide-go-to'));
+          }
+
+          // Change Indicator On slide Change
+          $(slider).on('beforeChange', function (event, slick, currentSlide, nextSlide) {
+            $menu.find(opt.tabButton + '[data-slide-go-to="' + nextSlide + '"]').addClass('active').siblings().removeClass('active');
+            linePos();
+          });
+        })
+
+      };
+
+      // Indicator Position
+      function linePos() {
+        var $btnActive = $menu.find(opt.tabButton + '.active'),
+          $height = $btnActive.css('height'),
+          $width = $btnActive.css('width'),
+          $top = $btnActive.position().top + 'px',
+          $left = $btnActive.position().left + 'px';
+
+        $line.get(0).style.setProperty('--height-set', $height);
+        $line.get(0).style.setProperty('--width-set', $width);
+        $line.get(0).style.setProperty('--pos-y', $top);
+        $line.get(0).style.setProperty('--pos-x', $left);
+
+        if ($($button).first().position().left == $btnActive.position().left) {
+          $line.addClass('start').removeClass('center').removeClass('end');
+        } else if ($($button).last().position().left == $btnActive.position().left) {
+          $line.addClass('end').removeClass('center').removeClass('start');
+        } else {
+          $line.addClass('center').removeClass('start').removeClass('end');
+        }
+      }
+      linePos();
+    })
+  }
+
+  // Call On Load
+  if ($('.taxi-tab').length) {
+    $('.taxi-tab').vsTab({
+      sliderTab: true,
+      tabButton: '.th-btn'
+    });
+  }
+
+  /*----------- 17. Progress Bar Animation ----------*/
+  $('.progress-bar').waypoint(function() {
+    $('.progress-bar').css({
+    animation: "animate-positive 1.8s",
+    opacity: "1"
+    });
+  }, { offset: '75%' });
+
+  /*---------- 18. Section Position ----------*/
+  // Interger Converter
+  function convertInteger(str) {
+    return parseInt(str, 10)
+  }
+
+  $.fn.sectionPosition = function (mainAttr, posAttr) {
+    $(this).each(function () {
+      var section = $(this);
+
+      function setPosition() {
+        var sectionHeight = Math.floor(section.height() / 2), // Main Height of section
+          posData = section.attr(mainAttr), // where to position
+          posFor = section.attr(posAttr), // On Which section is for positioning  
+          topMark = 'top-half', // Pos top
+          bottomMark = 'bottom-half', // Pos Bottom
+          parentPT = convertInteger($(posFor).css('padding-top')), // Default Padding of  parent
+          parentPB = convertInteger($(posFor).css('padding-bottom')); // Default Padding of  parent
+
+        if (posData === topMark) {
+          $(posFor).css('padding-bottom', parentPB + sectionHeight + 'px');
+          section.css('margin-top', "-" + sectionHeight + 'px');
+        } else if (posData === bottomMark) {
+          $(posFor).css('padding-top', parentPT + sectionHeight + 'px');
+          section.css('margin-bottom', "-" + sectionHeight + 'px');
+        }
+      }
+      setPosition(); // Set Padding On Load
+    })
+  }
+
+  var postionHandler = '[data-sec-pos]';
+  if ($(postionHandler).length) {
+    $(postionHandler).imagesLoaded(function () {
+      $(postionHandler).sectionPosition('data-sec-pos', 'data-pos-for');
+    });
+  }
+
+  /*----------- 19. Shape Mockup ----------*/
+  $.fn.shapeMockup = function () {
+    var $shape = $(this);
+    $shape.each(function() {
+      var $currentShape = $(this),
+      shapeTop = $currentShape.data('top'),
+      shapeRight = $currentShape.data('right'),
+      shapeBottom = $currentShape.data('bottom'),
+      shapeLeft = $currentShape.data('left');
+      $currentShape.css({
+        top: shapeTop,
+        right: shapeRight,
+        bottom: shapeBottom,
+        left: shapeLeft,
+      }).removeAttr('data-top')
+      .removeAttr('data-right')
+      .removeAttr('data-bottom')
+      .removeAttr('data-left')
+      .parent().addClass('shape-mockup-wrap');
+    });
+  };
+
+  if ($('.shape-mockup')) {
+    $('.shape-mockup').shapeMockup();
+  }
+
+  // Set position when click on bootstrap Tab
+  $('[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
+    $('.th-carousel').slick('setPosition');
+  })
+
+    /*----------- 00. Woocommerce Toggle ----------*/
+    // Ship To Different Address
+    $("#ship-to-different-address-checkbox").on("change", function () {
+      if ($(this).is(":checked")) {
+          $("#ship-to-different-address")
+              .next(".shipping_address")
+              .slideDown();
+      } else {
+          $("#ship-to-different-address").next(".shipping_address").slideUp();
+      }
+  });
+
+  // Login Toggle
+  $(".woocommerce-form-login-toggle a").on("click", function (e) {
+      e.preventDefault();
+      $(".woocommerce-form-login").slideToggle();
+  });
+
+  // Coupon Toggle
+  $(".woocommerce-form-coupon-toggle a").on("click", function (e) {
+      e.preventDefault();
+      $(".woocommerce-form-coupon").slideToggle();
+  });
+
+  // Woocommerce Shipping Method
+  $(".shipping-calculator-button").on("click", function (e) {
+      e.preventDefault();
+      $(this).next(".shipping-calculator-form").slideToggle();
+  });
+
+  // Woocommerce Payment Toggle
+  $('.wc_payment_methods input[type="radio"]:checked')
+      .siblings(".payment_box")
+      .show();
+  $('.wc_payment_methods input[type="radio"]').each(function () {
+      $(this).on("change", function () {
+          $(".payment_box").slideUp();
+          $(this).siblings(".payment_box").slideDown();
+      });
+  });
+
+  // Woocommerce Rating Toggle
+  $(".rating-select .stars a").each(function () {
+      $(this).on("click", function (e) {
+          e.preventDefault();
+          $(this).siblings().removeClass("active");
+          $(this).parent().parent().addClass("selected");
+          $(this).addClass("active");
+      });
+  });
+
+  // Quantity Plus Minus ---------------------------
+
+  $(".quantity-plus").each(function () {
+      $(this).on("click", function (e) {
+          e.preventDefault();
+          var $qty = $(this).siblings(".qty-input");
+          var currentVal = parseInt($qty.val(), 10);
+          if (!isNaN(currentVal)) {
+              $qty.val(currentVal + 1);
+          }
+      });
+  });
+
+  $(".quantity-minus").each(function () {
+      $(this).on("click", function (e) {
+          e.preventDefault();
+          var $qty = $(this).siblings(".qty-input");
+          var currentVal = parseInt($qty.val(), 10);
+          if (!isNaN(currentVal) && currentVal > 1) {
+              $qty.val(currentVal - 1);
+          }
+      });
+  });
+
+// /*----------- 00. Right Click Disable ----------*/
+//   window.addEventListener('contextmenu', function (e) {
+//     // do something here... 
+//     e.preventDefault();
+//   }, false);
+
+
+// /*----------- 00. Inspect Element Disable ----------*/
+//   document.onkeydown = function (e) {
+//     if (event.keyCode == 123) {
+//       return false;
+//     }
+//     if (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) {
+//       return false;
+//     }
+//     if (e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) {
+//       return false;
+//     }
+//     if (e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) {
+//       return false;
+//     }
+//     if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) {
+//       return false;
+//     }
+//   }
+ 
 })(jQuery);
