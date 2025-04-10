@@ -80,7 +80,7 @@ class EventController extends AbstractController
             CategorieEvent::ATELIER->value => 'Atelier',
         ];
     
-        return $this->render('GestionEvent/eventhh.html.twig', [
+        return $this->render('GestionEvent/test.html.twig', [
             'events' => $events,
             'categoryLabels' => $categoryLabels, // Pass the category labels to the template
         ]);
