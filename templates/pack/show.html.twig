@@ -16,72 +16,186 @@
     <link rel="stylesheet" href="{{ asset('Front/css/magnific-popup.min.css') }}">
     <link rel="stylesheet" href="{{ asset('Front/css/slick.min.css') }}">
     <link rel="stylesheet" href="{{ asset('Front/css/style.css') }}">
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
 </head>
 
 <body>
     {% include 'Front/partials/header.html.twig' %}
 
-    <!-- Page Title -->
-    <div class="breadcumb-wrapper" data-bg-src="{{ asset('Front/img/breadcumb/breadcumb-bg.jpg') }}" style="padding: 15px 0;">
-        <div class="container">
-            <div class="breadcumb-content" style="padding: 10px 0;">
-                <h1 class="breadcumb-title" style="font-size: 1.5rem; margin-bottom: 5px;">{{ pack.nom }}</h1>
-                <ul class="breadcumb-menu" style="font-size: 0.9rem;">
-                    <li><a href="{{ path('front_index') }}">Accueil</a></li>
-                    <li><a href="{{ path('app_pack_index') }}">Packs</a></li>
-                    <li>Détails</li>
-                </ul>
+    <!-- Hero Section -->
+    <div class="hero-wrapper position-relative overflow-hidden mb-5">
+        <div class="hero-bg" style="background: url('{{ asset('uploads/packs/' ~ pack.getPhoto()) }}') center/cover no-repeat; height: 70vh; position: relative;">
+            <div class="dark-overlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5);"></div>
+        </div>
+        <div class="container position-relative" style="height: 70vh; margin-top: -70vh;">
+            <div class="row h-100 align-items-center">
+                <div class="col-xl-6" data-aos="fade-up" data-aos-delay="100">
+                    <div class="hero-content text-white p-4">
+                        <h1 class="hero-title display-4 fw-bold mb-4">{{ pack.nom }}</h1>
+                        <p class="hero-text fs-5 mb-4">{{ pack.description|slice(0, 150) }}...</p>
+                        <div class="hero-btns d-flex gap-3">
+                            <a href="#booking" class="th-btn">Réserver maintenant<i class="fas fa-arrow-right ms-2"></i></a>
+                            <a href="#details" class="th-btn style2">Découvrir plus<i class="fas fa-info-circle ms-2"></i></a>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- Pack Details Section -->
-    <section class="space-top space-extra-bottom">
+    <section class="space" id="details">
         <div class="container">
-            <div class="row">
-                <div class="col-lg-8">
-                    <div class="pack-card">
-                        {% if pack.getPhoto() %}
-                            <img src="{{ asset('uploads/packs/' ~ pack.getPhoto()) }}" alt="{{ pack.getNom() }}" class="pack-image">
-                        {% else %}
-                            <img src="{{ asset('Front/img/placeholder.jpg') }}" alt="Pack Image" class="pack-image">
-                        {% endif %}
-                        
-                        <div class="pack-content">
-                            <h2 class="pack-title">{{ pack.nom }}</h2>
-                            <p class="pack-description">{{ pack.description }}</p>
-                            
-                            <div class="pack-meta">
-                                <span class="pack-capacity">
-                                    <i class="fas fa-users mr-1"></i> {{ pack.capacite }} personnes
-                                </span>
-                                <span class="price-badge">
-                                    {{ pack.prix }} €
-                                </span>
+            <div class="row gx-5">
+                <!-- Main Content -->
+                <div class="col-lg-8" data-aos="fade-up">
+                    <!-- Tabs Navigation -->
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#description" type="button">Description</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#services" type="button">Services inclus</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#reviews" type="button">Avis clients</button>
+                        </li>
+                    </ul>
+
+                    <!-- Tabs Content -->
+                    <div class="tab-content" id="myTabContent">
+                        <div class="tab-pane fade show active" id="description">
+                            <div class="content-box">
+                                <h3 class="h4 mb-4">À propos de ce pack</h3>
+                                <p class="mb-4">{{ pack.description }}</p>
+                                <div class="feature-list">
+                                    <div class="row g-4">
+                                        <div class="col-sm-6">
+                                            <div class="feature-box d-flex align-items-center">
+                                                <i class="fas fa-users fs-3 text-theme me-3"></i>
+                                                <div>
+                                                    <h6 class="mb-1">Capacité</h6>
+                                                    <p class="mb-0">{{ pack.capacite }} personnes</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <div class="feature-box d-flex align-items-center">
+                                                <i class="fas fa-clock fs-3 text-theme me-3"></i>
+                                                <div>
+                                                    <h6 class="mb-1">Durée</h6>
+                                                    <p class="mb-0">Personnalisable</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="services">
+                            <div class="content-box">
+                                <h3 class="h4 mb-4">Services inclus dans ce pack</h3>
+                                <div class="row g-4">
+                                    <div class="col-sm-6">
+                                        <div class="service-card p-4 rounded-3 bg-light">
+                                            <i class="fas fa-utensils fs-2 text-theme mb-3"></i>
+                                            <h5>Service traiteur</h5>
+                                            <p>Menu personnalisé selon vos préférences</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="service-card p-4 rounded-3 bg-light">
+                                            <i class="fas fa-music fs-2 text-theme mb-3"></i>
+                                            <h5>Animation musicale</h5>
+                                            <p>DJ professionnel et équipement sonore</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="reviews">
+                            <div class="content-box">
+                                <h3 class="h4 mb-4">Avis de nos clients</h3>
+                                <div class="review-card p-4 rounded-3 bg-light mb-4">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <img src="{{ asset('Front/img/testimonial/testi_1_1.jpg') }}" alt="User" class="rounded-circle" width="50">
+                                        <div class="ms-3">
+                                            <h6 class="mb-1">Sophie Martin</h6>
+                                            <div class="rating text-warning">
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p class="mb-0">"Une organisation parfaite ! L'équipe de GoldenTouch a su répondre à toutes nos attentes."</p>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                
-                <div class="col-lg-4">
-                    <div class="card">
-                        <div class="card-body">
-                            <h3 class="card-title">Réservation</h3>
-                            <a href="#" class="th-btn style2 btn-block">Réserver ce pack</a>
-                            
-                            {% if is_granted('ROLE_ADMIN') %}
-                                <div class="mt-3">
-                                    <a href="{{ path('app_pack_edit', {'id': pack.id}) }}" class="th-btn style3">
-                                        <i class="fas fa-edit"></i> Modifier
-                                    </a>
-                                    <form method="post" action="{{ path('app_pack_delete', {'id': pack.id}) }}" class="d-inline" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce pack ?');">
-                                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ pack.id) }}">
-                                        <button class="th-btn style4">
-                                            <i class="fas fa-trash-alt"></i> Supprimer
-                                        </button>
-                                    </form>
-                                </div>
-                            {% endif %}
+
+                <!-- Sidebar -->
+                <div class="col-lg-4" data-aos="fade-left">
+                    <div class="sticky-top" style="top: 100px;">
+                        <div class="booking-card bg-white rounded-3 overflow-hidden" id="booking">
+                            <div class="card-header bg-theme text-white p-4">
+                                <h3 class="h4 mb-0">{{ pack.prix }}€</h3>
+                                <p class="mb-0">Prix par pack</p>
+                            </div>
+                            <div class="card-body p-4">
+                                <form action="#" method="post" class="booking-form">
+                                    <div class="mb-4">
+                                        <label class="form-label">Date de l'événement</label>
+                                        <input type="date" class="form-control" required>
+                                    </div>
+                                    <div class="mb-4">
+                                        <label class="form-label">Nombre de personnes</label>
+                                        <input type="number" class="form-control" min="1" max="{{ pack.capacite }}" required>
+                                    </div>
+                                    <button type="submit" class="th-btn w-100">Réserver maintenant</button>
+                                </form>
+                            </div>
+                        </div>
+
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <div class="admin-actions mt-4 d-flex gap-2">
+                                <a href="{{ path('app_pack_edit', {'id': pack.id}) }}" class="th-btn style3 flex-grow-1">
+                                    <i class="fas fa-edit"></i> Modifier
+                                </a>
+                                <form method="post" action="{{ path('app_pack_delete', {'id': pack.id}) }}" class="flex-grow-1" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce pack ?');">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ pack.id) }}">
+                                    <button class="th-btn style4 w-100">
+                                        <i class="fas fa-trash-alt"></i> Supprimer
+                                    </button>
+                                </form>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Similar Packs Section -->
+    <section class="space-bottom">
+        <div class="container">
+            <div class="title-area text-center" data-aos="fade-up">
+                <span class="sub-title">Découvrez plus</span>
+                <h2 class="sec-title">Packs similaires</h2>
+            </div>
+            <div class="row slider-shadow th-carousel" data-slide-show="3" data-lg-slide-show="2" data-md-slide-show="2" data-sm-slide-show="1">
+                <div class="col-md-6 col-xl-4">
+                    <div class="taxi-box">
+                        <div class="taxi-img">
+                            <img src="{{ asset('Front/img/taxi/taxi_1_1.jpg') }}" alt="taxi image">
+                        </div>
+                        <div class="taxi-content">
+                            <h3 class="box-title">Pack Standard</h3>
+                            <p class="taxi-price">À partir de 500€</p>
+                            <a href="#" class="th-btn">Voir les détails<i class="fas fa-arrow-right ms-2"></i></a>
                         </div>
                     </div>
                 </div>
@@ -91,11 +205,35 @@
 
     {% include 'Front/partials/footer.html.twig' %}
 
+    <!-- Scroll To Top -->
+    <div class="scroll-top">
+        <svg class="progress-circle svg-content" width="100%" height="100%" viewBox="-1 -1 102 102">
+            <path d="M50,1 a49,49 0 0,1 0,98 a49,49 0 0,1 0,-98" style="transition: stroke-dashoffset 10ms linear 0s; stroke-dasharray: 307.919, 307.919; stroke-dashoffset: 307.919;"></path>
+        </svg>
+    </div>
+
     <!-- All JavaScript Files -->
     <script src="{{ asset('Front/js/jquery-3.6.0.min.js') }}"></script>
     <script src="{{ asset('Front/js/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ asset('Front/js/jquery.magnific-popup.min.js') }}"></script>
     <script src="{{ asset('Front/js/slick.min.js') }}"></script>
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
     <script src="{{ asset('Front/js/main.js') }}"></script>
+    <script>
+        // Initialize AOS
+        AOS.init({
+            duration: 800,
+            once: true
+        });
+
+        // Sticky Header
+        $(window).on('scroll', function() {
+            if ($(window).scrollTop() > 50) {
+                $('.sticky-wrapper').addClass('sticky');
+            } else {
+                $('.sticky-wrapper').removeClass('sticky');
+            }
+        });
+    </script>
 </body>
 </html>
