@@ -837,60 +837,7 @@
                     console.log('Form data:', data);
 
                     // Send request to create demande pack
-                    fetch('{{ path('app_demande_pack_create') }}', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-Requested-With': 'XMLHttpRequest'
-                        },
-                        body: JSON.stringify(data)
-                    })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Network response was not ok');
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        if (data.success) {
-                            // Show success message
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Succès',
-                                text: 'Votre demande de réservation a été envoyée avec succès !',
-                                confirmButtonText: 'OK',
-                                customClass: {
-                                    confirmButton: 'btn btn-primary'
-                                },
-                                buttonsStyling: false
-                            });
-                        } else {
-                            // Show error message
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Erreur',
-                                text: data.message || 'Une erreur est survenue lors de la réservation.',
-                                confirmButtonText: 'OK',
-                                customClass: {
-                                    confirmButton: 'btn btn-danger'
-                                },
-                                buttonsStyling: false
-                            });
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Erreur',
-                            text: 'Une erreur est survenue lors de la réservation.',
-                            confirmButtonText: 'OK',
-                            customClass: {
-                                confirmButton: 'btn btn-danger'
-                            },
-                            buttonsStyling: false
-                        });
-                    });
+                   
                 });
             }
 
