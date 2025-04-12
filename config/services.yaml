@@ -1,13 +1,20 @@
+# config/services.yaml
+
 # This file is the entry point to configure your own services.
 # Files in the packages/ subdirectory configure your dependencies.
 
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
-        materiel_directory: '%kernel.project_dir%/public/uploads/materiels'
-        packs_images_directory: '%kernel.project_dir%/public/uploads/packs/Images'
-        uploads_directory: '%kernel.project_dir%/public/uploads'
-        photos_directory: '%kernel.project_dir%/public/uploads/photos'
+    # Configuration du dossier d'upload des images du personnel
+    personnel_images_directory: '%kernel.project_dir%/public/uploads/personnel'
+    
+    # Paramètre pour la taille max des fichiers (optionnel)
+    app.max_file_size: '2M'
+    materiel_directory: '%kernel.project_dir%/public/uploads/materiels'
+    packs_images_directory: '%kernel.project_dir%/public/uploads/packs/Images'
+    uploads_directory: '%kernel.project_dir%/public/uploads'
+    photos_directory: '%kernel.project_dir%/public/uploads/photos'
 
 
 services:
@@ -27,3 +34,20 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    # Service pour gérer les uploads (optionnel)
+    # App\Service\FileUploader:
+    #     arguments:
+    #         $uploadDirectory: '%personnel_images_directory%'
+    #         $maxFileSize: '%app.max_file_size%'
+
+    # Service Twilio pour l'envoi de SMS (AJOUT)
+    App\Service\TwilioSmsService:
+        arguments:
+            $accountSid: '%env(TWILIO_ACCOUNT_SID)%'
+            $authToken: '%env(TWILIO_AUTH_TOKEN)%'
+            $fromNumber: '%env(TWILIO_PHONE_NUMBER)%'
+            $toNumber: '%env(DESTINATION_PHONE_NUMBER)%'
+
+    # Subscriber pour le calendrier (existant)
+    App\EventSubscriber\CalendarSubscriber:

@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html
   lang="en"
   class="light-style layout-navbar-fixed layout-menu-fixed"
@@ -7,12 +6,12 @@
   data-theme="theme-default"
   data-assets-path="{{ asset('') }}"
   data-template="vertical-menu-template">
- <head>
+  <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
     <link rel="stylesheet" href="{{ asset('css/pack-cards.css') }}">
-    <title>Packs</title>
+    <title>Personnels</title>
 
     <meta name="description" content="" />
 
@@ -36,7 +35,6 @@
 
     <!-- Vendors CSS -->
     <link rel="stylesheet" href="{{ asset('assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css') }}" />
-    
     <link rel="stylesheet" href="{{ asset('assets/vendor/libs/node-waves/node-waves.css') }}" />
     <link rel="stylesheet" href="{{ asset('/vendor/libs/typeahead-js/typeahead.css') }}" />
     <link rel="stylesheet" href="{{ asset('vendor/libs/apex-charts/apex-charts.css') }}" />
@@ -52,14 +50,16 @@
     <script src="{{ asset('vendor/js/helpers.js') }}"></script>
     <script src="{{ asset('vendor/js/template-customizer.js') }}"></script>
     <script src="{{ asset('js/config.js') }}"></script>
-</head>
+
+    <!-- Animation CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+  </head>
 
   <body>
     <!-- Layout wrapper -->
     <div class="layout-wrapper layout-content-navbar">
       <div class="layout-container">
         <!-- Menu -->
-
         <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
           <div class="app-brand demo">
             <a href="index.html" class="app-brand-link">
@@ -99,150 +99,147 @@
           </div>
 
           <div class="menu-inner-shadow"></div>
-<div class="menu-inner-shadow"></div>
 
-<ul class="menu-inner py-1">
-  <!-- Packs -->
-  <li class="menu-item active">
-    <a href="{{ path('app_packs') }}" class="menu-link">
-      <i class="menu-icon tf-icons ti ti-package"></i>
-      <div data-i18n="Packs">Packs</div>
-    </a>
-  </li>
+          <ul class="menu-inner py-1">
+            <!-- Packs -->
+            <li class="menu-item">
+              <a href="packs.html" class="menu-link">
+                <i class="menu-icon tf-icons ti ti-package"></i>
+                <div data-i18n="Packs">Packs</div>
+              </a>
+            </li>
 
-  <!-- Gestion Événements -->
-  <li class="menu-item">
-    <a href="javascript:void(0);" class="menu-link menu-toggle">
-      <i class="menu-icon tf-icons ti ti-calendar-event"></i>
-      <div data-i18n="Gestion Événements">Gestion Événements</div>
-    </a>
-    <ul class="menu-sub">
-      <li class="menu-item">
-        <a href="ajouter-evenement.html" class="menu-link">
-          <i class="menu-icon tf-icons ti ti-circle"></i>
-          <div data-i18n="Ajouter Événement">Ajouter Événement</div>
-        </a>
-      </li>
-      <li class="menu-item">
-        <a href="liste-evenements.html" class="menu-link">
-          <i class="menu-icon tf-icons ti ti-circle"></i>
-          <div data-i18n="Liste Événements">Liste Événements</div>
-        </a>
-      </li>
-    </ul>
-  </li>
+            <!-- Gestion Événements -->
+            <li class="menu-item">
+              <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons ti ti-calendar-event"></i>
+                <div data-i18n="Gestion Événements">Gestion Événements</div>
+              </a>
+              <ul class="menu-sub">
+                <li class="menu-item">
+                  <a href="ajouter-evenement.html" class="menu-link">
+                    <i class="menu-icon tf-icons ti ti-circle"></i>
+                    <div data-i18n="Ajouter Événement">Ajouter Événement</div>
+                  </a>
+                </li>
+                <li class="menu-item">
+                  <a href="liste-evenements.html" class="menu-link">
+                    <i class="menu-icon tf-icons ti ti-circle"></i>
+                    <div data-i18n="Liste Événements">Liste Événements</div>
+                  </a>
+                </li>
+              </ul>
+            </li>
 
-  <!-- Gestion Matérielle -->
-  <li class="menu-item">
-    <a href="javascript:void(0);" class="menu-link menu-toggle">
-      <i class="menu-icon tf-icons ti ti-tools"></i>
-      <div data-i18n="Gestion Matérielle">Gestion Matérielle</div>
-    </a>
-    <ul class="menu-sub">
-      <li class="menu-item">
-        <a href="ajouter-materiel.html" class="menu-link">
-          <i class="menu-icon tf-icons ti ti-circle"></i>
-          <div data-i18n="Ajouter Matériel">Ajouter Matériel</div>
-        </a>
-      </li>
-      <li class="menu-item">
-        <a href="liste-materiel.html" class="menu-link">
-          <i class="menu-icon tf-icons ti ti-circle"></i>
-          <div data-i18n="Liste Matériel">Liste Matériel</div>
-        </a>
-      </li>
-    </ul>
-  </li>
+            <!-- Gestion Matérielle -->
+            <li class="menu-item">
+              <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons ti ti-tools"></i>
+                <div data-i18n="Gestion Matérielle">Gestion Matérielle</div>
+              </a>
+              <ul class="menu-sub">
+                <li class="menu-item">
+                  <a href="ajouter-materiel.html" class="menu-link">
+                    <i class="menu-icon tf-icons ti ti-circle"></i>
+                    <div data-i18n="Ajouter Matériel">Ajouter Matériel</div>
+                  </a>
+                </li>
+                <li class="menu-item">
+                  <a href="liste-materiel.html" class="menu-link">
+                    <i class="menu-icon tf-icons ti ti-circle"></i>
+                    <div data-i18n="Liste Matériel">Liste Matériel</div>
+                  </a>
+                </li>
+              </ul>
+            </li>
 
-  <!-- Gestion Lieu -->
-  <li class="menu-item">
-    <a href="javascript:void(0);" class="menu-link menu-toggle">
-      <i class="menu-icon tf-icons ti ti-map-pin"></i>
-      <div data-i18n="Gestion Lieu">Gestion Lieu</div>
-    </a>
-    <ul class="menu-sub">
-      <li class="menu-item">
-        <a href="ajouter-lieu.html" class="menu-link">
-          <i class="menu-icon tf-icons ti ti-circle"></i>
-          <div data-i18n="Ajouter Lieu">Ajouter Lieu</div>
-        </a>
-      </li>
-      <li class="menu-item">
-        <a href="liste-lieux.html" class="menu-link">
-          <i class="menu-icon tf-icons ti ti-circle"></i>
-          <div data-i18n="Liste Lieux">Liste Lieux</div>
-        </a>
-      </li>
-    </ul>
-  </li>
+            <!-- Gestion Lieu -->
+            <li class="menu-item">
+              <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons ti ti-map-pin"></i>
+                <div data-i18n="Gestion Lieu">Gestion Lieu</div>
+              </a>
+              <ul class="menu-sub">
+                <li class="menu-item">
+                  <a href="ajouter-lieu.html" class="menu-link">
+                    <i class="menu-icon tf-icons ti ti-circle"></i>
+                    <div data-i18n="Ajouter Lieu">Ajouter Lieu</div>
+                  </a>
+                </li>
+                <li class="menu-item">
+                  <a href="liste-lieux.html" class="menu-link">
+                    <i class="menu-icon tf-icons ti ti-circle"></i>
+                    <div data-i18n="Liste Lieux">Liste Lieux</div>
+                  </a>
+                </li>
+              </ul>
+            </li>
 
-  <!-- Gestion Personnels -->
-  <li class="menu-item ">
-    <a href="{{ path('app_perso_index') }}" class="menu-link">
-      <i class="menu-icon tf-icons ti ti-package"></i>
-      <div data-i18n="Personnels">Personnels</div>
-    </a>
-  </li>
+            <!-- Gestion Personnels -->
+            <li class="menu-item active">
+              <a href="packs.html" class="menu-link">
+                <i class="menu-icon tf-icons ti ti-package"></i>
+                <div data-i18n="Personnels">Personnels</div>
+              </a>
+            </li>
 
-  <!-- Gestion Commandes -->
-  <li class="menu-item">
-    <a href="javascript:void(0);" class="menu-link menu-toggle">
-      <i class="menu-icon tf-icons ti ti-shopping-cart"></i>
-      <div data-i18n="Gestion Commandes">Gestion Commandes</div>
-    </a>
-    <ul class="menu-sub">
-      <li class="menu-item">
-        <a href="panier.html" class="menu-link">
-          <i class="menu-icon tf-icons ti ti-circle"></i>
-          <div data-i18n="Panier">Panier</div>
-          <div class="badge bg-label-primary rounded-pill ms-auto">3</div>
-        </a>
-      </li>
-      <li class="menu-item">
-        <a href="liste-commandes.html" class="menu-link">
-          <i class="menu-icon tf-icons ti ti-circle"></i>
-          <div data-i18n="Liste Commandes">Liste Commandes</div>
-        </a>
-      </li>
-      <li class="menu-item">
-        <a href="liste-reclamations.html" class="menu-link">
-          <i class="menu-icon tf-icons ti ti-circle"></i>
-          <div data-i18n="Liste Réclamations">Liste Réclamations</div>
-          <div class="badge bg-label-warning rounded-pill ms-auto">2</div>
-        </a>
-      </li>
-    </ul>
-  </li>
+            <!-- Gestion Commandes -->
+            <li class="menu-item">
+              <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons ti ti-shopping-cart"></i>
+                <div data-i18n="Gestion Commandes">Gestion Commandes</div>
+              </a>
+              <ul class="menu-sub">
+                <li class="menu-item">
+                  <a href="panier.html" class="menu-link">
+                    <i class="menu-icon tf-icons ti ti-circle"></i>
+                    <div data-i18n="Panier">Panier</div>
+                    <div class="badge bg-label-primary rounded-pill ms-auto">3</div>
+                  </a>
+                </li>
+                <li class="menu-item">
+                  <a href="liste-commandes.html" class="menu-link">
+                    <i class="menu-icon tf-icons ti ti-circle"></i>
+                    <div data-i18n="Liste Commandes">Liste Commandes</div>
+                  </a>
+                </li>
+                <li class="menu-item">
+                  <a href="liste-reclamations.html" class="menu-link">
+                    <i class="menu-icon tf-icons ti ti-circle"></i>
+                    <div data-i18n="Liste Réclamations">Liste Réclamations</div>
+                    <div class="badge bg-label-warning rounded-pill ms-auto">2</div>
+                  </a>
+                </li>
+              </ul>
+            </li>
 
-  <!-- Divider -->
-  <li class="menu-header small text-uppercase">
-    <span class="menu-header-text">Compte</span>
-  </li>
+            <!-- Divider -->
+            <li class="menu-header small text-uppercase">
+              <span class="menu-header-text">Compte</span>
+            </li>
 
-  <!-- Compte -->
-  <li class="menu-item">
-    <a href="compte.html" class="menu-link">
-      <i class="menu-icon tf-icons ti ti-user"></i>
-      <div data-i18n="Mon Compte">Mon Compte</div>
-    </a>
-  </li>
+            <!-- Compte -->
+            <li class="menu-item">
+              <a href="compte.html" class="menu-link">
+                <i class="menu-icon tf-icons ti ti-user"></i>
+                <div data-i18n="Mon Compte">Mon Compte</div>
+              </a>
+            </li>
 
-  <!-- Déconnexion -->
-  <li class="menu-item">
-    <a href="deconnexion.html" class="menu-link">
-      <i class="menu-icon tf-icons ti ti-logout"></i>
-      <div data-i18n="Déconnexion">Déconnexion</div>
-    </a>
-  </li>
-</ul>
-         
+            <!-- Déconnexion -->
+            <li class="menu-item">
+              <a href="deconnexion.html" class="menu-link">
+                <i class="menu-icon tf-icons ti ti-logout"></i>
+                <div data-i18n="Déconnexion">Déconnexion</div>
+              </a>
+            </li>
+          </ul>
         </aside>
         <!-- / Menu -->
 
         <!-- Layout container -->
         <div class="layout-page">
           <!-- Navbar -->
-
           <nav
             class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme"
             id="layout-navbar">
@@ -432,7 +429,7 @@
                           <div class="d-flex">
                             <div class="flex-shrink-0 me-3">
                               <div class="avatar">
-    <img src="{{ asset('img/avatars/1.png') }}" alt class="h-auto rounded-circle" />
+                                <img src="{{ asset('img/avatars/1.png') }}" alt class="h-auto rounded-circle" />
                               </div>
                             </div>
                             <div class="flex-grow-1">
@@ -476,7 +473,7 @@
                           <div class="d-flex">
                             <div class="flex-shrink-0 me-3">
                               <div class="avatar">
-    <img src="{{ asset('img/avatars/2.png') }}" alt class="h-auto rounded-circle" />
+                                <img src="{{ asset('img/avatars/2.png') }}" alt class="h-auto rounded-circle" />
                               </div>
                             </div>
                             <div class="flex-grow-1">
@@ -522,7 +519,7 @@
                           <div class="d-flex">
                             <div class="flex-shrink-0 me-3">
                               <div class="avatar">
-    <img src="{{ asset('img/avatars/9.png') }}" alt class="h-auto rounded-circle" />
+                                <img src="{{ asset('img/avatars/9.png') }}" alt class="h-auto rounded-circle" />
                               </div>
                             </div>
                             <div class="flex-grow-1">
@@ -568,7 +565,7 @@
                           <div class="d-flex">
                             <div class="flex-shrink-0 me-3">
                               <div class="avatar">
-    <img src="{{ asset('img/avatars/5.png') }}" alt class="h-auto rounded-circle" />
+                                <img src="{{ asset('img/avatars/5.png') }}" alt class="h-auto rounded-circle" />
                               </div>
                             </div>
                             <div class="flex-grow-1">
@@ -590,7 +587,7 @@
                           <div class="d-flex">
                             <div class="flex-shrink-0 me-3">
                               <div class="avatar">
-    <img src="{{ asset('img/avatars/6.png') }}" alt class="h-auto rounded-circle" />
+                                <img src="{{ asset('img/avatars/6.png') }}" alt class="h-auto rounded-circle" />
                               </div>
                             </div>
                             <div class="flex-grow-1">
@@ -649,7 +646,7 @@
                 <li class="nav-item navbar-dropdown dropdown-user dropdown">
                   <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
                     <div class="avatar avatar-online">
-    <img src="{{ asset('img/avatars/1.png') }}" alt class="h-auto rounded-circle" />
+                      <img src="{{ asset('img/avatars/1.png') }}" alt class="h-auto rounded-circle" />
                     </div>
                   </a>
                   <ul class="dropdown-menu dropdown-menu-end">
@@ -658,7 +655,7 @@
                         <div class="d-flex">
                           <div class="flex-shrink-0 me-3">
                             <div class="avatar avatar-online">
-    <img src="{{ asset('img/avatars/1.png') }}" alt class="h-auto rounded-circle" />
+                              <img src="{{ asset('img/avatars/1.png') }}" alt class="h-auto rounded-circle" />
                             </div>
                           </div>
                           <div class="flex-grow-1">
@@ -742,214 +739,607 @@
           </nav>
 
           <!-- / Navbar -->
-    <!-- Content wrapper -->
+
+          <!-- Content wrapper -->
           <div class="content-wrapper">
             <!-- Content -->
-
             <div class="container-xxl flex-grow-1 container-p-y">
-              <h4 class="fw-bold py-3 mb-4">Packs</h4>
+              <h4 class="fw-bold py-3 mb-4">Personnels</h4>
 
-              <!-- Filter Tabs -->
+              <!-- Boutons et Filtres -->
               <div class="row mb-4">
                 <div class="col-md-12">
-                  <ul class="nav nav-pills flex-column flex-md-row mb-3">
-                    <li class="nav-item">
-                      <a class="nav-link {{ currentFilter == 'all' ? 'active' : '' }}" href="{{ path('app_packs', {'filter': 'all'}) }}">
-                        <i class="ti ti-grid-dots me-1 ti-xs"></i> All
+                  <div class="d-flex justify-content-between align-items-center">
+                    <button id="toggleFiltersBtn" class="btn btn-outline-primary">
+                      <i class="ti ti-filter me-1"></i> Filtres & Tri
+                    </button>
+                    
+                    <div class="d-flex gap-2">
+                      <a href="{{ path('app_perso_new') }}" class="btn btn-primary">
+                        <i class="ti ti-plus me-1"></i> Ajouter un personnel
                       </a>
-                    </li>
-                    <li class="nav-item">
-                      <a class="nav-link {{ currentFilter == 'trending' ? 'active' : '' }}" href="{{ path('app_packs', {'filter': 'trending'}) }}">
-                        <i class="ti ti-trending-up me-1 ti-xs"></i> Trending
+                      <a href="{{ path('app_personnel_export_pdf') }}" class="btn btn-danger">
+                        <i class="ti ti-file-text me-1"></i> Exporter PDF
                       </a>
-                    </li>
-                    <li class="nav-item">
-                      <a class="nav-link {{ currentFilter == 'new' ? 'active' : '' }}" href="{{ path('app_packs', {'filter': 'new'}) }}">
-                        <i class="ti ti-star me-1 ti-xs"></i> New
+                      <a href="{{ path('app_perso_stats') }}" class="btn btn-outline-primary">
+                        <i class="ti ti-chart-pie me-1"></i> Statistiques
                       </a>
-                    </li>
-                  </ul>
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              <!-- Packs Grid -->
-              <div class="row g-4">
-                {% for pack in packs %}
-                <div class="col-xl-4 col-lg-6 col-md-6">
-                  <div class="card pack-card h-100">
-                    <div class="card-header border-bottom">
-                      {% if pack in trendingPacks %}
-                        <span class="badge bg-label-warning">
-                          <i class="ti ti-trending-up me-1"></i> TRENDING
-                        </span>
-                      {% else %}
-                        <span class="badge bg-label-secondary">
-                          <i class="ti ti-package me-1"></i> {{ pack.categorie|upper }}
-                        </span>
-                      {% endif %}
-                    </div>
+              <!-- Filtres et Tri -->
+              <div id="filtersContainer" class="row mb-4" style="display: none;">
+                <div class="col-md-12">
+                  <div class="card">
                     <div class="card-body">
-                      <div class="pack-image-wrapper mb-3">
-                        <img src="{{ asset('uploads/packs/' ~ pack.photo|default('default.jpg')) }}" 
-                             class="pack-image" 
-                             alt="{{ pack.nom }}">
-                      </div>
-                      <div class="pack-content">
-                        <h5 class="pack-title mb-1">{{ pack.nom }}</h5>
-                        <div class="badge bg-label-primary mb-3">{{ pack.categorie|upper }}</div>
-                        <p class="pack-description mb-3">{{ pack.description|default('No description available.')|slice(0, 100) }}...</p>
-                        <div class="pack-details">
-                          <div class="d-flex justify-content-between align-items-center mb-2">
-                            <h6 class="mb-0">Price</h6>
-                            <h6 class="mb-0 text-primary">{{ pack.prix|number_format(2, '.', ',') }} TND</h6>
-                          </div>
-                          <div class="d-flex justify-content-between align-items-center mb-2">
-                            <h6 class="mb-0">Capacity</h6>
-                            <span>{{ pack.capacite }} persons</span>
-                          </div>
-                          <div class="d-flex justify-content-between align-items-center">
-                            <h6 class="mb-0">Duration</h6>
-                            <span>{{ pack.duree }} hours</span>
+                      <div class="row g-3">
+                        <!-- Filtre par Statut -->
+                        <div class="col-md-3">
+                          <label for="statutFilter" class="form-label">Statut</label>
+                          <select id="statutFilter" class="form-select">
+                            <option value="">Tous les statuts</option>
+                            <option value="Disponible">Disponible</option>
+                            <option value="Non_disponible">Non_disponible</option>
+                          </select>
+                        </div>
+                        
+                        <!-- Filtre par Service -->
+                        <div class="col-md-3">
+                          <label for="serviceFilter" class="form-label">Service</label>
+                          <select id="serviceFilter" class="form-select">
+                            <option value="">Tous les services</option>
+                            <option value="Sécurité">Sécurité</option>
+                            <option value="Décorateur">Décorateur</option>
+                            <option value="Serveur">Serveur</option>
+                            <option value="Organisateur">Organisateur</option>
+                            <option value="Fleuriste">Fleuriste</option>
+                            <option value="Vidéaste">Vidéaste</option>
+                            <option value="Chef">Chef</option>
+                            <option value="Animateur">Animateur</option>
+                          </select>
+                        </div>
+                        
+                        <!-- Tri par Attribut -->
+                        <div class="col-md-3">
+                          <label for="sortBy" class="form-label">Trier par</label>
+                          <select id="sortBy" class="form-select">
+                            <option value="">Sélectionner</option>
+                            <option value="nomP">Nom</option>
+                            <option value="prenomP">Prénom</option>
+                            <option value="serviceP">Service</option>
+                            <option value="tarifP">Tarif</option>
+                          </select>
+                        </div>
+                        
+                        <!-- Ordre de Tri -->
+                        <div class="col-md-2">
+                          <label for="sortOrder" class="form-label">Ordre</label>
+                          <select id="sortOrder" class="form-select">
+                            <option value="ASC">Croissant</option>
+                            <option value="DESC">Décroissant</option>
+                          </select>
+                        </div>
+                        
+                        <!-- Boutons -->
+                        <div class="col-md-12 mt-3">
+                          <div class="d-flex justify-content-end gap-2">
+                            <button id="applyFilters" class="btn btn-purple">
+                              <i class="ti ti-check me-1"></i> Appliquer
+                            </button>
+                            <button id="resetFilters" class="btn btn-outline-secondary">
+                              <i class="ti ti-refresh me-1"></i> Réinitialiser
+                            </button>
                           </div>
                         </div>
                       </div>
-                    </div>
-                    <div class="card-footer">
-                      <a href="{{ path('app_pack_details', {id: pack.id}) }}" class="btn btn-primary w-100 waves-effect waves-light">
-                        <i class="ti ti-eye me-1"></i> View Details
-                      </a>
                     </div>
                   </div>
                 </div>
-                {% endfor %}
               </div>
 
-              <!-- Featured Pack Section -->
-              <div class="featured-pack-section mt-5">
-                <div class="card">
-                  <div class="card-header">
-                    <h4 class="mb-0"><i class="ti ti-award text-warning me-2"></i>Pack en Vedette</h4>
+              <!-- Search Bar -->
+              <div class="search-container mb-4">
+                <div class="input-group input-group-merge">
+                  <span class="input-group-text"><i class="ti ti-search"></i></span>
+                  <input type="text" 
+                         id="searchInput" 
+                         class="form-control" 
+                         placeholder="Rechercher un personnel..." 
+                         aria-label="Recherche">
+                  <button class="btn btn-primary" type="button" id="searchButton">Rechercher</button>
+                </div>
+                <div id="searchSpinner" class="text-center my-3" style="display:none;">
+                  <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Chargement...</span>
                   </div>
-                  <div class="card-body">
-                    <div class="row">
-                      <!-- Featured Pack Image and Info -->
-                      <div class="col-md-4">
-                        <div class="featured-pack-image">
-                          <img src="{{ asset('uploads/packs/' ~ trendingPacks[0].photo|default('default.jpg')) }}" 
-                               class="img-fluid rounded" 
-                               alt="{{ trendingPacks[0].nom }}">
-                          <div class="featured-badge">
-                            <i class="ti ti-crown"></i>
-                          </div>
-                        </div>
-                        <div class="featured-pack-info mt-3">
-                          <h3 class="mb-2">{{ trendingPacks[0].nom }}</h3>
-                          <div class="d-flex align-items-center mb-2">
-                            <span class="badge bg-label-primary me-2">{{ trendingPacks[0].categorie|upper }}</span>
-                            <span class="text-muted"><i class="ti ti-users me-1"></i>{{ trendingPacks[0].capacite }} personnes</span>
-                          </div>
-                          <p class="text-muted">{{ trendingPacks[0].description|slice(0, 150) }}...</p>
-                          <h4 class="text-primary mb-0">{{ trendingPacks[0].prix|number_format(2, '.', ',') }} TND</h4>
-                        </div>
-                      </div>
+                </div>
+                <div id="searchResults" class="mt-3"></div>
+              </div>
 
-                      <!-- Statistics and Tags -->
-                      <div class="col-md-8">
-                        <div class="featured-pack-stats">
-                          <h5 class="mb-4">Pourquoi ce pack est tendance</h5>
+              <!-- Personnel Cards Grid -->
+              <div id="defaultContent">
+                <div class="row g-4">
+                  {% for personnel in personnels %}
+                  <div class="col-xl-4 col-lg-6 col-md-6 animate__animated animate__fadeIn">
+                    <div class="card personnel-card h-100">
+                      <!-- Card Header with Service Badge -->
+                      <div class="card-header border-bottom position-relative">
+                        <span class="badge bg-label-{{ random(['primary', 'secondary', 'success', 'danger', 'warning', 'info']) }}">
+                          <i class="ti ti-briefcase me-1"></i> {{ personnel.serviceP|upper }}
+                        </span>
+                        {% if personnel.tarifP > 100 %}
+                        <span class="badge bg-label-warning position-absolute top-0 end-0 mt-3 me-3">
+                          <i class="ti ti-crown me-1"></i> PREMIUM
+                        </span>
+                        {% endif %}
+                      </div>
+                      
+                      <!-- Card Body -->
+                      <div class="card-body">
+                        <!-- Image au format rectangle -->
+                        <div class="pack-image-wrapper mb-3">
+                          <img src="{{ asset('uploads/personnel/' ~ personnel.imageUrl|default('default-personnel.jpg')) }}" 
+                               class="pack-image" 
+                               alt="{{ personnel.nomP }} {{ personnel.prenomP }}">
+                        </div>
+                        
+                        <!-- Name and Title -->
+                        <div class="personnel-content text-center">
+                          <div class="badge bg-label-primary mb-3">{{ personnel.nomP|upper }} {{ personnel.prenomP|upper }}</div>
                           
-                          <!-- Statistics Bars -->
-                          <div class="statistics-wrapper mb-4">
-                            <div class="statistic-item mb-3">
-                              <div class="d-flex justify-content-between mb-1">
-                                <span>Popularité</span>
-                                <span class="text-primary">43%</span>
-                              </div>
-                              <div class="progress" style="height: 8px">
-                                <div class="progress-bar" role="progressbar" style="width: 43%" aria-valuenow="43" aria-valuemin="0" aria-valuemax="100"></div>
-                              </div>
+                          <!-- Personnel Details -->
+                          <div class="personnel-details">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                              <h6 class="mb-0">Service</h6>
+                              <h6 class="mb-0 text-primary">{{ personnel.serviceP }}</h6>
                             </div>
-
-                            <div class="statistic-item mb-3">
-                              <div class="d-flex justify-content-between mb-1">
-                                <span>Évaluation des utilisateurs</span>
-                                <span class="text-primary">55%</span>
-                              </div>
-                              <div class="progress" style="height: 8px">
-                                <div class="progress-bar" role="progressbar" style="width: 55%" aria-valuenow="55" aria-valuemin="0" aria-valuemax="100"></div>
-                              </div>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                              <h6 class="mb-0">Disponibilité</h6>
+                              <h6 class="mb-0 text-primary">{{ personnel.statutP }}</h6>
                             </div>
-
-                            <div class="statistic-item">
-                              <div class="d-flex justify-content-between mb-1">
-                                <span>Réservations récentes</span>
-                                <span class="text-primary">43%</span>
-                              </div>
-                              <div class="progress" style="height: 8px">
-                                <div class="progress-bar" role="progressbar" style="width: 43%" aria-valuenow="43" aria-valuemin="0" aria-valuemax="100"></div>
-                              </div>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                              <h6 class="mb-0">Tarif journalier</h6>
+                              <h6 class="mb-0 text-primary">{{ personnel.tarifP|number_format(2, '.', ',') }} TND</h6>
                             </div>
                           </div>
-
-                          <!-- Tags Section -->
-                          <div class="tags-section">
-                            <h5 class="mb-3">Tags associés</h5>
-                            <div class="tags-wrapper">
-                              <span class="badge rounded-pill bg-label-primary me-1 mb-1">{{ trendingPacks[0].categorie }}</span>
-                              <span class="badge rounded-pill bg-label-secondary me-1 mb-1">Premium</span>
-                              <span class="badge rounded-pill bg-label-success me-1 mb-1">Grand Groupe</span>
-                              <span class="badge rounded-pill bg-label-info me-1 mb-1">Célébration</span>
-                              <span class="badge rounded-pill bg-label-warning me-1 mb-1">Romantique</span>
-                            </div>
-                          </div>
-
-                          <!-- Action Buttons -->
-                          <div class="action-buttons mt-4">
-                            <button type="button" class="btn btn-primary me-2">
-                              <i class="ti ti-eye me-1"></i> Voir les détails
-                            </button>
-                            <button type="button" class="btn btn-outline-primary">
-                              <i class="ti ti-calendar me-1"></i> Réserver maintenant
-                            </button>
-                          </div>
+                          
+                          <!-- Description (truncated) -->
+                          <p class="personnel-description mt-3 mb-3">
+                            {{ personnel.descriptionP|default('Aucune description disponible')|slice(0, 100) }}...
+                          </p>
+                        </div>
+                      </div>
+                      
+                      <!-- Card Footer with Action Buttons -->
+                      <div class="card-footer">
+                        <div class="d-flex gap-2">
+                          <a href="{{ path('app_perso_show', {'idP': personnel.idP}) }}" 
+                             class="btn btn-outline-primary flex-grow-1 waves-effect waves-light">
+                            <i class="ti ti-eye me-1"></i> Détails
+                          </a>
+                          <a href="{{ path('app_perso_edit', {'idP': personnel.idP}) }}" 
+                             class="btn btn-outline-secondary flex-grow-1 waves-effect waves-light">
+                            <i class="ti ti-edit me-1"></i> Modifier
+                          </a>
                         </div>
                       </div>
                     </div>
                   </div>
+                  {% else %}
+                  <div class="col-12">
+                    <div class="card">
+                      <div class="card-body text-center py-5">
+                        <div class="avatar avatar-xl bg-label-secondary rounded-circle mb-3 mx-auto">
+                          <i class="ti ti-users-off ti-lg"></i>
+                        </div>
+                        <h5 class="card-title mb-2">Aucun personnel enregistré</h5>
+                        <p class="text-muted mb-4">Commencez par ajouter un nouveau membre à votre équipe</p>
+                        <div class="d-flex justify-content-center gap-2">
+                          <a href="{{ path('app_perso_new') }}" class="btn btn-primary">
+                            <i class="ti ti-plus me-1"></i> Ajouter un personnel
+                          </a>
+                          <a href="{{ path('app_personnel_export_pdf') }}" class="btn btn-danger">
+                            <i class="ti ti-file-text me-1"></i> Exporter PDF
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  {% endfor %}
                 </div>
               </div>
+
+              <!-- Pagination Innovante -->
+              {% if personnels is defined and personnels is not empty %}
+              <div class="row mt-5">
+                <div class="col-12">
+                  <div class="pagination-wrapper">
+                    {{ knp_pagination_render(personnels, 'pagination/custom_pagination.html.twig') }}
+                    
+                    <div class="pagination-info text-center mt-3">
+                      <span class="badge bg-label-primary">
+                        <i class="ti ti-filter me-1"></i>
+                        Affichage <strong>{{ personnels.getCurrentPageNumber * personnels.getItemNumberPerPage - personnels.getItemNumberPerPage + 1 }}</strong>
+                        à <strong>{{ min(personnels.getCurrentPageNumber * personnels.getItemNumberPerPage, personnels.getTotalItemCount) }}</strong>
+                        sur <strong>{{ personnels.getTotalItemCount }}</strong> personnels
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {% endif %}
             </div>
-            <!-- / Content -->
           </div>
           <!-- / Content wrapper -->
         </div>
-        <!-- / Layout container -->
       </div>
 
       <!-- Overlay -->
       <div class="layout-overlay layout-menu-toggle"></div>
-
-      <!-- Drag Target Area To SlideIn Menu On Small Screens -->
       <div class="drag-target"></div>
     </div>
-    <!-- / Layout wrapper -->
 
-<!-- Core JS -->
-<script src="{{ asset('/vendor/libs/jquery/jquery.js') }}"></script>
-<script src="{{ asset('/vendor/libs/popper/popper.js') }}"></script>
-<script src="{{ asset('/vendor/js/bootstrap.js') }}"></script>
-<script src="{{ asset('/vendor/libs/perfect-scrollbar/perfect-scrollbar.js') }}"></script>
-<script src="{{ asset('/vendor/libs/node-waves/node-waves.js') }}"></script>
-<script src="{{ asset('/vendor/libs/hammer/hammer.js') }}"></script>
-<script src="{{ asset('/vendor/libs/i18n/i18n.js') }}"></script>
-<script src="{{ asset('/vendor/libs/typeahead-js/typeahead.js') }}"></script>
-<script src="{{ asset('/vendor/js/menu.js') }}"></script>
-<script src="{{ asset('/vendor/libs/apex-charts/apexcharts.js') }}"></script>
-<script src="{{ asset('/vendor/libs/swiper/swiper.js') }}"></script>
-<script src="{{ asset('/vendor/libs/datatables-bs5/datatables.bootstrap5.js') }}"></script>
+    <!-- Core JS -->
+    <script src="{{ asset('/vendor/libs/jquery/jquery.js') }}"></script>
+    <script src="{{ asset('/vendor/libs/popper/popper.js') }}"></script>
+    <script src="{{ asset('/vendor/js/bootstrap.js') }}"></script>
+    <script src="{{ asset('/vendor/libs/perfect-scrollbar/perfect-scrollbar.js') }}"></script>
+    <script src="{{ asset('/vendor/libs/node-waves/node-waves.js') }}"></script>
+    <script src="{{ asset('/vendor/libs/hammer/hammer.js') }}"></script>
+    <script src="{{ asset('/vendor/libs/i18n/i18n.js') }}"></script>
+    <script src="{{ asset('/vendor/libs/typeahead-js/typeahead.js') }}"></script>
+    <script src="{{ asset('/vendor/js/menu.js') }}"></script>
+    <script src="{{ asset('/vendor/libs/apex-charts/apexcharts.js') }}"></script>
+    <script src="{{ asset('/vendor/libs/swiper/swiper.js') }}"></script>
+    <script src="{{ asset('/vendor/libs/datatables-bs5/datatables.bootstrap5.js') }}"></script>
 
-<!-- Main JS -->
-<script src="{{ asset('/js/main.js') }}"></script>
-<script src="{{ asset('/js/dashboards-analytics.js') }}"></script>
+    <!-- Main JS -->
+    <script src="{{ asset('/js/main.js') }}"></script>
+    <script src="{{ asset('/js/dashboards-analytics.js') }}"></script>
+
+    <style>
+      /* ... Vos styles existants ... */
+
+      /* Pagination Innovante */
+      .pagination-wrapper {
+        position: relative;
+        padding: 1rem 0;
+      }
+
+      .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0;
+        margin: 0;
+      }
+
+      .page-item {
+        margin: 0;
+        transition: all 0.3s ease;
+      }
+
+      .page-item:not(.active):not(.disabled):hover {
+        transform: translateY(-3px);
+      }
+
+      .page-link {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border-radius: 50% !important;
+        border: none;
+        background: rgba(105, 108, 255, 0.1);
+        color: #696cff;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+      }
+
+      .page-link:hover {
+        background: rgba(105, 108, 255, 0.2);
+        color: #696cff;
+      }
+
+      .page-item.active .page-link {
+        background: linear-gradient(135deg, #696cff 0%, #9b9dff 100%);
+        color: white;
+        box-shadow: 0 4px 15px rgba(105, 108, 255, 0.4);
+      }
+
+      .page-item.disabled .page-link {
+        opacity: 0.5;
+        background: #f5f5f5;
+      }
+
+      .pagination-info {
+        font-size: 0.9rem;
+        color: #6c757d;
+      }
+
+      /* Animation des cartes */
+      .animate__animated {
+        animation-duration: 0.5s;
+      }
+
+      /* Loader pour pagination AJAX */
+      .pagination-loader {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255, 255, 255, 0.8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10;
+        border-radius: 0.5rem;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+      }
+
+      .pagination-loader.active {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .pagination-loader .loader {
+        width: 40px;
+        height: 40px;
+        border: 3px solid rgba(105, 108, 255, 0.2);
+        border-top-color: #696cff;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+      }
+
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+
+      /* Effet de vague au survol */
+      .page-item .wave-effect {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle, rgba(105, 108, 255, 0.4) 0%, transparent 70%);
+        border-radius: 50%;
+        transform: scale(0);
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .page-item:hover .wave-effect {
+        animation: wave 0.6s ease-out;
+      }
+
+      @keyframes wave {
+        0% { transform: scale(0); opacity: 1; }
+        100% { transform: scale(2); opacity: 0; }
+      }
+    </style>
+
+    {% block javascripts %}
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        // Initialisation des variables
+        const toggleFiltersBtn = document.getElementById('toggleFiltersBtn');
+        const filtersContainer = document.getElementById('filtersContainer');
+        const searchInput = document.getElementById('searchInput');
+        const searchButton = document.getElementById('searchButton');
+        const searchResults = document.getElementById('searchResults');
+        const defaultContent = document.getElementById('defaultContent');
+        const searchSpinner = document.getElementById('searchSpinner');
+        let searchTimeout;
+
+        // Fonction pour basculer l'affichage des filtres
+        function toggleFilters() {
+          if (filtersContainer.style.display === 'none') {
+            filtersContainer.style.display = 'block';
+            toggleFiltersBtn.innerHTML = '<i class="ti ti-filter-off me-1"></i> Masquer les filtres';
+            toggleFiltersBtn.classList.remove('btn-outline-primary');
+            toggleFiltersBtn.classList.add('btn-primary');
+          } else {
+            filtersContainer.style.display = 'none';
+            toggleFiltersBtn.innerHTML = '<i class="ti ti-filter me-1"></i> Filtres & Tri';
+            toggleFiltersBtn.classList.remove('btn-primary');
+            toggleFiltersBtn.classList.add('btn-outline-primary');
+          }
+        }
+
+        // Fonction pour appliquer les filtres et le tri
+        function applyFiltersAndSort() {
+          const statut = document.getElementById('statutFilter').value;
+          const service = document.getElementById('serviceFilter').value;
+          const sortBy = document.getElementById('sortBy').value;
+          const sortOrder = document.getElementById('sortOrder').value;
+          
+          // Si une recherche est en cours, ne rien faire
+          if (searchInput.value.trim().length >= 2) return;
+          
+          // Masquer le contenu par défaut pendant le chargement
+          defaultContent.style.display = 'none';
+          searchSpinner.style.display = 'block';
+          
+          // Construire l'URL avec les paramètres
+          let url = '{{ path("app_perso_index") }}?';
+          if (statut) url += `statut=${encodeURIComponent(statut)}&`;
+          if (service) url += `service=${encodeURIComponent(service)}&`;
+          if (sortBy) url += `sort=${encodeURIComponent(sortBy)}&order=${encodeURIComponent(sortOrder)}`;
+          
+          // Enlever le dernier & si nécessaire
+          if (url.endsWith('&')) url = url.slice(0, -1);
+          
+          fetch(url)
+            .then(response => response.text())
+            .then(html => {
+              // Extraire seulement la partie des cartes du HTML retourné
+              const parser = new DOMParser();
+              const doc = parser.parseFromString(html, 'text/html');
+              const newContent = doc.getElementById('defaultContent');
+              
+              if (newContent) {
+                defaultContent.innerHTML = newContent.innerHTML;
+              }
+            })
+            .catch(error => {
+              console.error('Error:', error);
+            })
+            .finally(() => {
+              searchSpinner.style.display = 'none';
+              defaultContent.style.display = 'block';
+            });
+        }
+
+        // Fonction pour réinitialiser les filtres
+        function resetFilters() {
+          document.getElementById('statutFilter').value = '';
+          document.getElementById('serviceFilter').value = '';
+          document.getElementById('sortBy').value = '';
+          document.getElementById('sortOrder').value = 'ASC';
+          
+          // Recharger le contenu initial
+          fetch('{{ path("app_perso_index") }}')
+            .then(response => response.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const doc = parser.parseFromString(html, 'text/html');
+              const newContent = doc.getElementById('defaultContent');
+              
+              if (newContent) {
+                defaultContent.innerHTML = newContent.innerHTML;
+              }
+            });
+        }
+
+        // Fonction de recherche
+        const performSearch = () => {
+          const term = searchInput.value.trim();
+          
+          if (term.length >= 2) {
+            searchSpinner.style.display = 'block';
+            searchResults.innerHTML = '';
+            defaultContent.style.display = 'none';
+            
+            fetch(`{{ path('app_personnel_search') }}?q=${encodeURIComponent(term)}`)
+              .then(response => {
+                if (!response.ok) {
+                  throw new Error(`Erreur HTTP: ${response.status}`);
+                }
+                return response.text();
+              })
+              .then(html => {
+                searchResults.innerHTML = html;
+              })
+              .catch(error => {
+                searchResults.innerHTML = `
+                  <div class="alert alert-danger alert-dismissible fade show">
+                    <i class="ti ti-alert-octagon me-2"></i>
+                    Erreur lors de la recherche: ${error.message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                  </div>
+                `;
+                console.error('Search error:', error);
+              })
+              .finally(() => {
+                searchSpinner.style.display = 'none';
+              });
+          } else if (term.length === 0) {
+            resetSearch();
+          }
+        };
+
+        const resetSearch = () => {
+          searchResults.innerHTML = '';
+          defaultContent.style.display = 'block';
+          searchSpinner.style.display = 'none';
+        };
+
+        // Écouteurs d'événements
+        toggleFiltersBtn.addEventListener('click', toggleFilters);
+        document.getElementById('applyFilters').addEventListener('click', applyFiltersAndSort);
+        document.getElementById('resetFilters').addEventListener('click', resetFilters);
+
+        searchInput.addEventListener('input', () => {
+          clearTimeout(searchTimeout);
+          searchTimeout = setTimeout(performSearch, 350);
+        });
+
+        searchButton.addEventListener('click', performSearch);
+
+        searchInput.addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') performSearch();
+        });
+
+        searchInput.addEventListener('change', () => {
+          if (searchInput.value.trim() === '') resetSearch();
+        });
+
+        // Permettre l'application des filtres avec la touche Entrée
+        document.querySelectorAll('.form-select').forEach(select => {
+          select.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') applyFiltersAndSort();
+          });
+        });
+
+        // Gestion AJAX de la pagination
+        document.addEventListener('click', function(e) {
+          const pageLink = e.target.closest('.page-link:not(.disabled)');
+          if (pageLink && !e.target.closest('#filtersContainer')) {
+            e.preventDefault();
+            
+            const loader = document.createElement('div');
+            loader.className = 'pagination-loader active';
+            loader.innerHTML = '<div class="loader"></div>';
+            document.getElementById('defaultContent').prepend(loader);
+            
+            fetch(pageLink.href)
+              .then(response => response.text())
+              .then(html => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const newContent = doc.getElementById('defaultContent');
+                const newPagination = doc.querySelector('.pagination-wrapper');
+                
+                if (newContent) {
+                  document.getElementById('defaultContent').innerHTML = newContent.innerHTML;
+                }
+                
+                if (newPagination) {
+                  document.querySelector('.pagination-wrapper').outerHTML = newPagination.outerHTML;
+                }
+                
+                // Animation de scroll
+                window.scrollTo({
+                  top: document.getElementById('defaultContent').offsetTop - 100,
+                  behavior: 'smooth'
+                });
+              })
+              .catch(error => {
+                console.error('Error:', error);
+              })
+              .finally(() => {
+                loader.remove();
+              });
+          }
+        });
+
+        // Effet de vague sur les boutons de pagination
+        document.querySelectorAll('.page-link').forEach(link => {
+          const wave = document.createElement('span');
+          wave.className = 'wave-effect';
+          link.appendChild(wave);
+        });
+      });
+    </script>
+    {% endblock %}
   </body>
 </html>
