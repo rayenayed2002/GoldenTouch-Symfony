@@ -1,398 +1,692 @@
-<!DOCTYPE html>
-<html
-  lang="fr"
-  class="light-style layout-navbar-fixed layout-menu-fixed"
-  dir="ltr"
-  data-theme="theme-default"
-  data-assets-path="{{ asset('') }}"
-  data-template="vertical-menu-template">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+<!doctype html>
+<html class="no-js" lang="zxx">
 
-    <title>Réservations par Utilisateur</title>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>GoldenTouch - Réservations par Utilisateur</title>
+    <meta name="author" content="GoldenTouch">
+    <meta name="description" content="GoldenTouch - Gestion des réservations">
+    <meta name="keywords" content="GoldenTouch, réservations, événements">
+    <meta name="robots" content="INDEX,FOLLOW">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <meta name="description" content="" />
-
-    <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="{{ asset('img/favicon/favicon.ico') }}" />
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="57x57" href="{{ asset('Front/img/favicons/apple-icon-57x57.png') }}">
+    <link rel="apple-touch-icon" sizes="60x60" href="{{ asset('Front/img/favicons/apple-icon-60x60.png') }}">
+    <link rel="apple-touch-icon" sizes="72x72" href="{{ asset('Front/img/favicons/apple-icon-72x72.png') }}">
+    <link rel="apple-touch-icon" sizes="76x76" href="{{ asset('Front/img/favicons/apple-icon-76x76.png') }}">
+    <link rel="apple-touch-icon" sizes="114x114" href="{{ asset('Front/img/favicons/apple-icon-114x114.png') }}">
+    <link rel="apple-touch-icon" sizes="120x120" href="{{ asset('Front/img/favicons/apple-icon-120x120.png') }}">
+    <link rel="apple-touch-icon" sizes="144x144" href="{{ asset('Front/img/favicons/apple-icon-144x144.png') }}">
+    <link rel="apple-touch-icon" sizes="152x152" href="{{ asset('Front/img/favicons/apple-icon-152x152.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('Front/img/favicons/apple-icon-180x180.png') }}">
+    <link rel="icon" type="image/png" sizes="192x192" href="{{ asset('Front/img/favicons/android-icon-192x192.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('Front/img/favicons/favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="96x96" href="{{ asset('Front/img/favicons/favicon-96x96.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('Front/img/favicons/favicon-16x16.png') }}">
+    <link rel="manifest" href="{{ asset('Front/img/favicons/manifest.json') }}">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="{{ asset('Front/img/favicons/ms-icon-144x144.png') }}">
+    <meta name="theme-color" content="#ffffff">
 
     <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Radio+Canada:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    <!-- Icons -->
-    <link rel="stylesheet" href="{{ asset('vendor/fonts/fontawesome.css') }}" />
-    <link rel="stylesheet" href="{{ asset('vendor/fonts/tabler-icons.css') }}" />
-    <link rel="stylesheet" href="{{ asset('vendor/fonts/flag-icons.css') }}" />
+    <!-- CSS -->
+    <link rel="stylesheet" href="{{ asset('Front/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('Front/css/fontawesome.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('Front/css/magnific-popup.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('Front/css/slick.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('Front/css/jquery.datetimepicker.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('Front/css/style.css') }}">
 
-    <!-- Core CSS -->
-    <link rel="stylesheet" href="{{ asset('vendor/css/rtl/core.css') }}" class="template-customizer-core-css" />
-    <link rel="stylesheet" href="{{ asset('vendor/css/rtl/theme-default.css') }}" class="template-customizer-theme-css" />
-    <link rel="stylesheet" href="{{ asset('css/demo.css') }}" />
-
-    <!-- Vendors CSS -->
-    <link rel="stylesheet" href="{{ asset('assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css') }}" />
-    <link rel="stylesheet" href="{{ asset('assets/vendor/libs/node-waves/node-waves.css') }}" />
-    <link rel="stylesheet" href="{{ asset('/vendor/libs/typeahead-js/typeahead.css') }}" />
-    <link rel="stylesheet" href="{{ asset('vendor/libs/apex-charts/apex-charts.css') }}" />
-    <link rel="stylesheet" href="{{ asset('vendor/libs/swiper/swiper.css') }}" />
-    <link rel="stylesheet" href="{{ asset('vendor/libs/datatables-bs5/datatables.bootstrap5.css') }}" />
-    <link rel="stylesheet" href="{{ asset('vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.css') }}" />
-    <link rel="stylesheet" href="{{ asset('vendor/libs/datatables-checkboxes-jquery/datatables.checkboxes.css') }}" />
-
-    <!-- Helpers -->
-    <script src="{{ asset('vendor/js/helpers.js') }}"></script>
-    <script src="{{ asset('vendor/js/template-customizer.js') }}"></script>
-    <script src="{{ asset('js/config.js') }}"></script>
-
+    <!-- Custom CSS for this page -->
     <style>
-      .event-badge {
-        transition: all 0.3s ease;
-      }
-      .event-badge:hover {
-        transform: scale(1.05);
-      }
-      .empty-state {
-        padding: 3rem;
-        text-align: center;
-      }
-      .empty-state-icon {
-        font-size: 3rem;
-        margin-bottom: 1rem;
-        color: #a1a1aa;
-      }
+        .event-badge {
+            transition: all 0.3s ease;
+        }
+        .event-badge:hover {
+            transform: scale(1.05);
+        }
+        .empty-state {
+            padding: 3rem;
+            text-align: center;
+        }
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #a1a1aa;
+        }
+        .card-header {
+            background-color: #fff;
+            border-bottom: 1px solid rgba(0,0,0,.125);
+        }
+        .alert {
+            border-radius: 0.5rem;
+        }
+        .table-responsive {
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+        .table {
+            margin-bottom: 0;
+        }
+        .table th {
+            background-color: #f8f9fa;
+        }
+        .badge {
+            font-weight: 500;
+        }
+        .bg-label-primary {
+            background-color: rgba(115,103,240,.16);
+            color: #7367F0;
+        }
+        .bg-label-success {
+            background-color: rgba(40,199,111,.16);
+            color: #28C76F;
+        }
+        .bg-label-secondary {
+            background-color: rgba(130,134,139,.16);
+            color: #82868B;
+        }
+        .bg-label-warning {
+            background-color: rgba(255,159,67,.16);
+            color: #FF9F43;
+        }
+
+
+    
+/* Nouveau style innovant pour le ComboBox */
+.goldentouch-combo {
+    position: relative;
+}
+
+.combo-wrapper {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+.goldentouch-select {
+    height: 56px;
+    padding: 12px 20px;
+    font-size: 1.05rem;
+    border: 2px solid rgba(115, 103, 240, 0.3);
+    border-radius: 12px !important;
+    background-color: white;
+    appearance: none;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    z-index: 1;
+    flex: 1;
+}
+
+.goldentouch-select:focus {
+    border-color: #7367F0;
+    box-shadow: 0 0 0 0.25rem rgba(115, 103, 240, 0.25);
+    outline: none;
+}
+
+.combo-decoration {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.combo-arrow {
+    width: 48px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.goldentouch-select:hover + .combo-decoration .combo-arrow {
+    background-color: #5d52d1 !important;
+}
+
+/* Animation pour le survol */
+@keyframes pulse-gold {
+    0% { box-shadow: 0 0 0 0 rgba(115, 103, 240, 0.4); }
+    70% { box-shadow: 0 0 0 10px rgba(115, 103, 240, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(115, 103, 240, 0); }
+}
+
+.goldentouch-select:focus {
+    animation: pulse-gold 1.5s infinite;
+}
+
+/* Effet de flottement pour le label */
+.form-label {
+    position: relative;
+    display: inline-block;
+}
+
+.form-label:after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 3px;
+    background: linear-gradient(90deg, #7367F0, #5d52d1);
+    border-radius: 3px;
+}
+
+/* Style pour le bouton refresh */
+#refresh-users {
+    transition: all 0.3s ease;
+    border-color: #ddd;
+}
+
+#refresh-users:hover {
+    background-color: #7367F0;
+    color: white;
+    animation: spin 0.7s ease;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+
+    
     </style>
-  </head>
+</head>
 
-  <body>
-    <!-- Layout wrapper -->
-    <div class="layout-wrapper layout-content-navbar">
-      <div class="layout-container">
-        <!-- Menu -->
-        <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
-          <div class="app-brand demo">
-            <a href="index.html" class="app-brand-link">
-              <span class="app-brand-logo demo">
-                <svg width="32" height="22" viewBox="0 0 32 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path
-                    fill-rule="evenodd"
-                    clip-rule="evenodd"
-                    d="M0.00172773 0V6.85398C0.00172773 6.85398 -0.133178 9.01207 1.98092 10.8388L13.6912 21.9964L19.7809 21.9181L18.8042 9.88248L16.4951 7.17289L9.23799 0H0.00172773Z"
-                    fill="#7367F0" />
-                  <path
-                    opacity="0.06"
-                    fill-rule="evenodd"
-                    clip-rule="evenodd"
-                    d="M7.69824 16.4364L12.5199 3.23696L16.5541 7.25596L7.69824 16.4364Z"
-                    fill="#161616" />
-                  <path
-                    opacity="0.06"
-                    fill-rule="evenodd"
-                    clip-rule="evenodd"
-                    d="M8.07751 15.9175L13.9419 4.63989L16.5849 7.28475L8.07751 15.9175Z"
-                    fill="#161616" />
-                  <path
-                    fill-rule="evenodd"
-                    clip-rule="evenodd"
-                    d="M7.77295 16.3566L23.6563 0H32V6.88383C32 6.88383 31.8262 9.17836 30.6591 10.4057L19.7824 22H13.6938L7.77295 16.3566Z"
-                    fill="#7367F0" />
-                </svg>
-              </span>
-              <span class="app-brand-text demo menu-text fw-bold">Vuexy</span>
-            </a>
+<body class="">
 
-            <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto">
-              <i class="ti menu-toggle-icon d-none d-xl-block ti-sm align-middle"></i>
-              <i class="ti ti-x d-block d-xl-none ti-sm align-middle"></i>
-            </a>
-          </div>
-
-          <div class="menu-inner-shadow"></div>
-
-          <ul class="menu-inner py-1">
-            <!-- Réservations Personnel -->
-            <li class="menu-item active">
-              <a href="#" class="menu-link">
-                <i class="menu-icon tf-icons ti ti-users"></i>
-                <div data-i18n="Réservations Personnel">Réservations Personnel</div>
-              </a>
-            </li>
-
-            <!-- Autres éléments du menu... -->
-          </ul>
-        </aside>
-        <!-- / Menu -->
-
-        <!-- Layout container -->
-        <div class="layout-page">
-          <!-- Navbar -->
-          <nav
-            class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme"
-            id="layout-navbar">
-            <div class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
-              <a class="nav-item nav-link px-0 me-xl-4" href="javascript:void(0)">
-                <i class="ti ti-menu-2 ti-sm"></i>
-              </a>
+    <div class="preloader">
+        <button class="th-btn style3 preloaderCls">Cancel Preloader </button>
+        <div class="preloader-inner">
+            <div class="loading-window">
+                <div class="car">
+                    <div class="strike"></div>
+                    <div class="strike strike2"></div>
+                    <div class="strike strike3"></div>
+                    <div class="strike strike4"></div>
+                    <div class="strike strike5"></div>
+                    <div class="car-detail spoiler"></div>
+                    <div class="car-detail back"></div>
+                    <div class="car-detail center"></div>
+                    <div class="car-detail center1"></div>
+                    <div class="car-detail front"></div>
+                    <div class="car-detail wheel"></div>
+                    <div class="car-detail wheel wheel2"></div>
+                </div>
             </div>
-
-            <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
-              <!-- Search -->
-              <div class="navbar-nav align-items-center">
-                <div class="nav-item navbar-search-wrapper mb-0">
-                  <a class="nav-item nav-link search-toggler d-flex align-items-center px-0" href="javascript:void(0);">
-                    <i class="ti ti-search ti-md me-2"></i>
-                    <span class="d-none d-md-inline-block text-muted">Search (Ctrl+/)</span>
-                  </a>
-                </div>
-              </div>
-              <!-- /Search -->
-
-              <ul class="navbar-nav flex-row align-items-center ms-auto">
-                <!-- Notification -->
-                <li class="nav-item dropdown-notifications navbar-dropdown dropdown me-3 me-xl-1">
-                  <a
-                    class="nav-link dropdown-toggle hide-arrow"
-                    href="javascript:void(0);"
-                    data-bs-toggle="dropdown"
-                    data-bs-auto-close="outside"
-                    aria-expanded="false">
-                    <i class="ti ti-bell ti-md"></i>
-                    <span class="badge bg-danger rounded-pill badge-notifications">5</span>
-                  </a>
-                  <ul class="dropdown-menu dropdown-menu-end py-0">
-                    <!-- Contenu des notifications... -->
-                  </ul>
-                </li>
-                <!--/ Notification -->
-
-                <!-- User -->
-                <li class="nav-item navbar-dropdown dropdown-user dropdown">
-                  <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
-                    <div class="avatar avatar-online">
-                      <img src="{{ asset('img/avatars/1.png') }}" alt class="h-auto rounded-circle" />
-                    </div>
-                  </a>
-                  <ul class="dropdown-menu dropdown-menu-end">
-                    <li>
-                      <a class="dropdown-item" href="pages-account-settings-account.html">
-                        <div class="d-flex">
-                          <div class="flex-shrink-0 me-3">
-                            <div class="avatar avatar-online">
-                              <img src="{{ asset('img/avatars/1.png') }}" alt class="h-auto rounded-circle" />
-                            </div>
-                          </div>
-                          <div class="flex-grow-1">
-                            <span class="fw-semibold d-block">John Doe</span>
-                            <small class="text-muted">Admin</small>
-                          </div>
-                        </div>
-                      </a>
-                    </li>
-                    <li>
-                      <div class="dropdown-divider"></div>
-                    </li>
-                    <li>
-                      <a class="dropdown-item" href="pages-profile-user.html">
-                        <i class="ti ti-user-check me-2 ti-sm"></i>
-                        <span class="align-middle">My Profile</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a class="dropdown-item" href="auth-login-cover.html" target="_blank">
-                        <i class="ti ti-logout me-2 ti-sm"></i>
-                        <span class="align-middle">Log Out</span>
-                      </a>
-                    </li>
-                  </ul>
-                </li>
-                <!--/ User -->
-              </ul>
-            </div>
-
-            <!-- Search Small Screens -->
-            <div class="navbar-search-wrapper search-input-wrapper d-none">
-              <input
-                type="text"
-                class="form-control search-input container-xxl border-0"
-                placeholder="Search..."
-                aria-label="Search..." />
-              <i class="ti ti-x ti-sm search-toggler cursor-pointer"></i>
-            </div>
-          </nav>
-
-          <!-- Content wrapper -->
-          <div class="content-wrapper">
-            <!-- Content -->
-            <div class="container-xxl flex-grow-1 container-p-y">
-              <h4 class="fw-bold py-3 mb-4">
-                <span class="text-muted fw-light">Réservation /</span> Par Utilisateur
-              </h4>
-
-              <!-- Sélecteur d'utilisateur -->
-              <div class="card mb-4">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                  <h5 class="mb-0">Sélection d'utilisateur</h5>
-                  <i class="ti ti-user-search"></i>
-                </div>
-                <div class="card-body">
-                  <div class="row">
-                    <div class="col-md-6">
-                      <label for="user-select" class="form-label">Utilisateur:</label>
-                      <select id="user-select" class="form-select">
-                        <option value="">-- Choisir un utilisateur --</option>
-                        {% for user in users %}
-                          <option value="{{ user.id }}" {% if selectedUserId == user.id %}selected{% endif %}>
-                            {{ user.nom }} {{ user.prenom }}
-                          </option>
-                        {% endfor %}
-                      </select>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {% if selectedUserId %}
-                {% if personnel %}
-                  <div class="alert alert-success mb-4">
-                    <div class="d-flex align-items-center">
-                      <i class="ti ti-user-check me-2 ti-lg"></i>
-                      <div>
-                        <h5 class="alert-heading mb-1">Personnel correspondant</h5>
-                        <p class="mb-0">
-                          <strong>{{ personnel.nomP }} {{ personnel.prenomP }}</strong> - 
-                          <span class="badge bg-label-primary">{{ personnel.serviceP }}</span>
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- Liste des événements -->
-                  <div class="card">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                      <h5 class="mb-0">Événements réservés</h5>
-                      <span class="badge bg-primary rounded-pill">{{ events|length }} événement(s)</span>
-                    </div>
-                    <div class="card-body">
-                      {% if events|length > 0 %}
-                        <div class="table-responsive">
-                          <table class="table table-hover">
-                            <thead>
-                              <tr>
-                                <th>Événement</th>
-                                <th>Date</th>
-                                <th>Statut</th>
-                              </tr>
-                            </thead>
-                            <tbody class="table-border-bottom-0">
-                              {% for event in events %}
-                                <tr>
-                                  <td>
-                                    <strong>{{ event.nom }}</strong>
-                                    <p class="mb-0 text-muted small">{{ event.description|default('Aucune description')|slice(0, 50) }}...</p>
-                                  </td>
-                                  <td>
-                                    <span class="badge bg-label-primary event-badge">
-                                      <i class="ti ti-calendar-event me-1"></i>
-                                      {{ event.date|date('d/m/Y') }}
-                                    </span>
-                                  </td>
-                                  <td>
-                                    {% if event.date|date('Y-m-d') > "now"|date('Y-m-d') %}
-                                      <span class="badge bg-label-success">À venir</span>
-                                    {% else %}
-                                      <span class="badge bg-label-secondary">Terminé</span>
-                                    {% endif %}
-                                  </td>
-                                </tr>
-                              {% endfor %}
-                            </tbody>
-                          </table>
-                        </div>
-                      {% else %}
-                        <div class="empty-state">
-                          <div class="empty-state-icon">
-                            <i class="ti ti-calendar-off"></i>
-                          </div>
-                          <h4 class="empty-state-title">Aucun événement réservé</h4>
-                          <p class="empty-state-subtitle text-muted">
-                            Cet utilisateur n'a réservé aucun événement pour le moment.
-                          </p>
-                        </div>
-                      {% endif %}
-                    </div>
-                  </div>
-                {% else %}
-                  <div class="alert alert-warning">
-                    <div class="d-flex align-items-center">
-                      <i class="ti ti-user-x me-2 ti-lg"></i>
-                      <div>
-                        <h5 class="alert-heading mb-1">Aucun personnel correspondant</h5>
-                        <p class="mb-0">Aucun personnel ne correspond à cet utilisateur.</p>
-                      </div>
-                    </div>
-                  </div>
-                {% endif %}
-              {% else %}
-                <div class="alert alert-info">
-                  <div class="d-flex align-items-center">
-                    <i class="ti ti-info-circle me-2 ti-lg"></i>
-                    <div>
-                      <h5 class="alert-heading mb-1">Sélection requise</h5>
-                      <p class="mb-0">Veuillez sélectionner un utilisateur pour afficher ses réservations.</p>
-                    </div>
-                  </div>
-                </div>
-              {% endif %}
-            </div>
-
-            <!-- Footer -->
-            <footer class="content-footer footer bg-footer-theme">
-              <div class="container-xxl d-flex flex-wrap justify-content-between py-2 flex-md-row flex-column">
-                <div class="mb-2 mb-md-0">
-                  © <script>document.write(new Date().getFullYear())</script>
-                  GoldenTouch
-                </div>
-              </div>
-            </footer>
-          </div>
         </div>
-      </div>
+    </div> 
+
+    <div class="th-menu-wrapper">
+        <div class="th-menu-area text-center">
+            <button class="th-menu-toggle "><i class="fal fa-times"></i></button>
+            <div class="mobile-logo">
+                <a href="index.html"><img src="{{ asset('Front/img/logo44.png') }}" alt="GoldenTouch" style="height: 100px;"></a>
+            </div>
+            <div class="th-mobile-menu">
+                <ul>
+                    <li>
+                        <a href="index.html">Pack</a>
+                    </li>
+                    <li class="menu-item-has-children">
+                        <a href="#">Event Planner</a>
+                        <ul class="sub-menu">
+                            <li><a href="#">Ajout Event</a></li>
+                            <li><a href="#">Liste Event</a></li>
+                        </ul>
+                    </li>
+                    <li class="menu-item-has-children">
+                        <a href="#">Materielles</a>
+                        <ul class="sub-menu">
+                            <li><a href="#">Ajout Materielles</a></li>
+                            <li><a href="#">Liste Materielles</a></li>
+                        </ul>
+                    </li>
+                    <li class="menu-item-has-children">
+                        <a href="#">Personnel</a>
+                        <ul class="sub-menu">
+                            <li><a href="#">Ajout Personnel</a></li>
+                            <li><a href="#">Liste Personnel</a></li>
+                        </ul>
+                    </li>
+                    <li class="menu-item-has-children">
+                        <a href="#">Lieu</a>
+                        <ul class="sub-menu">
+                            <li><a href="#">Ajout Lieu</a></li>
+                            <li><a href="#">Liste Lieu</a></li>
+                        </ul>
+                    </li>
+                    <li class="menu-item-has-children">
+                        <a href="#">Autre</a>
+                        <ul class="sub-menu">
+                            <li><a href="#">Commandes</a></li>
+                            <li><a href="#">Reclamation</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
     </div>
 
-    <!-- Core JS -->
-    <script src="{{ asset('/vendor/libs/jquery/jquery.js') }}"></script>
-    <script src="{{ asset('/vendor/libs/popper/popper.js') }}"></script>
-    <script src="{{ asset('/vendor/js/bootstrap.js') }}"></script>
-    <script src="{{ asset('/vendor/libs/perfect-scrollbar/perfect-scrollbar.js') }}"></script>
-    <script src="{{ asset('/vendor/libs/node-waves/node-waves.js') }}"></script>
-    <script src="{{ asset('/vendor/libs/hammer/hammer.js') }}"></script>
-    <script src="{{ asset('/vendor/libs/i18n/i18n.js') }}"></script>
-    <script src="{{ asset('/vendor/libs/typeahead-js/typeahead.js') }}"></script>
-    <script src="{{ asset('/vendor/js/menu.js') }}"></script>
+    <header class="th-header header-layout7">
+        <div class="header-top">
+            <div class="container">
+                <div class="row justify-content-center justify-content-md-between align-items-center gy-2">
+                    <div class="col-auto d-none d-md-block">
+                        <div class="header-links">
+                            <ul>
+                                <li><i class="fa-thin fa-envelope"></i><a href="mailto:GoldenTouch@gmail.com">GoldenTouch@gmail.com</a></li>
+                                <li><i class="fa-thin fa-phone"></i><a href="tel:+468254762443">(+468) 254 762 443</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <div class="header-right">
+                            <div class="langauge">
+                                <select class="form-select nice-select">
+                                    <option selected="">English</option>
+                                    <option>Français</option>
+                                </select>
+                            </div>
+                            <div class="header-social">
+                                <span class="social-title">Follow Us On:</span>
+                                <a href="https://www.facebook.com/"><i class="fab fa-facebook-f"></i></a>
+                                <a href="https://www.twitter.com/"><i class="fab fa-twitter"></i></a>
+                                <a href="https://www.linkedin.com/"><i class="fab fa-linkedin-in"></i></a>
+                                <a href="https://www.instagram.com/"><i class="fab fa-instagram"></i></a>
+                                <a href="https://www.youtube.com/"><i class="fa-brands fa-youtube"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    <!-- Main JS -->
-    <script src="{{ asset('/js/main.js') }}"></script>
+        <div class="sticky-wrapper">
+            <div class="menu-area">
+                <div class="container">
+                    <div class="row align-items-center justify-content-between">
+                        <div class="col-auto">
+                            <div class="header-logo">
+                                <img src="{{ asset('Front/img/logo44.png') }}" alt="GoldenTouch" style="height: 130px;">
+                            </div>
+                        </div>
+                        <div class="col-auto me-xl-auto">
+                            <nav class="main-menu d-none d-lg-block">
+                                <ul>
+                                    <li>
+                                        <a href="index.html">Pack</a>
+                                    </li>
+                                    <li class="menu-item-has-children">
+                                        <a href="#">Event Planner</a>
+                                        <ul class="sub-menu">
+                                            <li><a href="#">Ajout Event</a></li>
+                                            <li><a href="#">Liste Event</a></li>
+                                        </ul>
+                                    </li>
+                                    <li class="menu-item-has-children">
+                                        <a href="#">Materielles</a>
+                                        <ul class="sub-menu">
+                                            <li><a href="#">Ajout Materielles</a></li>
+                                            <li><a href="#">Liste Materielles</a></li>
+                                        </ul>
+                                    </li>
+                                    <li class="menu-item-has-children">
+                                        <a href="#">Personnel</a>
+                                        <ul class="sub-menu">
+                                            <li><a href="#">Ajout Personnel</a></li>
+                                            <li><a href="#">Liste Personnel</a></li>
+                                        </ul>
+                                    </li>
+                                    <li class="menu-item-has-children">
+                                        <a href="#">Lieu</a>
+                                        <ul class="sub-menu">
+                                            <li><a href="#">Ajout Lieu</a></li>
+                                            <li><a href="#">Liste Lieu</a></li>
+                                        </ul>
+                                    </li>
+                                    <li class="menu-item-has-children">
+                                        <a href="#">Autre</a>
+                                        <ul class="sub-menu">
+                                            <li><a href="#">Commandes</a></li>
+                                            <li><a href="#">Reclamation</a></li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </nav>
+                            <button class="th-menu-toggle d-inline-block d-lg-none"><i class="far fa-bars"></i></button>
+                        </div>
+                        <div class="col-auto d-none d-xl-block">
+                            <div class="header-button">
+                                <button type="button" class="icon-btn searchBoxToggler"><i class="far fa-search"></i></button>
+                                <a href="#" class="icon-btn sideMenuToggler"><i class="far fa-bars"></i></a>
+                                <a href="#" class="th-btn">Déconnexion<i class="fa-regular fa-arrow-right ms-2"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="logo-shape"><img src="{{ asset('Front/img/logo-shape.svg') }}" alt=""></div>
+    </header>
+
+    <div class="space" style="--top: 100px"></div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h4 class="fw-bold py-3 mb-4">
+                    <span class="text-muted fw-light">Réservation /</span> Par Personnel
+                </h4>
+
+                <!-- Sélecteur d'utilisateur -->
+<!-- Sélecteur d'utilisateur -->
+<div class="card mb-4 border-0" style="background: linear-gradient(135deg, #f8f9fa 0%, #fff8e6 100%);">
+    <div class="card-body p-4">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <!-- Nouveau design innovant pour le ComboBox -->
+                <div class="goldentouch-combo">
+                    <label for="user-select" class="form-label fw-bold mb-3 d-block text-center" style="color: #6c757d;">
+                        <i class="fas fa-user-search me-2" style="color: #7367F0;"></i>
+                        SÉLECTIONNEZ UN UTILISATEUR
+                    </label>
+                    
+                    <div class="combo-wrapper position-relative">
+                        <div class="input-group">
+                            <span class="input-group-text bg-transparent" style="border-right: none;">
+                                <i class="fas fa-user-circle" style="color: #7367F0;"></i>
+                            </span>
+                            <select id="user-select" class="form-select goldentouch-select shadow-sm">
+                                <option value="">-- Choisir un utilisateur --</option>
+                                {% for user in users %}
+                                    <option value="{{ user.id }}" {% if selectedUserId == user.id %}selected{% endif %}>
+                                        {{ user.nom }} {{ user.prenom }} 
+                                        <small class="text-muted">(ID: {{ user.id }})</small>
+                                    </option>
+                                {% endfor %}
+                            </select>
+                            <button class="btn btn-outline-secondary" type="button" id="refresh-users" style="border-left: none;">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+                        </div>
+                        <div class="combo-decoration">
+                            <div class="combo-arrow" style="background-color: #7367F0;">
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <small class="text-muted mt-2 d-block text-center">Sélectionnez un utilisateur pour afficher ses réservations</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+                {% if selectedUserId %}
+                    {% if personnel %}
+                        <div class="alert alert-success mb-4">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-user-check me-2"></i>
+                                <div>
+                                    <h5 class="alert-heading mb-1">Personnel correspondant</h5>
+                                    <p class="mb-0">
+                                        <strong>{{ personnel.nomP }} {{ personnel.prenomP }}</strong> - 
+                                        <span class="badge bg-primary">{{ personnel.serviceP }}</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Liste des événements -->
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">Événements réservés</h5>
+                                <span class="badge bg-primary rounded-pill">{{ events|length }} événement(s)</span>
+                            </div>
+                            <div class="card-body">
+                                {% if events|length > 0 %}
+                                    <div class="table-responsive">
+                                        <table class="table table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>Événement</th>
+                                                    <th>Date</th>
+                                                    <th>Statut</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="table-border-bottom-0">
+                                                {% for event in events %}
+                                                    <tr>
+                                                        <td>
+                                                            <strong>{{ event.nom }}</strong>
+                                                            <p class="mb-0 text-muted small">{{ event.description|default('Aucune description')|slice(0, 50) }}...</p>
+                                                        </td>
+                                                        <td>
+                                                            <span class="badge bg-label-primary event-badge">
+                                                                <i class="fas fa-calendar-alt me-1"></i>
+                                                                {{ event.date|date('d/m/Y') }}
+                                                            </span>
+                                                        </td>
+                                                        <td>
+                                                            {% if event.date|date('Y-m-d') > "now"|date('Y-m-d') %}
+                                                                <span class="badge bg-label-success">À venir</span>
+                                                            {% else %}
+                                                                <span class="badge bg-label-secondary">Terminé</span>
+                                                            {% endif %}
+                                                        </td>
+                                                    </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                {% else %}
+                                    <div class="empty-state">
+                                        <div class="empty-state-icon">
+                                            <i class="fas fa-calendar-times"></i>
+                                        </div>
+                                        <h4 class="empty-state-title">Aucun événement réservé</h4>
+                                        <p class="empty-state-subtitle text-muted">
+                                            Cet utilisateur n'a réservé aucun événement pour le moment.
+                                        </p>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-warning">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-user-times me-2"></i>
+                                <div>
+                                    <h5 class="alert-heading mb-1">Aucun personnel correspondant</h5>
+                                    <p class="mb-0">Aucun personnel ne correspond à cet utilisateur.</p>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% else %}
+                    <div class="alert alert-info">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <div>
+                                <h5 class="alert-heading mb-1">Sélection requise</h5>
+                                <p class="mb-0">Veuillez sélectionner un utilisateur pour afficher ses réservations.</p>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="space" style="--top: 100px"></div>
+
+    <footer class="footer-wrapper footer-layout7" data-bg-src="assets/img/bg/footer_bg_1.jpg">
+        <div class="widget-area">
+            <div class="container">
+                <div class="row justify-content-between">
+                    <div class="col-md-6 col-xl-auto">
+                        <div class="widget footer-widget">
+                            <div class="th-widget-about">
+                                <div class="about-logo">
+                                    <a href="index.html"><img src="{{ asset('Front/img/logo-white3.svg') }}" alt="GoldenTouch"></a>
+                                </div>
+                                <p class="about-text">GoldenTouch révolutionne la planification d'événements avec des solutions tout-en-un pour des expériences inoubliables.</p>
+                                <div class="working-time">
+                                    <span class="title">HORAIRES D'OUVERTURE</span>
+                                    <p class="desc">Lun-Sam : 09h00 à 18h30</p>
+                                </div>
+                                <div class="th-social footer-social">
+                                    <a href="https://www.facebook.com/"><i class="fab fa-facebook-f"></i></a>
+                                    <a href="https://www.twitter.com/"><i class="fab fa-twitter"></i></a>
+                                    <a href="https://www.linkedin.com/"><i class="fab fa-linkedin-in"></i></a>
+                                    <a href="https://www.instagram.com/"><i class="fab fa-instagram"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-xl-2">
+                        <div class="widget widget_nav_menu footer-widget">
+                            <h3 class="widget_title">Liens rapides</h3>
+                            <div class="menu-all-pages-container">
+                                <ul class="menu">
+                                    <li><a href="about.html">À propos</a></li>
+                                    <li><a href="gallery.html">Galerie</a></li>
+                                    <li><a href="testimonials.html">Témoignages</a></li>
+                                    <li><a href="services.html">Nos Services</a></li>
+                                    <li><a href="team.html">Notre Équipe</a></li>
+                                    <li><a href="contact.html">Contact</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-xl-auto">
+                        <div class="widget footer-widget">
+                            <h3 class="widget_title">Coordonnées</h3>
+                            <div class="th-widget-about">
+                                <h4 class="footer-info-title">Téléphone</h4>
+                                <p class="footer-info"><i class="fas fa-phone"></i><a class="text-inherit"
+                                        href="tel:+33123456789">+33 1 23 45 67 89</a></p>
+                                <h4 class="footer-info-title">Email</h4>
+                                <p class="footer-info"><i class="fas fa-envelope"></i><a class="text-inherit"
+                                        href="mailto:contact@goldentouch.com">contact{{ '@' }}goldentouch.com</a></p>
+                                <h4 class="footer-info-title">Adresse</h4>
+                                <p class="footer-info"><i class="fas fa-map-marker-alt"></i>123 Rue des Événements, 75001 Paris, France</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-xl-3">
+                        <div class="widget footer-widget">
+                            <h4 class="widget_title">Newsletter</h4>
+                            <div class="newsletter-widget">
+                                <p class="md-20">Abonnez-vous pour recevoir nos actualités et offres exclusives. Soyez les premiers informés de nos dernières prestations.</p>
+                                <div class="footer-search-contact mt-25">
+                                    <form>
+                                        <input class="form-control" type="email" placeholder="Votre email">
+                                    </form>
+                                    <div class="footer-btn mt-10">
+                                        <button type="submit" class="th-btn style3 fw-btn">S'abonner <i
+                                                class="fa-regular fa-arrow-right"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="copyright-wrap">
+            <div class="container">
+                <p class="copyright-text">© 2023 <a href="#">GoldenTouch</a>. Tous droits réservés.</p>
+            </div>
+        </div>
+        <div class="footer-shape"><img src="{{ asset('Front/img/shape/footer_shape.png') }}" alt="forme">
+        </div>
+    </footer>
+
+    <div class="scroll-top">
+        <svg class="progress-circle svg-content" width="100%" height="100%" viewBox="-1 -1 102 102">
+            <path d="M50,1 a49,49 0 0,1 0,98 a49,49 0 0,1 0,-98"
+                style="transition: stroke-dashoffset 10ms linear 0s; stroke-dasharray: 307.919, 307.919; stroke-dashoffset: 307.919;">
+            </path>
+        </svg>
+    </div>
+
+    <!-- Scripts -->
+    <script src="{{ asset('Front/js/vendor/jquery-3.6.0.min.js') }}"></script>
+    <script src="{{ asset('Front/js/slick.min.js') }}"></script>
+    <script src="{{ asset('Front/js/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('Front/js/jquery.magnific-popup.min.js') }}"></script>
+    <script src="{{ asset('Front/js/jquery.counterup.min.js') }}"></script>
+    <script src="{{ asset('Front/js/imagesloaded.pkgd.min.js') }}"></script>
+    <script src="{{ asset('Front/js/isotope.pkgd.min.js') }}"></script>
+    <script src="{{ asset('Front/js/nice-select.min.js') }}"></script>
+    <script src="{{ asset('Front/js/jquery.datetimepicker.min.js') }}"></script>
+    <script src="{{ asset('Front/js/wow.min.js') }}"></script>
+    <script src="{{ asset('Front/js/main.js') }}"></script>
 
     <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        // Gérer le changement d'utilisateur
-        document.getElementById('user-select').addEventListener('change', function() {
-          const userId = this.value;
-          if (userId) {
-            window.location.href = window.location.pathname + '?user=' + userId;
-          } else {
-            window.location.href = window.location.pathname;
-          }
+        document.addEventListener('DOMContentLoaded', function() {
+            // Gérer le changement d'utilisateur
+            document.getElementById('user-select').addEventListener('change', function() {
+                const userId = this.value;
+                if (userId) {
+                    window.location.href = window.location.pathname + '?user=' + userId;
+                } else {
+                    window.location.href = window.location.pathname;
+                }
+            });
         });
-
-        // Initialiser les tooltips
-        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-        tooltipTriggerList.map(function (tooltipTriggerEl) {
-          return new bootstrap.Tooltip(tooltipTriggerEl);
-        });
-      });
     </script>
-  </body>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Animation et fonctionnalité du bouton refresh
+        document.getElementById('refresh-users').addEventListener('click', function() {
+            this.classList.add('spin-animation');
+            setTimeout(() => {
+                this.classList.remove('spin-animation');
+                // Ici vous pourriez ajouter une requête AJAX pour rafraîchir la liste
+                location.reload(); // Solution simple en attendant
+            }, 700);
+        });
+        
+        // Amélioration de l'expérience utilisateur
+        const userSelect = document.getElementById('user-select');
+        userSelect.addEventListener('focus', function() {
+            this.style.borderColor = '#7367F0';
+            this.parentElement.style.boxShadow = '0 0 0 0.25rem rgba(115, 103, 240, 0.25)';
+        });
+        
+        userSelect.addEventListener('blur', function() {
+            this.style.borderColor = '#ddd';
+            this.parentElement.style.boxShadow = 'none';
+        });
+        
+        // Gestion du changement d'utilisateur
+        userSelect.addEventListener('change', function() {
+            const userId = this.value;
+            if (userId) {
+                window.location.href = window.location.pathname + '?user=' + userId;
+            } else {
+                window.location.href = window.location.pathname;
+            }
+        });
+    });
+</script>
+</body>
 </html>

@@ -9,6 +9,8 @@ use App\Repository\PersonnelRepository;
 use App\Repository\EventRepository;
 use App\Repository\UtilisateurRepository;
 use Tattali\CalendarBundle\TattaliCalendarBundle;
+use Knp\Component\Pager\PaginatorInterface;
+use App\Service\TwilioSmsService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -24,13 +26,21 @@ class ReservationPersoController extends AbstractController
         PersonnelRepository $personnelRepository,
         EventRepository $eventRepository,
         EntityManagerInterface $entityManager,
-        Request $request
+        Request $request,
+        PaginatorInterface $paginator
     ): Response {
         $selectedEventId = $request->query->get('event');
         $reservations = $entityManager->getRepository(ReservationPerso::class)->findAll();
         
+        // Pagination simple de tous les personnels
+        $personnels = $paginator->paginate(
+            $personnelRepository->findAllQueryBuilder(),
+            $request->query->getInt('page', 1),
+            6
+        );
+        
         return $this->render('reservation_perso/index.html.twig', [
-            'personnels' => $personnelRepository->findAll(),
+            'personnels' => $personnels,
             'events' => $eventRepository->findAll(),
             'reservations' => $reservations,
             'selectedEventId' => $selectedEventId
@@ -124,33 +134,46 @@ class ReservationPersoController extends AbstractController
         Request $request,
         ReservationPerso $reservation,
         EntityManagerInterface $entityManager,
-        EventRepository $eventRepository
+        EventRepository $eventRepository,
+        TwilioSmsService $twilioSmsService
     ): Response {
+        // Vérification CSRF
         if (!$this->isCsrfTokenValid('delete'.$reservation->getIdR(), $request->request->get('_token'))) {
             throw $this->createAccessDeniedException('Token CSRF invalide');
         }
     
-        $event = $eventRepository->find($reservation->getEvent()->getId());
-        $eventId = $reservation->getEvent()->getId();
-        
+        // Récupérer l'événement associé
+        $event = $reservation->getEvent();
+        $eventId = $event->getId();
+    
+        // Vérifier si l'annulation est possible (moins de 24h avant)
         $now = new \DateTime();
         $eventDate = $event->getDate();
-        
-        // Calculer la différence en heures
         $interval = $now->diff($eventDate);
         $hoursDifference = ($interval->days * 24) + $interval->h;
     
-        // Si l'événement est dans moins de 24h et pas encore passé
         if ($hoursDifference < 24 && $eventDate > $now) {
-            $this->addFlash('error', 'Impossible d\'annuler : l\'événement commence dans moins de 24h');
+            $this->addFlash('error', 'Annulation impossible : événement dans moins de 24h.');
             return $this->redirectToRoute('app_reservation_perso_index', ['event' => $eventId]);
         }
     
-        // Si l'événement est passé ou plus de 24h avant, permettre l'annulation
+        // Envoi du SMS avant suppression
+        $smsMessage = sprintf(
+            "[GoldenTouch] Annulation réservation #%d\nÉvénement: %s\nDate: %s",
+            $reservation->getIdR(),
+            $event->getNom(),
+            $event->getDate()->format('d/m/Y H:i')
+        );
+    
+        if (!$twilioSmsService->sendSms($smsMessage)) {
+            $this->addFlash('warning', 'Réservation annulée, mais échec d\'envoi du SMS.');
+        }
+    
+        // Suppression de la réservation
         $entityManager->remove($reservation);
         $entityManager->flush();
-        $this->addFlash('success', 'Réservation annulée avec succès!');
     
+        $this->addFlash('success', 'Réservation annulée avec succès !');
         return $this->redirectToRoute('app_reservation_perso_index', ['event' => $eventId]);
     }
 }

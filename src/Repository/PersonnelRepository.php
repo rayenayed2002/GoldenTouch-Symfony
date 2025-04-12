@@ -168,4 +168,11 @@ class PersonnelRepository extends ServiceEntityRepository
     
     return $qb->getQuery();
 }
+
+// Dans PersonnelRepository
+public function findAllQueryBuilder()
+{
+    return $this->createQueryBuilder('p')
+        ->orderBy('p.nomP', 'ASC');
+}
 }

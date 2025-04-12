@@ -158,6 +158,189 @@
         font-weight: 600;
         z-index: 2;
     }
+
+
+/* Pagination GoldenTouch - Style moderne avec flèches jaunes */
+.pagination-container {
+    margin: 50px 0;
+    display: flex;
+    justify-content: center;
+}
+
+.pagination {
+    display: flex;
+    gap: 8px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+}
+
+.page-item {
+    margin: 0;
+}
+
+.page-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 48px;
+    height: 48px;
+    padding: 0 16px;
+    border-radius: 10px;
+    background: white;
+    color: var(--title-color);
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border: 2px solid rgba(var(--theme-color-rgb), 0.1);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+/* Flèches en jaune */
+.page-item:first-child .page-link,
+.page-item:last-child .page-link {
+    color: #FFD700; /* Jaune doré */
+    background: rgba(255, 215, 0, 0.1); /* Fond légèrement jaune */
+    border-color: rgba(255, 215, 0, 0.2);
+}
+
+.page-item:first-child:not(.disabled) .page-link:hover,
+.page-item:last-child:not(.disabled) .page-link:hover {
+    background: rgba(255, 215, 0, 0.2);
+    color: #FFC000; /* Jaune légèrement plus foncé au survol */
+}
+
+.page-item:not(.disabled):not(.active) .page-link:hover {
+    background: rgba(var(--theme-color-rgb), 0.08);
+    border-color: rgba(var(--theme-color-rgb), 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    color: var(--theme-color);
+}
+
+.page-item.active .page-link {
+    background: var(--theme-color);
+    color: white;
+    border-color: var(--theme-color);
+    box-shadow: 0 4px 12px rgba(var(--theme-color-rgb), 0.3);
+}
+
+.page-item.disabled .page-link {
+    color: #ccc;
+    border-color: #f5f5f5;
+    background: #f9f9f9;
+    box-shadow: none;
+    cursor: not-allowed;
+}
+
+/* Animation */
+@keyframes gentleBounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
+}
+
+.page-item:not(.disabled):not(.active) .page-link:hover {
+    animation: gentleBounce 0.4s ease;
+}
+
+/* Responsive */
+@media (max-width: 767px) {
+    .page-link {
+        min-width: 40px;
+        height: 40px;
+        padding: 0 12px;
+        font-size: 14px;
+    }
+}
+tyle>
+    /* Nouveau style innovant pour le ComboBox */
+    .goldentouch-combo {
+        position: relative;
+    }
+    
+    .combo-wrapper {
+        position: relative;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    }
+    
+    .goldentouch-select {
+        height: 56px;
+        padding: 12px 20px;
+        font-size: 1.05rem;
+        border: 2px solid rgba(255, 215, 0, 0.3);
+        border-radius: 12px !important;
+        background-color: white;
+        appearance: none;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .goldentouch-select:focus {
+        border-color: #FFD700;
+        box-shadow: 0 0 0 0.25rem rgba(255, 215, 0, 0.25);
+        outline: none;
+    }
+    
+    .combo-decoration {
+        position: absolute;
+        top: 0;
+        right: 0;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        pointer-events: none;
+        z-index: 2;
+    }
+    
+    .combo-arrow {
+        width: 48px;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        transition: all 0.3s ease;
+    }
+    
+    .goldentouch-select:hover + .combo-decoration .combo-arrow {
+        background-color: #FFC107 !important;
+    }
+    
+    /* Animation pour le survol */
+    @keyframes pulse-gold {
+        0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.4); }
+        70% { box-shadow: 0 0 0 10px rgba(255, 215, 0, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); }
+    }
+    
+    .goldentouch-select:focus {
+        animation: pulse-gold 1.5s infinite;
+    }
+    
+    /* Effet de flottement pour le label */
+    .form-label {
+        position: relative;
+        display: inline-block;
+    }
+    
+    .form-label:after {
+        content: '';
+        position: absolute;
+        bottom: -5px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 40px;
+        height: 3px;
+        background: linear-gradient(90deg, #FFD700, #FFC107);
+        border-radius: 3px;
+    }
 </style>
 
 </head>
@@ -472,7 +655,7 @@
                                 <a href="#" class="icon-btn sideMenuToggler2"><i class="fa-regular fa-bag-shopping"></i>
                                     <span class="badge">5</span></a>
                                 <a href="#" class="icon-btn sideMenuToggler"><i class="far fa-bars"></i></a>
-                                <a href="booking.html" class="th-btn">BOOK A TAXI<i class="fa-regular fa-arrow-right ms-2"></i></a>
+                                <a href="booking.html" class="th-btn">BOOK AN Event<i class="fa-regular fa-arrow-right ms-2"></i></a>
                             </div>
                         </div>
                     </div>
@@ -491,27 +674,43 @@
             </div>
             
             <!-- Sélecteur d'événement -->
-            <div class="card mb-5">
-                <div class="card-body">
-                    <div class="row justify-content-center">
-                        <div class="col-md-6">
-                            <label for="event-select" class="form-label">Sélectionnez un événement:</label>
-                            <select id="event-select" class="form-select">
-                                <option value="">-- Choisir un événement --</option>
-                                {% for event in events %}
-                                    <option value="{{ event.id }}" {% if selectedEventId == event.id %}selected{% endif %}>
-                                        {{ event.nom }} ({{ event.date|date('d/m/Y') }})
-                                    </option>
-                                {% endfor %}
-                            </select>
+<div class="card mb-5 border-0" style="background: linear-gradient(135deg, #f8f9fa 0%, #fff8e6 100%);">
+    <div class="card-body p-4">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <!-- Nouveau design innovant pour le ComboBox -->
+                <div class="goldentouch-combo">
+                    <label for="event-select" class="form-label fw-bold mb-3 d-block text-center" style="color: #6c757d;">
+                        <i class="fas fa-calendar-star me-2" style="color: #FFD700;"></i>
+                        CHOISISSEZ VOTRE ÉVÉNEMENT
+                    </label>
+                    
+                    <div class="combo-wrapper position-relative">
+                        <select id="event-select" class="form-select goldentouch-select shadow-sm">
+                            <option value="">-- Sélectionnez un événement --</option>
+                            {% for event in events %}
+                                <option value="{{ event.id }}" {% if selectedEventId == event.id %}selected{% endif %}>
+                                    {{ event.nom }} ({{ event.date|date('d/m/Y') }})
+                                </option>
+                            {% endfor %}
+                        </select>
+                        <div class="combo-decoration">
+                            <div class="combo-arrow" style="background-color: #FFD700;">
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
                         </div>
                     </div>
+                    
                 </div>
             </div>
+        </div>
+    </div>
+</div>
             
             <!-- Cartes de personnel -->
             <div class="row gy-5">
                 {% for personnel in personnels %}
+                 {% if personnel is not null %}
                 <div class="col-md-6 col-lg-6 col-xl-4">
                     <div class="personnel-item style2">
                         <div class="personnel-item_img">
@@ -527,22 +726,18 @@
                         </h3>
                         <p class="personnel-item_subtitle">{{ personnel.tarifP|number_format(2, '.', ',') }} TND/jour</p>
                         
-                        <div class="personnel-item_feature">
-                            <span><img src="{{ asset('Front/img/icon/taxi_f_2_1.svg') }}" alt="">Service</span>
-                            <span class="personnel-item_info">{{ personnel.serviceP }}</span>
-                        </div>
-                        <div class="personnel-item_feature">
-                            <span><img src="{{ asset('Front/img/icon/taxi_f_2_2.svg') }}" alt="">Disponibilité</span>
-                            <span class="personnel-item_info">{{ personnel.statutP }}</span>
-                        </div>
-                        <div class="personnel-item_feature">
-                            <span><img src="{{ asset('Front/img/icon/taxi_f_2_3.svg') }}" alt="">Expérience</span>
-                            <span class="personnel-item_info">{{ personnel.experienceP ?? '5+' }} ans</span>
-                        </div>
-                        <div class="personnel-item_feature">
-                            <span><img src="{{ asset('Front/img/icon/taxi_f_2_4.svg') }}" alt="">Langues</span>
-                            <span class="personnel-item_info">{{ personnel.languesP ?? 'FR, EN' }}</span>
-                        </div>
+<div class="personnel-item_feature">
+    <span><i class="fas fa-hands-helping" style="width: 20px; text-align: center;"></i> Service</span>
+    <span class="personnel-item_info">{{ personnel.serviceP }}</span>
+</div>
+<div class="personnel-item_feature">
+    <span><i class="far fa-calendar-check" style="width: 20px; text-align: center;"></i> Disponibilité</span>
+    <span class="personnel-item_info">{{ personnel.statutP }}</span>
+</div>
+<div class="personnel-item_feature">
+    <span><i class="fas fa-language" style="width: 20px; text-align: center;"></i> Langues</span>
+    <span class="personnel-item_info">{{ personnel.languesP ?? 'FR, EN' }}</span>
+</div>
                         
                         <div class="d-flex justify-content-center mt-3">
                             {% set isReserved = false %}
@@ -585,18 +780,16 @@
                         <p>Tous nos professionnels sont actuellement réservés pour cette période.</p>
                     </div>
                 </div>
+                 {% endif %}
                 {% endfor %}
             </div>
             
             <!-- Pagination si nécessaire -->
-            <div class="th-pagination text-center mt-60 mb-0">
-                <ul>
-                    <li><a href="#">1</a></li>
-                    <li><a href="#">2</a></li>
-                    <li><a href="#">3</a></li>
-                    <li><a href="#"><i class="far fa-arrow-right"></i></a></li>
-                </ul>
-            </div>
+{% if personnels is defined and personnels is not empty %}
+    <div class="th-pagination text-center mt-60 mb-0">
+        {{ knp_pagination_render(personnels, 'pagination/custom_pagination.html.twig') }}
+    </div>
+{% endif %}
         </div>
     </section>
 

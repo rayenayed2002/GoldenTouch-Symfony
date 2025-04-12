@@ -13,14 +13,10 @@ parameters:
     app.max_file_size: '2M'
 
 services:
-    App\EventSubscriber\CalendarSubscriber:
-
-
     # default configuration for services in *this* file
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
-        
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
@@ -39,3 +35,14 @@ services:
     #     arguments:
     #         $uploadDirectory: '%personnel_images_directory%'
     #         $maxFileSize: '%app.max_file_size%'
+
+    # Service Twilio pour l'envoi de SMS (AJOUT)
+    App\Service\TwilioSmsService:
+        arguments:
+            $accountSid: '%env(TWILIO_ACCOUNT_SID)%'
+            $authToken: '%env(TWILIO_AUTH_TOKEN)%'
+            $fromNumber: '%env(TWILIO_PHONE_NUMBER)%'
+            $toNumber: '%env(DESTINATION_PHONE_NUMBER)%'
+
+    # Subscriber pour le calendrier (existant)
+    App\EventSubscriber\CalendarSubscriber:
