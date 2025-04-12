@@ -43,7 +43,6 @@ class Materielle
         pattern: '/^[a-zA-Z0-9\s\-_]+$/',
         message: 'Le nom ne peut contenir que des lettres, chiffres, espaces, tirets et underscores.'
     )]
-    #[ORM\Column(type: 'string', length: 255, nullable: false)]
     private ?string $nom_mat = null;
     public function getNom_mat(): ?string
     {
@@ -64,8 +63,7 @@ class Materielle
         max: 1000,
         minMessage: 'La description doit comporter au moins {{ limit }} caractères.',
         maxMessage: 'La description ne peut pas dépasser {{ limit }} caractères.'
-    )]    
-    #[ORM\Column(type: 'string', length: 255, nullable: false)]
+    )]
     private ?string $description_mat = null;
 
     public function getDescription_mat(): ?string

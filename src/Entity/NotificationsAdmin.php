@@ -77,6 +77,8 @@ class NotificationsAdmin
         return $this;
     }
 
+
+
     #[ORM\Column(type: 'text', nullable: false)]
     private ?string $message = null;
 

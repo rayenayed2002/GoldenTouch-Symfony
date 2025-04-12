@@ -28,6 +28,10 @@ class DemandePack
     #[ORM\JoinColumn(name: "pack_id", referencedColumnName: "id", nullable: false)]
     private Pack $pack;
 
+    #[ORM\ManyToOne(targetEntity: Utilisateur::class)]
+    #[ORM\JoinColumn(name: "utilisateur_id", referencedColumnName: "id", nullable: false)]
+    private ?Utilisateur $utilisateur = null;
+
     #[ORM\Column(name: "utilisateur_id")]
     private int $utilisateurId;
 
@@ -66,6 +70,17 @@ class DemandePack
     public function setPrix(float $prix): self
     {
         $this->prix = $prix;
+        return $this;
+    }
+
+    public function getUtilisateur(): ?Utilisateur
+    {
+        return $this->utilisateur;
+    }
+
+    public function setUtilisateur(?Utilisateur $utilisateur): self
+    {
+        $this->utilisateur = $utilisateur;
         return $this;
     }
 

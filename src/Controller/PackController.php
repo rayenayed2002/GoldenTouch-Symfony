@@ -95,18 +95,24 @@ class PackController extends AbstractController
     public function shopDetails(Pack $pack): Response
     {
         $similarPacks = $this->packRepository->findBy(
-            ['event' => $pack->getEvent()], 
-            ['prix' => 'ASC'], 
+            ['event' => $pack->getEvent()],
+            ['prix' => 'ASC'],
             3
         );
+
+        $demandePacks = $this->entityManager->getRepository(DemandePack::class)
+            ->createQueryBuilder('dp')
+            ->leftJoin('dp.utilisateur', 'u')
+            ->addSelect('u')
+            ->getQuery()
+            ->getResult();
 
         $avis = $this->entityManager->getRepository(Avis::class)->findAvisWithUserInfo($pack->getId());
 
         return $this->render('pack/shop-details.html.twig', [
             'pack' => $pack,
-            'packs' => $this->packRepository->findAll(),
             'similarPacks' => $similarPacks,
-            'trendingPacks' => $this->packRepository->findBy([], ['prix' => 'DESC'], 3),
+            'demandePacks' => $demandePacks,
             'avis' => $avis
         ]);
     }
