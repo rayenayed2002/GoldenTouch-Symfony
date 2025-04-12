@@ -17,10 +17,16 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Psr\Log\LoggerInterface;
 use App\Entity\Panier;
+use App\Entity\Payment;
+
+use App\Entity\DetailPayment;
+
 use App\Entity\Utilisateur;
 use Symfony\Component\Security\Core\Security;
 use Stripe\Stripe;
 use Stripe\PaymentIntent;
+use App\Repository\PanierRepository;
+
 class EventController extends AbstractController
 {
 
@@ -221,7 +227,7 @@ public function addToCart(Request $request, EntityManagerInterface $entityManage
     }
 
     // Fetch static user with ID = 1
-    $user = $entityManager->getRepository(Utilisateur::class)->find(30);
+    $user = $entityManager->getRepository(Utilisateur::class)->find(20  );
     if (!$user) {
         return new JsonResponse(['success' => false, 'message' => 'User not found'], 404);
     }
@@ -248,7 +254,7 @@ public function addToCart(Request $request, EntityManagerInterface $entityManage
 #[Route('/panier', name: 'app_panier', methods: ['GET'])]
 public function ShowPanier(EntityManagerInterface $em, Security $security): Response
 {
-    $user = $em->getRepository(Utilisateur::class)->find(30); // or your static user ID
+    $user = $em->getRepository(Utilisateur::class)->find(20); // or your static user ID
     
     $panierItems = $em->getRepository(Panier::class)->findBy(['utilisateur' => $user]);
     
@@ -277,11 +283,19 @@ public function removeFromCart(int $id, EntityManagerInterface $em): JsonRespons
 }
 
 #[Route('/panier/clear', name: 'app_panier_clear', methods: ['POST'])]
-public function clearCart(EntityManagerInterface $em, Security $security): JsonResponse
+public function clearCart(EntityManagerInterface $em): JsonResponse
 {
-    $user = $em->getRepository(Utilisateur::class)->find(30); // or your static user ID
+    // Static user for development
+    $user = $em->getRepository(Utilisateur::class)->find(20);
+    
+    if (!$user) {
+        return $this->json(['success' => false, 'error' => 'User not found']);
+    }
+
+    // Get all cart items using standard repository method
     $items = $em->getRepository(Panier::class)->findBy(['utilisateur' => $user]);
     
+    // Remove each item
     foreach ($items as $item) {
         $em->remove($item);
     }
@@ -294,22 +308,79 @@ public function clearCart(EntityManagerInterface $em, Security $security): JsonR
 #[Route('/cart/count', name: 'app_cart_count')]
 public function cartCount(EntityManagerInterface $em, Security $security): Response
 {
-    $user = $em->getRepository(Utilisateur::class)->find(30); // or your static user ID
+    $user = $em->getRepository(Utilisateur::class)->find(20); // or your static user ID
     $count = $em->getRepository(Panier::class)->count(['utilisateur' => $user]);
     
     return new Response($count);
 }
 
 #[Route('/process-payment', name: 'app_process_payment', methods: ['POST'])]
-public function processPayment(Request $request, EntityManagerInterface $em): JsonResponse
+public function processPayment(Request $request, EntityManagerInterface $em, PanierRepository $panierRepository): JsonResponse
 {
     $data = json_decode($request->getContent(), true);
     
     try {
-        \Stripe\Stripe::setApiKey('sk_test_51QvjqJKNitkaIcyAQVqN2T63JJ0vrUFwdbqfVQMNPWu4UzkqjcH2HmIABFxLOg34aZkGTNco7Bs41837SUtIN4o3006H4eMRxF');
+        // Input validation
+        if (!isset($data['paymentMethodId'])) {
+            return new JsonResponse(['success' => false, 'error' => 'Missing payment method ID']);
+        }
+
+        if (!isset($data['amount'])) {
+            return new JsonResponse(['success' => false, 'error' => 'Missing amount']);
+        }
+
+        // Get user (remove hardcoded ID in production)
+        $user = $em->getRepository(Utilisateur::class)->find(20);
+        if (!$user) {
+            return new JsonResponse(['success' => false, 'error' => 'User not found']);
+        }
+
+        // Get cart items
+        $cartItems = $panierRepository->findBy(['utilisateur' => $user]);
+        if (empty($cartItems)) {
+            return new JsonResponse(['success' => false, 'error' => 'Cart is empty']);
+        }
+
+        // Calculate total amount in cents
+        $calculatedAmount = 0;
+        $cartDebug = [];
         
+        foreach ($cartItems as $panier) {
+            $priceEur = (float)$panier->getPrice();
+            $priceCents = (int)round($priceEur * 100);
+            
+            $cartDebug[] = [
+                'eventId' => $panier->getEvent()?->getId(),
+                'eventName' => $panier->getEvent()?->getNom(),
+                'price_eur' => $priceEur,
+                'price_cents' => $priceCents,
+            ];
+            
+            $calculatedAmount += $priceCents;
+        }
+
+        // Convert received amount to integer
+        $receivedAmount = (int)$data['amount'];
+
+        // Verify amount with tolerance (5 cents)
+        if (abs($calculatedAmount - $receivedAmount) > 5) {
+            return new JsonResponse([
+                'success' => false, 
+                'error' => 'Cart total mismatch',
+                'details' => [
+                    'calculated_cents' => $calculatedAmount,
+                    'received_cents' => $receivedAmount,
+                    'difference' => $calculatedAmount - $receivedAmount,
+                    'cartDebug' => $cartDebug,
+                    'note' => 'Amounts should be in cents (1€ = 100 cents)'
+                ]
+            ]);
+        }
+
+        // Process Stripe payment
+        \Stripe\Stripe::setApiKey('sk_test_51QvjqJKNitkaIcyAQVqN2T63JJ0vrUFwdbqfVQMNPWu4UzkqjcH2HmIABFxLOg34aZkGTNco7Bs41837SUtIN4o3006H4eMRxF');        
         $paymentIntent = \Stripe\PaymentIntent::create([
-            'amount' => $data['amount'],
+            'amount' => $calculatedAmount,
             'currency' => 'eur',
             'payment_method' => $data['paymentMethodId'],
             'confirm' => true,
@@ -320,17 +391,58 @@ public function processPayment(Request $request, EntityManagerInterface $em): Js
         ]);
 
         if ($paymentIntent->status === 'succeeded') {
-            // Clear cart and process order
-            $user = $em->getRepository(Utilisateur::class)->find(30);
-            $em->getRepository(Panier::class)->clearCart($user);
-            
-            return new JsonResponse(['success' => true]);
+            // Create and save payment
+            $payment = new Payment();
+            $payment->setUser($user)
+            ->setAmount($calculatedAmount / 100)  // CORRECT METHOD
+            ->setPaymentMethod($paymentIntent->payment_method_types[0] ?? 'card')  // CORRECT METHOD
+            ->setCreatedAt(new \DateTime());  // Correct method name
+
+            $em->persist($payment);
+            $em->flush();
+
+            // Create and save payment details
+            foreach ($cartItems as $panier) {
+                $event = $panier->getEvent();
+                if ($event) {
+                    $detail = new DetailPayment();
+                    $detail->setPayment($payment)
+                        ->setEvent($event)
+                        ->setPrice((float)$panier->getPrice());
+                    $em->persist($detail);
+                }
+            }
+
+            // Clear cart and save changes
+            $panierRepository->clearCart($user);
+            $em->flush();
+
+            return new JsonResponse([
+                'success' => true,
+                'paymentId' => $payment->getId(),
+                'amountCharged' => $calculatedAmount / 100,
+                'itemsCount' => count($cartItems)
+            ]);
         }
         
-        return new JsonResponse(['success' => false, 'error' => 'Payment failed']);
+        return new JsonResponse([
+            'success' => false, 
+            'error' => 'Payment failed',
+            'stripe_error' => $paymentIntent->last_payment_error?->message
+        ]);
         
+    } catch (\Stripe\Exception\CardException $e) {
+        return new JsonResponse([
+            'success' => false, 
+            'error' => 'Card error',
+            'stripe_error' => $e->getError()->message
+        ]);
     } catch (\Exception $e) {
-        return new JsonResponse(['success' => false, 'error' => $e->getMessage()]);
+        return new JsonResponse([
+            'success' => false, 
+            'error' => 'Payment processing error',
+            'system_error' => $e->getMessage()
+        ], 500);
     }
 }
 

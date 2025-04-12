@@ -1,863 +1,499 @@
 
-<!DOCTYPE html>
 
-<html
-  lang="en"
-  class="light-style layout-navbar-fixed layout-menu-fixed"
-  dir="ltr"
-  data-theme="theme-default"
-  data-assets-path="{{ asset('') }}"
-  data-template="vertical-menu-template">
- <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+<!doctype html>
+<html class="no-js" lang="zxx">
 
-    <title>Dashboard - Analytics | Vuexy - Bootstrap Admin Template</title>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Taxiar - Online Taxi Service HTML Template - Home 1</title>
+    <meta name="author" content="Taxiar">
+    <meta name="description" content="Taxiar - Online Taxi Service HTML Template">
+    <meta name="keywords" content="Taxiar - Online Taxi Service HTML Template">
+    <meta name="robots" content="INDEX,FOLLOW">
 
-    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="{{ asset('img/favicon/favicon.ico') }}" />
+<link rel="apple-touch-icon" sizes="57x57" href="{{ asset('Front/img/favicons/apple-icon-57x57.png') }}">
+<link rel="apple-touch-icon" sizes="60x60" href="{{ asset('Front/img/favicons/apple-icon-60x60.png') }}">
+<link rel="apple-touch-icon" sizes="72x72" href="{{ asset('Front/img/favicons/apple-icon-72x72.png') }}">
+<link rel="apple-touch-icon" sizes="76x76" href="{{ asset('Front/img/favicons/apple-icon-76x76.png') }}">
+<link rel="apple-touch-icon" sizes="114x114" href="{{ asset('Front/img/favicons/apple-icon-114x114.png') }}">
+<link rel="apple-touch-icon" sizes="120x120" href="{{ asset('Front/img/favicons/apple-icon-120x120.png') }}">
+<link rel="apple-touch-icon" sizes="144x144" href="{{ asset('Front/img/favicons/apple-icon-144x144.png') }}">
+<link rel="apple-touch-icon" sizes="152x152" href="{{ asset('Front/img/favicons/apple-icon-152x152.png') }}">
+<link rel="apple-touch-icon" sizes="180x180" href="{{ asset('Front/img/favicons/apple-icon-180x180.png') }}">
+<link rel="icon" type="image/png" sizes="192x192" href="{{ asset('Front/img/favicons/android-icon-192x192.png') }}">
+<link rel="icon" type="image/png" sizes="32x32" href="{{ asset('Front/img/favicons/favicon-32x32.png') }}">
+<link rel="icon" type="image/png" sizes="96x96" href="{{ asset('Front/img/favicons/favicon-96x96.png') }}">
+<link rel="icon" type="image/png" sizes="16x16" href="{{ asset('Front/img/favicons/favicon-16x16.png') }}">
+<link rel="manifest" href="{{ asset('Front/img/favicons/manifest.json') }}">
+<meta name="msapplication-TileColor" content="#ffffff">
+<meta name="msapplication-TileImage" content="{{ asset('Front/img/favicons/ms-icon-144x144.png') }}">
+<meta name="theme-color" content="#ffffff">
 
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 
-    <!-- Icons -->
-    <link rel="stylesheet" href="{{ asset('vendor/fonts/fontawesome.css') }}" />
-    <link rel="stylesheet" href="{{ asset('vendor/fonts/tabler-icons.css') }}" />
-    <link rel="stylesheet" href="{{ asset('vendor/fonts/flag-icons.css') }}" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Radio+Canada:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+<script src="https://js.stripe.com/v3/"></script>
 
-    <!-- Core CSS -->
-    <link rel="stylesheet" href="{{ asset('vendor/css/rtl/core.css') }}" class="template-customizer-core-css" />
-    <link rel="stylesheet" href="{{ asset('vendor/css/rtl/theme-default.css') }}" class="template-customizer-theme-css" />
-    <link rel="stylesheet" href="{{ asset('css/demo.css') }}" />
 
-    <!-- Vendors CSS -->
-    <link rel="stylesheet" href="{{ asset('assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css') }}" />
+<link rel="stylesheet" href="{{ asset('Front/css/bootstrap.min.css') }}">
+<link rel="stylesheet" href="{{ asset('Front/css/fontawesome.min.css') }}">
+<link rel="stylesheet" href="{{ asset('Front/css/magnific-popup.min.css') }}">
+<link rel="stylesheet" href="{{ asset('Front/css/slick.min.css') }}">
+<link rel="stylesheet" href="{{ asset('Front/css/jquery.datetimepicker.min.css') }}">
+<link rel="stylesheet" href="{{ asset('Front/css/style.css') }}">
+<style> 
+/* Body background */
+body {
+    background-color: #f8f7fa;
+}
+
+/* Event Card Style */
+.th-product {
+    background-color: #ffffff;
+    border: 2px solid gold;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    margin: 10px;
+    padding: 10px;
+    height: 100%; /* Helps cards be uniform height */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    cursor: pointer;
+
+}
+
+/* Image wrapper to control sizing and spacing */
+.product-img {
+    overflow: hidden;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+/* Image style - same height and zoom on hover */
+.product-img img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+    border-radius: 8px;
+    display: block;
+}
+
+/* Zoom effect on hover */
+.th-product:hover .product-img img {
+    transform: scale(1.05);
+}
+
+/* Card hover effect */
+.th-product:hover {
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+    transform: translateY(-5px);
+}
+
+  .th-product .product-img::before {
+        content: none !important;
+        background-color: transparent !important;
+        opacity: 0 !important;
+        transform: none !important;
+        transition: none !important;
+        visibility: visible !important;
+    }
     
-    <link rel="stylesheet" href="{{ asset('assets/vendor/libs/node-waves/node-waves.css') }}" />
-    <link rel="stylesheet" href="{{ asset('/vendor/libs/typeahead-js/typeahead.css') }}" />
-    <link rel="stylesheet" href="{{ asset('vendor/libs/apex-charts/apex-charts.css') }}" />
-    <link rel="stylesheet" href="{{ asset('vendor/libs/swiper/swiper.css') }}" />
-    <link rel="stylesheet" href="{{ asset('vendor/libs/datatables-bs5/datatables.bootstrap5.css') }}" />
-    <link rel="stylesheet" href="{{ asset('vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.css') }}" />
-    <link rel="stylesheet" href="{{ asset('vendor/libs/flatpickr/flatpickr.css') }}" />
-
-    <!-- Page CSS -->
-    <link rel="stylesheet" href="{{ asset('vendor/css/pages/cards-advance.css') }}" />
+    /* Disable hover state */
+    .th-product:hover .product-img::before {
+        opacity: 0 !important;
+        visibility: hidden !important;
+    }
     
-    <!-- Helpers -->
-    <script src="{{ asset('vendor/js/helpers.js') }}"></script>
-    <script src="{{ asset('vendor/js/template-customizer.js') }}"></script>
-    <script src="{{ asset('js/config.js') }}"></script>
-    <script src="https://js.stripe.com/v3/"></script>
+    /* Remove any other hover effects */
+    .th-product:hover {
+        transform: none !important;
+        box-shadow: none !important;
+    }
+        #cartIcon.dragover {
+        transform: scale(1.1);
+        color: #4CAF50;
+    }
+    .event-card {
+        cursor: grab;
+        transition: transform 0.2s;
+    }
+    
+    .event-card:active {
+        cursor: grabbing;
+    }
+    .stripe-element {
+    transition: border-color 0.3s ease;
+    height: 48px;
+    padding: 12px 16px;
+}
+
+.stripe-element--focus {
+    border-color: #0d6efd !important;
+    box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.25);
+}
+
+.stripe-element--invalid {
+    border-color: #dc3545 !important;
+}
+
+.invalid-feedback {
+    display: block;
+    margin-top: 4px;
+}
+</style>
+
 
 </head>
 
-  <body>
-    <!-- Layout wrapper -->
-    <div class="layout-wrapper layout-content-navbar">
-      <div class="layout-container">
-        <!-- Menu -->
+<body class="">
 
-        <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
-          <div class="app-brand demo">
-            <a href="index.html" class="app-brand-link">
-              <span class="app-brand-logo demo">
-                <svg width="32" height="22" viewBox="0 0 32 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path
-                    fill-rule="evenodd"
-                    clip-rule="evenodd"
-                    d="M0.00172773 0V6.85398C0.00172773 6.85398 -0.133178 9.01207 1.98092 10.8388L13.6912 21.9964L19.7809 21.9181L18.8042 9.88248L16.4951 7.17289L9.23799 0H0.00172773Z"
-                    fill="#7367F0" />
-                  <path
-                    opacity="0.06"
-                    fill-rule="evenodd"
-                    clip-rule="evenodd"
-                    d="M7.69824 16.4364L12.5199 3.23696L16.5541 7.25596L7.69824 16.4364Z"
-                    fill="#161616" />
-                  <path
-                    opacity="0.06"
-                    fill-rule="evenodd"
-                    clip-rule="evenodd"
-                    d="M8.07751 15.9175L13.9419 4.63989L16.5849 7.28475L8.07751 15.9175Z"
-                    fill="#161616" />
-                  <path
-                    fill-rule="evenodd"
-                    clip-rule="evenodd"
-                    d="M7.77295 16.3566L23.6563 0H32V6.88383C32 6.88383 31.8262 9.17836 30.6591 10.4057L19.7824 22H13.6938L7.77295 16.3566Z"
-                    fill="#7367F0" />
-                </svg>
-              </span>
-              <span class="app-brand-text demo menu-text fw-bold">Vuexy</span>
-            </a>
 
-            <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto">
-              <i class="ti menu-toggle-icon d-none d-xl-block ti-sm align-middle"></i>
-              <i class="ti ti-x d-block d-xl-none ti-sm align-middle"></i>
-            </a>
-          </div>
 
-          <div class="menu-inner-shadow"></div>
-<div class="menu-inner-shadow"></div>
 
-<ul class="menu-inner py-1">
-  <!-- Packs -->
-  <li class="menu-item active">
-    <a href="packs.html" class="menu-link">
-      <i class="menu-icon tf-icons ti ti-package"></i>
-      <div data-i18n="Packs">Packs</div>
-    </a>
-  </li>
 
-  <!-- Gestion Événements -->
-  <li class="menu-item">
-    <a href="javascript:void(0);" class="menu-link menu-toggle">
-      <i class="menu-icon tf-icons ti ti-calendar-event"></i>
-      <div data-i18n="Gestion Événements">Gestion Événements</div>
-    </a>
-    <ul class="menu-sub">
-      <li class="menu-item">
-        <a href="ajouter-evenement.html" class="menu-link">
-          <i class="menu-icon tf-icons ti ti-circle"></i>
-          <div data-i18n="Ajouter Événement">Ajouter Événement</div>
-        </a>
-      </li>
-      <li class="menu-item">
-        <a href="liste-evenements.html" class="menu-link">
-          <i class="menu-icon tf-icons ti ti-circle"></i>
-          <div data-i18n="Liste Événements">Liste Événements</div>
-        </a>
-      </li>
-    </ul>
-  </li>
 
-  <!-- Gestion Matérielle -->
-  <li class="menu-item">
-    <a href="javascript:void(0);" class="menu-link menu-toggle">
-      <i class="menu-icon tf-icons ti ti-tools"></i>
-      <div data-i18n="Gestion Matérielle">Gestion Matérielle</div>
-    </a>
-    <ul class="menu-sub">
-      <li class="menu-item">
-        <a href="ajouter-materiel.html" class="menu-link">
-          <i class="menu-icon tf-icons ti ti-circle"></i>
-          <div data-i18n="Ajouter Matériel">Ajouter Matériel</div>
-        </a>
-      </li>
-      <li class="menu-item">
-        <a href="liste-materiel.html" class="menu-link">
-          <i class="menu-icon tf-icons ti ti-circle"></i>
-          <div data-i18n="Liste Matériel">Liste Matériel</div>
-        </a>
-      </li>
-    </ul>
-  </li>
-
-  <!-- Gestion Lieu -->
-  <li class="menu-item">
-    <a href="javascript:void(0);" class="menu-link menu-toggle">
-      <i class="menu-icon tf-icons ti ti-map-pin"></i>
-      <div data-i18n="Gestion Lieu">Gestion Lieu</div>
-    </a>
-    <ul class="menu-sub">
-      <li class="menu-item">
-        <a href="ajouter-lieu.html" class="menu-link">
-          <i class="menu-icon tf-icons ti ti-circle"></i>
-          <div data-i18n="Ajouter Lieu">Ajouter Lieu</div>
-        </a>
-      </li>
-      <li class="menu-item">
-        <a href="liste-lieux.html" class="menu-link">
-          <i class="menu-icon tf-icons ti ti-circle"></i>
-          <div data-i18n="Liste Lieux">Liste Lieux</div>
-        </a>
-      </li>
-    </ul>
-  </li>
-
-  <!-- Gestion Personnels -->
-  <li class="menu-item">
-    <a href="javascript:void(0);" class="menu-link menu-toggle">
-      <i class="menu-icon tf-icons ti ti-users"></i>
-      <div data-i18n="Gestion Personnels">Gestion Personnels</div>
-    </a>
-    <ul class="menu-sub">
-      <li class="menu-item">
-        <a href="ajouter-personnel.html" class="menu-link">
-          <i class="menu-icon tf-icons ti ti-circle"></i>
-          <div data-i18n="Ajouter Personnel">Ajouter Personnel</div>
-        </a>
-      </li>
-      <li class="menu-item">
-        <a href="liste-personnels.html" class="menu-link">
-          <i class="menu-icon tf-icons ti ti-circle"></i>
-          <div data-i18n="Liste Personnels">Liste Personnels</div>
-        </a>
-      </li>
-    </ul>
-  </li>
-
-  <!-- Gestion Commandes -->
-  <li class="menu-item">
-    <a href="javascript:void(0);" class="menu-link menu-toggle">
-      <i class="menu-icon tf-icons ti ti-shopping-cart"></i>
-      <div data-i18n="Gestion Commandes">Gestion Commandes</div>
-    </a>
-    <ul class="menu-sub">
-      <li class="menu-item">
-        <a href="panier.html" class="menu-link">
-          <i class="menu-icon tf-icons ti ti-circle"></i>
-          <div data-i18n="Panier">Panier</div>
-          <div class="badge bg-label-primary rounded-pill ms-auto">3</div>
-        </a>
-      </li>
-      <li class="menu-item">
-        <a href="liste-commandes.html" class="menu-link">
-          <i class="menu-icon tf-icons ti ti-circle"></i>
-          <div data-i18n="Liste Commandes">Liste Commandes</div>
-        </a>
-      </li>
-      <li class="menu-item">
-        <a href="liste-reclamations.html" class="menu-link">
-          <i class="menu-icon tf-icons ti ti-circle"></i>
-          <div data-i18n="Liste Réclamations">Liste Réclamations</div>
-          <div class="badge bg-label-warning rounded-pill ms-auto">2</div>
-        </a>
-      </li>
-    </ul>
-  </li>
-
-  <!-- Divider -->
-  <li class="menu-header small text-uppercase">
-    <span class="menu-header-text">Compte</span>
-  </li>
-
-  <!-- Compte -->
-  <li class="menu-item">
-    <a href="compte.html" class="menu-link">
-      <i class="menu-icon tf-icons ti ti-user"></i>
-      <div data-i18n="Mon Compte">Mon Compte</div>
-    </a>
-  </li>
-
-  <!-- Déconnexion -->
-  <li class="menu-item">
-    <a href="deconnexion.html" class="menu-link">
-      <i class="menu-icon tf-icons ti ti-logout"></i>
-      <div data-i18n="Déconnexion">Déconnexion</div>
-    </a>
-  </li>
-</ul>
-         
-        </aside>
-        <!-- / Menu -->
-
-        <!-- / Menu -->
-
-        <!-- Layout container -->
-        <div class="layout-page">
-          <!-- Navbar -->
-
-          <nav
-            class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme"
-            id="layout-navbar">
-            <div class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
-              <a class="nav-item nav-link px-0 me-xl-4" href="javascript:void(0)">
-                <i class="ti ti-menu-2 ti-sm"></i>
-              </a>
-            </div>
-
-            <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
-              <!-- Search -->
-              <div class="navbar-nav align-items-center">
-                <div class="nav-item navbar-search-wrapper mb-0">
-                  <a class="nav-item nav-link search-toggler d-flex align-items-center px-0" href="javascript:void(0);">
-                    <i class="ti ti-search ti-md me-2"></i>
-                    <span class="d-none d-md-inline-block text-muted">Search (Ctrl+/)</span>
-                  </a>
+    <div class="preloader">
+        <button class="th-btn style3 preloaderCls">Cancel Preloader </button>
+        <div class="preloader-inner">
+            <div class="loading-window">
+                <div class="car">
+                    <div class="strike"></div>
+                    <div class="strike strike2"></div>
+                    <div class="strike strike3"></div>
+                    <div class="strike strike4"></div>
+                    <div class="strike strike5"></div>
+                    <div class="car-detail spoiler"></div>
+                    <div class="car-detail back"></div>
+                    <div class="car-detail center"></div>
+                    <div class="car-detail center1"></div>
+                    <div class="car-detail front"></div>
+                    <div class="car-detail wheel"></div>
+                    <div class="car-detail wheel wheel2"></div>
                 </div>
-              </div>
-              <!-- /Search -->
-
-              <ul class="navbar-nav flex-row align-items-center ms-auto">
- 
-<!-- Cart -->
-<li class="nav-item dropdown-cart navbar-dropdown dropdown me-3 me-xl-1"  id="cartIcon">
-    <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown" aria-label="Cart">
-        <i class="fas fa-shopping-cart fa-lg"></i> <!-- Match icon size -->
-        <span class="badge bg-danger rounded-pill badge-notificationss">3</span>
-    </a>
-    <ul class="dropdown-menu dropdown-menu-end py-0">
-        <!-- Cart dropdown content here -->
-    </ul>
-</li>
-
-                <!-- Style Switcher -->
-                <li class="nav-item me-2 me-xl-0">
-                  <a class="nav-link style-switcher-toggle hide-arrow" href="javascript:void(0);">
-                    <i class="ti ti-md"></i>
-                  </a>
-                </li>
-                <!--/ Style Switcher -->
-
-                <!-- Quick links  -->
-                <li class="nav-item dropdown-shortcuts navbar-dropdown dropdown me-2 me-xl-0">
-                  <a
-                    class="nav-link dropdown-toggle hide-arrow"
-                    href="javascript:void(0);"
-                    data-bs-toggle="dropdown"
-                    data-bs-auto-close="outside"
-                    aria-expanded="false">
-                    <i class="ti ti-layout-grid-add ti-md"></i>
-                  </a>
-                  <div class="dropdown-menu dropdown-menu-end py-0">
-                    <div class="dropdown-menu-header border-bottom">
-                      <div class="dropdown-header d-flex align-items-center py-3">
-                        <h5 class="text-body mb-0 me-auto">Shortcuts</h5>
-                        <a
-                          href="javascript:void(0)"
-                          class="dropdown-shortcuts-add text-body"
-                          data-bs-toggle="tooltip"
-                          data-bs-placement="top"
-                          title="Add shortcuts"
-                          ><i class="ti ti-sm ti-apps"></i
-                        ></a>
-                      </div>
-                    </div>
-                    <div class="dropdown-shortcuts-list scrollable-container">
-                      <div class="row row-bordered overflow-visible g-0">
-                        <div class="dropdown-shortcuts-item col">
-                          <span class="dropdown-shortcuts-icon rounded-circle mb-2">
-                            <i class="ti ti-calendar fs-4"></i>
-                          </span>
-                          <a href="app-calendar.html" class="stretched-link">Calendar</a>
-                          <small class="text-muted mb-0">Appointments</small>
-                        </div>
-                        <div class="dropdown-shortcuts-item col">
-                          <span class="dropdown-shortcuts-icon rounded-circle mb-2">
-                            <i class="ti ti-file-invoice fs-4"></i>
-                          </span>
-                          <a href="app-invoice-list.html" class="stretched-link">Invoice App</a>
-                          <small class="text-muted mb-0">Manage Accounts</small>
-                        </div>
-                      </div>
-                      <div class="row row-bordered overflow-visible g-0">
-                        <div class="dropdown-shortcuts-item col">
-                          <span class="dropdown-shortcuts-icon rounded-circle mb-2">
-                            <i class="ti ti-users fs-4"></i>
-                          </span>
-                          <a href="app-user-list.html" class="stretched-link">User App</a>
-                          <small class="text-muted mb-0">Manage Users</small>
-                        </div>
-                        <div class="dropdown-shortcuts-item col">
-                          <span class="dropdown-shortcuts-icon rounded-circle mb-2">
-                            <i class="ti ti-lock fs-4"></i>
-                          </span>
-                          <a href="app-access-roles.html" class="stretched-link">Role Management</a>
-                          <small class="text-muted mb-0">Permission</small>
-                        </div>
-                      </div>
-                      <div class="row row-bordered overflow-visible g-0">
-                        <div class="dropdown-shortcuts-item col">
-                          <span class="dropdown-shortcuts-icon rounded-circle mb-2">
-                            <i class="ti ti-chart-bar fs-4"></i>
-                          </span>
-                          <a href="index.html" class="stretched-link">Dashboard</a>
-                          <small class="text-muted mb-0">User Profile</small>
-                        </div>
-                        <div class="dropdown-shortcuts-item col">
-                          <span class="dropdown-shortcuts-icon rounded-circle mb-2">
-                            <i class="ti ti-settings fs-4"></i>
-                          </span>
-                          <a href="pages-account-settings-account.html" class="stretched-link">Setting</a>
-                          <small class="text-muted mb-0">Account Settings</small>
-                        </div>
-                      </div>
-                      <div class="row row-bordered overflow-visible g-0">
-                        <div class="dropdown-shortcuts-item col">
-                          <span class="dropdown-shortcuts-icon rounded-circle mb-2">
-                            <i class="ti ti-help fs-4"></i>
-                          </span>
-                          <a href="pages-help-center-landing.html" class="stretched-link">Help Center</a>
-                          <small class="text-muted mb-0">FAQs & Articles</small>
-                        </div>
-                        <div class="dropdown-shortcuts-item col">
-                          <span class="dropdown-shortcuts-icon rounded-circle mb-2">
-                            <i class="ti ti-square fs-4"></i>
-                          </span>
-                          <a href="modal-examples.html" class="stretched-link">Modals</a>
-                          <small class="text-muted mb-0">Useful Popups</small>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </li>
-                <!-- Quick links -->
-
-                <!-- Notification -->
-                <li class="nav-item dropdown-notifications navbar-dropdown dropdown me-3 me-xl-1">
-                  <a
-                    class="nav-link dropdown-toggle hide-arrow"
-                    href="javascript:void(0);"
-                    data-bs-toggle="dropdown"
-                    data-bs-auto-close="outside"
-                    aria-expanded="false">
-                    <i class="ti ti-bell ti-md"></i>
-                    <span class="badge bg-danger rounded-pill badge-notifications">5</span>
-                  </a>
-                  <ul class="dropdown-menu dropdown-menu-end py-0">
-                    <li class="dropdown-menu-header border-bottom">
-                      <div class="dropdown-header d-flex align-items-center py-3">
-                        <h5 class="text-body mb-0 me-auto">Notification</h5>
-                        <a
-                          href="javascript:void(0)"
-                          class="dropdown-notifications-all text-body"
-                          data-bs-toggle="tooltip"
-                          data-bs-placement="top"
-                          title="Mark all as read"
-                          ><i class="ti ti-mail-opened fs-4"></i
-                        ></a>
-                      </div>
-                    </li>
-                    <li class="dropdown-notifications-list scrollable-container">
-                      <ul class="list-group list-group-flush">
-                        <li class="list-group-item list-group-item-action dropdown-notifications-item">
-                          <div class="d-flex">
-                            <div class="flex-shrink-0 me-3">
-                              <div class="avatar">
-                                <img src="{{ asset('img/avatars/1.png') }}" alt class="h-auto rounded-circle" />
-                            
-                              </div>
-                            </div>
-                            <div class="flex-grow-1">
-                              <h6 class="mb-1">Congratulation Lettie 🎉</h6>
-                              <p class="mb-0">Won the monthly best seller gold badge</p>
-                              <small class="text-muted">1h ago</small>
-                            </div>
-                            <div class="flex-shrink-0 dropdown-notifications-actions">
-                              <a href="javascript:void(0)" class="dropdown-notifications-read"
-                                ><span class="badge badge-dot"></span
-                              ></a>
-                              <a href="javascript:void(0)" class="dropdown-notifications-archive"
-                                ><span class="ti ti-x"></span
-                              ></a>
-                            </div>
-                          </div>
-                        </li>
-                        <li class="list-group-item list-group-item-action dropdown-notifications-item">
-                          <div class="d-flex">
-                            <div class="flex-shrink-0 me-3">
-                              <div class="avatar">
-                                <span class="avatar-initial rounded-circle bg-label-danger">CF</span>
-                              </div>
-                            </div>
-                            <div class="flex-grow-1">
-                              <h6 class="mb-1">Charles Franklin</h6>
-                              <p class="mb-0">Accepted your connection</p>
-                              <small class="text-muted">12hr ago</small>
-                            </div>
-                            <div class="flex-shrink-0 dropdown-notifications-actions">
-                              <a href="javascript:void(0)" class="dropdown-notifications-read"
-                                ><span class="badge badge-dot"></span
-                              ></a>
-                              <a href="javascript:void(0)" class="dropdown-notifications-archive"
-                                ><span class="ti ti-x"></span
-                              ></a>
-                            </div>
-                          </div>
-                        </li>
-                        <li class="list-group-item list-group-item-action dropdown-notifications-item marked-as-read">
-                          <div class="d-flex">
-                            <div class="flex-shrink-0 me-3">
-                              <div class="avatar">
-                                <img src="{{ asset('img/avatars/2.png') }}" alt class="h-auto rounded-circle" />
-                              </div>
-                            </div>
-                            <div class="flex-grow-1">
-                              <h6 class="mb-1">New Message ✉️</h6>
-                              <p class="mb-0">You have new message from Natalie</p>
-                              <small class="text-muted">1h ago</small>
-                            </div>
-                            <div class="flex-shrink-0 dropdown-notifications-actions">
-                              <a href="javascript:void(0)" class="dropdown-notifications-read"
-                                ><span class="badge badge-dot"></span
-                              ></a>
-                              <a href="javascript:void(0)" class="dropdown-notifications-archive"
-                                ><span class="ti ti-x"></span
-                              ></a>
-                            </div>
-                          </div>
-                        </li>
-                        <li class="list-group-item list-group-item-action dropdown-notifications-item">
-                          <div class="d-flex">
-                            <div class="flex-shrink-0 me-3">
-                              <div class="avatar">
-                                <span class="avatar-initial rounded-circle bg-label-success"
-                                  ><i class="ti ti-shopping-cart"></i
-                                ></span>
-                              </div>
-                            </div>
-                            <div class="flex-grow-1">
-                              <h6 class="mb-1">Whoo! You have new order 🛒</h6>
-                              <p class="mb-0">ACME Inc. made new order $1,154</p>
-                              <small class="text-muted">1 day ago</small>
-                            </div>
-                            <div class="flex-shrink-0 dropdown-notifications-actions">
-                              <a href="javascript:void(0)" class="dropdown-notifications-read"
-                                ><span class="badge badge-dot"></span
-                              ></a>
-                              <a href="javascript:void(0)" class="dropdown-notifications-archive"
-                                ><span class="ti ti-x"></span
-                              ></a>
-                            </div>
-                          </div>
-                        </li>
-                        <li class="list-group-item list-group-item-action dropdown-notifications-item marked-as-read">
-                          <div class="d-flex">
-                            <div class="flex-shrink-0 me-3">
-                              <div class="avatar">
-                                <img src="{{ asset('img/avatars/9.png') }}" alt class="h-auto rounded-circle" />
-                              </div>
-                            </div>
-                            <div class="flex-grow-1">
-                              <h6 class="mb-1">Application has been approved 🚀</h6>
-                              <p class="mb-0">Your ABC project application has been approved.</p>
-                              <small class="text-muted">2 days ago</small>
-                            </div>
-                            <div class="flex-shrink-0 dropdown-notifications-actions">
-                              <a href="javascript:void(0)" class="dropdown-notifications-read"
-                                ><span class="badge badge-dot"></span
-                              ></a>
-                              <a href="javascript:void(0)" class="dropdown-notifications-archive"
-                                ><span class="ti ti-x"></span
-                              ></a>
-                            </div>
-                          </div>
-                        </li>
-                        <li class="list-group-item list-group-item-action dropdown-notifications-item marked-as-read">
-                          <div class="d-flex">
-                            <div class="flex-shrink-0 me-3">
-                              <div class="avatar">
-                                <span class="avatar-initial rounded-circle bg-label-success"
-                                  ><i class="ti ti-chart-pie"></i
-                                ></span>
-                              </div>
-                            </div>
-                            <div class="flex-grow-1">
-                              <h6 class="mb-1">Monthly report is generated</h6>
-                              <p class="mb-0">July monthly financial report is generated</p>
-                              <small class="text-muted">3 days ago</small>
-                            </div>
-                            <div class="flex-shrink-0 dropdown-notifications-actions">
-                              <a href="javascript:void(0)" class="dropdown-notifications-read"
-                                ><span class="badge badge-dot"></span
-                              ></a>
-                              <a href="javascript:void(0)" class="dropdown-notifications-archive"
-                                ><span class="ti ti-x"></span
-                              ></a>
-                            </div>
-                          </div>
-                        </li>
-                        <li class="list-group-item list-group-item-action dropdown-notifications-item marked-as-read">
-                          <div class="d-flex">
-                            <div class="flex-shrink-0 me-3">
-                              <div class="avatar">
-                                <img src="{{ asset('img/avatars/5.png') }}" alt class="h-auto rounded-circle" />
-                              </div>
-                            </div>
-                            <div class="flex-grow-1">
-                              <h6 class="mb-1">Send connection request</h6>
-                              <p class="mb-0">Peter sent you connection request</p>
-                              <small class="text-muted">4 days ago</small>
-                            </div>
-                            <div class="flex-shrink-0 dropdown-notifications-actions">
-                              <a href="javascript:void(0)" class="dropdown-notifications-read"
-                                ><span class="badge badge-dot"></span
-                              ></a>
-                              <a href="javascript:void(0)" class="dropdown-notifications-archive"
-                                ><span class="ti ti-x"></span
-                              ></a>
-                            </div>
-                          </div>
-                        </li>
-                        <li class="list-group-item list-group-item-action dropdown-notifications-item">
-                          <div class="d-flex">
-                            <div class="flex-shrink-0 me-3">
-                              <div class="avatar">
-                                <img src="{{ asset('img/avatars/6.png') }}" alt class="h-auto rounded-circle" />
-                              </div>
-                            </div>
-                            <div class="flex-grow-1">
-                              <h6 class="mb-1">New message from Jane</h6>
-                              <p class="mb-0">Your have new message from Jane</p>
-                              <small class="text-muted">5 days ago</small>
-                            </div>
-                            <div class="flex-shrink-0 dropdown-notifications-actions">
-                              <a href="javascript:void(0)" class="dropdown-notifications-read"
-                                ><span class="badge badge-dot"></span
-                              ></a>
-                              <a href="javascript:void(0)" class="dropdown-notifications-archive"
-                                ><span class="ti ti-x"></span
-                              ></a>
-                            </div>
-                          </div>
-                        </li>
-                        <li class="list-group-item list-group-item-action dropdown-notifications-item marked-as-read">
-                          <div class="d-flex">
-                            <div class="flex-shrink-0 me-3">
-                              <div class="avatar">
-                                <span class="avatar-initial rounded-circle bg-label-warning"
-                                  ><i class="ti ti-alert-triangle"></i
-                                ></span>
-                              </div>
-                            </div>
-                            <div class="flex-grow-1">
-                              <h6 class="mb-1">CPU is running high</h6>
-                              <p class="mb-0">CPU Utilization Percent is currently at 88.63%,</p>
-                              <small class="text-muted">5 days ago</small>
-                            </div>
-                            <div class="flex-shrink-0 dropdown-notifications-actions">
-                              <a href="javascript:void(0)" class="dropdown-notifications-read"
-                                ><span class="badge badge-dot"></span
-                              ></a>
-                              <a href="javascript:void(0)" class="dropdown-notifications-archive"
-                                ><span class="ti ti-x"></span
-                              ></a>
-                            </div>
-                          </div>
-                        </li>
-                      </ul>
-                    </li>
-                    <li class="dropdown-menu-footer border-top">
-                      <a
-                        href="javascript:void(0);"
-                        class="dropdown-item d-flex justify-content-center text-primary p-2 h-px-40 mb-1 align-items-center">
-                        View all notifications
-                      </a>
-                    </li>
-                  </ul>
-                </li>
-                <!--/ Notification -->
-
-                <!-- User -->
-                <li class="nav-item navbar-dropdown dropdown-user dropdown">
-                  <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
-                    <div class="avatar avatar-online">
-                      <img src="{{ asset('img/avatars/1.png') }}" alt class="h-auto rounded-circle" />
-                    </div>
-                  </a>
-                  <ul class="dropdown-menu dropdown-menu-end">
-                    <li>
-                      <a class="dropdown-item" href="pages-account-settings-account.html">
-                        <div class="d-flex">
-                          <div class="flex-shrink-0 me-3">
-                            <div class="avatar avatar-online">
-                              <img src="{{ asset('img/avatars/1.png') }}" alt class="h-auto rounded-circle" />
-                            </div>
-                          </div>
-                          <div class="flex-grow-1">
-                            <span class="fw-semibold d-block">John Doe</span>
-                            <small class="text-muted">Admin</small>
-                          </div>
-                        </div>
-                      </a>
-                    </li>
-                    <li>
-                      <div class="dropdown-divider"></div>
-                    </li>
-                    <li>
-                      <a class="dropdown-item" href="pages-profile-user.html">
-                        <i class="ti ti-user-check me-2 ti-sm"></i>
-                        <span class="align-middle">My Profile</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a class="dropdown-item" href="pages-account-settings-account.html">
-                        <i class="ti ti-settings me-2 ti-sm"></i>
-                        <span class="align-middle">Settings</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a class="dropdown-item" href="pages-account-settings-billing.html">
-                        <span class="d-flex align-items-center align-middle">
-                          <i class="flex-shrink-0 ti ti-credit-card me-2 ti-sm"></i>
-                          <span class="flex-grow-1 align-middle">Billing</span>
-                          <span class="flex-shrink-0 badge badge-center rounded-pill bg-label-danger w-px-20 h-px-20"
-                            >2</span
-                          >
-                        </span>
-                      </a>
-                    </li>
-                    <li>
-                      <div class="dropdown-divider"></div>
-                    </li>
-                    <li>
-                      <a class="dropdown-item" href="pages-help-center-landing.html">
-                        <i class="ti ti-lifebuoy me-2 ti-sm"></i>
-                        <span class="align-middle">Help</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a class="dropdown-item" href="pages-faq.html">
-                        <i class="ti ti-help me-2 ti-sm"></i>
-                        <span class="align-middle">FAQ</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a class="dropdown-item" href="pages-pricing.html">
-                        <i class="ti ti-currency-dollar me-2 ti-sm"></i>
-                        <span class="align-middle">Pricing</span>
-                      </a>
-                    </li>
-                    <li>
-                      <div class="dropdown-divider"></div>
-                    </li>
-                    <li>
-                      <a class="dropdown-item" href="auth-login-cover.html" target="_blank">
-                        <i class="ti ti-logout me-2 ti-sm"></i>
-                        <span class="align-middle">Log Out</span>
-                      </a>
-                    </li>
-                  </ul>
-                </li>
-                <!--/ User -->
-              </ul>
             </div>
+        </div>
+    </div> 
+<input type="hidden" name="_token" value="{{ csrf_token('add_to_cart') }}">
 
-            <!-- Search Small Screens -->
-            <div class="navbar-search-wrapper search-input-wrapper d-none">
-              <input
-                type="text"
-                class="form-control search-input container-xxl border-0"
-                placeholder="Search..."
-                aria-label="Search..." />
-              <i class="ti ti-x ti-sm search-toggler cursor-pointer"></i>
+
+    <div class="th-menu-wrapper">
+        <div class="th-menu-area text-center">
+            <button class="th-menu-toggle "><i class="fal fa-times"></i></button>
+            <div class="mobile-logo">
+                <a href="index.html"><img src="{{ asset('Front/img/logo.svg') }}" alt="Taxiar"></a>
             </div>
-          </nav>
+            <div class="th-mobile-menu">
+                <ul>
+                    <li class="menu-item-has-children">
+                        <a href="index.html">Home</a>
+                        <ul class="sub-menu">
+                            <li><a href="index.html">Home One </a></li>
+                            <li><a href="index-2.html">Home Two </a></li>
+                            <li><a href="index-3.html">Home Three </a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="about.html">About Us</a>
+                    </li>
+                    <li class="menu-item-has-children">
+                        <a href="#">Service</a>
+                        <ul class="sub-menu">
+                            <li><a href="service.html">Service</a></li>
+                            <li><a href="service-details.html">Service Details</a></li>
+                        </ul>
+                    </li>
+                    <li class="menu-item-has-children">
+                        <a href="#">Blog</a>
+                        <ul class="sub-menu">
+                            <li><a href="blog.html">Blog</a></li>
+                            <li><a href="blog-details.html">Blog Details</a></li>
+                        </ul>
+                    </li>
+                    <li class="menu-item-has-children">
+                        <a href="#">Pages</a>
+                        <ul class="sub-menu">
+                            <li class="menu-item-has-children"><a href="#">Shop</a>
+                                <ul class="sub-menu">
+                                    <li><a href="shop.html">Shop</a></li>
+                                    <li><a href="shop-details.html">Shop Details</a></li>
+                                    <li><a href="cart.html">Cart Page</a></li>
+                                    <li><a href="checkout.html">Checkout</a></li>
+                                    <li><a href="wishlist.html">Wishlist</a></li>
+                                </ul>
+                            </li>
+                            <li><a href="team.html">Driver</a></li>
+                            <li><a href="team-details.html">Driver Details</a></li>
+                            <li><a href="taxi.html">Taxi</a></li>
+                            <li><a href="taxi-details.html">Taxi Details</a></li>
+                            <li><a href="booking.html">Booking Ride</a></li>
+                            <li><a href="faq.html">Faq</a></li>
+                            <li><a href="error.html">Error</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="contact.html">Contact</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
 
-          <!-- / Navbar -->
+    <div class="sidemenu-wrapper shopping-cart d-none d-lg-block  ">
+        <div class="sidemenu-content">
+            <button class="closeButton sideMenuCls"><i class="far fa-times"></i></button>
+            <div class="widget woocommerce widget_shopping_cart">
+                <h3 class="widget_title">Shopping cart</h3>
+                <div class="widget_shopping_cart_content">
+                    <ul class="woocommerce-mini-cart cart_list product_list_widget">
+                        <li class="woocommerce-mini-cart-item mini_cart_item">
+                            <a href="#" class="remove remove_from_cart_button"><i class="far fa-times"></i></a>
+                            <a href="#"><img src="{{ asset('Front/img/product/product_thumb_1_1.jpg') }}"
+                                    alt="Cart Image">Suspension-Coil</a>
+                            <span class="quantity">1 ×
+                                <span class="woocommerce-Price-amount amount">
+                                    <span class="woocommerce-Price-currencySymbol">$</span>94</span>,
+                            </span>
+                        </li>
+                        <li class="woocommerce-mini-cart-item mini_cart_item">
+                            <a href="#" class="remove remove_from_cart_button"><i class="far fa-times"></i></a>
+                            <a href="#"><img src="{{ asset('Front/img/product/product_thumb_1_2.jpg') }}" alt="Cart Image">absorbers
+                                Brake</a>
+                            <span class="quantity">1 ×
+                                <span class="woocommerce-Price-amount amount">
+                                    <span class="woocommerce-Price-currencySymbol">$</span>89</span>
+                            </span>
+                        </li>
+                        <li class="woocommerce-mini-cart-item mini_cart_item">
+                            <a href="#" class="remove remove_from_cart_button"><i class="far fa-times"></i></a>
+                            <a href="#"><img src="{{ asset('Front/img/product/product_thumb_1_3.jpg') }}"
+                                    alt="Cart Image">Motorcycle-Shock</a>
+                            <span class="quantity">1 ×
+                                <span class="woocommerce-Price-amount amount">
+                                    <span class="woocommerce-Price-currencySymbol">$</span>75</span>
+                            </span>
+                        </li>
+                        <li class="woocommerce-mini-cart-item mini_cart_item">
+                            <a href="#" class="remove remove_from_cart_button"><i class="far fa-times"></i></a>
+                            <a href="#"><img src="{{ asset('Front/img/product/product_thumb_1_4.jpg') }}" alt="Cart Image">Body
+                                Spring</a>
+                            <span class="quantity">1 ×
+                                <span class="woocommerce-Price-amount amount">
+                                    <span class="woocommerce-Price-currencySymbol">$</span>72</span>
+                            </span>
+                        </li>
+                        <li class="woocommerce-mini-cart-item mini_cart_item">
+                            <a href="#" class="remove remove_from_cart_button"><i class="far fa-times"></i></a>
+                            <a href="#"><img src="{{ asset('Front/img/product/product_thumb_1_5.jpg') }}" alt="Cart Image">Body
+                                Spring</a>
+                            <span class="quantity">1 ×
+                                <span class="woocommerce-Price-amount amount">
+                                    <span class="woocommerce-Price-currencySymbol">$</span>81</span>
+                            </span>
+                        </li>
+                    </ul>
+                    <p class="woocommerce-mini-cart__total total">
+                        <strong>Subtotal:</strong>
+                        <span class="woocommerce-Price-amount amount">
+                            <span class="woocommerce-Price-currencySymbol">$</span>318.00</span>
+                    </p>
+                    <p class="woocommerce-mini-cart__buttons buttons">
+                        <a href="cart.html" class="th-btn style1 wc-forward">View cart</a>
+                        <a href="checkout.html" class="th-btn style1 checkout wc-forward">Checkout</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-          <div class="content-wrapper">
-    <div class="container-xxl flex-grow-1 container-p-y">
-<div class="card">
-    <h5 class="card-header">Your Shopping Cart</h5>
-    <div class="card-datatable table-responsive">
-        <table class="dt-responsive table">
-            <thead>
-                <tr>
-                    <th>Event</th>
-                    <th>Category</th>
-                    <th>Type</th>
-                    <th>Date</th>
-                    <th>Price</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for item in panierItems %}
-                <tr>
-                    <td>{{ item.event.nom }}</td>
-                    <td>{{ item.categorie }}</td>
-                    <td>{{ item.typeEvent }}</td>
-                    <td>{{ item.date|date('Y-m-d') }}</td>
-                    <td>{{ item.price }} TND</td>
-                    <td>
-                        <button class="btn btn-danger btn-sm remove-from-cart" 
-                                data-id="{{ item.id }}">
-                            <i class="fas fa-trash"></i> Remove
-                        </button>
-                    </td>
-                </tr>
-                {% else %}
-                <tr>
-                    <td colspan="6" class="text-center">Your cart is empty</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-            <tfoot>
-                <tr>
-                    <td colspan="4" class="text-right"><strong>Total:</strong></td>
-                    <td><strong>{{ total }} TND</strong></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td colspan="6" class="text-right">
-                        <div class="d-flex justify-content-between">
-                            <button class="btn btn-outline-secondary" id="clear-cart">
-                                <i class="fas fa-broom"></i> Clear Cart
-                            </button>
-                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#checkoutModal">
-  <i class="fas fa-shopping-bag"></i> Commander
-</button>
+    <div class="sidemenu-wrapper d-none d-lg-block  ">
+        <div class="sidemenu-content bg-title">
+            <button class="closeButton sideMenuCls"><i class="far fa-times"></i></button>
+            <div class="widget footer-widget">
+                <h3 class="widget_title">About Company</h3>
+                <div class="th-widget-about">
+                    <p class="footer-text">Centric aplications productize before front end vortals visualize front end
+                        is results and value added</p>
+                    <h4 class="footer-info-title">WE ARE AVAILABLE</h4>
+                    <p class="footer-text">Mon-Sat: 09.00 am to 6.30 pm</p>
+                    <a href="contact.html" class="th-btn style3"><span class="btn-text">Contact Us</span></a>
+                </div>
+            </div>
+            <div class="widget footer-widget">
+                <h3 class="widget_title">Recent Posts</h3>
+                <div class="recent-post-wrap">
+                    <div class="recent-post">
+                        <div class="media-img">
+                            <a href="blog-details.html"><img src="{{ asset('Front/img/blog/recent-post-1-2.jpg') }}"
+                                    alt="Blog Image"></a>
                         </div>
-                    </td>
-                </tr>
-            </tfoot>
-        </table>
+                        <div class="media-body">
+                            <div class="recent-post-meta">
+                                <a href="blog.html"><i class="far fa-calendar-days"></i>22th May, 2023</a>
+                            </div>
+                            <h4 class="post-title"><a class="text-inherit" href="blog-details.html">How To Start Car
+                                    Engine Faster</a></h4>
+                            <a class="line-btn" href="blog.html">Read More<i class="fa-regular fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                    <div class="recent-post">
+                        <div class="media-img">
+                            <a href="blog-details.html"><img src="{{ asset('Front/img/blog/recent-post-1-3.jpg') }}"
+                                    alt="Blog Image"></a>
+                        </div>
+                        <div class="media-body">
+                            <div class="recent-post-meta">
+                                <a href="blog.html"><i class="far fa-calendar-days"></i>25th May, 2023</a>
+                            </div>
+                            <h4 class="post-title"><a class="text-inherit" href="blog-details.html">How to start car
+                                    engine slowly</a></h4>
+                            <a class="line-btn" href="blog.html">Read More<i class="fa-regular fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="widget footer-widget">
+                <h4 class="widget_title">Get Newsletter</h4>
+                <div class="newsletter-widget">
+                    <p class="md-20">Sign up today for hints, tips & latest car overview and news</p>
+                    <form class="newsletter-form">
+                        <input class="form-control" type="email" placeholder="Email Address" required="">
+                        <button type="submit" class="newsletter-btn"><i class="fas fa-envelope"></i></button>
+                    </form>
+                    <div class="th-social  style2">
+                        <a target="_blank" href="https://facebook.com/"><i class="fab fa-facebook-f"></i></a>
+                        <a target="_blank" href="https://twitter.com/"><i class="fab fa-twitter"></i></a>
+                        <a target="_blank" href="https://instagram.com/"><i class="fab fa-instagram"></i></a>
+                        <a target="_blank" href="https://linkedin.com/"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="popup-search-box d-none d-lg-block">
+        <button class="searchClose"><i class="fal fa-times"></i></button>
+        <form action="#">
+            <input type="text" placeholder="What are you looking for">
+            <button type="submit"><i class="fal fa-search"></i></button>
+        </form>
+    </div>
+
+
+    <header class="th-header header-layout7">
+        <div class="header-top">
+            <div class="container">
+                <div class="row justify-content-center justify-content-md-between align-items-center gy-2">
+                    <div class="col-auto d-none d-md-block">
+                        <div class="header-links">
+                            <ul>
+                                <li><i class="fa-thin fa-envelope"></i><a
+                                        href="mailto:GoldenTouch@gmail.com">GoldenTouch@gmail.com</a>
+                                </li>
+                                <li><i class="fa-thin fa-phone"></i><a href="tel:+468254762443">(+468) 254 762 443</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <div class="header-right">
+                            <div class="langauge">
+                                <select class="form-select nice-select">
+                                    <option selected="">English</option>
+                                    <option>Hindi</option>
+                                </select>
+                            </div>
+                            <div class="header-social">
+                                <span class="social-title">Follow Us On:</span>
+                                <a href="https://www.facebook.com/"><i class="fab fa-facebook-f"></i></a>
+                                <a href="https://www.twitter.com/"><i class="fab fa-twitter"></i></a>
+                                <a href="https://www.linkedin.com/"><i class="fab fa-linkedin-in"></i></a>
+                                <a href="https://www.instagram.com/"><i class="fab fa-instagram"></i></a>
+                                <a href="https://www.youtube.com/"><i class="fa-brands fa-youtube"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+<div class="sticky-wrapper">
+    <div class="menu-area">
+        <div class="container">
+            <div class="row align-items-center justify-content-between">
+                <div class="col-auto">
+                    <div class="header-logo">
+<img src="{{ asset('Front/img/logo44.png') }}" alt="GoldenTouch" style="height: 130px;">
+                    </div>
+                </div>
+                <div class="col-auto me-xl-auto">
+                    <nav class="main-menu d-none d-lg-block">
+                        <ul>
+                            <li>
+                                <a href="index.html">Pack</a>
+                            </li>
+                            <li class="menu-item-has-children">
+                                <a href="#">Event Planner</a>
+                                <ul class="sub-menu">
+                                    <li><a href="#">Ajout Event</a></li>
+                                    <li><a href="#">Liste Event</a></li>
+                                </ul>
+                            </li>
+                            <li class="menu-item-has-children">
+                                <a href="#">Materielles</a>
+                                <ul class="sub-menu">
+                                    <li><a href="#">Ajout Materielles</a></li>
+                                    <li><a href="#">Liste Materielles</a></li>
+                                </ul>
+                            </li>
+                            <li class="menu-item-has-children">
+                                <a href="#">Personnel</a>
+                                <ul class="sub-menu">
+                                    <li><a href="#">Ajout Personnel</a></li>
+                                    <li><a href="#">Liste Personnel</a></li>
+                                </ul>
+                            </li>
+                            <li class="menu-item-has-children">
+                                <a href="#">Lieu</a>
+                                <ul class="sub-menu">
+                                    <li><a href="#">Ajout Lieu</a></li>
+                                    <li><a href="#">Liste Lieu</a></li>
+                                </ul>
+                            </li>
+                            <li class="menu-item-has-children">
+                                <a href="#">Autre</a>
+                                <ul class="sub-menu">
+                                    <li><a href="#">Commandes</a></li>
+                                    <li><a href="#">Reclamation</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </nav>
+                    <button class="th-menu-toggle d-inline-block d-lg-none"><i class="far fa-bars"></i></button>
+                </div>
+                <div class="col-auto d-none d-xl-block">
+                    <div class="header-button">
+                        <button type="button" class="icon-btn searchBoxToggler"><i class="far fa-search"></i></button>
+                     <a href="#" class="icon-btn sideMenuToggler2" id="cartIcon">
+    <i class="fa-regular fa-bag-shopping"></i>
+    <span class="badge">5</span>
+</a>
+                        <a href="#" class="icon-btn sideMenuToggler"><i class="far fa-bars"></i></a>
+                        <a href="booking.html" class="th-btn">BOOK A TAXI<i class="fa-regular fa-arrow-right ms-2"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
-</div>
+<div class="logo-shape"><img src="{{ asset('Front/img/logo-shape.svg') }}" alt=""></div>
+    </header>
 
 
 
@@ -870,50 +506,211 @@
 
 
 
-<div class="modal fade" id="checkoutModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-lg modal-simple modal-edit-event">
-    <div class="modal-content p-3 p-md-5">
-      <div class="modal-body">
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        <div class="text-center mb-4">
-          <h3 class="mb-2">Paiement Sécurisé</h3>
-          <p class="text-muted">Total à payer: {{ total }} €</p>
-        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="th-cart-wrapper space-top space-extra-bottom">
+    <div class="container">
+        <div class="woocommerce-notices-wrapper"></div>
         
-        <div class="payment-container">
-          <form id="payment-form">
-            <div class="input-group mb-3">
-              <label class="form-label">Numéro de carte</label>
-              <div id="card-number" class="stripe-element form-control"></div>
+        <div class="card">
+            <h5 class="card-header">Your Shopping Cart</h5>
+            
+            <div class="card-datatable table-responsive">
+                <table class="cart_table">
+                    <thead>
+                        <tr>
+                            <th class="cart-col-image">Event</th>
+                            <th class="cart-col-productname">Category</th>
+                            <th class="cart-col-price">Type</th>
+                            <th class="cart-col-quantity">Date</th>
+                            <th class="cart-col-total">Price</th>
+                            <th class="cart-col-remove">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in panierItems %}
+                        <tr class="cart_item">
+                            <td data-title="Event">
+                                <div class="d-flex align-items-center">
+                                    {% if item.event.photo %}
+                                    <a class="cart-productimage me-3" href="#">
+                                        <img width="91" height="91" src="{{ asset('uploads/' ~ item.event.photo) }}" alt="{{ item.event.nom }}">
+                                    </a>
+                                    {% endif %}
+                                    <a class="cart-productname" href="#">{{ item.event.nom }}</a>
+                                </div>
+                            </td>
+                            <td data-title="Category">{{ item.categorie }}</td>
+                            <td data-title="Type">{{ item.typeEvent }}</td>
+                            <td data-title="Date">{{ item.date|date('Y-m-d') }}</td>
+                            <td data-title="Price">
+                                <span class="amount"><bdi>{{ item.price }} TND</bdi></span>
+                            </td>
+                            <td data-title="Actions">
+                                <button class="btn btn-danger btn-sm remove-from-cart" 
+                                        data-id="{{ item.id }}">
+                                    <i class="fas fa-trash"></i> Remove
+                                </button>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="6" class="text-center py-4">Your cart is empty</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot>
+                        <tr class="order-total">
+                            <td colspan="4" class="text-end"><strong>Total:</strong></td>
+                            <td colspan="2">
+                                <strong>
+                                    <span class="amount"><bdi>{{ total }} TND</bdi></span>
+                                </strong>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="6" class="text-end">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <button class="btn btn-outline-danger" id="clear-cart">
+                                        <i class="fas fa-broom"></i> Clear Cart
+                                    </button>
+                                    <div class="d-flex gap-2">
+                                        <a href="{{ path('app_draft_events') }}" class="th-btn">
+                                            Continue Shopping
+                                        </a>
+                                        <button class="th-btn btn-primary" 
+                                                data-bs-toggle="modal" 
+                                                data-bs-target="#checkoutModal">
+                                            <i class="fas fa-shopping-bag"></i> Checkout
+                                        </button>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
             </div>
-
-            <div class="row g-3 mb-3">
-              <div class="col-md-6">
-                <div class="input-group">
-                  <label class="form-label">Date d'expiration</label>
-                  <div id="card-expiry" class="stripe-element form-control"></div>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="input-group">
-                  <label class="form-label">CVC</label>
-                  <div id="card-cvc" class="stripe-element form-control"></div>
-                </div>
-              </div>
-            </div>
-
-            <div class="text-center">
-              <button type="submit" class="btn btn-primary" id="submit" disabled>
-                <span id="button-text">Payer maintenant</span>
-                <div id="spinner" class="spinner-border spinner-border-sm d-none" role="status"></div>
-              </button>
-              <div id="card-errors" class="text-danger mt-2" role="alert"></div>
-            </div>
-          </form>
         </div>
-      </div>
+
+   <!-- Checkout Modal -->
+<div class="modal fade" id="checkoutModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title fs-4">Secure Payment Gateway</h5>
+                <button type="button" class="btn-close btn-close-black" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="modal-body p-5">
+                <!-- Payment Summary -->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h5 class="mb-0">Total Amount:</h5>
+                    <h3 class="mb-0 text-primary">{{ total }} TND</h3>
+                </div>
+
+                <!-- Payment Form -->
+                <form id="payment-form" class="needs-validation" novalidate>
+                    <!-- Card Number -->
+                    <div class="mb-4">
+                        <label for="card-number" class="form-label fw-medium">Card Number</label>
+                        <div id="card-number" class="stripe-element form-control p-3 border-2"></div>
+                        <div class="invalid-feedback">Please enter a valid card number</div>
+                    </div>
+
+                    <!-- Card Details Row -->
+                    <div class="row g-4 mb-4">
+                        <!-- Expiry Date -->
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="card-expiry" class="form-label fw-medium">Expiration Date</label>
+                                <div id="card-expiry" class="stripe-element form-control p-3 border-2"></div>
+                                <div class="invalid-feedback">Please enter expiration date</div>
+                            </div>
+                        </div>
+
+                        <!-- CVC -->
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="card-cvc" class="form-label fw-medium">CVC/CVV</label>
+                                <div id="card-cvc" class="stripe-element form-control p-3 border-2"></div>
+                                <div class="invalid-feedback">Security code required</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Payment Button -->
+                    <div class="d-grid gap-3 mt-5">
+                        <button type="submit" class="btn btn-secondary btn-lg py-3 fw-bold" id="submit">
+                            <span id="button-text">Confirm Payment</span>
+                            <div id="spinner" class="spinner-border spinner-border-sm d-none ms-2"></div>
+                        </button>
+                        <div id="card-errors" class="text-danger small text-center"></div>
+                    </div>
+                </form>
+
+                <!-- Security Assurance -->
+                <div class="mt-4 text-center">
+                    <p class="text-muted small mb-2">
+                        <i class="bi bi-lock-fill text-success"></i> Your payment is securely encrypted
+                    </p>
+                    <div class="d-flex justify-content-center gap-3">
+                        <img src="visa.svg" alt="Visa" style="height: 24px">
+                        <img src="mastercard.svg" alt="Mastercard" style="height: 24px">
+                        <img src="stripe.svg" alt="Stripe" style="height: 24px">
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
+</div>
+
 </div>
 
 
@@ -956,81 +753,133 @@
 
 
 
+       
 
 
-
-            <!-- / Content -->
-
-            <!-- Footer -->
-            <footer class="content-footer footer bg-footer-theme">
-              <div class="container-xxl">
-                <div
-                  class="footer-container d-flex align-items-center justify-content-between py-2 flex-md-row flex-column">
-                  <div>
-                    ©
-                    <script>
-                      document.write(new Date().getFullYear());
-                    </script>
-                    , made with ❤️ by <a href="https://pixinvent.com" target="_blank" class="fw-semibold">Pixinvent</a>
-                  </div>
-                  <div>
-                    <a href="https://themeforest.net/licenses/standard" class="footer-link me-4" target="_blank"
-                      >License</a
-                    >
-                    <a href="https://1.envato.market/pixinvent_portfolio" target="_blank" class="footer-link me-4"
-                      >More Themes</a
-                    >
-
-                    <a
-                      href="https://demos.pixinvent.com/vuexy-html-admin-template/documentation/"
-                      target="_blank"
-                      class="footer-link me-4"
-                      >Documentation</a
-                    >
-
-                    <a href="https://pixinvent.ticksy.com/" target="_blank" class="footer-link d-none d-sm-inline-block"
-                      >Support</a
-                    >
-                  </div>
+ <footer class="footer-wrapper footer-layout7" data-bg-src="assets/img/bg/footer_bg_1.jpg">
+    <div class="widget-area">
+        <div class="container">
+            <div class="row justify-content-between">
+                <div class="col-md-6 col-xl-auto">
+                    <div class="widget footer-widget">
+                        <div class="th-widget-about">
+                            <div class="about-logo">
+                                <a href="index.html"><img src="assets/img/logo-white3.svg" alt="GoldenTouch"></a>
+                            </div>
+                            <p class="about-text">GoldenTouch révolutionne la planification d'événements avec des solutions tout-en-un pour des expériences inoubliables.</p>
+                            <div class="working-time">
+                                <span class="title">HORAIRES D'OUVERTURE</span>
+                                <p class="desc">Lun-Sam : 09h00 à 18h30</p>
+                            </div>
+                            <div class="th-social footer-social">
+                                <a href="https://www.facebook.com/"><i class="fab fa-facebook-f"></i></a>
+                                <a href="https://www.twitter.com/"><i class="fab fa-twitter"></i></a>
+                                <a href="https://www.linkedin.com/"><i class="fab fa-linkedin-in"></i></a>
+                                <a href="https://www.instagram.com/"><i class="fab fa-instagram"></i></a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-              </div>
-            </footer>
-            <!-- / Footer -->
-
-            <div class="content-backdrop fade"></div>
-          </div>
-          <!-- Content wrapper -->
+                <div class="col-md-6 col-xl-2">
+                    <div class="widget widget_nav_menu footer-widget">
+                        <h3 class="widget_title">Liens rapides</h3>
+                        <div class="menu-all-pages-container">
+                            <ul class="menu">
+                                <li><a href="about.html">À propos</a></li>
+                                <li><a href="gallery.html">Galerie</a></li>
+                                <li><a href="testimonials.html">Témoignages</a></li>
+                                <li><a href="services.html">Nos Services</a></li>
+                                <li><a href="team.html">Notre Équipe</a></li>
+                                <li><a href="contact.html">Contact</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-xl-auto">
+                    <div class="widget footer-widget">
+                        <h3 class="widget_title">Coordonnées</h3>
+                        <div class="th-widget-about">
+                            <h4 class="footer-info-title">Téléphone</h4>
+                            <p class="footer-info"><i class="fa-sharp fa-solid fa-phone"></i><a class="text-inherit"
+                                    href="tel:+33123456789">+33 1 23 45 67 89</a></p>
+                            <h4 class="footer-info-title">Email</h4>
+                            <p class="footer-info"><i class="fas fa-envelope"></i><a class="text-inherit"
+                                    href="mailto:contact@goldentouch.com">contact{{ '@' }}goldentouch.com</a></p>
+                            <h4 class="footer-info-title">Adresse</h4>
+                            <p class="footer-info"><i class="fas fa-map-marker-alt"></i>123 Rue des Événements, 75001 Paris, France</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-xl-3">
+                    <div class="widget footer-widget">
+                        <h4 class="widget_title">Newsletter</h4>
+                        <div class="newsletter-widget">
+                            <p class="md-20">Abonnez-vous pour recevoir nos actualités et offres exclusives. Soyez les premiers informés de nos dernières prestations.</p>
+                            <div class="footer-search-contact mt-25">
+                                <form>
+                                    <input class="form-control" type="email" placeholder="Votre email">
+                                </form>
+                                <div class="footer-btn mt-10">
+                                    <button type="submit" class="th-btn style3 fw-btn">S'abonner <i
+                                            class="fa-regular fa-arrow-right"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <!-- / Layout page -->
-      </div>
-
-      <!-- Overlay -->
-      <div class="layout-overlay layout-menu-toggle"></div>
-
-      <!-- Drag Target Area To SlideIn Menu On Small Screens -->
-      <div class="drag-target"></div>
     </div>
-    <!-- / Layout wrapper -->
+    <div class="copyright-wrap">
+        <div class="container">
+            <p class="copyright-text">© 2023 <a href="#">GoldenTouch</a>. Tous droits réservés.</p>
+        </div>
+    </div>
+    <div class="footer-shape"><img src="assets/img/shape/footer_shape.png" alt="forme">
+    </div>
+</footer>
 
-<!-- Core JS -->
-<script src="{{ asset('/vendor/libs/jquery/jquery.js') }}"></script>
-<script src="{{ asset('/vendor/libs/popper/popper.js') }}"></script>
-<script src="{{ asset('/vendor/js/bootstrap.js') }}"></script>
-<script src="{{ asset('/vendor/libs/perfect-scrollbar/perfect-scrollbar.js') }}"></script>
-<script src="{{ asset('/vendor/libs/node-waves/node-waves.js') }}"></script>
-<script src="{{ asset('/vendor/libs/hammer/hammer.js') }}"></script>
-<script src="{{ asset('/vendor/libs/i18n/i18n.js') }}"></script>
-<script src="{{ asset('/vendor/libs/typeahead-js/typeahead.js') }}"></script>
-<script src="{{ asset('/vendor/js/menu.js') }}"></script>
-<script src="{{ asset('/vendor/libs/flatpickr/flatpickr.js') }}"></script>
-<script src="{{ asset('/vendor/libs/moment/moment.js') }}"></script>
-<script src="{{ asset('/vendor/libs/datatables-bs5/datatables-bootstrap5.js') }}"></script>
 
-<!-- Main JS -->
-<script src="{{ asset('/js/main.js') }}"></script>
-<script src="{{ asset('/js/dashboards-analytics.js') }}"></script>
-  </body>
+
+
+
+    <div class="scroll-top">
+        <svg class="progress-circle svg-content" width="100%" height="100%" viewBox="-1 -1 102 102">
+            <path d="M50,1 a49,49 0 0,1 0,98 a49,49 0 0,1 0,-98"
+                style="transition: stroke-dashoffset 10ms linear 0s; stroke-dasharray: 307.919, 307.919; stroke-dashoffset: 307.919;">
+            </path>
+        </svg>
+    </div>
+
+
+
+  <script src="{{ asset('Front/js/vendor/jquery-3.6.0.min.js') }}"></script>
+
+<script src="{{ asset('Front/js/slick.min.js') }}"></script>
+
+<script src="{{ asset('Front/js/bootstrap.min.js') }}"></script>
+
+<script src="{{ asset('Front/js/jquery.magnific-popup.min.js') }}"></script>
+
+<script src="{{ asset('Front/js/jquery.counterup.min.js') }}"></script>
+
+<script src="{{ asset('Front/js/imagesloaded.pkgd.min.js') }}"></script>
+<script src="{{ asset('Front/js/isotope.pkgd.min.js') }}"></script>
+
+<script src="{{ asset('Front/js/nice-select.min.js') }}"></script>
+
+<script src="{{ asset('Front/js/jquery.datetimepicker.min.js') }}"></script>
+
+<script src="{{ asset('Front/js/wow.min.js') }}"></script>
+
+<script src="{{ asset('Front/js/main.js') }}"></script>
+
+</body>
+
 </html>
+
+
+
 
 
 
@@ -1088,81 +937,89 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
-
-
-// Initialize Stripe with your public key
+// Initialize Stripe
 const stripe = Stripe('pk_test_51QvjqJKNitkaIcyAlpIsRTNgLfBCjUiuYOiSMDcA5CH4JKv3hLHmLdRch010MMUgFxfNN2I5SiVfo6aQjlpvFjgO00ccWNwlhS');
-
-// Create Stripe elements
 const elements = stripe.elements();
-const cardNumber = elements.create('cardNumber', { 
+
+// Create card elements with minimal styling
+const cardOptions = {
   style: {
     base: {
       fontSize: '16px',
       color: '#32325d',
+      '::placeholder': {
+        color: '#aab7c4'
+      }
+    },
+    invalid: {
+      color: '#fa755a'
     }
   }
-});
-const cardExpiry = elements.create('cardExpiry');
-const cardCvc = elements.create('cardCvc');
+};
 
-// Mount elements to DOM when modal is shown
-document.getElementById('checkoutModal').addEventListener('shown.bs.modal', () => {
-  cardNumber.mount('#card-number');
-  cardExpiry.mount('#card-expiry');
-  cardCvc.mount('#card-cvc');
-    document.getElementById('submit').disabled = false;
-});
+const cardNumber = elements.create('cardNumber', cardOptions);
+const cardExpiry = elements.create('cardExpiry', cardOptions);
+const cardCvc = elements.create('cardCvc', cardOptions);
+
+// Mount elements to the respective divs
+cardNumber.mount('#card-number');
+cardExpiry.mount('#card-expiry');
+cardCvc.mount('#card-cvc');
 
 // Handle form submission
 document.getElementById('payment-form').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  
-  const submitButton = document.getElementById('submit');
-  const buttonText = document.getElementById('button-text');
-  const spinner = document.getElementById('spinner');
-  
-  submitButton.disabled = true;
-  buttonText.textContent = 'Traitement...';
-  spinner.classList.remove('d-none');
+  e.preventDefault(); // Prevent form from submitting
 
-  const { paymentMethod, error } = await stripe.createPaymentMethod({
+  // Show the spinner
+  document.getElementById('spinner').classList.remove('d-none');
+  document.getElementById('button-text').textContent = 'Processing...';
+
+  // Create a payment method using the card details entered by the user
+  const {error, paymentMethod} = await stripe.createPaymentMethod({
     type: 'card',
-    card: cardNumber,
+    card: cardNumber, // Pass the card number element
   });
 
   if (error) {
+    // Handle errors (show error message)
     document.getElementById('card-errors').textContent = error.message;
+    document.getElementById('spinner').classList.add('d-none');
+    document.getElementById('button-text').textContent = 'Confirm Payment';
   } else {
-    try {
-      // Send paymentMethod.id to your backend
-      const response = await fetch('/process-payment', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          paymentMethodId: paymentMethod.id,
-          amount: {{ total * 100 }} // Amount in cents
-        })
-      });
-
-      const result = await response.json();
-      if (result.success) {
-        window.javaConnector.onTokenReceived(paymentMethod.id);
-        $('#checkoutModal').modal('hide');
-        // Show success message or redirect
-      }
-    } catch (err) {
-      console.error('Error:', err);
-      document.getElementById('card-errors').textContent = 'Erreur de traitement du paiement';
-    }
+    // Send the payment method to your server for processing
+    // Example: send it to your backend for payment confirmation
+fetch('/process-payment', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    paymentMethodId: paymentMethod.id,
+    amount: Math.round(parseFloat('{{ total }}') * 100), // Convert euros to cents
+  }),
+})
+.then(response => response.json())
+.then(data => {
+  if (data.success) {
+    // Redirect to a confirmation page or show a success message
+    window.location.href = '/panier'; // Example redirect after success
+  } else {
+    // Handle error from backend
+    document.getElementById('card-errors').textContent = data.error || 'Payment failed.';
   }
-
-  submitButton.disabled = false;
-  buttonText.textContent = 'Payer maintenant';
-  spinner.classList.add('d-none');
+})
+.catch(error => {
+  document.getElementById('card-errors').textContent = error.message;
+})
+.finally(() => {
+  // Hide spinner and reset button text
+  document.getElementById('spinner').classList.add('d-none');
+  document.getElementById('button-text').textContent = 'Confirm Payment';
 });
+
+  }
+});
+
 </script>
 
 

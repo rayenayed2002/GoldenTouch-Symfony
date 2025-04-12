@@ -116,6 +116,18 @@ body {
         transform: none !important;
         box-shadow: none !important;
     }
+        #cartIcon.dragover {
+        transform: scale(1.1);
+        color: #4CAF50;
+    }
+    .event-card {
+        cursor: grab;
+        transition: transform 0.2s;
+    }
+    
+    .event-card:active {
+        cursor: grabbing;
+    }
 </style>
 
 
@@ -149,6 +161,7 @@ body {
             </div>
         </div>
     </div> 
+<input type="hidden" name="_token" value="{{ csrf_token('add_to_cart') }}">
 
 
     <div class="th-menu-wrapper">
@@ -447,8 +460,11 @@ body {
                 <div class="col-auto d-none d-xl-block">
                     <div class="header-button">
                         <button type="button" class="icon-btn searchBoxToggler"><i class="far fa-search"></i></button>
-                        <a href="#" class="icon-btn sideMenuToggler2"><i class="fa-regular fa-bag-shopping"></i>
-                            <span class="badge">5</span></a>
+<a href="{{ path('app_panier') }}" class="icon-btn " id="cartIcon">
+    <i class="fa-regular fa-bag-shopping"></i>
+    <span class="badge">5</span>
+</a>
+
                         <a href="#" class="icon-btn sideMenuToggler"><i class="far fa-bars"></i></a>
                         <a href="booking.html" class="th-btn">BOOK A TAXI<i class="fa-regular fa-arrow-right ms-2"></i></a>
                     </div>
@@ -512,7 +528,10 @@ body {
                 <div class="row gy-40">
                     {% for event in events %}
                         <div class="col-xl-4 col-sm-6">
-                            <div class="th-product event-card">
+                             <div class="th-product event-card" 
+             data-event-id="{{ event.id }}"
+             data-categorie="{{ event.categorie.value }}"
+             data-date="{{ event.date|date('Y-m-d') }}">
                                 <div class="product-img">
                                     {% if event.photo %}
                                         <img src="{{ asset('uploads/' ~ event.photo) }}" class="img-fluid" alt="{{ event.nom }}">
@@ -786,6 +805,70 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             }
         });
+    });
+});
+
+
+
+
+
+
+
+
+
+
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Make event cards draggable
+    document.querySelectorAll('.event-card').forEach(card => {
+        card.draggable = true;
+        
+        card.addEventListener('dragstart', (e) => {
+            const eventData = {
+                idEvent: card.dataset.eventId,
+                categorie: card.dataset.categorie,
+                date: card.dataset.date
+            };
+            e.dataTransfer.setData('application/json', JSON.stringify(eventData));
+        });
+    });
+
+    // Handle drop on shopping bag
+    const shoppingBag = document.querySelector('#cartIcon');
+    
+    shoppingBag.addEventListener('dragover', (e) => {
+        e.preventDefault();
+    });
+
+    shoppingBag.addEventListener('drop', async (e) => {
+        e.preventDefault();
+        const eventData = JSON.parse(e.dataTransfer.getData('application/json'));
+        
+        try {
+            const response = await fetch('{{ path('app_panier_add') }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value
+                },
+                body: JSON.stringify(eventData)
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                if (result.success) {
+                    // Update cart count
+                    const badge = document.querySelector('.badge');
+                    badge.textContent = parseInt(badge.textContent) + 1;
+                } else {
+                    alert('Failed to add to cart: ' + (result.message || 'Unknown error'));
+                }
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Failed to add to cart');
+        }
     });
 });
 </script>
