@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>Taxiar - Online Taxi Service HTML Template - Booking</title>
+    <title>{% block title %}{{ pack.nom }} - Réservation{% endblock %}</title>
     <meta name="author" content="Taxiar">
     <meta name="description" content="Taxiar - Online Taxi Service HTML Template">
     <meta name="keywords" content="Taxiar - Online Taxi Service HTML Template">
@@ -39,7 +39,10 @@
     <link rel="stylesheet" href="{{ asset('Front/css/magnific-popup.min.css') }}">
     <link rel="stylesheet" href="{{ asset('Front/css/slick.min.css') }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/material_blue.css">
     <link rel="stylesheet" href="{{ asset('Front/css/style.css') }}">
+
+    {% block stylesheets %}{% endblock %}
 </head>
 
 <body class="">
@@ -143,7 +146,6 @@
                             <a href="#"><img src="{{ asset('Front/img/product/product_thumb_1_1.jpg') }}" alt="Cart Image">Suspension-Coil</a>
                             <span class="quantity">1 × <span class="woocommerce-Price-amount amount"><span class="woocommerce-Price-currencySymbol">$</span>94</span></span>
                         </li>
-                        <!-- Other cart items... -->
                     </ul>
                     <p class="woocommerce-mini-cart__total total">
                         <strong>Subtotal:</strong>
@@ -231,13 +233,15 @@
     <!-- Header -->
     {% include 'Front/partials/header.html.twig' %}
 
+    {% block body %}
     <!-- Breadcrumb -->
-    <div class="breadcumb-wrapper" data-bg-src="{{ asset('Front/img/breadcumb/breadcumb-bg.jpg') }}" data-overlay="title" data-opacity="4">
+    <div class="breadcumb-wrapper" data-bg-src="{{ asset('uploads/packs/' ~ pack.photo) }}" alt="{{ pack.nom }}" data-overlay="title" data-opacity="4">
         <div class="container z-index-common">
-            <h1 class="breadcumb-title">{{pack.nom}}</h1>
+            <h1 class="breadcumb-title">Réserver {{ pack.nom }}</h1>
             <ul class="breadcumb-menu">
-                <li><a href="index.html">Home</a></li>
-                <li>{{pack.nom}}</li>
+                <li><a href="{{ path('app_packs') }}">Accueil</a></li>
+                <li><a href="{{ path('app_packs') }}">Packs</a></li>
+                <li>Réservation</li>
             </ul>
         </div>
     </div>
@@ -246,92 +250,93 @@
     <div class="position-relative space">
         <div class="container">
             <div class="booking-form">
+                <h3 class="mb-4">Formulaire de réservation</h3>
+                
+                {% for flash_message in app.flashes('error') %}
+                    <div class="alert alert-danger">
+                        {{ flash_message }}
+                    </div>
+                {% endfor %}
+                
                 {{ form_start(form, {
                     'attr': {
                         'id': 'bookingForm',
-                        'class': 'ajax-form'
+                        'class': 'needs-validation',
+                        'novalidate': 'novalidate'
                     }
                 }) }}
+                
                 <div class="form-group">
-                    <label for="personCount">Nombre de personnes</label>
-                    {{ form_widget(form.personCount, {'attr': {'class': 'form-control', 'id': 'personCount'}}) }}
+                    {{ form_label(form.personCount, 'Nombre de personnes *', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.personCount, {'attr': {'class': 'form-control' ~ (form.personCount.vars.errors|length > 0 ? ' is-invalid' : '')}}) }}
+                    {{ form_errors(form.personCount, {'attr': {'class': 'invalid-feedback d-block'}}) }}
                 </div>
 
                 <div class="form-group">
-                    <label for="eventDate">Date de l'événement</label>
-                    {{ form_widget(form.eventDate, {'attr': {'class': 'form-control datetimepicker', 'id': 'eventDate'}}) }}
+                    {{ form_label(form.eventDate, 'Date de l\'événement *', {'label_attr': {'class': 'form-label'}}) }}
+                    <div class="input-group date-picker-container">
+                        {{ form_widget(form.eventDate, {
+                            'attr': {
+                                'class': 'form-control js-datepicker' ~ (form.eventDate.vars.errors|length > 0 ? ' is-invalid' : ''),
+                                'placeholder': 'Cliquez pour sélectionner une date',
+                                'readonly': 'readonly'
+                            }
+                        }) }}
+                        <div class="input-group-append">
+                            <span class="input-group-text calendar-icon"><i class="far fa-calendar-alt"></i></span>
+                        </div>
+                    </div>
+                    {{ form_errors(form.eventDate, {'attr': {'class': 'invalid-feedback d-block'}}) }}
                 </div>
 
                 <div class="form-group">
-                    <label for="notes">Notes</label>
-                    {{ form_widget(form.message, {'attr': {'class': 'form-control', 'id': 'notes'}}) }}
+                    {{ form_label(form.message, 'Notes et détails *', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.message, {'attr': {
+                        'class': 'form-control' ~ (form.message.vars.errors|length > 0 ? ' is-invalid' : ''), 
+                        'rows': 3, 
+                        'placeholder': 'Ajoutez votre message et détails supplémentaires'
+                    }}) }}
+                    {{ form_errors(form.message, {'attr': {'class': 'invalid-feedback d-block'}}) }}
                 </div>
 
                 <button type="submit" class="th-btn style1">Réserver</button>
                 {{ form_end(form) }}
             </div>
 
-            <script>
-            $(document).ready(function() {
-                // Initialize date picker
-                if ($.fn.datetimepicker) {
-                    $('#eventDate').datetimepicker({
-                        format: 'd/m/Y',
-                        timepicker: false,
-                        minDate: 0, // Today or future dates only
-                        scrollMonth: false,
-                        scrollInput: false,
-                        lang: 'fr'
-                    });
+            <style>
+                .form-control.is-invalid {
+                    border-color: #dc3545;
                 }
-
-                // Form submission handler
-                $('#bookingForm').on('submit', function(e) {
-                    e.preventDefault();
-
-                    // Get form data
-                    const formData = new FormData(this);
-
-                    // Submit form via AJAX
-                    $.ajax({
-                        url: '{{ path('app_pack_booking', {'id': pack.id}) }}',
-                        type: 'POST',
-                        data: formData,
-                        processData: false,
-                        contentType: false,
-                        success: function(response) {
-                            if (response.success) {
-                                Swal.fire({
-                                    title: 'Réservation confirmée !',
-                                    text: response.message || 'Votre demande de réservation a été envoyée avec succès. Un administrateur vous contactera bientôt.',
-                                    icon: 'success',
-                                    confirmButtonText: 'OK'
-                                }).then(() => {
-                                    $('#bookingForm')[0].reset();
-                                });
-                            } else {
-                                Swal.fire({
-                                    title: 'Erreur',
-                                    text: response.message || 'Une erreur est survenue lors de la réservation.',
-                                    icon: 'error',
-                                    confirmButtonText: 'OK'
-                                });
-                            }
-                        },
-                        error: function(xhr, status, error) {
-                            Swal.fire({
-                                title: 'Erreur',
-                                text: 'Une erreur est survenue lors de la réservation.',
-                                icon: 'error',
-                                confirmButtonText: 'OK'
-                            });
-                        }
-                    });
-                });
-            });
-            </script>
+                .invalid-feedback {
+                    display: block;
+                    width: 100%;
+                    margin-top: 0.25rem;
+                    font-size: 0.875em;
+                    color: #dc3545;
+                }
+                .date-picker-container {
+                    position: relative;
+                }
+                .calendar-icon {
+                    cursor: pointer;
+                    background-color: #f8f9fa;
+                    border: 1px solid #ced4da;
+                    border-left: none;
+                    padding: 0.375rem 0.75rem;
+                }
+                /* Make the Flatpickr calendar more visually appealing */
+                .flatpickr-calendar {
+                    box-shadow: 0 3px 15px rgba(0, 0, 0, 0.2);
+                    border-radius: 8px;
+                }
+                .flatpickr-day.selected, .flatpickr-day.startRange, .flatpickr-day.endRange, .flatpickr-day.selected.inRange, .flatpickr-day.startRange.inRange, .flatpickr-day.endRange.inRange, .flatpickr-day.selected:focus, .flatpickr-day.startRange:focus, .flatpickr-day.endRange:focus, .flatpickr-day.selected:hover, .flatpickr-day.startRange:hover, .flatpickr-day.endRange:hover, .flatpickr-day.selected.prevMonthDay, .flatpickr-day.startRange.prevMonthDay, .flatpickr-day.endRange.prevMonthDay, .flatpickr-day.selected.nextMonthDay, .flatpickr-day.startRange.nextMonthDay, .flatpickr-day.endRange.nextMonthDay {
+                    background: #ffb703;
+                    border-color: #ffb703;
+                }
+            </style>
         </div>
     </div>
+    {% endblock %}
 
     <!-- Footer -->
     {% include 'Front/partials/footer.html.twig' %}
@@ -356,67 +361,76 @@
     <script src="{{ asset('Front/js/wow.min.js') }}"></script>
     <script src="{{ asset('Front/js/main.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/fr.js"></script>
 
-    <!-- Custom JavaScript -->
+    {% block javascripts %}
     <script>
-    $(document).ready(function() {
-        // Initialize date picker
-        if ($.fn.datetimepicker) {
-            $('#eventDate').datetimepicker({
-                format: 'd/m/Y',
-                timepicker: false,
-                minDate: 0, // Today or future dates only
-                scrollMonth: false,
-                scrollInput: false,
-                lang: 'fr'
-            });
-        }
-
-        // Form submission handler
-        $('#bookingForm').on('submit', function(e) {
-            e.preventDefault();
-
-            // Get form data
-            const formData = new FormData(this);
-
-            // Submit form via AJAX
-            $.ajax({
-                url: '{{ path("app_pack_booking", {"id": pack.id}) }}',
-                type: 'POST',
-                data: formData,
-                processData: false,
-                contentType: false,
-                success: function(response) {
-                    if (response.success) {
-                        Swal.fire({
-                            title: 'Réservation confirmée !',
-                            text: response.message || 'Votre demande de réservation a été envoyée avec succès. Un administrateur vous contactera bientôt.',
-                            icon: 'success',
-                            confirmButtonText: 'OK'
-                        }).then(() => {
-                            // Reset form
-                            this.reset();
-                        });
-                    } else {
-                        Swal.fire({
-                            title: 'Erreur',
-                            text: response.message || 'Une erreur est survenue lors de la réservation.',
-                            icon: 'error',
-                            confirmButtonText: 'OK'
-                        });
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize Flatpickr with improved configuration
+        const datePickers = document.querySelectorAll('.js-datepicker');
+        if (datePickers.length > 0) {
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            
+            datePickers.forEach(function(el) {
+                const fp = flatpickr(el, {
+                    dateFormat: "d/m/Y",
+                    minDate: tomorrow,
+                    locale: "fr",
+                    disableMobile: false,
+                    allowInput: false,
+                    static: true,
+                    monthSelectorType: "static",
+                    showMonths: 1,
+                    animate: true,
+                    closeOnSelect: true,
+                    onChange: function(selectedDates, dateStr) {
+                        // Clear any validation error when a date is selected
+                        el.classList.remove('is-invalid');
+                        const errorEl = el.parentNode.nextElementSibling;
+                        if (errorEl && errorEl.classList.contains('invalid-feedback')) {
+                            errorEl.style.display = 'none';
+                        }
                     }
-                },
-                error: function(xhr, status, error) {
-                    Swal.fire({
-                        title: 'Erreur',
-                        text: 'Une erreur est survenue lors de la réservation.',
-                        icon: 'error',
-                        confirmButtonText: 'OK'
+                });
+                
+                // Make the calendar icon clickable to open the picker
+                const iconContainer = el.parentNode.querySelector('.calendar-icon');
+                if (iconContainer) {
+                    iconContainer.addEventListener('click', function() {
+                        if (fp) {
+                            fp.open();
+                        }
                     });
                 }
             });
-        });
+        }
+        
+        // Form validation
+        const bookingForm = document.getElementById('bookingForm');
+        if (bookingForm) {
+            bookingForm.addEventListener('submit', function(event) {
+                let isValid = true;
+                
+                // Validate date field
+                const dateField = bookingForm.querySelector('.js-datepicker');
+                if (dateField && !dateField.value) {
+                    event.preventDefault();
+                    dateField.classList.add('is-invalid');
+                    const errorEl = dateField.parentNode.nextElementSibling;
+                    if (errorEl && errorEl.classList.contains('invalid-feedback')) {
+                        errorEl.textContent = 'Veuillez sélectionner une date';
+                        errorEl.style.display = 'block';
+                    }
+                    isValid = false;
+                }
+                
+                return isValid;
+            });
+        }
     });
     </script>
+    {% endblock %}
 </body>
 </html>
