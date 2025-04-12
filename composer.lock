@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4c2b30e855222f53c07bec0cefa13e46",
+    "content-hash": "ba5f59f5dddaa0262a5aeb5bfbc691ce",
     "packages": [
         {
             "name": "composer/semver",
@@ -1716,73 +1716,6 @@
             "time": "2025-01-14T07:31:54+00:00"
         },
         {
-            "name": "masterminds/html5",
-            "version": "2.9.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/Masterminds/html5-php.git",
-                "reference": "f5ac2c0b0a2eefca70b2ce32a5809992227e75a6"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/Masterminds/html5-php/zipball/f5ac2c0b0a2eefca70b2ce32a5809992227e75a6",
-                "reference": "f5ac2c0b0a2eefca70b2ce32a5809992227e75a6",
-                "shasum": ""
-            },
-            "require": {
-                "ext-dom": "*",
-                "php": ">=5.3.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^4.8.35 || ^5.7.21 || ^6 || ^7 || ^8 || ^9"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "2.7-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Masterminds\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Matt Butcher",
-                    "email": "technosophos@gmail.com"
-                },
-                {
-                    "name": "Matt Farina",
-                    "email": "matt@mattfarina.com"
-                },
-                {
-                    "name": "Asmir Mustafic",
-                    "email": "goetas@gmail.com"
-                }
-            ],
-            "description": "An HTML5 parser and serializer.",
-            "homepage": "http://masterminds.github.io/html5-php",
-            "keywords": [
-                "HTML5",
-                "dom",
-                "html",
-                "parser",
-                "querypath",
-                "serializer",
-                "xml"
-            ],
-            "support": {
-                "issues": "https://github.com/Masterminds/html5-php/issues",
-                "source": "https://github.com/Masterminds/html5-php/tree/2.9.0"
-            },
-            "time": "2024-03-31T07:05:07+00:00"
-        },
-        {
             "name": "lcobucci/clock",
             "version": "2.3.0",
             "source": {
@@ -1921,6 +1854,73 @@
                 }
             ],
             "time": "2021-09-28T19:18:28+00:00"
+        },
+        {
+            "name": "masterminds/html5",
+            "version": "2.9.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Masterminds/html5-php.git",
+                "reference": "f5ac2c0b0a2eefca70b2ce32a5809992227e75a6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Masterminds/html5-php/zipball/f5ac2c0b0a2eefca70b2ce32a5809992227e75a6",
+                "reference": "f5ac2c0b0a2eefca70b2ce32a5809992227e75a6",
+                "shasum": ""
+            },
+            "require": {
+                "ext-dom": "*",
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.8.35 || ^5.7.21 || ^6 || ^7 || ^8 || ^9"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.7-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Masterminds\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Matt Butcher",
+                    "email": "technosophos@gmail.com"
+                },
+                {
+                    "name": "Matt Farina",
+                    "email": "matt@mattfarina.com"
+                },
+                {
+                    "name": "Asmir Mustafic",
+                    "email": "goetas@gmail.com"
+                }
+            ],
+            "description": "An HTML5 parser and serializer.",
+            "homepage": "http://masterminds.github.io/html5-php",
+            "keywords": [
+                "HTML5",
+                "dom",
+                "html",
+                "parser",
+                "querypath",
+                "serializer",
+                "xml"
+            ],
+            "support": {
+                "issues": "https://github.com/Masterminds/html5-php/issues",
+                "source": "https://github.com/Masterminds/html5-php/tree/2.9.0"
+            },
+            "time": "2024-03-31T07:05:07+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -2802,57 +2802,6 @@
             "time": "2024-09-11T13:17:53+00:00"
         },
         {
-            "name": "smalot/pdfparser",
-            "version": "v2.12.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/smalot/pdfparser.git",
-                "reference": "8440edbf58c8596074e78ada38dcb0bd041a5948"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/smalot/pdfparser/zipball/8440edbf58c8596074e78ada38dcb0bd041a5948",
-                "reference": "8440edbf58c8596074e78ada38dcb0bd041a5948",
-                "shasum": ""
-            },
-            "require": {
-                "ext-iconv": "*",
-                "ext-zlib": "*",
-                "php": ">=7.1",
-                "symfony/polyfill-mbstring": "^1.18"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-0": {
-                    "Smalot\\PdfParser\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "LGPL-3.0"
-            ],
-            "authors": [
-                {
-                    "name": "Sebastien MALOT",
-                    "email": "sebastien@malot.fr"
-                }
-            ],
-            "description": "Pdf parser library. Can read and extract information from pdf file.",
-            "homepage": "https://www.pdfparser.org",
-            "keywords": [
-                "extract",
-                "parse",
-                "parser",
-                "pdf",
-                "text"
-            ],
-            "support": {
-                "issues": "https://github.com/smalot/pdfparser/issues",
-                "source": "https://github.com/smalot/pdfparser/tree/v2.12.0"
-            },
-            "time": "2025-03-31T13:16:09+00:00"
-        },
-        {
             "name": "sabberworm/php-css-parser",
             "version": "v8.8.0",
             "source": {
@@ -2916,6 +2865,57 @@
                 "source": "https://github.com/MyIntervals/PHP-CSS-Parser/tree/v8.8.0"
             },
             "time": "2025-03-23T17:59:05+00:00"
+        },
+        {
+            "name": "smalot/pdfparser",
+            "version": "v2.12.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/smalot/pdfparser.git",
+                "reference": "8440edbf58c8596074e78ada38dcb0bd041a5948"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/smalot/pdfparser/zipball/8440edbf58c8596074e78ada38dcb0bd041a5948",
+                "reference": "8440edbf58c8596074e78ada38dcb0bd041a5948",
+                "shasum": ""
+            },
+            "require": {
+                "ext-iconv": "*",
+                "ext-zlib": "*",
+                "php": ">=7.1",
+                "symfony/polyfill-mbstring": "^1.18"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Smalot\\PdfParser\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL-3.0"
+            ],
+            "authors": [
+                {
+                    "name": "Sebastien MALOT",
+                    "email": "sebastien@malot.fr"
+                }
+            ],
+            "description": "Pdf parser library. Can read and extract information from pdf file.",
+            "homepage": "https://www.pdfparser.org",
+            "keywords": [
+                "extract",
+                "parse",
+                "parser",
+                "pdf",
+                "text"
+            ],
+            "support": {
+                "issues": "https://github.com/smalot/pdfparser/issues",
+                "source": "https://github.com/smalot/pdfparser/tree/v2.12.0"
+            },
+            "time": "2025-03-31T13:16:09+00:00"
         },
         {
             "name": "stella-maris/clock",
@@ -8032,16 +8032,16 @@
         },
         {
             "name": "symfony/ux-chartjs",
-            "version": "v2.13.0",
+            "version": "v2.24.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/ux-chartjs.git",
-                "reference": "8c0dd710bdfd06c57cd39b76a1657f61eebf080d"
+                "reference": "8fe776864ef8e08225d509be9d49cc06b90d7043"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/ux-chartjs/zipball/8c0dd710bdfd06c57cd39b76a1657f61eebf080d",
-                "reference": "8c0dd710bdfd06c57cd39b76a1657f61eebf080d",
+                "url": "https://api.github.com/repos/symfony/ux-chartjs/zipball/8fe776864ef8e08225d509be9d49cc06b90d7043",
+                "reference": "8fe776864ef8e08225d509be9d49cc06b90d7043",
                 "shasum": ""
             },
             "require": {
@@ -8092,7 +8092,7 @@
                 "symfony-ux"
             ],
             "support": {
-                "source": "https://github.com/symfony/ux-chartjs/tree/v2.13.0"
+                "source": "https://github.com/symfony/ux-chartjs/tree/v2.24.0"
             },
             "funding": [
                 {
@@ -8108,7 +8108,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-11-07T21:10:32+00:00"
+            "time": "2025-03-09T21:10:04+00:00"
         },
         {
             "name": "symfony/ux-turbo",
@@ -8899,33 +8899,39 @@
             "time": "2025-04-07T15:34:07+00:00"
         },
         {
-            "name": "twilio/sdk",
-            "version": "8.5.0",
+            "name": "webmozart/assert",
+            "version": "1.11.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/twilio/twilio-php.git",
-                "reference": "a68a13ed8ddc720d5adb580cbc22b4fd80dc6b38"
+                "url": "https://github.com/webmozarts/assert.git",
+                "reference": "11cb2199493b2f8a3b53e7f19068fc6aac760991"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twilio/twilio-php/zipball/a68a13ed8ddc720d5adb580cbc22b4fd80dc6b38",
-                "reference": "a68a13ed8ddc720d5adb580cbc22b4fd80dc6b38",
+                "url": "https://api.github.com/repos/webmozarts/assert/zipball/11cb2199493b2f8a3b53e7f19068fc6aac760991",
+                "reference": "11cb2199493b2f8a3b53e7f19068fc6aac760991",
                 "shasum": ""
             },
             "require": {
-                "php": ">=7.1.0"
+                "ext-ctype": "*",
+                "php": "^7.2 || ^8.0"
+            },
+            "conflict": {
+                "phpstan/phpstan": "<0.12.20",
+                "vimeo/psalm": "<4.6.1 || 4.6.2"
             },
             "require-dev": {
-                "guzzlehttp/guzzle": "^6.3 || ^7.0",
-                "phpunit/phpunit": ">=7.0 < 10"
-            },
-            "suggest": {
-                "guzzlehttp/guzzle": "An HTTP client to execute the API requests"
+                "phpunit/phpunit": "^8.5.13"
             },
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.10-dev"
+                }
+            },
             "autoload": {
                 "psr-4": {
-                    "Twilio\\": "src/Twilio/"
+                    "Webmozart\\Assert\\": "src/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -8934,92 +8940,24 @@
             ],
             "authors": [
                 {
-                    "name": "Twilio API Team",
-                    "email": "api@twilio.com"
+                    "name": "Bernhard Schussek",
+                    "email": "bschussek@gmail.com"
                 }
             ],
-            "description": "A PHP wrapper for Twilio's API",
-            "homepage": "https://github.com/twilio/twilio-php",
+            "description": "Assertions to validate method input/output with nice error messages.",
             "keywords": [
-                "api",
-                "sms",
-                "twilio"
+                "assert",
+                "check",
+                "validate"
             ],
             "support": {
-                "issues": "https://github.com/twilio/twilio-php/issues",
-                "source": "https://github.com/twilio/twilio-php/tree/8.5.0"
+                "issues": "https://github.com/webmozarts/assert/issues",
+                "source": "https://github.com/webmozarts/assert/tree/1.11.0"
             },
             "time": "2022-06-03T18:03:27+00:00"
         }
     ],
     "packages-dev": [
-        {
-            "name": "masterminds/html5",
-            "version": "2.9.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/Masterminds/html5-php.git",
-                "reference": "f5ac2c0b0a2eefca70b2ce32a5809992227e75a6"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/Masterminds/html5-php/zipball/f5ac2c0b0a2eefca70b2ce32a5809992227e75a6",
-                "reference": "f5ac2c0b0a2eefca70b2ce32a5809992227e75a6",
-                "shasum": ""
-            },
-            "require": {
-                "ext-dom": "*",
-                "php": ">=5.3.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^4.8.35 || ^5.7.21 || ^6 || ^7 || ^8 || ^9"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "2.7-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Masterminds\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Matt Butcher",
-                    "email": "technosophos@gmail.com"
-                },
-                {
-                    "name": "Matt Farina",
-                    "email": "matt@mattfarina.com"
-                },
-                {
-                    "name": "Asmir Mustafic",
-                    "email": "goetas@gmail.com"
-                }
-            ],
-            "description": "An HTML5 parser and serializer.",
-            "homepage": "http://masterminds.github.io/html5-php",
-            "keywords": [
-                "HTML5",
-                "dom",
-                "html",
-                "parser",
-                "querypath",
-                "serializer",
-                "xml"
-            ],
-            "support": {
-                "issues": "https://github.com/Masterminds/html5-php/issues",
-                "source": "https://github.com/Masterminds/html5-php/tree/2.9.0"
-            },
-            "time": "2024-03-31T07:05:07+00:00"
-        },
         {
             "name": "myclabs/deep-copy",
             "version": "1.13.0",
