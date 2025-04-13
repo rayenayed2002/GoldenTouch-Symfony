@@ -168,6 +168,58 @@
             background-color: #7367f0;
             color: white;
         }
+
+        /* Form Elements */
+        .form-control, .form-select {
+            transition: all 0.3s ease;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            border: 2px solid #e2e8f0;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+        }
+
+        .form-control.is-invalid, .form-select.is-invalid {
+            border-color: #ef4444;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+            animation: shake 0.5s ease-in-out;
+        }
+
+        .invalid-feedback {
+            color: #dc2626;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+            display: none;
+        }
+
+        .form-control.is-invalid ~ .invalid-feedback,
+        .form-select.is-invalid ~ .invalid-feedback {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Error Icon for Select Elements */
+        .form-select.is-invalid {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc2626'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc2626' stroke='none'/%3e%3c/svg%3e"),
+                       url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' width='16' height='16' fill='%23495057'%3e%3cpath fill-rule='evenodd' d='M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8z'/%3e%3c/svg%3e");
+            background-position: right 0.5rem center, center right 2.25rem;
+            background-size: 16px 12px, 16px 12px;
+            background-repeat: no-repeat;
+        }
     </style>
 </head>
 
@@ -878,42 +930,64 @@
                     <h5 class="modal-title" id="modalTitle">Create New Pack</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form id="packForm" onsubmit="handlePackSubmit(event)">
+                {{ form_start(form, {
+                    'attr': {
+                        'id': 'packForm',
+                        'class': 'needs-validation',
+                        'novalidate': 'novalidate',
+                        'action': path('admin_pack_update', {'id': 'packId'}),
+                        'method': 'POST'
+                    }
+                }) }}
                     <div class="modal-body">
                         <input type="hidden" id="packId" name="id">
                         <div class="mb-3">
-                            <label class="form-label" for="event">Event</label>
-                            <select class="form-select" id="event" name="event" required>
-                                {% for event in events %}
-                                    <option value="{{ event.id }}">{{ event.nom }}</option>
-                                {% endfor %}
-                            </select>
+                            <label class="form-label" for="{{ form.event.vars.id }}">Event</label>
+                            {{ form_widget(form.event, {'attr': {'class': 'form-select', 'required': 'required'}}) }}
+                            <div class="invalid-feedback">Please select an event.</div>
+                            <div class="invalid-feedback">Veuillez sélectionner un événement.</div>
+                            {{ form_errors(form.event) }}
                         </div>
                         <div class="mb-3">
-                            <label class="form-label" for="description">Description</label>
-                            <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+                            <label class="form-label" for="{{ form.description.vars.id }}">Description</label>
+                            {{ form_widget(form.description, {'attr': {'class': 'form-control', 'required': 'required'}}) }}
+                            <div class="invalid-feedback">Please provide a description.</div>
+                            <div class="invalid-feedback">Veuillez fournir une description.</div>
+                            {{ form_errors(form.description) }}
                         </div>
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label class="form-label" for="prix">Price</label>
+                                <label class="form-label" for="{{ form.prix.vars.id }}">Price</label>
                                 <div class="input-group">
                                     <span class="input-group-text">$</span>
-                                    <input type="number" class="form-control" id="prix" name="prix" step="0.01" required>
+                                    {{ form_widget(form.prix, {'attr': {'class': 'form-control', 'required': 'required', 'step': '0.01', 'min': '0'}}) }}
                                 </div>
+                                <div class="invalid-feedback">Please provide a valid price.</div>
+                                <div class="invalid-feedback">Veuillez fournir un prix valide.</div>
+                                {{ form_errors(form.prix) }}
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label class="form-label" for="capacite">Capacity</label>
-                                <input type="number" class="form-control" id="capacite" name="capacite" required>
+                                <label class="form-label" for="{{ form.capacite.vars.id }}">Capacity</label>
+                                {{ form_widget(form.capacite, {'attr': {'class': 'form-control', 'required': 'required', 'min': '1'}}) }}
+                                <div class="invalid-feedback">Please provide a valid capacity.</div>
+                                <div class="invalid-feedback">Veuillez fournir une capacité valide.</div>
+                                {{ form_errors(form.capacite) }}
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label class="form-label" for="duree">Duration (hours)</label>
-                                <input type="number" class="form-control" id="duree" name="duree" required>
+                                <label class="form-label" for="{{ form.duree.vars.id }}">Duration (hours)</label>
+                                {{ form_widget(form.duree, {'attr': {'class': 'form-control', 'required': 'required', 'min': '1'}}) }}
+                                <div class="invalid-feedback">Please provide a valid duration.</div>
+                                <div class="invalid-feedback">Veuillez fournir une durée valide.</div>
+                                {{ form_errors(form.duree) }}
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label class="form-label" for="endDate">End Date</label>
-                                <input type="text" class="form-control flatpickr" id="endDate" name="endDate">
+                                <label class="form-label" for="{{ form.endDate.vars.id }}">End Date</label>
+                                {{ form_widget(form.endDate, {'attr': {'class': 'form-control flatpickr'}}) }}
+                                <div class="invalid-feedback">Please provide a valid date.</div>
+                                <div class="invalid-feedback">Veuillez fournir une date valide.</div>
+                                {{ form_errors(form.endDate) }}
                             </div>
                         </div>
                     </div>
@@ -921,7 +995,7 @@
                         <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Close</button>
                         <button type="submit" class="btn btn-primary">Save changes</button>
                     </div>
-                </form>
+                {{ form_end(form) }}
             </div>
         </div>
     </div>
@@ -948,7 +1022,7 @@
         $(document).ready(function() {
             // Initialize DataTable
             const packsTable = $('#packsTable').DataTable({
-                dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6 d-flex justify-content-center justify-content-md-end"f>>t<"row"<"col-sm-12 col-md-6"i><"col-sm-12 col-md-6"p>>',
+                dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>t<"row"<"col-sm-12 col-md-6"i><"col-sm-12 col-md-6"p>>',
                 responsive: true,
                 order: [[0, 'desc']],
                 pageLength: 10,
@@ -993,53 +1067,89 @@
             });
         });
 
-        // Handle form submission
-        function handlePackSubmit(event) {
-            event.preventDefault();
-            const form = event.target;
+        // Submit form
+        document.getElementById('packForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const form = e.target;
             const formData = new FormData(form);
-            const packId = formData.get('id');
-            const url = packId ? `{{ path('admin_pack_update', {'id': 'PACK_ID'}) }}`.replace('PACK_ID', packId)
-                              : '{{ path('admin_pack_create') }}';
-
-            // Convert FormData to JSON
             const data = {};
-            formData.forEach((value, key) => {
-                data[key] = value;
-            });
 
-            fetch(url, {
-                method: packId ? 'PUT' : 'POST',
+            // Convert FormData to object
+            for (let [key, value] of formData.entries()) {
+                // Remove the 'pack[' prefix from the key
+                const fieldName = key.replace('pack[', '').replace(']', '');
+                data[fieldName] = value;
+            }
+
+            // Get the pack ID from the hidden input
+            const packId = document.getElementById('packId').value;
+            
+            // Show loading state
+            form.classList.add('was-validated');
+            const submitButton = form.querySelector('button[type="submit"]');
+            submitButton.disabled = true;
+            submitButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...';
+
+            // Send the request
+            fetch(`{{ path('admin_pack_update', {'id': 'PACK_ID'}) }}`.replace('PACK_ID', packId), {
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
                 },
                 body: JSON.stringify(data)
             })
             .then(response => response.json())
-            .then(data => {
-                if (data.success) {
+            .then(response => {
+                if (response.success) {
+                    // Show success message
                     Swal.fire({
                         icon: 'success',
                         title: 'Success!',
-                        text: data.message,
+                        text: response.message,
                         showConfirmButton: false,
                         timer: 1500
-                    }).then(() => {
-                        location.reload();
                     });
+
+                    // Close modal and refresh the page
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('packModal'));
+                    modal.hide();
+                    window.location.reload();
                 } else {
-                    throw new Error(data.message);
+                    // Show error message with detailed debug info
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        html: `
+                            <div>${response.message}</div>
+                            ${response.debug ? `
+                            <div class="mt-3">
+                                <h6>Debug Information:</h6>
+                                <pre>${JSON.stringify(response.debug, null, 2)}</pre>
+                            </div>
+                            ` : ''}
+                        `,
+                        confirmButtonText: 'OK'
+                    });
                 }
             })
             .catch(error => {
+                console.error('Network error:', error);
                 Swal.fire({
                     icon: 'error',
-                    title: 'Error!',
-                    text: error.message,
+                    title: 'Network Error!',
+                    text: 'An error occurred while submitting the form. Please try again.',
                     confirmButtonText: 'OK'
                 });
+            })
+            .finally(() => {
+                // Reset form state
+                form.classList.remove('was-validated');
+                submitButton.disabled = false;
+                submitButton.innerHTML = 'Save changes';
             });
-        }
+        });
 
         // Edit pack
         function editPack(id) {
@@ -1050,12 +1160,22 @@
                         const pack = data.pack;
                         document.getElementById('modalTitle').textContent = 'Edit Pack';
                         document.getElementById('packId').value = pack.id;
-                        document.getElementById('event').value = pack.event.id;
-                        document.getElementById('description').value = pack.description;
-                        document.getElementById('prix').value = pack.prix;
-                        document.getElementById('capacite').value = pack.capacite;
-                        document.getElementById('duree').value = pack.duree;
-                        document.getElementById('endDate').value = pack.endDate;
+                        
+                        // Get form elements using their names
+                        const eventSelect = document.querySelector('select[name="pack[event]"]');
+                        const descriptionInput = document.querySelector('textarea[name="pack[description]"]');
+                        const prixInput = document.querySelector('input[name="pack[prix]"]');
+                        const capaciteInput = document.querySelector('input[name="pack[capacite]"]');
+                        const dureeInput = document.querySelector('input[name="pack[duree]"]');
+                        const endDateInput = document.querySelector('input[name="pack[endDate]"]');
+
+                        // Set values
+                        eventSelect.value = pack.event.id;
+                        descriptionInput.value = pack.description;
+                        prixInput.value = pack.prix;
+                        capaciteInput.value = pack.capacite;
+                        dureeInput.value = pack.duree;
+                        endDateInput.value = pack.endDate;
                         
                         const modal = new bootstrap.Modal(document.getElementById('packModal'));
                         modal.show();
