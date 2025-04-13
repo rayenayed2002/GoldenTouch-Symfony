@@ -306,13 +306,11 @@ class PackController extends AbstractController
     #[Route('/{id}/show', name: 'show', methods: ['GET'])]
     public function show(Pack $pack, EventRepository $eventRepository): Response
     {
-        $events = $eventRepository->findAll();
-        $form = $this->createForm(PackType::class, $pack);
-        
+        $editForm = $this->createForm(PackType::class, $pack);
         return $this->render('admin/pack/show.html.twig', [
             'pack' => $pack,
-            'events' => $events,
-            'form' => $form->createView()
+            'events' => $eventRepository->findAll(),
+            'editForm' => $editForm->createView()
         ]);
     }
 
