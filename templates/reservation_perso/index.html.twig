@@ -1,0 +1,1019 @@
+<!doctype html>
+<html class="no-js" lang="zxx">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>GoldenTouch - Gestion de personnel</title>
+    <meta name="author" content="GoldenTouch">
+    <meta name="description" content="GoldenTouch - Gestion de personnel pour événements">
+    <meta name="keywords" content="GoldenTouch, gestion personnel, événements">
+    <meta name="robots" content="INDEX,FOLLOW">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+<link rel="apple-touch-icon" sizes="57x57" href="{{ asset('Front/img/favicons/apple-icon-57x57.png') }}">
+<link rel="apple-touch-icon" sizes="60x60" href="{{ asset('Front/img/favicons/apple-icon-60x60.png') }}">
+<link rel="apple-touch-icon" sizes="72x72" href="{{ asset('Front/img/favicons/apple-icon-72x72.png') }}">
+<link rel="apple-touch-icon" sizes="76x76" href="{{ asset('Front/img/favicons/apple-icon-76x76.png') }}">
+<link rel="apple-touch-icon" sizes="114x114" href="{{ asset('Front/img/favicons/apple-icon-114x114.png') }}">
+<link rel="apple-touch-icon" sizes="120x120" href="{{ asset('Front/img/favicons/apple-icon-120x120.png') }}">
+<link rel="apple-touch-icon" sizes="144x144" href="{{ asset('Front/img/favicons/apple-icon-144x144.png') }}">
+<link rel="apple-touch-icon" sizes="152x152" href="{{ asset('Front/img/favicons/apple-icon-152x152.png') }}">
+<link rel="apple-touch-icon" sizes="180x180" href="{{ asset('Front/img/favicons/apple-icon-180x180.png') }}">
+<link rel="icon" type="image/png" sizes="192x192" href="{{ asset('Front/img/favicons/android-icon-192x192.png') }}">
+<link rel="icon" type="image/png" sizes="32x32" href="{{ asset('Front/img/favicons/favicon-32x32.png') }}">
+<link rel="icon" type="image/png" sizes="96x96" href="{{ asset('Front/img/favicons/favicon-96x96.png') }}">
+<link rel="icon" type="image/png" sizes="16x16" href="{{ asset('Front/img/favicons/favicon-16x16.png') }}">
+<link rel="manifest" href="{{ asset('Front/img/favicons/manifest.json') }}">
+<meta name="msapplication-TileColor" content="#ffffff">
+<meta name="msapplication-TileImage" content="{{ asset('Front/img/favicons/ms-icon-144x144.png') }}">
+<meta name="theme-color" content="#ffffff">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Radio+Canada:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+<link rel="stylesheet" href="{{ asset('Front/css/bootstrap.min.css') }}">
+<link rel="stylesheet" href="{{ asset('Front/css/fontawesome.min.css') }}">
+<link rel="stylesheet" href="{{ asset('Front/css/magnific-popup.min.css') }}">
+<link rel="stylesheet" href="{{ asset('Front/css/slick.min.css') }}">
+<link rel="stylesheet" href="{{ asset('Front/css/jquery.datetimepicker.min.css') }}">
+<link rel="stylesheet" href="{{ asset('Front/css/style.css') }}">
+
+<!-- Style personnalisé pour les cartes de personnel -->
+<style>
+    .personnel-item.style2 {
+        background: var(--white-color);
+        box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.04);
+        border-radius: 10px;
+        padding: 30px;
+        transition: 0.4s;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .personnel-item.style2:hover {
+        transform: translateY(-5px);
+        box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.1);
+    }
+    
+    .personnel-item_img {
+        border-radius: 10px;
+        overflow: hidden;
+        margin-bottom: 20px;
+        position: relative;
+        padding-top: 100%;
+    }
+    
+    .personnel-item_img img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+    
+    .personnel-item.style2:hover .personnel-item_img img {
+        transform: scale(1.05);
+    }
+    
+    .personnel-item_title {
+        font-size: 22px;
+        font-weight: 700;
+        margin-bottom: 5px;
+    }
+    
+    .personnel-item_title a {
+        color: inherit;
+        text-decoration: none;
+    }
+    
+    .personnel-item_subtitle {
+        color: var(--theme-color);
+        font-weight: 600;
+        margin-bottom: 15px;
+    }
+    
+    .personnel-item_feature {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+    
+    .personnel-item_feature:last-child {
+        border-bottom: none;
+    }
+    
+    .personnel-item_feature span:first-child {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .personnel-item_feature img {
+        width: 20px;
+        height: 20px;
+    }
+    
+    .personnel-item_info {
+        font-weight: 600;
+        color: var(--title-color);
+    }
+    
+    .fw-btn {
+        width: 100%;
+        margin-top: auto;
+        padding: 12px 20px;
+    }
+    
+    .premium-badge {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: var(--theme-color);
+        color: white;
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        z-index: 2;
+    }
+    
+    .service-badge {
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        background: white;
+        color: var(--title-color);
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        z-index: 2;
+    }
+
+
+/* Pagination GoldenTouch - Style moderne avec flèches jaunes */
+.pagination-container {
+    margin: 50px 0;
+    display: flex;
+    justify-content: center;
+}
+
+.pagination {
+    display: flex;
+    gap: 8px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+}
+
+.page-item {
+    margin: 0;
+}
+
+.page-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 48px;
+    height: 48px;
+    padding: 0 16px;
+    border-radius: 10px;
+    background: white;
+    color: var(--title-color);
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border: 2px solid rgba(var(--theme-color-rgb), 0.1);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+/* Flèches en jaune */
+.page-item:first-child .page-link,
+.page-item:last-child .page-link {
+    color: #FFD700; /* Jaune doré */
+    background: rgba(255, 215, 0, 0.1); /* Fond légèrement jaune */
+    border-color: rgba(255, 215, 0, 0.2);
+}
+
+.page-item:first-child:not(.disabled) .page-link:hover,
+.page-item:last-child:not(.disabled) .page-link:hover {
+    background: rgba(255, 215, 0, 0.2);
+    color: #FFC000; /* Jaune légèrement plus foncé au survol */
+}
+
+.page-item:not(.disabled):not(.active) .page-link:hover {
+    background: rgba(var(--theme-color-rgb), 0.08);
+    border-color: rgba(var(--theme-color-rgb), 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    color: var(--theme-color);
+}
+
+.page-item.active .page-link {
+    background: var(--theme-color);
+    color: white;
+    border-color: var(--theme-color);
+    box-shadow: 0 4px 12px rgba(var(--theme-color-rgb), 0.3);
+}
+
+.page-item.disabled .page-link {
+    color: #ccc;
+    border-color: #f5f5f5;
+    background: #f9f9f9;
+    box-shadow: none;
+    cursor: not-allowed;
+}
+
+/* Animation */
+@keyframes gentleBounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
+}
+
+.page-item:not(.disabled):not(.active) .page-link:hover {
+    animation: gentleBounce 0.4s ease;
+}
+
+/* Responsive */
+@media (max-width: 767px) {
+    .page-link {
+        min-width: 40px;
+        height: 40px;
+        padding: 0 12px;
+        font-size: 14px;
+    }
+}
+tyle>
+    /* Nouveau style innovant pour le ComboBox */
+    .goldentouch-combo {
+        position: relative;
+    }
+    
+    .combo-wrapper {
+        position: relative;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    }
+    
+    .goldentouch-select {
+        height: 56px;
+        padding: 12px 20px;
+        font-size: 1.05rem;
+        border: 2px solid rgba(255, 215, 0, 0.3);
+        border-radius: 12px !important;
+        background-color: white;
+        appearance: none;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .goldentouch-select:focus {
+        border-color: #FFD700;
+        box-shadow: 0 0 0 0.25rem rgba(255, 215, 0, 0.25);
+        outline: none;
+    }
+    
+    .combo-decoration {
+        position: absolute;
+        top: 0;
+        right: 0;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        pointer-events: none;
+        z-index: 2;
+    }
+    
+    .combo-arrow {
+        width: 48px;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        transition: all 0.3s ease;
+    }
+    
+    .goldentouch-select:hover + .combo-decoration .combo-arrow {
+        background-color: #FFC107 !important;
+    }
+    
+    /* Animation pour le survol */
+    @keyframes pulse-gold {
+        0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.4); }
+        70% { box-shadow: 0 0 0 10px rgba(255, 215, 0, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); }
+    }
+    
+    .goldentouch-select:focus {
+        animation: pulse-gold 1.5s infinite;
+    }
+    
+    /* Effet de flottement pour le label */
+    .form-label {
+        position: relative;
+        display: inline-block;
+    }
+    
+    .form-label:after {
+        content: '';
+        position: absolute;
+        bottom: -5px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 40px;
+        height: 3px;
+        background: linear-gradient(90deg, #FFD700, #FFC107);
+        border-radius: 3px;
+    }
+</style>
+
+</head>
+
+<body class="">
+
+    <div class="preloader">
+        <button class="th-btn style3 preloaderCls">Cancel Preloader </button>
+        <div class="preloader-inner">
+            <div class="loading-window">
+                <div class="car">
+                    <div class="strike"></div>
+                    <div class="strike strike2"></div>
+                    <div class="strike strike3"></div>
+                    <div class="strike strike4"></div>
+                    <div class="strike strike5"></div>
+                    <div class="car-detail spoiler"></div>
+                    <div class="car-detail back"></div>
+                    <div class="car-detail center"></div>
+                    <div class="car-detail center1"></div>
+                    <div class="car-detail front"></div>
+                    <div class="car-detail wheel"></div>
+                    <div class="car-detail wheel wheel2"></div>
+                </div>
+            </div>
+        </div>
+    </div> 
+
+    <div class="th-menu-wrapper">
+        <div class="th-menu-area text-center">
+            <button class="th-menu-toggle "><i class="fal fa-times"></i></button>
+            <div class="mobile-logo">
+                <a href="index.html"><img src="{{ asset('Front/img/logo44.png') }}" alt="GoldenTouch" style="height: 100px;"></a>
+            </div>
+            <div class="th-mobile-menu">
+                <ul>
+                    <li>
+                        <a href="index.html">Pack</a>
+                    </li>
+                    <li class="menu-item-has-children">
+                        <a href="#">Event Planner</a>
+                        <ul class="sub-menu">
+                            <li><a href="#">Ajout Event</a></li>
+                            <li><a href="#">Liste Event</a></li>
+                        </ul>
+                    </li>
+                    <li class="menu-item-has-children">
+                        <a href="#">Materielles</a>
+                        <ul class="sub-menu">
+                            <li><a href="#">Ajout Materielles</a></li>
+                            <li><a href="#">Liste Materielles</a></li>
+                        </ul>
+                    </li>
+                    <li class="menu-item-has-children">
+                        <a href="#">Personnel</a>
+                        <ul class="sub-menu">
+                            <li><a href="#">Ajout Personnel</a></li>
+                            <li><a href="#">Liste Personnel</a></li>
+                        </ul>
+                    </li>
+                    <li class="menu-item-has-children">
+                        <a href="#">Lieu</a>
+                        <ul class="sub-menu">
+                            <li><a href="#">Ajout Lieu</a></li>
+                            <li><a href="#">Liste Lieu</a></li>
+                        </ul>
+                    </li>
+                    <li class="menu-item-has-children">
+                        <a href="#">Autre</a>
+                        <ul class="sub-menu">
+                            <li><a href="#">Commandes</a></li>
+                            <li><a href="#">Reclamation</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="sidemenu-wrapper shopping-cart d-none d-lg-block">
+        <div class="sidemenu-content">
+            <button class="closeButton sideMenuCls"><i class="far fa-times"></i></button>
+            <div class="widget woocommerce widget_shopping_cart">
+                <h3 class="widget_title">Shopping cart</h3>
+                <div class="widget_shopping_cart_content">
+                    <ul class="woocommerce-mini-cart cart_list product_list_widget">
+                        <li class="woocommerce-mini-cart-item mini_cart_item">
+                            <a href="#" class="remove remove_from_cart_button"><i class="far fa-times"></i></a>
+                            <a href="#"><img src="{{ asset('Front/img/product/product_thumb_1_1.jpg') }}"
+                                    alt="Cart Image">Suspension-Coil</a>
+                            <span class="quantity">1 ×
+                                <span class="woocommerce-Price-amount amount">
+                                    <span class="woocommerce-Price-currencySymbol">$</span>94</span>,
+                            </span>
+                        </li>
+                        <li class="woocommerce-mini-cart-item mini_cart_item">
+                            <a href="#" class="remove remove_from_cart_button"><i class="far fa-times"></i></a>
+                            <a href="#"><img src="{{ asset('Front/img/product/product_thumb_1_2.jpg') }}" alt="Cart Image">absorbers
+                                Brake</a>
+                            <span class="quantity">1 ×
+                                <span class="woocommerce-Price-amount amount">
+                                    <span class="woocommerce-Price-currencySymbol">$</span>89</span>
+                            </span>
+                        </li>
+                        <li class="woocommerce-mini-cart-item mini_cart_item">
+                            <a href="#" class="remove remove_from_cart_button"><i class="far fa-times"></i></a>
+                            <a href="#"><img src="{{ asset('Front/img/product/product_thumb_1_3.jpg') }}"
+                                    alt="Cart Image">Motorcycle-Shock</a>
+                            <span class="quantity">1 ×
+                                <span class="woocommerce-Price-amount amount">
+                                    <span class="woocommerce-Price-currencySymbol">$</span>75</span>
+                            </span>
+                        </li>
+                        <li class="woocommerce-mini-cart-item mini_cart_item">
+                            <a href="#" class="remove remove_from_cart_button"><i class="far fa-times"></i></a>
+                            <a href="#"><img src="{{ asset('Front/img/product/product_thumb_1_4.jpg') }}" alt="Cart Image">Body
+                                Spring</a>
+                            <span class="quantity">1 ×
+                                <span class="woocommerce-Price-amount amount">
+                                    <span class="woocommerce-Price-currencySymbol">$</span>72</span>
+                            </span>
+                        </li>
+                        <li class="woocommerce-mini-cart-item mini_cart_item">
+                            <a href="#" class="remove remove_from_cart_button"><i class="far fa-times"></i></a>
+                            <a href="#"><img src="{{ asset('Front/img/product/product_thumb_1_5.jpg') }}" alt="Cart Image">Body
+                                Spring</a>
+                            <span class="quantity">1 ×
+                                <span class="woocommerce-Price-amount amount">
+                                    <span class="woocommerce-Price-currencySymbol">$</span>81</span>
+                            </span>
+                        </li>
+                    </ul>
+                    <p class="woocommerce-mini-cart__total total">
+                        <strong>Subtotal:</strong>
+                        <span class="woocommerce-Price-amount amount">
+                            <span class="woocommerce-Price-currencySymbol">$</span>318.00</span>
+                    </p>
+                    <p class="woocommerce-mini-cart__buttons buttons">
+                        <a href="cart.html" class="th-btn style1 wc-forward">View cart</a>
+                        <a href="checkout.html" class="th-btn style1 checkout wc-forward">Checkout</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="sidemenu-wrapper d-none d-lg-block">
+        <div class="sidemenu-content bg-title">
+            <button class="closeButton sideMenuCls"><i class="far fa-times"></i></button>
+            <div class="widget footer-widget">
+                <h3 class="widget_title">About Company</h3>
+                <div class="th-widget-about">
+                    <p class="footer-text">GoldenTouch révolutionne la planification d'événements avec des solutions tout-en-un pour des expériences inoubliables.</p>
+                    <h4 class="footer-info-title">WE ARE AVAILABLE</h4>
+                    <p class="footer-text">Mon-Sat: 09.00 am to 6.30 pm</p>
+                    <a href="contact.html" class="th-btn style3"><span class="btn-text">Contact Us</span></a>
+                </div>
+            </div>
+            <div class="widget footer-widget">
+                <h3 class="widget_title">Recent Posts</h3>
+                <div class="recent-post-wrap">
+                    <div class="recent-post">
+                        <div class="media-img">
+                            <a href="blog-details.html"><img src="{{ asset('Front/img/blog/recent-post-1-2.jpg') }}"
+                                    alt="Blog Image"></a>
+                        </div>
+                        <div class="media-body">
+                            <div class="recent-post-meta">
+                                <a href="blog.html"><i class="far fa-calendar-days"></i>22th May, 2023</a>
+                            </div>
+                            <h4 class="post-title"><a class="text-inherit" href="blog-details.html">How To Start Car
+                                    Engine Faster</a></h4>
+                            <a class="line-btn" href="blog.html">Read More<i class="fa-regular fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                    <div class="recent-post">
+                        <div class="media-img">
+                            <a href="blog-details.html"><img src="{{ asset('Front/img/blog/recent-post-1-3.jpg') }}"
+                                    alt="Blog Image"></a>
+                        </div>
+                        <div class="media-body">
+                            <div class="recent-post-meta">
+                                <a href="blog.html"><i class="far fa-calendar-days"></i>25th May, 2023</a>
+                            </div>
+                            <h4 class="post-title"><a class="text-inherit" href="blog-details.html">How to start car
+                                    engine slowly</a></h4>
+                            <a class="line-btn" href="blog.html">Read More<i class="fa-regular fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="widget footer-widget">
+                <h4 class="widget_title">Get Newsletter</h4>
+                <div class="newsletter-widget">
+                    <p class="md-20">Sign up today for hints, tips & latest car overview and news</p>
+                    <form class="newsletter-form">
+                        <input class="form-control" type="email" placeholder="Email Address" required="">
+                        <button type="submit" class="newsletter-btn"><i class="fas fa-envelope"></i></button>
+                    </form>
+                    <div class="th-social style2">
+                        <a target="_blank" href="https://facebook.com/"><i class="fab fa-facebook-f"></i></a>
+                        <a target="_blank" href="https://twitter.com/"><i class="fab fa-twitter"></i></a>
+                        <a target="_blank" href="https://instagram.com/"><i class="fab fa-instagram"></i></a>
+                        <a target="_blank" href="https://linkedin.com/"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="popup-search-box d-none d-lg-block">
+        <button class="searchClose"><i class="fal fa-times"></i></button>
+        <form action="#">
+            <input type="text" placeholder="What are you looking for">
+            <button type="submit"><i class="fal fa-search"></i></button>
+        </form>
+    </div>
+
+    <header class="th-header header-layout7">
+        <div class="header-top">
+            <div class="container">
+                <div class="row justify-content-center justify-content-md-between align-items-center gy-2">
+                    <div class="col-auto d-none d-md-block">
+                        <div class="header-links">
+                            <ul>
+                                <li><i class="fa-thin fa-envelope"></i><a
+                                        href="mailto:GoldenTouch@gmail.com">GoldenTouch@gmail.com</a>
+                                </li>
+                                <li><i class="fa-thin fa-phone"></i><a href="tel:+468254762443">(+468) 254 762 443</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <div class="header-right">
+                            <div class="langauge">
+                                <select class="form-select nice-select">
+                                    <option selected="">English</option>
+                                    <option>Hindi</option>
+                                </select>
+                            </div>
+                            <div class="header-social">
+                                <span class="social-title">Follow Us On:</span>
+                                <a href="https://www.facebook.com/"><i class="fab fa-facebook-f"></i></a>
+                                <a href="https://www.twitter.com/"><i class="fab fa-twitter"></i></a>
+                                <a href="https://www.linkedin.com/"><i class="fab fa-linkedin-in"></i></a>
+                                <a href="https://www.instagram.com/"><i class="fab fa-instagram"></i></a>
+                                <a href="https://www.youtube.com/"><i class="fa-brands fa-youtube"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="sticky-wrapper">
+            <div class="menu-area">
+                <div class="container">
+                    <div class="row align-items-center justify-content-between">
+                        <div class="col-auto">
+                            <div class="header-logo">
+                                <img src="{{ asset('Front/img/logo44.png') }}" alt="GoldenTouch" style="height: 130px;">
+                            </div>
+                        </div>
+                        <div class="col-auto me-xl-auto">
+                            <nav class="main-menu d-none d-lg-block">
+                                <ul>
+                                    <li>
+                                        <a href="index.html">Pack</a>
+                                    </li>
+                                    <li class="menu-item-has-children">
+                                        <a href="#">Event Planner</a>
+                                        <ul class="sub-menu">
+                                            <li><a href="#">Ajout Event</a></li>
+                                            <li><a href="#">Liste Event</a></li>
+                                        </ul>
+                                    </li>
+                                    <li class="menu-item-has-children">
+                                        <a href="#">Materielles</a>
+                                        <ul class="sub-menu">
+                                            <li><a href="#">Ajout Materielles</a></li>
+                                            <li><a href="#">Liste Materielles</a></li>
+                                        </ul>
+                                    </li>
+                                    <li class="menu-item-has-children">
+                                        <a href="#">Personnel</a>
+                                        <ul class="sub-menu">
+                                            <li><a href="#">Ajout Personnel</a></li>
+                                            <li><a href="#">Liste Personnel</a></li>
+                                        </ul>
+                                    </li>
+                                    <li class="menu-item-has-children">
+                                        <a href="#">Lieu</a>
+                                        <ul class="sub-menu">
+                                            <li><a href="#">Ajout Lieu</a></li>
+                                            <li><a href="#">Liste Lieu</a></li>
+                                        </ul>
+                                    </li>
+                                    <li class="menu-item-has-children">
+                                        <a href="#">Autre</a>
+                                        <ul class="sub-menu">
+                                            <li><a href="#">Commandes</a></li>
+                                            <li><a href="#">Reclamation</a></li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </nav>
+                            <button class="th-menu-toggle d-inline-block d-lg-none"><i class="far fa-bars"></i></button>
+                        </div>
+                        <div class="col-auto d-none d-xl-block">
+                            <div class="header-button">
+                                <button type="button" class="icon-btn searchBoxToggler"><i class="far fa-search"></i></button>
+                                <a href="#" class="icon-btn sideMenuToggler2"><i class="fa-regular fa-bag-shopping"></i>
+                                    <span class="badge">5</span></a>
+                                <a href="#" class="icon-btn sideMenuToggler"><i class="far fa-bars"></i></a>
+                                <a href="booking.html" class="th-btn">BOOK AN Event<i class="fa-regular fa-arrow-right ms-2"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="logo-shape"><img src="{{ asset('Front/img/logo-shape.svg') }}" alt=""></div>
+    </header>
+
+    <!-- Section principale avec les cartes de personnel -->
+    <section class="bg-top-center space">
+        <div class="container">
+            <div class="title-area text-center">
+                <span class="sub-title">Notre Personnel<span class="double-line"></span></span>
+                <h2 class="sec-title text-capitalize">Choisissez parmi nos professionnels</h2>
+            </div>
+            
+            <!-- Sélecteur d'événement -->
+<div class="card mb-5 border-0" style="background: linear-gradient(135deg, #f8f9fa 0%, #fff8e6 100%);">
+    <div class="card-body p-4">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <!-- Nouveau design innovant pour le ComboBox -->
+                <div class="goldentouch-combo">
+                    <label for="event-select" class="form-label fw-bold mb-3 d-block text-center" style="color: #6c757d;">
+                        <i class="fas fa-calendar-star me-2" style="color: #FFD700;"></i>
+                        CHOISISSEZ VOTRE ÉVÉNEMENT
+                    </label>
+                    
+                    <div class="combo-wrapper position-relative">
+                        <select id="event-select" class="form-select goldentouch-select shadow-sm">
+                            <option value="">-- Sélectionnez un événement --</option>
+                            {% for event in events %}
+                                <option value="{{ event.id }}" {% if selectedEventId == event.id %}selected{% endif %}>
+                                    {{ event.nom }} ({{ event.date|date('d/m/Y') }})
+                                </option>
+                            {% endfor %}
+                        </select>
+                        <div class="combo-decoration">
+                            <div class="combo-arrow" style="background-color: #FFD700;">
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+            
+            <!-- Cartes de personnel -->
+            <div class="row gy-5">
+                {% for personnel in personnels %}
+                 {% if personnel is not null %}
+                <div class="col-md-6 col-lg-6 col-xl-4">
+                    <div class="personnel-item style2">
+                        <div class="personnel-item_img">
+                            <img src="{{ asset('uploads/personnel/' ~ personnel.imageUrl|default('default-personnel.jpg')) }}" 
+                                 alt="{{ personnel.nomP }} {{ personnel.prenomP }}">
+                            {% if personnel.tarifP > 100 %}
+                            <span class="premium-badge">PREMIUM</span>
+                            {% endif %}
+                            <span class="service-badge">{{ personnel.serviceP|upper }}</span>
+                        </div>
+                        <h3 class="personnel-item_title">
+                            {{ personnel.nomP }} {{ personnel.prenomP }}
+                        </h3>
+                        <p class="personnel-item_subtitle">{{ personnel.tarifP|number_format(2, '.', ',') }} TND/jour</p>
+                        
+<div class="personnel-item_feature">
+    <span><i class="fas fa-hands-helping" style="width: 20px; text-align: center;"></i> Service</span>
+    <span class="personnel-item_info">{{ personnel.serviceP }}</span>
+</div>
+<div class="personnel-item_feature">
+    <span><i class="far fa-calendar-check" style="width: 20px; text-align: center;"></i> Disponibilité</span>
+    <span class="personnel-item_info">{{ personnel.statutP }}</span>
+</div>
+<div class="personnel-item_feature">
+    <span><i class="fas fa-language" style="width: 20px; text-align: center;"></i> Langues</span>
+    <span class="personnel-item_info">{{ personnel.languesP ?? 'FR, EN' }}</span>
+</div>
+                        
+                        <div class="d-flex justify-content-center mt-3">
+                            {% set isReserved = false %}
+                            {% set reservationId = null %}
+                            
+                            {% for reservation in reservations %}
+                            {% if reservation.idP == personnel.idP and reservation.event.id == selectedEventId %}
+                                {% set isReserved = true %}
+                                {% set reservationId = reservation.idR %}
+                            {% endif %}
+                            {% endfor %}
+                            
+                            {% if isReserved %}
+                                <form method="post" action="{{ path('app_reservation_perso_delete', {'idR': reservationId}) }}" class="w-100" id="cancelForm-{{ reservationId }}">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ reservationId) }}">
+                                    <input type="hidden" name="event_id" value="{{ selectedEventId }}">
+                                    <button class="th-btn fw-btn btn-danger cancel-btn"
+                                            data-reservation-id="{{ reservationId }}"
+                                            title="Annuler cette réservation">
+                                        <i class="fa-regular fa-calendar-xmark me-2"></i>Annuler
+                                    </button>
+                                </form>
+                            {% else %}
+                                <button class="th-btn fw-btn reserve-btn" 
+                                        data-personnel-id="{{ personnel.idP }}"
+                                        title="Réserver ce personnel">
+                                    <i class="fa-regular fa-calendar-plus me-2"></i>Réserver
+                                </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                <div class="col-12">
+                    <div class="alert alert-info text-center py-5">
+                        <div class="icon-box">
+                            <i class="fa-regular fa-users-slash fa-3x mb-3"></i>
+                        </div>
+                        <h4 class="alert-heading">Aucun personnel disponible</h4>
+                        <p>Tous nos professionnels sont actuellement réservés pour cette période.</p>
+                    </div>
+                </div>
+                 {% endif %}
+                {% endfor %}
+            </div>
+            
+            <!-- Pagination si nécessaire -->
+{% if personnels is defined and personnels is not empty %}
+    <div class="th-pagination text-center mt-60 mb-0">
+        {{ knp_pagination_render(personnels, 'pagination/custom_pagination.html.twig') }}
+    </div>
+{% endif %}
+        </div>
+    </section>
+
+    <!-- Modal pour annulation impossible -->
+    <div class="modal fade" id="cancelAlertModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">Annulation impossible</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="d-flex align-items-center">
+                        <div class="icon-box text-danger me-3">
+                            <i class="fa-regular fa-circle-exclamation fa-3x"></i>
+                        </div>
+                        <div>
+                            <p class="mb-0" id="cancelAlertMessage"></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="th-btn" data-bs-dismiss="modal">Fermer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast pour les messages d'erreur -->
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <div id="errorToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header bg-danger text-white">
+                <strong class="me-auto">Erreur</strong>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body" id="toastMessage"></div>
+        </div>
+    </div>
+
+    <footer class="footer-wrapper footer-layout7" data-bg-src="assets/img/bg/footer_bg_1.jpg">
+        <div class="widget-area">
+            <div class="container">
+                <div class="row justify-content-between">
+                    <div class="col-md-6 col-xl-auto">
+                        <div class="widget footer-widget">
+                            <div class="th-widget-about">
+                                <div class="about-logo">
+                                    <a href="index.html"><img src="{{ asset('Front/img/logo-white3.svg') }}" alt="GoldenTouch"></a>
+                                </div>
+                                <p class="about-text">GoldenTouch révolutionne la planification d'événements avec des solutions tout-en-un pour des expériences inoubliables.</p>
+                                <div class="working-time">
+                                    <span class="title">HORAIRES D'OUVERTURE</span>
+                                    <p class="desc">Lun-Sam : 09h00 à 18h30</p>
+                                </div>
+                                <div class="th-social footer-social">
+                                    <a href="https://www.facebook.com/"><i class="fab fa-facebook-f"></i></a>
+                                    <a href="https://www.twitter.com/"><i class="fab fa-twitter"></i></a>
+                                    <a href="https://www.linkedin.com/"><i class="fab fa-linkedin-in"></i></a>
+                                    <a href="https://www.instagram.com/"><i class="fab fa-instagram"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-xl-2">
+                        <div class="widget widget_nav_menu footer-widget">
+                            <h3 class="widget_title">Liens rapides</h3>
+                            <div class="menu-all-pages-container">
+                                <ul class="menu">
+                                    <li><a href="about.html">À propos</a></li>
+                                    <li><a href="gallery.html">Galerie</a></li>
+                                    <li><a href="testimonials.html">Témoignages</a></li>
+                                    <li><a href="services.html">Nos Services</a></li>
+                                    <li><a href="team.html">Notre Équipe</a></li>
+                                    <li><a href="contact.html">Contact</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-xl-auto">
+                        <div class="widget footer-widget">
+                            <h3 class="widget_title">Coordonnées</h3>
+                            <div class="th-widget-about">
+                                <h4 class="footer-info-title">Téléphone</h4>
+                                <p class="footer-info"><i class="fa-sharp fa-solid fa-phone"></i><a class="text-inherit"
+                                        href="tel:+33123456789">+33 1 23 45 67 89</a></p>
+                                <h4 class="footer-info-title">Email</h4>
+                                <p class="footer-info"><i class="fas fa-envelope"></i><a class="text-inherit"
+                                        href="mailto:contact@goldentouch.com">contact{{ '@' }}goldentouch.com</a></p>
+                                <h4 class="footer-info-title">Adresse</h4>
+                                <p class="footer-info"><i class="fas fa-map-marker-alt"></i>123 Rue des Événements, 75001 Paris, France</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-xl-3">
+                        <div class="widget footer-widget">
+                            <h4 class="widget_title">Newsletter</h4>
+                            <div class="newsletter-widget">
+                                <p class="md-20">Abonnez-vous pour recevoir nos actualités et offres exclusives. Soyez les premiers informés de nos dernières prestations.</p>
+                                <div class="footer-search-contact mt-25">
+                                    <form>
+                                        <input class="form-control" type="email" placeholder="Votre email">
+                                    </form>
+                                    <div class="footer-btn mt-10">
+                                        <button type="submit" class="th-btn style3 fw-btn">S'abonner <i
+                                                class="fa-regular fa-arrow-right"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="copyright-wrap">
+            <div class="container">
+                <p class="copyright-text">© 2023 <a href="#">GoldenTouch</a>. Tous droits réservés.</p>
+            </div>
+        </div>
+        <div class="footer-shape"><img src="{{ asset('Front/img/shape/footer_shape.png') }}" alt="forme">
+        </div>
+    </footer>
+
+    <div class="scroll-top">
+        <svg class="progress-circle svg-content" width="100%" height="100%" viewBox="-1 -1 102 102">
+            <path d="M50,1 a49,49 0 0,1 0,98 a49,49 0 0,1 0,-98"
+                style="transition: stroke-dashoffset 10ms linear 0s; stroke-dasharray: 307.919, 307.919; stroke-dashoffset: 307.919;">
+            </path>
+        </svg>
+    </div>
+
+    <script src="{{ asset('Front/js/vendor/jquery-3.6.0.min.js') }}"></script>
+    <script src="{{ asset('Front/js/slick.min.js') }}"></script>
+    <script src="{{ asset('Front/js/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('Front/js/jquery.magnific-popup.min.js') }}"></script>
+    <script src="{{ asset('Front/js/jquery.counterup.min.js') }}"></script>
+    <script src="{{ asset('Front/js/imagesloaded.pkgd.min.js') }}"></script>
+    <script src="{{ asset('Front/js/isotope.pkgd.min.js') }}"></script>
+    <script src="{{ asset('Front/js/nice-select.min.js') }}"></script>
+    <script src="{{ asset('Front/js/jquery.datetimepicker.min.js') }}"></script>
+    <script src="{{ asset('Front/js/wow.min.js') }}"></script>
+    <script src="{{ asset('Front/js/main.js') }}"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const eventSelect = document.getElementById('event-select');
+            let selectedEventId = {{ selectedEventId ? selectedEventId : 'null' }};
+            
+            // Gérer le changement d'événement
+            eventSelect.addEventListener('change', function() {
+                selectedEventId = this.value;
+                if (selectedEventId) {
+                    window.location.href = window.location.pathname + '?event=' + selectedEventId;
+                } else {
+                    window.location.href = window.location.pathname;
+                }
+            });
+            
+            // Gérer le bouton de réservation
+            document.querySelectorAll('.reserve-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const personnelId = this.getAttribute('data-personnel-id');
+                    
+                    if (!selectedEventId) {
+                        const toast = new bootstrap.Toast(document.getElementById('errorToast'));
+                        document.getElementById('toastMessage').textContent = 'Veuillez sélectionner un événement';
+                        toast.show();
+                        return;
+                    }
+                    
+                    const confirmation = confirm(`Confirmez-vous la réservation de ce personnel pour l'événement sélectionné ?`);
+                    
+                    if (confirmation) {
+                        window.location.href = `/reservation/perso/new/${personnelId}/${selectedEventId}`;
+                    }
+                });
+            });
+            
+            // Gérer le bouton d'annulation
+            document.querySelectorAll('.cancel-btn').forEach(button => {
+                button.addEventListener('click', async function(e) {
+                    e.preventDefault();
+                    const reservationId = this.getAttribute('data-reservation-id');
+                    const form = document.getElementById(`cancelForm-${reservationId}`);
+                    
+                    try {
+                        this.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-2"></i> Vérification...';
+                        
+                        const response = await fetch(`/reservation/perso/check-cancel/${reservationId}/${selectedEventId}`);
+                        
+                        if (!response.ok) {
+                            throw new Error('Erreur réseau');
+                        }
+                        
+                        const data = await response.json();
+                        
+                        this.innerHTML = '<i class="fa-regular fa-calendar-xmark me-2"></i> Annuler';
+                        
+                        if (data.canCancel) {
+                            if (confirm('Êtes-vous sûr de vouloir annuler cette réservation ?')) {
+                                form.submit();
+                            }
+                        } else {
+                            const alertModal = new bootstrap.Modal(document.getElementById('cancelAlertModal'));
+                            const alertMessage = document.getElementById('cancelAlertMessage');
+                            
+                            if (data.reason === 'soon') {
+                                alertMessage.textContent = 'Impossible d\'annuler : l\'événement commence dans moins de 24h.';
+                            } else {
+                                alertMessage.textContent = 'Impossible d\'annuler cette réservation.';
+                            }
+                            
+                            alertModal.show();
+                        }
+                    } catch (error) {
+                        console.error('Erreur lors de la vérification:', error);
+                        this.innerHTML = '<i class="fa-regular fa-calendar-xmark me-2"></i> Annuler';
+                        
+                        const toast = new bootstrap.Toast(document.getElementById('errorToast'));
+                        document.getElementById('toastMessage').textContent = 'Une erreur est survenue lors de la vérification';
+                        toast.show();
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
