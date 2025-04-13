@@ -751,15 +751,16 @@ tyle>
                             {% endfor %}
                             
                             {% if isReserved %}
-                                <form method="post" action="{{ path('app_reservation_perso_delete', {'idR': reservationId}) }}" class="w-100" id="cancelForm-{{ reservationId }}">
-                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ reservationId) }}">
-                                    <input type="hidden" name="event_id" value="{{ selectedEventId }}">
-                                    <button class="th-btn fw-btn btn-danger cancel-btn"
-                                            data-reservation-id="{{ reservationId }}"
-                                            title="Annuler cette réservation">
-                                        <i class="fa-regular fa-calendar-xmark me-2"></i>Annuler
-                                    </button>
-                                </form>
+<form method="post" action="{{ path('app_reservation_perso_delete', {'idR': reservationId}) }}" class="w-100" id="cancelForm-{{ reservationId }}">
+    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ reservationId) }}">
+    <input type="hidden" name="event_id" value="{{ selectedEventId }}">
+    <button class="th-btn fw-btn cancel-btn"
+            style="background-color: #dc3545; border-color: #dc3545;"
+            data-reservation-id="{{ reservationId }}"
+            title="Annuler cette réservation">
+        <i class="fa-regular fa-calendar-xmark me-2"></i>Annuler
+    </button>
+</form>
                             {% else %}
                                 <button class="th-btn fw-btn reserve-btn" 
                                         data-personnel-id="{{ personnel.idP }}"
