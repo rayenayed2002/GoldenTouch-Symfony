@@ -5,7 +5,10 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Validator\Constraints as Assert;
 use App\Repository\PersonnelRepository;
+use Tattali\CalendarBundle\TattaliCalendarBundle;
+
 
 #[ORM\Entity(repositoryClass: PersonnelRepository::class)]
 #[ORM\Table(name: 'personnels')]
@@ -13,45 +16,33 @@ class Personnel
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(name: 'idP')]
+    #[ORM\Column(name: 'idP', type: 'integer')]
     private ?int $idP = null;
-
-    #[ORM\Column(name: 'nomP', length: 255)]
-    private ?string $nomP = null;
-
-    #[ORM\Column(name: 'prenomP', length: 255)]
-    private ?string $prenomP = null;
-
-    #[ORM\Column(name: 'serviceP', length: 255)]
-    private ?string $serviceP = null;
-
-    #[ORM\Column(name: 'statutP', length: 255)]
-    private ?string $statutP = null;
-
-    #[ORM\Column(name: 'imageUrl', length: 255)]
-    private ?string $imageUrl = null;
-
-    #[ORM\Column(name: 'descriptionP', length: 255)]
-    private ?string $descriptionP = null;
-
-    #[ORM\Column(name: 'tarifP')]
-    private ?int $tarifP = null;
-
-    #[ORM\Column(name: 'id', nullable: true)]
-    private ?int $utilisateurId = null;
-
-    #[ORM\ManyToMany(targetEntity: Event::class, mappedBy: "personnels")]
-    private Collection $assignedEvents;
-
-    public function __construct()
-    {
-        $this->assignedEvents = new ArrayCollection();
-    }
 
     public function getIdP(): ?int
     {
         return $this->idP;
     }
+
+    public function setIdP(int $idP): self
+    {
+        $this->idP = $idP;
+        return $this;
+    }
+
+    #[ORM\Column(name: 'nomP', type: 'string', nullable: false)]
+    #[Assert\NotBlank(message: "Le nom ne peut pas être vide")]
+    #[Assert\Length(
+        min: 2,
+        max: 50,
+        minMessage: "Le nom doit contenir au moins {{ limit }} caractères",
+        maxMessage: "Le nom ne peut pas dépasser {{ limit }} caractères"
+    )]
+    #[Assert\Regex(
+        pattern: "/^[a-zA-ZÀ-ÿ\s\-']+$/",
+        message: "Le nom ne peut contenir que des lettres, espaces, tirets et apostrophes"
+    )]
+    private ?string $nomP = null;
 
     public function getNomP(): ?string
     {
@@ -64,6 +55,20 @@ class Personnel
         return $this;
     }
 
+    #[ORM\Column(name: 'prenomP', type: 'string', nullable: false)]
+    #[Assert\NotBlank(message: "Le prénom ne peut pas être vide")]
+    #[Assert\Length(
+        min: 2,
+        max: 50,
+        minMessage: "Le prénom doit contenir au moins {{ limit }} caractères",
+        maxMessage: "Le prénom ne peut pas dépasser {{ limit }} caractères"
+    )]
+    #[Assert\Regex(
+        pattern: "/^[a-zA-ZÀ-ÿ\s\-']+$/",
+        message: "Le prénom ne peut contenir que des lettres, espaces, tirets et apostrophes"
+    )]
+    private ?string $prenomP = null;
+
     public function getPrenomP(): ?string
     {
         return $this->prenomP;
@@ -74,6 +79,18 @@ class Personnel
         $this->prenomP = $prenomP;
         return $this;
     }
+
+    #[ORM\Column(name: 'serviceP', type: 'string', nullable: false)]
+    #[Assert\NotBlank(message: "Le service ne peut pas être vide")]
+    #[Assert\Length(
+        max: 100,
+        maxMessage: "Le service ne peut pas dépasser {{ limit }} caractères"
+    )]
+    #[Assert\Choice(
+        choices: ["Photographie", "Vidéographie", "Animation", "Décorateur", "Catering", "Logistique"],
+        message: "Veuillez choisir un service valide"
+    )]
+    private ?string $serviceP = null;
 
     public function getServiceP(): ?string
     {
@@ -86,6 +103,11 @@ class Personnel
         return $this;
     }
 
+    #[ORM\Column(name: 'statutP', type: 'string', nullable: false)]
+    #[Assert\NotBlank(message: "Le statut ne peut pas être vide")]
+
+    private ?string $statutP = null;
+
     public function getStatutP(): ?string
     {
         return $this->statutP;
@@ -96,6 +118,10 @@ class Personnel
         $this->statutP = $statutP;
         return $this;
     }
+
+    #[ORM\Column(name: 'imageUrl', type: 'string', nullable: false)]
+
+    private ?string $imageUrl = null;
 
     public function getImageUrl(): ?string
     {
@@ -108,6 +134,30 @@ class Personnel
         return $this;
     }
 
+    #[ORM\Column(name: 'id', type: 'integer', nullable: true)]
+    private ?int $id = null;
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function setId(?int $id): self
+    {
+        $this->id = $id;
+        return $this;
+    }
+
+    #[ORM\Column(name: 'descriptionP', type: 'string', nullable: false)]
+    #[Assert\NotBlank(message: "La description ne peut pas être vide")]
+    #[Assert\Length(
+        min: 10,
+        max: 500,
+        minMessage: "La description doit contenir au moins {{ limit }} caractères",
+        maxMessage: "La description ne peut pas dépasser {{ limit }} caractères"
+    )]
+    private ?string $descriptionP = null;
+
     public function getDescriptionP(): ?string
     {
         return $this->descriptionP;
@@ -118,6 +168,19 @@ class Personnel
         $this->descriptionP = $descriptionP;
         return $this;
     }
+
+    #[ORM\Column(name: 'tarifP', type: 'integer', nullable: false)]
+    #[Assert\NotBlank(message: "Le tarif ne peut pas être vide")]
+    #[Assert\Type(
+        type: "integer",
+        message: "Le tarif doit être un nombre entier"
+    )]
+    #[Assert\Range(
+        min: 10,
+        max: 10000,
+        notInRangeMessage: "Le tarif doit être compris entre {{ min }} et {{ max }} TND"
+    )]
+    private ?int $tarifP = null;
 
     public function getTarifP(): ?int
     {
@@ -130,36 +193,4 @@ class Personnel
         return $this;
     }
 
-    public function getUtilisateurId(): ?int
-    {
-        return $this->utilisateurId;
-    }
-
-    public function setUtilisateurId(?int $utilisateurId): self
-    {
-        $this->utilisateurId = $utilisateurId;
-        return $this;
-    }
-
-    public function getAssignedEvents(): Collection
-    {
-        return $this->assignedEvents;
-    }
-
-    public function addAssignedEvent(Event $event): self
-    {
-        if (!$this->assignedEvents->contains($event)) {
-            $this->assignedEvents[] = $event;
-            $event->addPersonnel($this);
-        }
-        return $this;
-    }
-
-    public function removeAssignedEvent(Event $event): self
-    {
-        if ($this->assignedEvents->removeElement($event)) {
-            $event->removePersonnel($this);
-        }
-        return $this;
-    }
 }

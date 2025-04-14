@@ -26,6 +26,7 @@
     <link rel="stylesheet" href="{{ asset('vendor/libs/perfect-scrollbar/perfect-scrollbar.css') }}" />
     <link rel="stylesheet" href="{{ asset('vendor/libs/node-waves/node-waves.css') }}" />
     <link rel="stylesheet" href="{{ asset('vendor/libs/swiper/swiper.css') }}" />
+    <link rel="stylesheet" href="{{ asset('vendor/libs/sweetalert2/sweetalert2.css') }}" />
     
     <style>
         .pack-header {
@@ -102,6 +103,58 @@
             background: #7367f0;
             border: 2px solid white;
         }
+        
+        /* Form Elements */
+        .form-control, .form-select {
+            transition: all 0.3s ease;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            border: 2px solid #e2e8f0;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+        }
+
+        .form-control.is-invalid, .form-select.is-invalid {
+            border-color: #ef4444;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+            animation: shake 0.5s ease-in-out;
+        }
+
+        .invalid-feedback {
+            color: #dc2626;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .form-control.is-invalid ~ .invalid-feedback,
+        .form-select.is-invalid ~ .invalid-feedback {
+            display: block;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Error Icon for Select Elements */
+        .form-select.is-invalid {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc2626'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc2626' stroke='none'/%3e%3c/svg%3e"),
+            linear-gradient(to bottom, #f8f9fa, #f8f9fa);
+            background-repeat: no-repeat, repeat;
+            background-position: right 0.5rem center, center right 2.25rem;
+            background-size: 16px 12px, 16px 12px;
+        }
     </style>
 </head>
 
@@ -147,15 +200,13 @@
                                 <h4 class="fw-bold mb-2">Pack Details</h4>
                                 <nav aria-label="breadcrumb">
                                     <ol class="breadcrumb">
-                                        <li class="breadcrumb-item">
-                                            <a href="{{ path('admin_pack_index') }}">Packs</a>
-                                        </li>
-                                        <li class="breadcrumb-item active">Details</li>
+                                        <li class="breadcrumb-item"><a href="{{ path('admin_pack_index') }}">Packs</a></li>
+                                        <li class="breadcrumb-item active" aria-current="page">Details</li>
                                     </ol>
                                 </nav>
                             </div>
-                            <div class="d-flex gap-2">
-                                <button type="button" class="btn btn-primary" onclick="editPack({{ pack.id }})">
+                            <div>
+                                <button type="button" class="btn btn-primary me-2" onclick="editPack({{ pack.id }})">
                                     <i class="ti ti-edit me-1"></i> Edit Pack
                                 </button>
                                 <button type="button" class="btn btn-danger" onclick="deletePack({{ pack.id }})">
@@ -271,7 +322,7 @@
                                             <div class="timeline-item">
                                                 <div class="timeline-point"></div>
                                                 <h6 class="mb-1">Category</h6>
-                                                <p class="mb-0">{{ pack.event.categorie }}</p>
+                                                <p class="mb-0">{{ pack.event.categorie.value }}</p>
                                             </div>
                                             
                                             <div class="timeline-item">
@@ -290,58 +341,56 @@
         </div>
     </div>
 
-    <!-- Create/Edit Pack Modal -->
-    <div class="modal fade" id="packModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
+    <!-- Edit Pack Modal -->
+    <div class="modal fade" id="editPackModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalTitle">Edit Pack</h5>
+                    <h5 class="modal-title" id="editPackModalLabel">Edit Pack</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form id="packForm" onsubmit="handlePackSubmit(event)">
-                    <div class="modal-body">
-                        <input type="hidden" id="packId" name="id">
-                        <div class="mb-3">
-                            <label class="form-label" for="event">Event</label>
-                            <select class="form-select" id="event" name="event" required>
-                                {% for event in events %}
-                                    <option value="{{ event.id }}">{{ event.nom }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label" for="description">Description</label>
-                            <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
-                        </div>
+                <div class="modal-body">
+                    <form id="editPackForm" class="needs-validation" novalidate>
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label class="form-label" for="prix">Price</label>
-                                <div class="input-group">
-                                    <span class="input-group-text">$</span>
-                                    <input type="number" class="form-control" id="prix" name="prix" step="0.01" required>
-                                </div>
+                                <label for="event" class="form-label">Event</label>
+                                {{ form_widget(editForm.event, {'attr': {'class': 'form-select', 'id': 'event', 'required': 'required'}}) }}
+                                <div class="invalid-feedback">Please select an event.</div>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label class="form-label" for="capacite">Capacity</label>
-                                <input type="number" class="form-control" id="capacite" name="capacite" required>
+                                <label for="prix" class="form-label">Price</label>
+                                {{ form_widget(editForm.prix, {'attr': {'class': 'form-control', 'id': 'prix', 'required': 'required', 'min': '0', 'step': '0.01'}}) }}
+                                <div class="invalid-feedback">Please provide a valid price.</div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label class="form-label" for="duree">Duration (hours)</label>
-                                <input type="number" class="form-control" id="duree" name="duree" required>
+                                <label for="capacite" class="form-label">Capacity</label>
+                                {{ form_widget(editForm.capacite, {'attr': {'class': 'form-control', 'id': 'capacite', 'required': 'required', 'min': '1'}}) }}
+                                <div class="invalid-feedback">Please provide a valid capacity.</div>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label class="form-label" for="endDate">End Date</label>
-                                <input type="text" class="form-control flatpickr" id="endDate" name="endDate">
+                                <label for="duree" class="form-label">Duration</label>
+                                {{ form_widget(editForm.duree, {'attr': {'class': 'form-control', 'id': 'duree', 'required': 'required', 'min': '1'}}) }}
+                                <div class="invalid-feedback">Please provide a valid duration.</div>
                             </div>
                         </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Save changes</button>
-                    </div>
-                </form>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            {{ form_widget(editForm.description, {'attr': {'class': 'form-control', 'rows': '4', 'id': 'description', 'required': 'required'}}) }}
+                            <div class="invalid-feedback">Please provide a description.</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="endDate" class="form-label">End Date</label>
+                            {{ form_widget(editForm.endDate, {'attr': {'class': 'form-control', 'id': 'endDate'}}) }}
+                            <div class="invalid-feedback">Please provide a valid date.</div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary" onclick="submitEditForm()">Save Changes</button>
+                </div>
             </div>
         </div>
     </div>
@@ -357,89 +406,152 @@
     <script src="{{ asset('vendor/libs/sweetalert2/sweetalert2.js') }}"></script>
 
     <script>
-        $(document).ready(function() {
-            // Initialize Flatpickr
-            flatpickr('.flatpickr', {
-                dateFormat: 'Y-m-d',
-                minDate: 'today'
-            });
-        });
-
-        // Handle form submission
-        function handlePackSubmit(event) {
-            event.preventDefault();
-            const form = event.target;
-            const formData = new FormData(form);
-            const packId = formData.get('id');
-            const url = packId ? `{{ path('admin_pack_update', {'id': 'PACK_ID'}) }}`.replace('PACK_ID', packId)
-                              : '{{ path('admin_pack_create') }}';
-
-            // Convert FormData to JSON
-            const data = {};
-            formData.forEach((value, key) => {
-                data[key] = value;
-            });
-
-            fetch(url, {
-                method: packId ? 'PUT' : 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data)
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Success!',
-                        text: data.message,
-                        showConfirmButton: false,
-                        timer: 1500
-                    }).then(() => {
-                        location.reload();
-                    });
-                } else {
-                    throw new Error(data.message);
-                }
-            })
-            .catch(error => {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error!',
-                    text: error.message,
-                    confirmButtonText: 'OK'
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add validation error styling
+            document.querySelectorAll('.form-control, .form-select').forEach(function(input) {
+                input.addEventListener('invalid', function(e) {
+                    e.preventDefault();
+                    this.classList.add('is-invalid');
+                    
+                    // Add shake animation
+                    this.style.animation = 'shake 0.5s ease-in-out';
+                    setTimeout(() => {
+                        this.style.animation = '';
+                    }, 500);
+                });
+                
+                input.addEventListener('input', function() {
+                    this.classList.remove('is-invalid');
                 });
             });
-        }
 
-        // Edit pack function
-        function editPack(id) {
-            fetch(`{{ path('admin_pack_edit', {'id': 'PACK_ID'}) }}`.replace('PACK_ID', id))
-                .then(response => response.json())
+            // Handle form submission
+            document.getElementById('editPackForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Check if form is valid
+                const form = this;
+                let isValid = true;
+                
+                // Validate each required field
+                form.querySelectorAll('[required]').forEach(function(input) {
+                    if (!input.checkValidity()) {
+                        input.classList.add('is-invalid');
+                        input.style.animation = 'shake 0.5s ease-in-out';
+                        setTimeout(() => {
+                            input.style.animation = '';
+                        }, 500);
+                        isValid = false;
+                    }
+                });
+                
+                // Validate endDate if provided
+                const endDateInput = form.querySelector('input[name="pack[endDate]"]');
+                if (endDateInput && endDateInput.value) {
+                    const endDate = new Date(endDateInput.value);
+                    if (isNaN(endDate.getTime())) {
+                        endDateInput.classList.add('is-invalid');
+                        isValid = false;
+                    }
+                }
+                
+                if (!isValid) {
+                    // Show error message with SweetAlert
+                    Swal.fire({
+                        title: 'Erreur!',
+                        text: 'Veuillez corriger les erreurs dans le formulaire.',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                    return;
+                }
+
+                const formData = new FormData(this);
+
+                fetch(this.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    credentials: 'same-origin'
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
                 .then(data => {
                     if (data.success) {
-                        const pack = data.pack;
-                        document.getElementById('modalTitle').textContent = 'Edit Pack';
-                        document.getElementById('packId').value = pack.id;
-                        document.getElementById('event').value = pack.event.id;
-                        document.getElementById('description').value = pack.description;
-                        document.getElementById('prix').value = pack.prix;
-                        document.getElementById('capacite').value = pack.capacite;
-                        document.getElementById('duree').value = pack.duree;
-                        document.getElementById('endDate').value = pack.endDate;
-                        
-                        const modal = new bootstrap.Modal(document.getElementById('packModal'));
-                        modal.show();
+                        // Show success message with SweetAlert
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Succès !',
+                            text: 'Pack modifié avec succès !',
+                            showConfirmButton: false,
+                            timer: 1500,
+                            customClass: {
+                                popup: 'swal2-popup-custom'
+                            }
+                        }).then(() => {
+                            // Refresh the page
+                            location.reload();
+                        });
                     } else {
                         throw new Error(data.message);
                     }
                 })
                 .catch(error => {
+                    console.error('Error:', error);
+                    // Show error message with SweetAlert
                     Swal.fire({
                         icon: 'error',
-                        title: 'Error!',
-                        text: error.message,
+                        title: 'Erreur !',
+                        text: 'Une erreur est survenue lors de la modification du pack.',
+                        showConfirmButton: false,
+                        timer: 1500,
+                        customClass: {
+                            popup: 'swal2-popup-custom'
+                        }
+                    });
+                });
+            });
+        });
+
+        // Edit pack function
+        function editPack(id) {
+            fetch(`{{ path('admin_pack_edit', {'id': 'ID'}) }}`.replace('ID', id))
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const pack = data.pack;
+                        document.getElementById('editPackModalLabel').textContent = 'Edit Pack';
+                        
+                        // Show modal
+                        const modal = new bootstrap.Modal(document.getElementById('editPackModal'));
+                        modal.show();
+                        
+                        // Populate form fields after modal is shown
+                        modal._element.addEventListener('shown.bs.modal', function() {
+                            document.querySelector('select[name="pack[event]"]').value = pack.event.id;
+                            document.querySelector('input[name="pack[prix]"]').value = pack.prix;
+                            document.querySelector('input[name="pack[capacite]"]').value = pack.capacite;
+                            document.querySelector('input[name="pack[duree]"]').value = pack.duree;
+                            document.querySelector('textarea[name="pack[description]"]').value = pack.description;
+                            document.querySelector('input[name="pack[endDate]"]').value = pack.endDate;
+                        });
+                    } else {
+                        throw new Error(data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    // Show error message with SweetAlert
+                    Swal.fire({
+                        title: 'Erreur!',
+                        text: 'Une erreur est survenue lors de la récupération des données du pack.',
+                        icon: 'error',
                         confirmButtonText: 'OK'
                     });
                 });
@@ -490,6 +602,123 @@
                 }
             });
         }
+
+        // Form validation
+        function validateForm() {
+            const form = document.getElementById('editPackForm');
+            let isValid = true;
+            
+            // Clear previous errors
+            form.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+            
+            // Validate required fields
+            form.querySelectorAll('[required]').forEach(input => {
+                if (!input.value.trim()) {
+                    input.classList.add('is-invalid');
+                    isValid = false;
+                }
+            });
+            
+            // Validate price
+            const prix = form.querySelector('input[name="pack[prix]"]');
+            if (prix) {
+                const priceValue = parseFloat(prix.value);
+                if (isNaN(priceValue) || priceValue < 0) {
+                    prix.classList.add('is-invalid');
+                    isValid = false;
+                }
+            }
+            
+            // Validate capacity
+            const capacite = form.querySelector('input[name="pack[capacite]"]');
+            if (capacite) {
+                const capacityValue = parseInt(capacite.value);
+                if (isNaN(capacityValue) || capacityValue < 1) {
+                    capacite.classList.add('is-invalid');
+                    isValid = false;
+                }
+            }
+            
+            // Validate duration
+            const duree = form.querySelector('input[name="pack[duree]"]');
+            if (duree) {
+                const durationValue = parseInt(duree.value);
+                if (isNaN(durationValue) || durationValue < 1) {
+                    duree.classList.add('is-invalid');
+                    isValid = false;
+                }
+            }
+            
+            return isValid;
+        }
+
+        // Submit edit form
+        function submitEditForm() {
+            if (!validateForm()) {
+                return;
+            }
+
+            const form = document.getElementById('editPackForm');
+            const formData = new FormData(form);
+            
+            // Convert FormData to JSON
+            const jsonData = {
+                event: formData.get('pack[event]'),
+                description: formData.get('pack[description]'),
+                prix: formData.get('pack[prix]'),
+                capacite: formData.get('pack[capacite]'),
+                duree: formData.get('pack[duree]'),
+                endDate: formData.get('pack[endDate]')
+            };
+            
+            fetch(`{{ path('admin_pack_update', {'id': 'ID'}) }}`.replace('ID', {{ pack.id }}), {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify(jsonData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Show success message
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Succès !',
+                        text: 'Pack modifié avec succès !',
+                        showConfirmButton: false,
+                        timer: 1500,
+                        customClass: {
+                            popup: 'swal2-popup-custom'
+                        }
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                } else {
+                    throw new Error(data.message);
+                }
+            })
+            .catch(error => {
+                // Show error message
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erreur !',
+                    text: 'Une erreur est survenue lors de la modification du pack.',
+                    showConfirmButton: false,
+                    timer: 1500,
+                    customClass: {
+                        popup: 'swal2-popup-custom'
+                    }
+                });
+            });
+        }
+
+        // Add form validation on submit
+        document.getElementById('editPackForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            submitEditForm();
+        });
     </script>
 </body>
 </html>

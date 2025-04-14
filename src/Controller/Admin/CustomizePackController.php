@@ -6,6 +6,12 @@ use App\Entity\Pack;
 use App\Entity\DemandePack;
 use App\Entity\Event;
 use App\Entity\Materielle;
+use App\Entity\ReservMat;
+use App\Entity\ReserverLieu;
+use App\Entity\ReservationPerso;
+use App\Entity\ReservationPersonnel;
+use App\Entity\ReservationMaterielle;
+use App\Entity\ReservationLieu;
 use App\Repository\PackRepository;
 use App\Repository\DemandePackRepository;
 use App\Repository\EventRepository;
@@ -13,6 +19,7 @@ use App\Repository\MaterielleRepository;
 use App\Repository\PersonnelRepository;
 use App\Repository\LieuRepository;
 use App\Repository\UtilisateurRepository;
+use App\Repository\NotificationsAdminRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,9 +28,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Service\NotificationService;
 use App\Entity\NotificationAdmin;
-use App\Entity\ReservationMaterielle;
-use App\Entity\ReservationLieu;
-use App\Entity\ReservationPersonnel;
 use Symfony\Bundle\SecurityBundle\Security;
 
 #[Route('/admin/customize-pack', name: 'admin_customize_pack_')]
@@ -37,6 +41,7 @@ class CustomizePackController extends AbstractController
     private PersonnelRepository $personnelRepository;
     private LieuRepository $lieuRepository;
     private UtilisateurRepository $utilisateurRepository;
+    private NotificationsAdminRepository $notificationsAdminRepository;
 
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -46,7 +51,8 @@ class CustomizePackController extends AbstractController
         MaterielleRepository $materielleRepository,
         PersonnelRepository $personnelRepository,
         LieuRepository $lieuRepository,
-        UtilisateurRepository $utilisateurRepository
+        UtilisateurRepository $utilisateurRepository,
+        NotificationsAdminRepository $notificationsAdminRepository
     ) {
         $this->entityManager = $entityManager;
         $this->packRepository = $packRepository;
@@ -56,6 +62,7 @@ class CustomizePackController extends AbstractController
         $this->personnelRepository = $personnelRepository;
         $this->lieuRepository = $lieuRepository;
         $this->utilisateurRepository = $utilisateurRepository;
+        $this->notificationsAdminRepository = $notificationsAdminRepository;
     }
 
     #[Route('/{id}', name: 'show', methods: ['GET'])]
@@ -67,8 +74,15 @@ class CustomizePackController extends AbstractController
             throw $this->createNotFoundException('Demande pack not found');
         }
         
+        // Mark the notification as read
+        $notification = $this->notificationsAdminRepository->findOneBy(['demandePack' => $id]);
+        if ($notification && $notification->getStatut() === 'NON_LU') {
+            $notification->setStatut('LU');
+            $this->entityManager->flush();
+        }
+        
         // Get the original pack
-        $pack = $this->packRepository->find($demandePack->getPackId());
+        $pack = $demandePack->getPack();
         
         if (!$pack) {
             throw $this->createNotFoundException('Pack not found');
@@ -104,7 +118,7 @@ class CustomizePackController extends AbstractController
     }
 
     #[Route('/{id}/update', name: 'update', methods: ['POST'])]
-    public function update(Request $request, int $id): Response
+    public function update(Request $request, int $id): JsonResponse
     {
         $demandePack = $this->demandePackRepository->find($id);
         
@@ -113,41 +127,85 @@ class CustomizePackController extends AbstractController
         }
 
         $data = json_decode($request->getContent(), true);
+        
+        // Get or create the event for this pack
+        $event = $demandePack->getPack()->getEvent();
+        if (!$event) {
+            $event = new Event();
+            $event->setUtilisateur($this->utilisateurRepository->find($demandePack->getUtilisateurId()));
+            $event->setStatut('CUSTOMIZED');
+            $event->setDateDebut(new \DateTime());
+            $event->setDateFin(new \DateTime());
+            $this->entityManager->persist($event);
+            $demandePack->getPack()->setEvent($event);
+        }
 
-        // Validate and process selected materielle
+        // Delete existing reservations
+        $this->entityManager->createQueryBuilder()
+            ->delete(ReservMat::class, 'r')
+            ->where('r.event = :event')
+            ->setParameter('event', $event)
+            ->getQuery()
+            ->execute();
+
+        $this->entityManager->createQueryBuilder()
+            ->delete(ReserverLieu::class, 'r')
+            ->where('r.event_id = :eventId')
+            ->setParameter('eventId', $event->getId())
+            ->getQuery()
+            ->execute();
+
+        $this->entityManager->createQueryBuilder()
+            ->delete(ReservationPerso::class, 'r')
+            ->where('r.event = :event')
+            ->setParameter('event', $event)
+            ->getQuery()
+            ->execute();
+
+        // Process selected materielle
         if (isset($data['materielles'])) {
             foreach ($data['materielles'] as $materielleData) {
                 $materielle = $this->materielleRepository->find($materielleData['id']);
-                if ($materielle && $materielleData['quantity'] <= $materielle->getQuantity()) {
-                    // Create materielle reservation
-                    $reservation = new ReservationMaterielle();
+                if ($materielle) {
+                    $reservation = new ReservMat();
                     $reservation->setMaterielle($materielle);
-                    $reservation->setQuantity($materielleData['quantity']);
-                    $reservation->setDemandePack($demandePack);
+                    $reservation->setEvent($event);
+                    $reservation->setQuantite($materielleData['quantity']);
+                    $reservation->setUtilisateur($this->utilisateurRepository->find($demandePack->getUtilisateurId()));
                     $this->entityManager->persist($reservation);
                 }
             }
         }
 
-        // Process selected location
-        if (isset($data['location'])) {
-            $location = $this->lieuRepository->find($data['location']);
+        // Process selected location - ensure only one location is selected
+        if (isset($data['location']['id']) && is_numeric($data['location']['id'])) {
+            $location = $this->lieuRepository->find((int)$data['location']['id']);
             if ($location) {
-                $reservation = new ReservationLieu();
-                $reservation->setLieu($location);
-                $reservation->setDemandePack($demandePack);
+                // Remove any existing location reservations for this event
+                $existingReservations = $this->entityManager->getRepository(ReserverLieu::class)
+                    ->findBy(['event_id' => $event->getId()]);
+                foreach ($existingReservations as $existingReservation) {
+                    $this->entityManager->remove($existingReservation);
+                }
+                
+                $reservation = new ReserverLieu();
+                $reservation->setLieu_id($location->getId());
+                $reservation->setEvent_id($event->getId());
+                $reservation->setDate_reservation(new \DateTime());
+                $reservation->setStatus('pending');
+                $reservation->setCreated_at(new \DateTime());
                 $this->entityManager->persist($reservation);
             }
         }
 
         // Process selected personnel
         if (isset($data['personnel'])) {
-            foreach ($data['personnel'] as $personnelId) {
-                $personnel = $this->personnelRepository->find($personnelId);
+            foreach ($data['personnel'] as $personnelData) {
+                $personnel = $this->personnelRepository->find($personnelData['id']);
                 if ($personnel) {
-                    $reservation = new ReservationPersonnel();
-                    $reservation->setPersonnel($personnel);
-                    $reservation->setDemandePack($demandePack);
+                    $reservation = new ReservationPerso();
+                    $reservation->setIdP($personnel->getIdP());
+                    $reservation->setEvent($event);
                     $this->entityManager->persist($reservation);
                 }
             }
@@ -158,7 +216,7 @@ class CustomizePackController extends AbstractController
         
         // Calculate total price based on selections
         $totalPrice = $this->calculateTotalPrice($data);
-        $demandePack->setTotalPrice($totalPrice);
+        $demandePack->setPrix($totalPrice);
 
         $this->entityManager->flush();
 
@@ -178,26 +236,26 @@ class CustomizePackController extends AbstractController
             foreach ($data['materielles'] as $materielleData) {
                 $materielle = $this->materielleRepository->find($materielleData['id']);
                 if ($materielle) {
-                    $totalPrice += $materielle->getPrice() * $materielleData['quantity'];
+                    $totalPrice += $materielle->getPrixMat() * $materielleData['quantity'];
+                } else {
+                    // Fallback to the price provided in the request if the materielle is not found
+                    $totalPrice += $materielleData['price'] * $materielleData['quantity'];
                 }
             }
         }
 
         // Add location cost
-        if (isset($data['location'])) {
-            $location = $this->lieuRepository->find($data['location']);
+        if (isset($data['location']) && $data['location'] !== null) {
+            $location = $this->lieuRepository->find($data['location']['id']);
             if ($location) {
-                $totalPrice += $location->getPrice();
+                $totalPrice += floatval($location->getPrice());
             }
         }
 
         // Add personnel cost
         if (isset($data['personnel'])) {
-            foreach ($data['personnel'] as $personnelId) {
-                $personnel = $this->personnelRepository->find($personnelId);
-                if ($personnel) {
-                    $totalPrice += $personnel->getPrice();
-                }
+            foreach ($data['personnel'] as $personnelData) {
+                $totalPrice += $personnelData['price'];
             }
         }
 

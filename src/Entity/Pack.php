@@ -5,11 +5,11 @@ namespace App\Entity;
 use App\Repository\PackRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\DBAL\Types\Types;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: PackRepository::class)]
-#[ORM\Table(name: 'pack')]
 class Pack
 {
     #[ORM\Id]
@@ -18,25 +18,37 @@ class Pack
     private ?int $id = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Assert\NotBlank(message: 'La description ne peut pas être vide')]
     private ?string $description = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
+    #[Assert\NotBlank(message: 'Le prix ne peut pas être vide')]
+    #[Assert\Positive(message: 'Le prix doit être un nombre positif')]
     private ?float $prix = null;
 
     #[ORM\Column(name: 'capacité')]
+    #[Assert\NotBlank(message: 'La capacité ne peut pas être vide')]
+    #[Assert\Positive(message: 'La capacité doit être un nombre positif')]
     private ?int $capacite = null;
 
     #[ORM\Column(name: 'durée')]
+    #[Assert\NotBlank(message: 'La durée ne peut pas être vide')]
+    #[Assert\Positive(message: 'La durée doit être un nombre positif')]
     private ?int $duree = null;
 
-    #[ORM\Column(name: 'end_date', type: Types::DATE_MUTABLE, nullable: true)]
-    private ?\DateTimeInterface $endDate = null;
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    #[Assert\NotBlank(message: 'La date de fin ne peut pas être vide')]
+    #[Assert\Date(message: 'La date de fin n\'est pas valide')]
+    private ?\DateTime $endDate = null;
 
     #[ORM\ManyToOne(inversedBy: 'packs')]
     #[ORM\JoinColumn(name: 'event_id', nullable: false)]
+    #[Assert\NotNull(message: 'L\'événement ne peut pas être vide')]
     private ?Event $event = null;
 
     #[ORM\Column(name: 'admin_id')]
+    #[Assert\NotBlank(message: 'L\'identifiant de l\'administrateur ne peut pas être vide')]
+    #[Assert\Positive(message: 'L\'identifiant de l\'administrateur doit être un nombre positif')]
     private ?int $adminId = null;
 
     #[ORM\OneToMany(mappedBy: 'pack', targetEntity: Avis::class)]
@@ -102,15 +114,26 @@ class Pack
         return $this;
     }
 
-    public function getEndDate(): ?\DateTimeInterface
+    public function getEndDate(): ?\DateTime
     {
         return $this->endDate;
     }
 
-    public function setEndDate(?\DateTimeInterface $endDate): self
+    public function setEndDate($endDate): self
     {
-        $this->endDate = $endDate;
+        if ($endDate instanceof \DateTime) {
+            $this->endDate = $endDate;
+        } elseif (is_string($endDate)) {
+            $this->endDate = \DateTime::createFromFormat('Y-m-d', $endDate);
+        } else {
+            $this->endDate = null;
+        }
         return $this;
+    }
+
+    public function getEndDateAsString(): ?string
+    {
+        return $this->endDate ? $this->endDate->format('Y-m-d') : null;
     }
 
     public function getEvent(): ?Event
@@ -193,7 +216,7 @@ class Pack
             $this->prix,
             $this->capacite,
             $this->duree,
-            $this->endDate,
+            $this->endDate ? $this->endDate->format('Y-m-d') : 'null',
             $this->event->getId(),
             $this->adminId
         );

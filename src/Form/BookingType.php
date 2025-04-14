@@ -4,61 +4,75 @@ namespace App\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\GreaterThan;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Type;
+use Symfony\Component\Validator\Constraints\Date;
 
 class BookingType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $tomorrow = new \DateTime('tomorrow');
+        
         $builder
             ->add('personCount', NumberType::class, [
                 'label' => 'Nombre de personnes',
-                'attr' => [
-                    'min' => 1,
-                    'max' => 100
-                ],
+                'required' => true,
                 'constraints' => [
-                    new NotBlank(['message' => 'Le nombre de personnes est requis']),
-                    new GreaterThan(['value' => 0, 'message' => 'Le nombre de personnes doit être supérieur à 0'])
+                    new NotBlank([
+                        'message' => 'Le nombre de personnes est requis'
+                    ]),
+                    new Type([
+                        'type' => 'numeric',
+                        'message' => 'Veuillez entrer un nombre valide'
+                    ]),
+                    new GreaterThan([
+                        'value' => 0,
+                        'message' => 'Le nombre de personnes doit être supérieur à 0'
+                    ])
                 ]
             ])
             ->add('eventDate', DateType::class, [
                 'label' => 'Date de l\'événement',
                 'widget' => 'single_text',
-                'format' => 'dd/MM/yyyy',
                 'html5' => false,
+                'format' => 'dd/MM/yyyy',
                 'attr' => [
-                    'class' => 'flatpickr-input',
-                    'placeholder' => 'JJ/MM/AAAA'
+                    'class' => 'js-datepicker',
+                    'autocomplete' => 'off'
                 ],
                 'constraints' => [
-                    new NotBlank(['message' => 'La date de l\'événement est requise'])
+                    new NotBlank([
+                        'message' => 'La date de l\'événement est requise'
+                    ]),
+                    new GreaterThan([
+                        'value' => new \DateTime('today'),
+                        'message' => 'La date doit être à partir de demain'
+                    ])
                 ]
             ])
             ->add('message', TextareaType::class, [
-                'label' => 'Message',
+                'label' => 'Notes et détails',
                 'required' => true,
-                'attr' => [
-                    'rows' => 3,
-                    'placeholder' => 'Ajoutez votre message et détails supplémentaires'
-                ],
                 'constraints' => [
-                    new NotBlank(['message' => 'Le message est requis'])
+                    new NotBlank([
+                        'message' => 'Veuillez ajouter un message ou des détails sur votre réservation'
+                    ])
                 ]
-            ])
-            ->add('admin_id', HiddenType::class, [
-                'mapped' => false,
-                'data' => 1
-            ])
-            ->add('utilisateur_id', HiddenType::class, [
-                'mapped' => false,
-                'data' => 25
-            ])
-        ;
+            ]);
+    }
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults([
+            'data_class' => null,
+            'csrf_protection' => true,
+            'attr' => ['novalidate' => 'novalidate']
+        ]);
     }
 }

@@ -16,6 +16,7 @@ use App\Repository\NotificationsAdminRepository;
 use App\Repository\DemandePackRepository;
 use App\Repository\UtilisateurRepository;   
 use Symfony\Component\Finder\Finder;
+use App\Form\PackType;
 
 #[Route('/admin/pack', name: 'admin_pack_')]
 class PackController extends AbstractController
@@ -39,10 +40,15 @@ class PackController extends AbstractController
     {
         $packs = $this->packRepository->findAll();
         $events = $this->eventRepository->findAll();
+        
+        // Create a new Pack instance for the form
+        $pack = new Pack();
+        $form = $this->createForm(PackType::class, $pack);
 
         return $this->render('admin/pack/index.html.twig', [
             'packs' => $packs,
             'events' => $events,
+            'form' => $form->createView()
         ]);
     }
 
@@ -298,20 +304,22 @@ class PackController extends AbstractController
     }
 
     #[Route('/{id}/show', name: 'show', methods: ['GET'])]
-    public function show(Pack $pack): Response
+    public function show(Pack $pack, EventRepository $eventRepository): Response
     {
-        $events = $this->eventRepository->findAll();
-        
+        $editForm = $this->createForm(PackType::class, $pack);
         return $this->render('admin/pack/show.html.twig', [
             'pack' => $pack,
-            'events' => $events
+            'events' => $eventRepository->findAll(),
+            'editForm' => $editForm->createView()
         ]);
     }
 
     #[Route('/{id}/edit', name: 'edit', methods: ['GET'])]
     public function edit(Pack $pack): JsonResponse
     {
-        return $this->json([
+        $form = $this->createForm(PackType::class, $pack);
+        
+        return new JsonResponse([
             'success' => true,
             'pack' => [
                 'id' => $pack->getId(),
@@ -324,37 +332,89 @@ class PackController extends AbstractController
                 'capacite' => $pack->getCapacite(),
                 'duree' => $pack->getDuree(),
                 'endDate' => $pack->getEndDate() ? $pack->getEndDate()->format('Y-m-d') : null,
-            ],
+            ]
         ]);
     }
 
-    #[Route('/{id}', name: 'update', methods: ['PUT'])]
+    #[Route('/{id}', name: 'update', methods: ['POST', 'PUT'])]
     public function update(Request $request, Pack $pack): JsonResponse
     {
         try {
-            $data = json_decode($request->getContent(), true);
+            // Log the raw request data for debugging
+            $rawData = $request->getContent();
+            error_log("Raw request data: " . $rawData);
+
+            // Get the form data
+            $formData = json_decode($request->getContent(), true);
             
-            if (!$data) {
-                throw new \Exception('Invalid request data');
+            if (!$formData) {
+                error_log("Invalid JSON data: " . json_last_error_msg());
+                return $this->json([
+                    'success' => false,
+                    'message' => 'Invalid request data',
+                    'debug' => [
+                        'raw_data' => $rawData,
+                        'json_error' => json_last_error_msg()
+                    ]
+                ], 400);
             }
 
-            $event = $this->eventRepository->find($data['event']);
+            error_log("Decoded form data: " . print_r($formData, true));
+
+            // Validate required fields
+            $requiredFields = ['event', 'description', 'prix', 'capacite', 'duree'];
+            $missingFields = array_filter($requiredFields, function($field) use ($formData) {
+                return !isset($formData[$field]) || empty($formData[$field]);
+            });
+
+            if (!empty($missingFields)) {
+                return $this->json([
+                    'success' => false,
+                    'message' => 'Missing required fields',
+                    'debug' => [
+                        'missing_fields' => $missingFields,
+                        'received_data' => $formData
+                    ]
+                ], 400);
+            }
+
+            // Get the event
+            $event = $this->eventRepository->find($formData['event']);
             if (!$event) {
-                throw new \Exception('Event not found');
+                return $this->json([
+                    'success' => false,
+                    'message' => 'Event not found',
+                    'debug' => [
+                        'event_id' => $formData['event']
+                    ]
+                ], 400);
             }
 
+            // Update the pack
             $pack->setEvent($event);
-            $pack->setDescription($data['description']);
-            $pack->setPrix((float) $data['prix']);
-            $pack->setCapacite((int) $data['capacite']);
-            $pack->setDuree((int) $data['duree']);
+            $pack->setDescription($formData['description']);
+            $pack->setPrix((float) $formData['prix']);
+            $pack->setCapacite((int) $formData['capacite']);
+            $pack->setDuree((int) $formData['duree']);
             
-            if (!empty($data['endDate'])) {
-                $pack->setEndDate(new \DateTime($data['endDate']));
+            if (!empty($formData['endDate'])) {
+                try {
+                    $pack->setEndDate(new \DateTime($formData['endDate']));
+                } catch (\Exception $e) {
+                    return $this->json([
+                        'success' => false,
+                        'message' => 'Invalid date format',
+                        'debug' => [
+                            'date_value' => $formData['endDate'],
+                            'error' => $e->getMessage()
+                        ]
+                    ], 400);
+                }
             } else {
                 $pack->setEndDate(null);
             }
 
+            // Persist changes
             $this->entityManager->flush();
 
             return $this->json([
@@ -374,9 +434,16 @@ class PackController extends AbstractController
                 ],
             ]);
         } catch (\Exception $e) {
+            error_log("Error updating pack: " . $e->getMessage());
+            error_log("Stack trace: " . $e->getTraceAsString());
+            
             return $this->json([
                 'success' => false,
-                'message' => 'Error updating pack: ' . $e->getMessage(),
+                'message' => 'Error updating pack',
+                'debug' => [
+                    'error' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString()
+                ]
             ], 500);
         }
     }

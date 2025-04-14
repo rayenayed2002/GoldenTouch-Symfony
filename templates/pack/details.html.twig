@@ -940,7 +940,39 @@
 
         function submitReview() {
             const form = document.getElementById('reviewForm');
-            // Here you would normally validate and submit the form
+            const comment = form.querySelector('textarea').value.trim();
+            const rating = form.querySelector('#ratingInput').value;
+            
+            // Validate form
+            if (!comment) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erreur',
+                });
+                return false;
+                    text: 'Veuillez écrire un commentaire avant de soumettre votre avis.',
+                    confirmButtonText: 'OK',
+                    customClass: {
+                        confirmButton: 'btn btn-primary'
+                    },
+                    buttonsStyling: false
+                });
+                return;
+            }
+            
+            if (rating === '0') {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erreur',
+                    text: 'Veuillez sélectionner une note avant de soumettre votre avis.',
+                    confirmButtonText: 'OK',
+                    customClass: {
+                        confirmButton: 'btn btn-primary'
+                    },
+                    buttonsStyling: false
+                });
+                return;
+            }
             
             const submitBtn = document.querySelector('#reviewModal .btn-primary');
             submitBtn.disabled = true;

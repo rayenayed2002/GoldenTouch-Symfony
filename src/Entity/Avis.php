@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\AvisRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: AvisRepository::class)]
 #[ORM\Table(name: 'avis')]
@@ -21,10 +22,23 @@ class Avis
     #[ORM\Column(name: 'id_pack', nullable: true)]
     private ?int $idPack = null;
 
-    #[ORM\Column(name: 'note', type: Types::INTEGER, nullable: true)]
+    #[ORM\Column(name: 'note', type: Types::INTEGER, nullable: false)]
+    #[Assert\NotBlank(message: 'Please select a rating')]
+    #[Assert\Range(
+        min: 1,
+        max: 5,
+        notInRangeMessage: 'Rating must be between 1 and 5'
+    )]
     private ?int $note = null;
 
-    #[ORM\Column(name: 'commentaire', type: Types::TEXT, nullable: true)]
+    #[ORM\Column(name: 'commentaire', type: Types::TEXT, nullable: false)]
+    #[Assert\NotBlank(message: 'Please write a comment before submitting your review.')]
+    #[Assert\Length(
+        min: 5,
+        max: 1000,
+        minMessage: 'Your comment must be at least {{ limit }} characters',
+        maxMessage: 'Your comment cannot be longer than {{ limit }} characters'
+    )]
     private ?string $commentaire = null;
 
     #[ORM\Column(name: 'date_creation', type: Types::DATETIME_MUTABLE)]
@@ -129,6 +143,7 @@ class Avis
         return $this;
     }
 
+    
     public function getUtilisateur(): ?Utilisateur
     {
         return $this->utilisateur;

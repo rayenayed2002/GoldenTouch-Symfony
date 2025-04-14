@@ -8,6 +8,7 @@ use App\Entity\DemandePack;
 use App\Entity\NotificationsAdmin; 
 use App\Repository\PackRepository;
 use App\Repository\AvisRepository;
+use App\Repository\UtilisateurRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -24,7 +25,8 @@ class PackController extends AbstractController
     public function __construct(
         private PackRepository $packRepository,
         private AvisRepository $avisRepository,
-        private EntityManagerInterface $entityManager
+        private EntityManagerInterface $entityManager,
+        private UtilisateurRepository $utilisateurRepository
     ) {}
 
     #[Route('/packs', name: 'app_packs')]
@@ -95,18 +97,24 @@ class PackController extends AbstractController
     public function shopDetails(Pack $pack): Response
     {
         $similarPacks = $this->packRepository->findBy(
-            ['event' => $pack->getEvent()], 
-            ['prix' => 'ASC'], 
+            ['event' => $pack->getEvent()],
+            ['prix' => 'ASC'],
             3
         );
+
+        $demandePacks = $this->entityManager->getRepository(DemandePack::class)
+            ->createQueryBuilder('dp')
+            ->leftJoin('dp.utilisateur', 'u')
+            ->addSelect('u')
+            ->getQuery()
+            ->getResult();
 
         $avis = $this->entityManager->getRepository(Avis::class)->findAvisWithUserInfo($pack->getId());
 
         return $this->render('pack/shop-details.html.twig', [
             'pack' => $pack,
-            'packs' => $this->packRepository->findAll(),
             'similarPacks' => $similarPacks,
-            'trendingPacks' => $this->packRepository->findBy([], ['prix' => 'DESC'], 3),
+            'demandePacks' => $demandePacks,
             'avis' => $avis
         ]);
     }
@@ -114,94 +122,98 @@ class PackController extends AbstractController
     #[Route('/pack/book/{id}', name: 'app_pack_booking')]
     public function booking(Request $request, Pack $pack, EntityManagerInterface $entityManager, ClockInterface $clock): Response
     {
-        // Create form instance
-        $form = $this->createForm(BookingType::class);
+        // Create form instance with HTML5 validation disable
+        $form = $this->createForm(BookingType::class, null, [
+            'attr' => ['novalidate' => 'novalidate']
+        ]);
         $form->handleRequest($request);
 
         // Handle form submission
-        if ($form->isSubmitted() && $form->isValid()) {
-            $formData = $form->getData();
+        if ($form->isSubmitted()) {
+            if ($form->isValid()) {
+                $formData = $form->getData();
+                try {
+                    $demande = new DemandePack();
+                    $demande->setPack($pack);
+                    $demande->setPrix($pack->getPrix());
+                    
+                    // Set event ID to match pack ID
+                    $event = $entityManager->getReference('App\Entity\Event', $pack->getId());
+                    $demande->setEvent($event);
 
-            try {
-                // Create and persist the demande pack
-                $demande = new DemandePack();
-                $demande->setPack($pack);
-                $demande->setPrix($pack->getPrix());
-                
-                // Handle the date with current time
-                $date = $formData['eventDate'];
-                if (!$date instanceof \DateTime) {
-                    throw new \Exception('Invalid date format');
+                    // Process date with current time
+                    $date = $formData['eventDate'];
+                    $currentTime = $clock->now()->format('H:i:s');
+                    list($hour, $minute, $second) = explode(':', $currentTime);
+                    $date->setTime((int)$hour, (int)$minute, (int)$second);
+                    
+                    $demande->setDateDemande($date);
+                    $demande->setStatut('EN_ATTENTE');
+
+                    // Set user
+                    $user = $this->utilisateurRepository->find(25);
+                    if (!$user) {
+                        throw new \Exception("L'utilisateur avec ID 25 n'existe pas");
+                    }
+                    $demande->setUtilisateur($user);
+
+                    // Persist demande
+                    $entityManager->persist($demande);
+                    $entityManager->flush();
+
+                    // Create admin notification
+                    $notification = new NotificationsAdmin();
+                    $notification->setAdmin($entityManager->getReference('App\Entity\Utilisateur', 1));
+                    $notification->setUtilisateur($entityManager->getReference('App\Entity\Utilisateur', 25));
+                    $notification->setDemandePack($demande);
+                    $notification->setMessage("Nouvelle demande pour " . $pack->getNom());
+                    $notification->setStatut('NON_LU');
+                    $notification->setDateCreation(new \DateTime());
+                    
+                    $entityManager->persist($notification);
+                    $entityManager->flush();
+
+                    // Handle response
+                    if ($request->isXmlHttpRequest()) {
+                        return new JsonResponse([
+                            'success' => true, 
+                            'message' => 'Demande enregistrée avec succès!',
+                            'redirect' => $this->generateUrl('app_pack_booking', ['id' => $pack->getId()])
+                        ]);
+                    }
+
+                    $this->addFlash('success', 'Votre demande a été enregistrée avec succès!');
+                    return $this->redirectToRoute('app_pack_booking', ['id' => $pack->getId()]);
+
+                } catch (\Exception $e) {
+                    // Error handling
+                    if ($request->isXmlHttpRequest()) {
+                        return new JsonResponse([
+                            'success' => false, 
+                            'message' => 'Erreur serveur: ' . $e->getMessage()
+                        ]);
+                    }
+                    
+                    $this->addFlash('error', 'Une erreur est survenue: ' . $e->getMessage());
+                    return $this->redirectToRoute('app_pack_booking', ['id' => $pack->getId()]);
                 }
-                // Set the current time
-                $currentTime = $clock->now()->format('H:i:s');
-                list($hour, $minute, $second) = explode(':', $currentTime);
-                $date->setTime((int)$hour, (int)$minute, (int)$second);
-                $demande->setDateDemande($date);
-                
-                $demande->setStatut('EN_ATTENTE');
-                $demande->setUtilisateurId(25); // Static user ID
-                
-                $entityManager->persist($demande);
-                $entityManager->flush();
-
-                // Create and persist the notification
-                $notification = new NotificationsAdmin();
-                $notification->setAdmin($entityManager->getReference('App\Entity\Utilisateur', 1));
-                $notification->setUtilisateur($entityManager->getReference('App\Entity\Utilisateur', 25));
-                $notification->setDemandePack($demande);
-                $notification->setMessage("Nouvelle demande de réservation pour le pack " . $pack->getNom() . "\n" . 
-                    "Nombre de personnes: " . $formData['personCount'] . "\n" .
-                    "Message: " . $formData['message']);
-                $notification->setStatut('NON_LU');
-                $notification->setDateCreation(new \DateTime());
-                
-                $entityManager->persist($notification);
-                $entityManager->flush();
-
-                // Return success response
+            } else {
+                // Form invalid handling
                 if ($request->isXmlHttpRequest()) {
-                    return new JsonResponse([
-                        'success' => true,
-                        'message' => 'Votre demande a été enregistrée avec succès!',
-                        'data' => [
-                            'demandeId' => $demande->getId(),
-                            'packId' => $pack->getId(),
-                            'personCount' => $formData['personCount'],
-                            'eventDate' => $date->format('Y-m-d H:i:s')
-                        ]
-                    ], 200);
+                    $errors = [];
+                    foreach ($form->getErrors(true) as $error) {
+                        $fieldName = $error->getOrigin()->getName();
+                        $errors[$fieldName][] = $error->getMessage();
+                    }
+                    return new JsonResponse(['success' => false, 'errors' => $errors]);
                 }
-
-                // For non-AJAX submissions
-                $this->addFlash('success', 'Votre demande a été enregistrée avec succès!');
-                return $this->redirectToRoute('app_pack_details', ['id' => $pack->getId()]);
-
-            } catch (\Exception $e) {
-                // Log the error
-                error_log('Booking error: ' . $e->getMessage());
                 
-                if ($request->isXmlHttpRequest()) {
-                    return new JsonResponse([
-                        'success' => false,
-                        'message' => 'Une erreur est survenue lors de l\'enregistrement de votre demande.'
-                    ], 500);
-                }
-
-                // For non-AJAX submissions
-                $this->addFlash('error', 'Une erreur est survenue lors de l\'enregistrement de votre demande.');
-                return $this->redirectToRoute('app_pack_booking', ['id' => $pack->getId()]);
+                // For regular form submission, errors will be displayed in template
+                $this->addFlash('warning', 'Veuillez corriger les erreurs dans le formulaire');
             }
         }
 
-        // If form is not submitted or invalid
-        if ($request->isXmlHttpRequest()) {
-            return new JsonResponse([
-                'success' => false,
-                'message' => 'Veuillez remplir tous les champs requis.'
-            ], 400);
-        }
-
+        // Render form template
         return $this->render('pack/booking.html.twig', [
             'pack' => $pack,
             'form' => $form->createView()
