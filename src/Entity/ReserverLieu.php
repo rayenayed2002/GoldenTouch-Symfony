@@ -29,12 +29,34 @@ class ReserverLieu
         return $this;
     }
 
-    #[ORM\Column(type: 'integer', nullable: false)]
-    private ?int $lieu_id = null;
+    #[ORM\ManyToOne(targetEntity: Lieu::class)]
+    #[ORM\JoinColumn(name: 'lieu_id', referencedColumnName: 'id')]
+    private ?Lieu $lieu = null;
 
-    public function getLieu_id(): ?int
+    #[ORM\ManyToOne(targetEntity: Event::class, inversedBy: 'reservationsLieu')]
+    #[ORM\JoinColumn(name: 'event_id', referencedColumnName: 'id')]
+    private ?Event $event = null;
+
+      public function getLieu(): ?Lieu
     {
-        return $this->lieu_id;
+        return $this->lieu;
+    }
+
+    public function setLieu(?Lieu $lieu): static
+    {
+        $this->lieu = $lieu;
+        return $this;
+    }
+
+    public function getEvent(): ?Event
+    {
+        return $this->event;
+    }
+
+    public function setEvent(?Event $event): static
+    {
+        $this->event = $event;
+        return $this;
     }
 
     public function setLieu_id(int $lieu_id): self

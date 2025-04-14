@@ -16,25 +16,37 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
-
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\GreaterThanOrEqual;
 class EventType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            // Section de taille des entrées
-            ->add('nom', TextType::class, [
-                'label' => 'Nom de l\'événement',
-                'attr' => [
-                    'class' => 'form-control form-control-lg',
-                    'placeholder' => 'Saisissez le nom de l\'événement'
-                ]
-            ])
+        ->add('nom', TextType::class, [
+            'label' => 'Nom de l\'événement',
+            'constraints' => [
+                new NotBlank(['message' => 'Le nom est obligatoire']),
+                new Length([
+                    'min' => 2,
+                    'minMessage' => 'Le nom doit contenir au moins {{ limit }} caractères',
+                ]),
+            ],
+            'attr' => [
+                'class' => 'form-control form-control-lg',
+                'placeholder' => 'Saisissez le nom de l\'événement',
+                'minlength' => 2
+            ]
+        ])
             
             // Menu déroulant des catégories
             ->add('categorie', EnumType::class, [
                 'class' => CategorieEvent::class,
                 'label' => 'Catégorie de l\'événement',
+                'constraints' => [
+                    new NotBlank(['message' => 'La catégorie est obligatoire']),
+                ],
                 'attr' => [
                     'class' => 'form-select form-select-lg'
                 ],
@@ -44,13 +56,10 @@ class EventType extends AbstractType
             // Section de téléchargement de fichier
             ->add('photo', FileType::class, [
                 'label' => 'Photo de l\'événement',
-                'attr' => [
-                    'class' => 'form-control'
-                ],
-                'required' => false,
-                'mapped' => false ,
-                 'constraints' => [
-        new File([
+                'required' => true, // Changé à true
+                'constraints' => [
+                    new NotBlank(['message' => 'La photo est obligatoire']),
+                    new File([
             'maxSize' => '5M', // Limit file size (e.g., 5MB)
             'mimeTypes' => [ // Only allow image MIME types
                 'image/jpeg',
@@ -71,18 +80,28 @@ class EventType extends AbstractType
             ->add('date', DateType::class, [
                 'label' => 'Date de l\'événement',
                 'widget' => 'single_text',
-                'html5' => false, // Renders as a text input
+                'html5' => false,
+                'format' => 'dd/MM/yyyy',
                 'attr' => [
-                    'class' => 'date-pick form-control',
-                    'placeholder' => 'Sélectionnez une date'
+                    'class' => 'date-picker', // Keep this class
+                    'placeholder' => 'Cliquez pour choisir une date',
+                    'autocomplete' => 'off',
+                    'data-input' => true // Add this for Flatpickr
                 ],
+                'constraints' => [
+                    new NotBlank(['message' => 'La date est obligatoire']),
+                    new GreaterThanOrEqual([
+                        'value' => 'today',
+                        'message' => 'La date doit être ultérieure à aujourd\'hui'
+                    ])
+                ]
             ])
             
             // Bouton de soumission
             ->add('save', SubmitType::class, [
                 'label' => 'Créer l\'événement',
                 'attr' => [
-                    'class' => 'btn btn-primary mt-4'
+                    'class' => 'btn btn-primary mt-4  btn-gold'
                 ]
             ])
             

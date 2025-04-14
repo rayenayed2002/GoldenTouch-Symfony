@@ -61,8 +61,8 @@ class Panier
         return $this;
     }
 
-    #[ORM\Column(type: 'string', nullable: true)]
-    private ?string $typeEvent = null;
+    #[ORM\Column(name: 'typeEvent', type: 'string', nullable: true)]
+        private ?string $typeEvent = null;
 
     public function getTypeEvent(): ?string
     {

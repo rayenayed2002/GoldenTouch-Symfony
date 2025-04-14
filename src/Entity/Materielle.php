@@ -63,7 +63,7 @@ class Materielle
         max: 1000,
         minMessage: 'La description doit comporter au moins {{ limit }} caractères.',
         maxMessage: 'La description ne peut pas dépasser {{ limit }} caractères.'
-    )]
+    )]    
     private ?string $description_mat = null;
 
     public function getDescription_mat(): ?string
@@ -139,6 +139,9 @@ class Materielle
         $this->categorie_mat = $categorie_mat;
         return $this;
     }
+
+    #[ORM\ManyToMany(targetEntity: Event::class, mappedBy: 'materielles')]
+private Collection $events;
     
     #[ORM\ManyToMany(targetEntity: Utilisateur::class, inversedBy: 'materielles')]
     #[ORM\JoinTable(
@@ -151,12 +154,60 @@ class Materielle
         ]
     )]
     private Collection $utilisateurs;
+    #[ORM\OneToMany(targetEntity: ReservMat::class, mappedBy: 'materielle')]
+private Collection $reservations;
 
     public function __construct()
     {
         $this->utilisateurs = new ArrayCollection();
+        $this->events = new ArrayCollection();
+        $this->reservations = new ArrayCollection();
+
 
     }
+
+    /**
+ * @return Collection<int, ReservMat>
+ */
+public function getReservations(): Collection
+{
+    return $this->reservations;
+}
+
+public function addReservation(ReservMat $reservation): static
+{
+    if (!$this->reservations->contains($reservation)) {
+        $this->reservations->add($reservation);
+        $reservation->setMaterielle($this);
+    }
+    return $this;
+}
+
+public function removeReservation(ReservMat $reservation): static
+{
+    if ($this->reservations->removeElement($reservation)) {
+        if ($reservation->getMaterielle() === $this) {
+            $reservation->setMaterielle(null);
+        }
+    }
+    return $this;
+}
+    public function addEvent(Event $event): static
+{
+    if (!$this->events->contains($event)) {
+        $this->events->add($event);
+        $event->addMaterielle($this);
+    }
+    return $this;
+}
+
+public function removeEvent(Event $event): static
+{
+    if ($this->events->removeElement($event)) {
+        $event->removeMaterielle($this);
+    }
+    return $this;
+}
 
     /**
      * @return Collection<int, Utilisateur>
