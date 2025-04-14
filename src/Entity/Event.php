@@ -337,6 +337,9 @@ class Event
         ]
     )]
     private Collection $utilisateurs;
+    #[ORM\OneToMany(targetEntity: ReservMat::class, mappedBy: 'event')]
+private Collection $reservationsMaterielles;
+
 
     public function __construct()
     {
@@ -347,6 +350,11 @@ class Event
         $this->payments = new ArrayCollection();
         $this->personnels = new ArrayCollection();
         $this->utilisateurs = new ArrayCollection();
+        $this->reservationsMaterielles = new ArrayCollection();
+        $this->reservationsLieu = new ArrayCollection();
+        $this->detailPayments = new ArrayCollection();
+
+
     }
 
     /**
@@ -372,5 +380,102 @@ class Event
 
         return $this;
     }
+    public function getReservationsMaterielles(): Collection
+    {
+        return $this->reservationsMaterielles;
+    }
+    
+    public function addReservationsMaterielle(ReservMat $reservationsMaterielle): static
+    {
+        if (!$this->reservationsMaterielles->contains($reservationsMaterielle)) {
+            $this->reservationsMaterielles->add($reservationsMaterielle);
+            $reservationsMaterielle->setEvent($this);
+        }
+        return $this;
+    }
+    
+    public function removeReservationsMaterielle(ReservMat $reservationsMaterielle): static
+    {
+        if ($this->reservationsMaterielles->removeElement($reservationsMaterielle)) {
+            if ($reservationsMaterielle->getEvent() === $this) {
+                $reservationsMaterielle->setEvent(null);
+            }
+        }
+        return $this;
+    }
+    
+    // Helper method to get materielles through reservations
+    public function getMaterielles(): array
+    {
+        return $this->reservationsMaterielles->map(
+            fn(ReservMat $reservation) => $reservation->getMaterielle()
+        )->toArray();
+    }
 
+
+    #[ORM\OneToMany(targetEntity: ReserverLieu::class, mappedBy: 'event')]
+private Collection $reservationsLieu;
+
+
+
+/**
+ * @return Collection<int, ReserverLieu>
+ */
+public function getReservationsLieu(): Collection
+{
+    return $this->reservationsLieu;
+}
+
+// Helper method to get lieux through reservations
+public function getLieux(): array
+{
+    return $this->reservationsLieu->map(
+        fn(ReserverLieu $reservation) => $reservation->getLieu()
+    )->toArray();
+}
+#[ORM\OneToMany(mappedBy: 'event', targetEntity: DetailPayment::class)]
+private Collection $detailPayments;
+public function getDetailPayments(): Collection
+{
+    return $this->detailPayments;
+}
+
+public function getMaterielTotal(): float
+{
+    return $this->reservationsMaterielles->reduce(
+        function(float $total, ReservMat $reservation) {
+            $materielle = $reservation->getMaterielle();
+            return $total + ($reservation->getQuantite() * $materielle->getPrixMat());
+        },
+        0.0
+    );
+}
+
+public function getLieuTotal(): float
+{
+    return $this->reservationsLieu->reduce(
+        function(float $total, ReserverLieu $reservation) {
+            $lieu = $reservation->getLieu();
+            return $total + $lieu->getPrice();
+        },
+        0.0
+    );
+}
+
+public function getPersonnelTotal(): float
+{
+    return $this->personnels->reduce(
+        function(float $total, Personnel $personnel) {
+            return $total + $personnel->getTarifP();
+        },
+        0.0
+    );
+}
+
+public function getTotalPrice(): float
+{
+    return $this->getMaterielTotal() 
+         + $this->getLieuTotal()
+         + $this->getPersonnelTotal();
+}
 }

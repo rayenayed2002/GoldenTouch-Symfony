@@ -15,6 +15,15 @@ class PanierRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Panier::class);
     }
+    public function clearCart($user)
+{
+    $qb = $this->createQueryBuilder('p')
+        ->delete()
+        ->where('p.utilisateur = :user')
+        ->setParameter('user', $user);
+
+    return $qb->getQuery()->execute();
+}
 
     //    /**
     //     * @return Panier[] Returns an array of Panier objects
