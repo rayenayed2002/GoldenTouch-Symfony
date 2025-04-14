@@ -50,6 +50,14 @@ final class PersoController extends AbstractController
         ]);
     }
 
+
+
+
+
+
+
+
+
     #[Route('/new', name: 'app_perso_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger, PersonnelRepository $personnelRepository): Response
     {
@@ -97,6 +105,13 @@ final class PersoController extends AbstractController
         ]);
     }
     
+
+
+
+
+
+
+
 
     #[Route('/{idP}/edit', name: 'app_perso_edit', methods: ['GET', 'POST'])]
     public function edit(
@@ -162,6 +177,14 @@ final class PersoController extends AbstractController
         ]);
     }
 
+
+
+
+
+
+
+
+
     #[Route('/{idP}', name: 'app_perso_delete', methods: ['POST'])]
     public function delete(Request $request, Personnel $personnel, EntityManagerInterface $entityManager): Response
     {
@@ -175,6 +198,13 @@ final class PersoController extends AbstractController
 
 
 
+
+
+
+
+
+
+
     //metieeer
     #[Route('/export-pdf', name: 'app_personnel_export_pdf')]
     public function exportPdf(PersonnelRepository $personnelRepository, PdfGenerator $pdfGenerator): Response
@@ -185,13 +215,17 @@ final class PersoController extends AbstractController
         
         return new Response(
             $pdfContent,
-            200,
+            200, //succes
             [
                 'Content-Type' => 'application/pdf',
                 'Content-Disposition' => 'attachment; filename="personnels_export_'.date('Y-m-d').'.pdf"'
             ]
         );
     }
+
+
+
+
 
 
     #[Route('/stats', name: 'app_perso_stats', methods: ['GET'])]
@@ -206,6 +240,9 @@ final class PersoController extends AbstractController
         ]);
     }
     
+
+
+
     #[Route('/search', name: 'app_personnel_search', methods: ['GET'])]
     public function search(Request $request, PersonnelRepository $personnelRepository): Response
     {
@@ -238,6 +275,9 @@ final class PersoController extends AbstractController
 
 
 
+
+
+
     #[Route('/{idP}', name: 'app_perso_show', methods: ['GET'])]
     public function show(Personnel $personnel, EntityManagerInterface $entityManager): Response
     {
@@ -266,6 +306,11 @@ final class PersoController extends AbstractController
             'calendar_events' => $calendarEvents,
         ]);
     }
+
+
+
+
+
 
     private function getEventColor(?string $type): string
     {

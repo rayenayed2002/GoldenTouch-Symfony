@@ -53,6 +53,254 @@
 
     <!-- Animation CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    
+    <style>
+      /* Pagination Innovante */
+      .pagination-wrapper {
+        position: relative;
+        padding: 1rem 0;
+      }
+
+      .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0;
+        margin: 0;
+      }
+
+      .page-item {
+        margin: 0;
+        transition: all 0.3s ease;
+      }
+
+      .page-item:not(.active):not(.disabled):hover {
+        transform: translateY(-3px);
+      }
+
+      .page-link {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border-radius: 50% !important;
+        border: none;
+        background: rgba(105, 108, 255, 0.1);
+        color: #696cff;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+      }
+
+      .page-link:hover {
+        background: rgba(105, 108, 255, 0.2);
+        color: #696cff;
+      }
+
+      .page-item.active .page-link {
+        background: linear-gradient(135deg, #696cff 0%, #9b9dff 100%);
+        color: white;
+        box-shadow: 0 4px 15px rgba(105, 108, 255, 0.4);
+      }
+
+      .page-item.disabled .page-link {
+        opacity: 0.5;
+        background: #f5f5f5;
+      }
+
+      .pagination-info {
+        font-size: 0.9rem;
+        color: #6c757d;
+      }
+
+      /* Animation des cartes */
+      .animate__animated {
+        animation-duration: 0.5s;
+      }
+
+      /* Loader pour pagination AJAX */
+      .pagination-loader {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255, 255, 255, 0.8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10;
+        border-radius: 0.5rem;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+      }
+
+      .pagination-loader.active {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .pagination-loader .loader {
+        width: 40px;
+        height: 40px;
+        border: 3px solid rgba(105, 108, 255, 0.2);
+        border-top-color: #696cff;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+      }
+
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+
+      /* Effet de vague au survol */
+      .page-item .wave-effect {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle, rgba(105, 108, 255, 0.4) 0%, transparent 70%);
+        border-radius: 50%;
+        transform: scale(0);
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .page-item:hover .wave-effect {
+        animation: wave 0.6s ease-out;
+      }
+
+      @keyframes wave {
+        0% { transform: scale(0); opacity: 1; }
+        100% { transform: scale(2); opacity: 0; }
+      }
+
+      /* Animations pour les cartes */
+      .personnel-card {
+        transition: all 0.3s ease;
+        transform: translateY(0);
+        position: relative;
+        overflow: hidden;
+        cursor: pointer;
+      }
+
+      /* Effet au survol */
+      .personnel-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+      }
+
+      /* Effet de vague au survol */
+      .personnel-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle, rgba(105, 108, 255, 0.1) 0%, transparent 70%);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .personnel-card:hover::before {
+        opacity: 1;
+      }
+
+      /* Animation au clic */
+      .personnel-card:active {
+        transform: translateY(0) scale(0.98);
+      }
+
+      /* Animation des boutons d'action */
+      .personnel-card .btn {
+        transition: all 0.3s ease, transform 0.1s ease;
+      }
+
+      .personnel-card .btn:hover {
+        transform: translateY(-2px);
+      }
+
+      .personnel-card .btn:active {
+        transform: translateY(0) scale(0.95);
+      }
+
+      /* Animation de l'image */
+      .pack-image-wrapper {
+        overflow: hidden;
+        border-radius: 0.5rem;
+      }
+
+      .pack-image {
+        transition: transform 0.5s ease;
+      }
+
+      .personnel-card:hover .pack-image {
+        transform: scale(1.05);
+      }
+
+      /* Animation des détails */
+      .personnel-details div {
+        transition: all 0.3s ease;
+        padding: 0.25rem 0;
+      }
+
+      .personnel-card:hover .personnel-details div {
+        background-color: rgba(105, 108, 255, 0.05);
+        border-radius: 0.25rem;
+        padding: 0.25rem 0.5rem;
+      }
+
+      /* Animation du badge de service */
+      .card-header .badge {
+        transition: all 0.3s ease;
+      }
+
+      .personnel-card:hover .card-header .badge {
+        transform: scale(1.05);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      /* Effet de ripple au clic */
+      .ripple-effect {
+        position: absolute;
+        border-radius: 50%;
+        background-color: rgba(105, 108, 255, 0.3);
+        transform: scale(0);
+        animation: ripple 0.6s linear;
+        pointer-events: none;
+        width: 100px;
+        height: 100px;
+        margin-left: -50px;
+        margin-top: -50px;
+      }
+
+      @keyframes ripple {
+        to {
+          transform: scale(4);
+          opacity: 0;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .personnel-card:hover {
+          transform: none;
+          box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1) !important;
+        }
+        
+        .personnel-card:hover .pack-image {
+          transform: none;
+        }
+        
+        .personnel-card .btn:hover {
+          transform: none;
+        }
+      }
+    </style>
   </head>
 
   <body>
@@ -999,134 +1247,6 @@
     <script src="{{ asset('/js/main.js') }}"></script>
     <script src="{{ asset('/js/dashboards-analytics.js') }}"></script>
 
-    <style>
-      /* ... Vos styles existants ... */
-
-      /* Pagination Innovante */
-      .pagination-wrapper {
-        position: relative;
-        padding: 1rem 0;
-      }
-
-      .pagination {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0;
-        margin: 0;
-      }
-
-      .page-item {
-        margin: 0;
-        transition: all 0.3s ease;
-      }
-
-      .page-item:not(.active):not(.disabled):hover {
-        transform: translateY(-3px);
-      }
-
-      .page-link {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 40px;
-        height: 40px;
-        border-radius: 50% !important;
-        border: none;
-        background: rgba(105, 108, 255, 0.1);
-        color: #696cff;
-        font-weight: 600;
-        transition: all 0.3s ease;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-      }
-
-      .page-link:hover {
-        background: rgba(105, 108, 255, 0.2);
-        color: #696cff;
-      }
-
-      .page-item.active .page-link {
-        background: linear-gradient(135deg, #696cff 0%, #9b9dff 100%);
-        color: white;
-        box-shadow: 0 4px 15px rgba(105, 108, 255, 0.4);
-      }
-
-      .page-item.disabled .page-link {
-        opacity: 0.5;
-        background: #f5f5f5;
-      }
-
-      .pagination-info {
-        font-size: 0.9rem;
-        color: #6c757d;
-      }
-
-      /* Animation des cartes */
-      .animate__animated {
-        animation-duration: 0.5s;
-      }
-
-      /* Loader pour pagination AJAX */
-      .pagination-loader {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(255, 255, 255, 0.8);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 10;
-        border-radius: 0.5rem;
-        opacity: 0;
-        visibility: hidden;
-        transition: all 0.3s ease;
-      }
-
-      .pagination-loader.active {
-        opacity: 1;
-        visibility: visible;
-      }
-
-      .pagination-loader .loader {
-        width: 40px;
-        height: 40px;
-        border: 3px solid rgba(105, 108, 255, 0.2);
-        border-top-color: #696cff;
-        border-radius: 50%;
-        animation: spin 0.8s linear infinite;
-      }
-
-      @keyframes spin {
-        to { transform: rotate(360deg); }
-      }
-
-      /* Effet de vague au survol */
-      .page-item .wave-effect {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: radial-gradient(circle, rgba(105, 108, 255, 0.4) 0%, transparent 70%);
-        border-radius: 50%;
-        transform: scale(0);
-        opacity: 0;
-        pointer-events: none;
-      }
-
-      .page-item:hover .wave-effect {
-        animation: wave 0.6s ease-out;
-      }
-
-      @keyframes wave {
-        0% { transform: scale(0); opacity: 1; }
-        100% { transform: scale(2); opacity: 0; }
-      }
-    </style>
-
     {% block javascripts %}
     <script>
       document.addEventListener('DOMContentLoaded', function() {
@@ -1262,6 +1382,40 @@
           defaultContent.style.display = 'block';
           searchSpinner.style.display = 'none';
         };
+
+        // Animation au clic sur une carte
+        document.querySelectorAll('.personnel-card').forEach(card => {
+          // Effet de vague au clic
+          card.addEventListener('click', function(e) {
+            // Ne pas déclencher si on clique sur un lien ou un bouton
+            if (e.target.tagName === 'A' || e.target.tagName === 'BUTTON') return;
+            
+            const ripple = document.createElement('span');
+            ripple.className = 'ripple-effect';
+            ripple.style.left = (e.pageX - card.getBoundingClientRect().left - window.scrollX) + 'px';
+            ripple.style.top = (e.pageY - card.getBoundingClientRect().top - window.scrollY) + 'px';
+            card.appendChild(ripple);
+            
+            setTimeout(() => {
+              ripple.remove();
+            }, 600);
+          });
+
+          // Animation d'entrée avec un délai progressif
+          const index = Array.from(document.querySelectorAll('.personnel-card')).indexOf(card);
+          card.style.animationDelay = `${index * 0.1}s`;
+        });
+
+        // Animation pour les liens dans les cartes
+        document.querySelectorAll('.personnel-card a').forEach(link => {
+          link.addEventListener('click', function(e) {
+            // Petite animation lors du clic sur un lien
+            this.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+              this.style.transform = '';
+            }, 200);
+          });
+        });
 
         // Écouteurs d'événements
         toggleFiltersBtn.addEventListener('click', toggleFilters);
