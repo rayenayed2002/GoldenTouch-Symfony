@@ -4,6 +4,8 @@ namespace App\Controller;
 
 use App\Entity\Materielle;  // <-- Add this line
 use App\Repository\MaterielleRepository;
+use App\Repository\EventRepository;
+
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -18,6 +20,9 @@ use Picqer\Barcode\BarcodeGeneratorHTML;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Dompdf\Dompdf;
 use Dompdf\Options;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Symfony\Component\HttpClient\HttpClient;
+
 final class MaterielsController extends AbstractController
 {
     #[Route('/materielss', name: 'app_materielss')]
@@ -52,26 +57,33 @@ final class MaterielsController extends AbstractController
                 if (!$photoFile instanceof \Symfony\Component\HttpFoundation\File\UploadedFile) {
                     throw new \Exception('Le fichier uploadé est invalide.');
                 }
-    
+            
                 $originalFilename = pathinfo($photoFile->getClientOriginalName(), PATHINFO_FILENAME);
                 $safeFilename = $slugger->slug($originalFilename);
                 $newFilename = $safeFilename . '-' . uniqid() . '.' . $photoFile->guessExtension();
-    
+            
                 try {
                     $photoFile->move(
-                        $this->getParameter('materiel_directory'), // Assurez-vous que ce paramètre existe dans services.yaml
+                        $this->getParameter('materiel_directory'),
                         $newFilename
                     );
                 } catch (FileException $e) {
                     throw new \Exception('Erreur lors de l\'upload du fichier.');
                 }
+            
                 $materiel->setPhotoMat($newFilename);
+            
+                // ⚡️ Appel à Gemini après l'upload
+                $imagePath = $this->getParameter('materiel_directory') . '/' . $newFilename;
+                $description = $this->generateDescriptionFromImageWithGemini($imagePath);
+                $materiel->setDescriptionMat($description);
             }
+            
     
             $entityManager->persist($materiel);
             $entityManager->flush();
     
-            return $this->redirectToRoute('app_materiels');
+            return $this->redirectToRoute('app_materielss');
         }
     
         return $this->render('materiels/show.html.twig', [
@@ -121,7 +133,7 @@ public function edit(Request $request, Materielle $materiel, EntityManagerInterf
         'materiel' => $materiel,
     ]);
 }
-#[Route('/materiels/{id}', name: 'app_materiels_show', methods: ['GET'])]
+#[Route('/materiel/{id}', name: 'app_materiels_show', methods: ['GET'])]
 public function show(Materielle $materielle): Response
 {
     // Créer le contenu du code-barres à partir des données du matériel
@@ -225,6 +237,67 @@ public function sort(Request $request, MaterielleRepository $repo): Response
         'materiels' => $materiels,
     ]);
 }
+#[Route('/liste/Mat', name: 'app_materiels_index')]
+    public function liste(MaterielleRepository $materielleRepository): Response
+    {
+        $materiels = $materielleRepository->findAll();
+
+        return $this->render('materiels/listeMat.html.twig', [
+            'materiels' => $materiels,
+        ]);
+    }
+ #[Route('/materiels/{id}', name: 'app_materiels_show_Details', methods: ['GET'])]
+public function showDetails(Materielle $materielle,EventRepository $eventRepository): Response
+{
+    $events = $eventRepository->findAll();
+
+   
+
+    // Générer le code-barres en base64
+    // Passer le SVG ou PNG encodé à Twig
+    return $this->render('materiels/detailsMat.html.twig', [
+        'materiel' => $materielle,
+        'events' => $events
+
+    ]);
+}
+private function generateDescriptionFromImageWithGemini(string $imagePath): string
+{
+    $apiKey = 'AIzaSyCTc8nu8Q1JpPHo6FCZBrWZz0Xmmy_rLBs';
+    $imageData = base64_encode(file_get_contents($imagePath));
+
+    $body = [
+        "contents" => [
+            [
+                "parts" => [
+                    ["text" => "Analyse cette image et génère une description simple en français."],
+                    [
+                        "inline_data" => [
+                            "mime_type" => "image/jpeg",
+                            "data" => $imageData
+                        ]
+                    ]
+                ]
+            ]
+        ]
+    ];
+
+    $client = HttpClient::create(); // Création directe du client
+    
+    try {
+        $response = $client->request(
+            'POST',
+            'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro-vision:generateContent?key='.$apiKey,
+            ['json' => $body]
+        );
+
+        $data = $response->toArray();
+        return $data['candidates'][0]['content']['parts'][0]['text'] ?? 'Description non disponible.';
+    } catch (\Exception $e) {
+        return 'Erreur lors de la génération de la description : '.$e->getMessage();
+    }
+}
+
 
 
 

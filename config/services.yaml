@@ -8,6 +8,10 @@ parameters:
         packs_images_directory: '%kernel.project_dir%/public/uploads/packs/Images'
         uploads_directory: '%kernel.project_dir%/public/uploads'
         photos_directory: '%kernel.project_dir%/public/uploads/photos'
+        gemini_api_key: '%env(resolve:AIzaSyCTc8nu8Q1JpPHo6FCZBrWZz0Xmmy_rLBs)%'
+        default_user_id: 19
+
+
 
 
 services:
