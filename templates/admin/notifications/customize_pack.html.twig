@@ -225,6 +225,7 @@
                                         <p><strong>Category:</strong> {{ originalPack.categorie }}</p>
                                     </div>
                                 </div>
+                                
                             </div>
                         </div>
 
@@ -285,6 +286,7 @@
                                         </select>
                                     </div>
                                 </div>
+                                
                             </div>
                         </div>
 
@@ -311,6 +313,7 @@
                                         </tbody>
                                     </table>
                                 </div>
+                               
                             </div>
                         </div>
 
@@ -363,6 +366,7 @@
                                         </table>
                                     </div>
                                 </div>
+                               
                             </div>
                         </div>
 
@@ -394,8 +398,17 @@
                                         </button>
                                     </div>
                                 </div>
+                              
                             </div>
+                            <div class="selected-location mt-4">
+                                    <h6>Emplacement Sélectionné</h6>
+                                    <div id="selectedLocation" class="p-3 border rounded">
+                                        Aucun emplacement sélectionné
+                                    </div>
+                                </div>
                         </div>
+
+                        
 
                         <!-- Personnel Section -->
                         <div class="card mb-4 glass-panel" data-aos="fade-up" data-aos-delay="600">
@@ -448,6 +461,7 @@
                                         </table>
                                     </div>
                                 </div>
+                               
                             </div>
                         </div>
 
@@ -457,9 +471,11 @@
                                 <button type="button" class="btn btn-secondary" onclick="window.location.href='{{ path('admin_notifications') }}'">
                                     <i class="ti ti-x"></i> Annuler
                                 </button>
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="ti ti-device-floppy"></i> Enregistrer les modifications
-                                </button>
+                                <form id="customizeForm" action="{{ path('admin_customize_pack_update', {id: demandePack.id}) }}" method="POST">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="ti ti-device-floppy"></i> Enregistrer les modifications
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -471,6 +487,12 @@
                             <div class="footer-container d-flex align-items-center justify-content-between py-2 flex-md-row flex-column">
                                 <div>
                                     &copy; <script>document.write(new Date().getFullYear())</script> Golden Touch
+                                </div>
+                                <div class="selected-location mt-4">
+                                    <h6>Emplacement Sélectionné</h6>
+                                    <div id="selectedLocation" class="p-3 border rounded">
+                                        Aucun emplacement sélectionné
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -507,9 +529,112 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 
     <script>
+    // Global functions for materielle and location management
+    function updateMaterielleQuantity(id, quantity) {
+        const materielle = selectedMaterielles.get(id);
+        if (materielle) {
+            materielle.quantity = parseInt(quantity) || 1;
+            updateMaterielleTable();
+            calculateTotal();
+        }
+    }
+
+    function removeMaterielle(id) {
+        selectedMaterielles.delete(id);
+        updateMaterielleTable();
+        calculateTotal();
+    }
+
+    function removeLocation() {
+        selectedLocation = null;
+        updateLocationDisplay();
+        calculateTotal();
+    }
+    
     document.addEventListener('DOMContentLoaded', function() {
         // Initialize variables
+        let selectedMaterielles = new Map();
         let selectedPersonnel = new Map();
+        let selectedLocation = null;
+
+        // Helper function to show toast messages
+        function showToast(icon, title, text) {
+            Swal.fire({
+                icon: icon,
+                title: title,
+                text: text,
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                customClass: {
+                    popup: 'colored-toast'
+                }
+            });
+        }
+
+        // Handle materielle selection
+        document.getElementById('addMaterielBtn').addEventListener('click', function() {
+            const select = document.getElementById('materielSelect');
+            const quantityInput = document.getElementById('materielQuantity');
+            
+            if (!select.value) {
+                showToast('warning', 'Attention', 'Veuillez sélectionner un matériel');
+                return;
+            }
+            
+            const id = select.value;
+            const selectedOption = select.options[select.selectedIndex];
+            const name = selectedOption.dataset.name;
+            const price = parseFloat(selectedOption.dataset.price);
+            const available = parseInt(selectedOption.dataset.available);
+            const quantity = parseInt(quantityInput.value) || 1;
+            
+            if (quantity > available) {
+                showToast('warning', 'Attention', `Seulement ${available} unités disponibles`);
+                return;
+            }
+            
+            if (selectedMaterielles.has(id)) {
+                showToast('warning', 'Attention', 'Ce matériel est déjà sélectionné');
+                return;
+            }
+            
+            selectedMaterielles.set(id, {
+                id: id,
+                name: name,
+                price: price,
+                quantity: quantity
+            });
+            
+            updateMaterielleTable();
+            calculateTotal();
+            showToast('success', 'Succès', 'Matériel ajouté avec succès');
+        });
+        
+        document.querySelectorAll('.select-materielle').forEach(button => {
+            button.addEventListener('click', function() {
+                const id = this.dataset.id;
+                const name = this.dataset.name;
+                const price = parseFloat(this.dataset.price);
+
+                if (selectedMaterielles.has(id)) {
+                    showToast('warning', 'Attention', 'Ce matériel est déjà sélectionné');
+                    return;
+                }
+
+                selectedMaterielles.set(id, {
+                    id: id,
+                    name: name,
+                    price: price,
+                    quantity: 1
+                });
+
+                updateMaterielleTable();
+                calculateTotal();
+            });
+        });
 
         // Handle personnel selection
         document.querySelectorAll('.select-personnel').forEach(button => {
@@ -520,7 +645,7 @@
                 const price = parseFloat(this.dataset.price);
 
                 if (selectedPersonnel.has(id)) {
-                    showToast('warning', 'Ce personnel est déjà sélectionné');
+                    showToast('warning', 'Attention', 'Ce personnel est déjà sélectionné');
                     return;
                 }
 
@@ -535,6 +660,182 @@
                 calculateTotal();
             });
         });
+
+        // Handle location selection
+        document.getElementById('addLocationBtn').addEventListener('click', function() {
+            const select = document.getElementById('locationSelect');
+            
+            if (!select.value) {
+                showToast('warning', 'Attention', 'Veuillez sélectionner un emplacement');
+                return;
+            }
+            
+            if (selectedLocation) {
+                showToast('warning', 'Attention', 'Un emplacement est déjà sélectionné');
+                return;
+            }
+            
+            const id = select.value;
+            const selectedOption = select.options[select.selectedIndex];
+            const name = selectedOption.dataset.name;
+            const price = parseFloat(selectedOption.dataset.price);
+            
+            selectedLocation = {
+                id: id,
+                name: name,
+                price: price
+            };
+            
+            updateLocationDisplay();
+            calculateTotal();
+            showToast('success', 'Succès', 'Emplacement ajouté avec succès');
+        });
+        
+        document.querySelectorAll('.select-location').forEach(button => {
+            button.addEventListener('click', function() {
+                const id = this.dataset.id;
+                const name = this.dataset.name;
+                const price = parseFloat(this.dataset.price);
+
+                if (selectedLocation) {
+                    showToast('warning', 'Attention', 'Un emplacement est déjà sélectionné');
+                    return;
+                }
+
+                selectedLocation = {
+                    id: id,
+                    name: name,
+                    price: price
+                };
+
+                updateLocationDisplay();
+                calculateTotal();
+            });
+        });
+
+        // Form submission
+        document.getElementById('customizeForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const formData = {
+                id: '{{ originalPack.id }}',
+                materielles: Array.from(selectedMaterielles.values()).map(m => ({
+                    id: m.id,
+                    quantity: m.quantity,
+                    price: m.price
+                })),
+                location: selectedLocation ? {
+                    id: selectedLocation.id,
+                    name: selectedLocation.name,
+                    price: selectedLocation.price
+                } : null,
+                personnel: Array.from(selectedPersonnel.values()).map(p => ({
+                    id: p.id,
+                    name: p.name,
+                    service: p.service,
+                    price: p.price
+                }))
+            };
+
+            // Show loading state
+            const submitButton = this.querySelector('button[type="submit"]');
+            const originalText = submitButton.innerHTML;
+            submitButton.innerHTML = '<i class="ti ti-loader-2 ti-spin"></i> Enregistrement...';
+            submitButton.disabled = true;
+
+            fetch(this.action, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token("customize_pack") }}'
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erreur serveur');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Succès !',
+                        text: 'Pack customisé avec succès !',
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                        customClass: {
+                            popup: 'colored-toast'
+                        }
+                    }).then(() => {
+                        window.location.href = '{{ path("admin_notifications") }}';
+                    });
+                } else {
+                    throw new Error(data.message || 'Erreur lors de la customisation');
+                }
+            })
+            .catch(error => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erreur !',
+                    text: 'Une erreur est survenue lors de la customisation du pack',
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 5000,
+                    timerProgressBar: true,
+                    customClass: {
+                        popup: 'colored-toast'
+                    }
+                });
+                console.error('Error:', error);
+            })
+            .finally(() => {
+                // Reset button state
+                submitButton.innerHTML = originalText;
+                submitButton.disabled = false;
+            });
+        });
+
+        // Helper functions
+        function updateMaterielleTable() {
+            const tbody = document.querySelector('#selectedMaterielsTable tbody');
+            tbody.innerHTML = '';
+            
+            if (selectedMaterielles.size === 0) {
+                const tr = document.createElement('tr');
+                tr.innerHTML = '<td colspan="5" class="text-center">Aucun matériel sélectionné</td>';
+                tbody.appendChild(tr);
+                return;
+            }
+            
+            selectedMaterielles.forEach(materielle => {
+                const total = materielle.price * materielle.quantity;
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${materielle.name}</td>
+                    <td>
+                        <input type="number" 
+                               class="form-control" 
+                               min="1" 
+                               value="${materielle.quantity}" 
+                               onchange="updateMaterielleQuantity('${materielle.id}', this.value)">
+                    </td>
+                    <td>${materielle.price.toFixed(2)}€</td>
+                    <td>${total.toFixed(2)}€</td>
+                    <td>
+                        <button class="btn btn-sm btn-danger" onclick="removeMaterielle('${materielle.id}')">
+                            <i class="ti ti-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
 
         function updatePersonnelTable() {
             const tbody = document.querySelector('#selectedPersonnelTable tbody');
@@ -556,71 +857,74 @@
             });
         }
 
-        window.removePersonnel = function(id) {
+        function updateLocationDisplay() {
+            const locationDisplay = document.getElementById('selectedLocation');
+            if (selectedLocation) {
+                locationDisplay.innerHTML = `
+                    <div class="d-flex align-items-center">
+                        <span>${selectedLocation.name}</span>
+                        <button class="btn btn-sm btn-danger ms-2" onclick="removeLocation()">
+                            <i class="ti ti-trash"></i>
+                        </button>
+                    </div>
+                `;
+            } else {
+                locationDisplay.innerHTML = 'Aucune location sélectionnée';
+            }
+        }
+
+        function updateMaterielleQuantity(id, quantity) {
+            const materielle = selectedMaterielles.get(id);
+            if (materielle) {
+                materielle.quantity = parseInt(quantity) || 1;
+                calculateTotal();
+            }
+        }
+
+        function removeMaterielle(id) {
+            selectedMaterielles.delete(id);
+            updateMaterielleTable();
+            calculateTotal();
+        }
+
+        function removePersonnel(id) {
             selectedPersonnel.delete(id);
             updatePersonnelTable();
             calculateTotal();
-        };
+        }
 
-        // Form submission
-        document.querySelector('form').addEventListener('submit', function(e) {
-            e.preventDefault();
+        function removeLocation() {
+            selectedLocation = null;
+            updateLocationDisplay();
+            calculateTotal();
+        }
 
-            const formData = {
-                packId: '{{ originalPack.id }}',
-                name: document.getElementById('packName').value,
-                price: document.getElementById('packPrice').value,
-                description: document.getElementById('packDescription').value,
-                capacity: document.getElementById('packCapacity').value,
-                category: document.getElementById('packCategory').value,
-                materielles: Array.from(selectedMaterielles.values()).map(m => ({
-                    id: m.id,
-                    quantity: m.quantity
-                })),
-                personnel: Array.from(selectedPersonnel.values()).map(p => ({
-                    id: p.id
-                })),
-                location: selectedLocation ? selectedLocation.id : null
-            };
+        function calculateTotal() {
+            let total = 0;
 
-            fetch('{{ path("admin_customize_pack_update", {id: demandePack.id}) }}', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token("customize_pack") }}'
-                },
-                body: JSON.stringify(formData)
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Succès',
-                        text: 'Pack personnalisé enregistré avec succès',
-                        toast: true,
-                        position: 'top-end',
-                        showConfirmButton: false,
-                        timer: 1500
-                    }).then(() => {
-                        window.location.href = '{{ path("admin_notifications") }}';
-                    });
-                } else {
-                    throw new Error(data.message || 'Erreur lors de l\'enregistrement');
-                }
-            })
-            .catch(error => {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Erreur',
-                    text: error.message || 'Erreur lors de l\'enregistrement',
-                    toast: true,
-                    position: 'top-end',
-                    showConfirmButton: false,
-                    timer: 3000
-                });
+            // Add materielles cost
+            selectedMaterielles.forEach(materielle => {
+                total += materielle.price * materielle.quantity;
             });
-        });
+
+            // Add location cost
+            if (selectedLocation) {
+                total += selectedLocation.price;
+            }
+
+            // Add personnel cost
+            selectedPersonnel.forEach(person => {
+                total += person.price;
+            });
+
+            document.getElementById('totalPrice').textContent = total.toFixed(2) + '€';
+        }
+
+        // Initialize total price
+        calculateTotal();
+
+        // Initialize Select2
+        $('.select2').select2();
     });
     </script>
 </body>

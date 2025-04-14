@@ -136,6 +136,10 @@ class PackController extends AbstractController
                     $demande = new DemandePack();
                     $demande->setPack($pack);
                     $demande->setPrix($pack->getPrix());
+                    
+                    // Set event ID to match pack ID
+                    $event = $entityManager->getReference('App\Entity\Event', $pack->getId());
+                    $demande->setEvent($event);
 
                     // Process date with current time
                     $date = $formData['eventDate'];
