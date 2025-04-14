@@ -512,31 +512,41 @@
 
                 <!-- Right Column: Booking, QR Code and Similar Lieux -->
                 <div class="col-lg-4">
-                    <!-- Booking Card -->
+                   <!-- Booking Card -->
 <div class="booking-card mb-30" id="bookingSection">
     <h3 class="section-title">Réserver ce lieu</h3>
-    <form id="bookingForm" method="POST" action="{{ path('app_lieu_details', {'id': lieu.id}) }}">
+    <form id="bookingForm" method="POST" action="{{ path('app_lieu_details', {'id': lieu.id}) }}" novalidate>
         <input type="hidden" name="lieu_id" value="{{ lieu.id }}">
         <div class="mb-3">
             <label class="form-label">Date</label>
-            <input type="date" class="form-control" name="date" required min="{{ 'now'|date('Y-m-d') }}">
+            <input type="date" class="form-control" name="date" required 
+                   min="{{ 'now'|date('Y-m-d') }}"
+                   onchange="validateDate(this)">
+            <div class="invalid-feedback">Veuillez sélectionner une date valide</div>
         </div>
         <div class="mb-3">
             <label class="form-label">Nombre de personnes</label>
-            <input type="number" class="form-control" name="people" min="1" max="{{ lieu.capacity }}" required>
+            <input type="number" class="form-control" name="people" 
+                   min="1" max="{{ lieu.capacity }}" required
+                   oninput="validateCapacity(this, {{ lieu.capacity }})">
+            <small class="text-muted">Capacité maximale: {{ lieu.capacity }} personnes</small>
+            <div class="invalid-feedback">Le nombre de personnes doit être entre 1 et {{ lieu.capacity }}</div>
         </div>
         <div class="mb-3">
             <label class="form-label">Type d'événement</label>
             <select class="form-select" name="event_type" required>
+                <option value="" selected disabled>Choisir un type</option>
                 <option value="Mariage">Mariage</option>
                 <option value="Anniversaire">Anniversaire</option>
                 <option value="Conférence">Conférence</option>
                 <option value="Autre">Autre</option>
             </select>
+            <div class="invalid-feedback">Veuillez sélectionner un type d'événement</div>
         </div>
         <div class="mb-3">
             <label class="form-label">Notes spéciales</label>
-            <textarea class="form-control" name="notes" rows="3"></textarea>
+            <textarea class="form-control" name="notes" rows="3" maxlength="500"></textarea>
+            <small class="text-muted">Maximum 500 caractères</small>
         </div>
         <button type="submit" class="th-btn w-100">
             <i class="fas fa-calendar-plus me-2"></i> Réserver maintenant
@@ -739,6 +749,66 @@
     <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap" async defer></script>
 
     <script>
+    // Custom form validation
+function validateDate(input) {
+    const selectedDate = new Date(input.value);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    if (selectedDate < today) {
+        input.setCustomValidity('La date ne peut pas être dans le passé');
+        input.classList.add('is-invalid');
+    } else {
+        input.setCustomValidity('');
+        input.classList.remove('is-invalid');
+    }
+}
+
+function validateCapacity(input, maxCapacity) {
+    const value = parseInt(input.value);
+    
+    if (isNaN(value) {
+        input.setCustomValidity('Veuillez entrer un nombre valide');
+        input.classList.add('is-invalid');
+    } else if (value < 1 || value > maxCapacity) {
+        input.setCustomValidity(`Le nombre doit être entre 1 et ${maxCapacity}`);
+        input.classList.add('is-invalid');
+    } else {
+        input.setCustomValidity('');
+        input.classList.remove('is-invalid');
+    }
+}
+
+// Form submission handling
+document.getElementById('bookingForm').addEventListener('submit', function(e) {
+    // First check HTML5 validation
+    if (!this.checkValidity()) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        // Add Bootstrap's validation classes
+        this.classList.add('was-validated');
+        
+        // Scroll to first invalid element
+        const firstInvalid = this.querySelector(':invalid');
+        if (firstInvalid) {
+            firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            firstInvalid.focus();
+        }
+    } else {
+        // Optional: Add loading state
+        const submitBtn = this.querySelector('button[type="submit"]');
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Traitement...';
+    }
+});
+
+// Reset validation on form reset
+document.getElementById('bookingForm').addEventListener('reset', function() {
+    this.classList.remove('was-validated');
+    const inputs = this.querySelectorAll('.is-invalid');
+    inputs.forEach(input => input.classList.remove('is-invalid'));
+});
         // Initialize map
         function initMap() {
             // Replace with actual coordinates from your Lieu entity
