@@ -176,4 +176,55 @@ class ReservationPersoController extends AbstractController
         $this->addFlash('success', 'Réservation annulée avec succès !');
         return $this->redirectToRoute('app_reservation_perso_index', ['event' => $eventId]);
     }
+
+
+
+
+ 
+    #[Route('/search', name: 'app_reservation_perso_search', methods: ['GET'])]
+    public function search(
+        Request $request, 
+        PersonnelRepository $personnelRepository,
+        EntityManagerInterface $entityManager
+    ): JsonResponse {
+        try {
+            $term = $request->query->get('q', '');
+            $selectedEventId = $request->query->get('event');
+            
+            if (empty($term)) {
+                return $this->json([
+                    'html' => '',
+                    'count' => 0
+                ]);
+            }
+    
+            $personnels = $personnelRepository->search($term);
+            $reservations = $entityManager->getRepository(ReservationPerso::class)->findAll();
+            
+            $html = $this->renderView('reservation_perso/_search_results.html.twig', [
+                'personnels' => $personnels,
+                'reservations' => $reservations,
+                'selectedEventId' => $selectedEventId,
+                'error' => null
+            ]);
+            
+            return $this->json([
+                'html' => $html,
+                'count' => count($personnels)
+            ]);
+        } catch (\Exception $e) {
+            return $this->json([
+                'html' => $this->renderView('reservation_perso/_search_results.html.twig', [
+                    'personnels' => [],
+                    'error' => 'Une erreur est survenue lors de la recherche'
+                ]),
+                'count' => 0
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+
+
+
 }
