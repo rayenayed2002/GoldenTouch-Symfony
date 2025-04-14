@@ -104,7 +104,6 @@
         .pagination .page-link {
             color: var(--theme-color);
         }
-        /* Styles ajoutés pour la recherche */
         .search-results-dropdown {
             position: absolute;
             width: 100%;
@@ -180,11 +179,11 @@
     <!-- Lieu List Section -->
     <section class="space-top space-extra-bottom">
         <div class="container">
-            <!-- Search Section Modifiée -->
+            <!-- Search Section -->
             <div class="search-section">
                 <div class="row justify-content-center">
                     <div class="col-lg-8 position-relative">
-                        <form class="search-form" id="searchForm" action="{{ path('app_lieux') }}" method="get">
+                        <form class="search-form" id="searchForm" action="{{ path('app_lieu_index') }}" method="get">
                             <input type="hidden" name="filter" value="{{ currentFilter }}">
                             <div class="input-group">
                                 <input type="text" 
@@ -235,8 +234,14 @@
                                             <img src="{{ asset('Front/img/placeholder.jpg') }}" alt="Lieu Image" class="lieu-image">
                                         {% endif %}
                                         <div class="actions">
-                                            <a href="{{ path('app_lieu_details', {'id': lieu.id}) }}" class="icon-btn"><i class="far fa-eye"></i></a>
-                                            <a href="#" class="icon-btn"><i class="far fa-heart"></i></a>
+                                            <a href="{{ path('app_lieu_details', {'id': lieu.id}) }}" class="icon-btn" title="Voir les détails"><i class="far fa-eye"></i></a>
+                                            <a href="{{ path('app_lieu_qr_code', {'id': lieu.id}) }}"
+                                            class="icon-btn"
+                                            title="Générer QR Code"
+                                            download="qr-code-{{ lieu.name|lower|replace({' ': '-', '/': '-', '\\': '-', '_': '-', '.': '-'})|trim('-') }}.png">
+                                            <i class="fas fa-qrcode"></i>
+                                            </a>
+                                            <a href="#" class="icon-btn" title="Ajouter aux favoris"><i class="far fa-heart"></i></a>
                                         </div>
                                     </div>
                                     <div class="lieu-content">
@@ -379,7 +384,7 @@
                             let html = '';
                             data.forEach(item => {
                                 html += `
-                                    <a href="/lieu/${item.id}" class="search-result-item">
+                                    <a href="{{ path('app_lieu_details', {'id': 'PLACEHOLDER'}) }}".replace('PLACEHOLDER', item.id) class="search-result-item">
                                         <img src="/${item.image}" alt="${item.name}">
                                         <div class="search-result-info">
                                             <h6>${item.name}</h6>

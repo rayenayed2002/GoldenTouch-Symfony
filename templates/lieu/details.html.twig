@@ -1,0 +1,834 @@
+<!doctype html>
+<html class="no-js" lang="zxx">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>GoldenTouch - Détails du Lieu {{ lieu.name }}</title>
+    <meta name="author" content="GoldenTouch">
+    <meta name="description" content="Détails du lieu {{ lieu.name }}">
+    <meta name="keywords" content="lieu, événement, location, salle">
+    <meta name="robots" content="INDEX,FOLLOW">
+
+    <!-- Mobile Specific Metas -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="57x57" href="{{ asset('Front/img/favicons/apple-icon-57x57.png') }}">
+    <link rel="apple-touch-icon" sizes="60x60" href="{{ asset('Front/img/favicons/apple-icon-60x60.png') }}">
+    <link rel="apple-touch-icon" sizes="72x72" href="{{ asset('Front/img/favicons/apple-icon-72x72.png') }}">
+    <link rel="apple-touch-icon" sizes="76x76" href="{{ asset('Front/img/favicons/apple-icon-76x76.png') }}">
+    <link rel="apple-touch-icon" sizes="114x114" href="{{ asset('Front/img/favicons/apple-icon-114x114.png') }}">
+    <link rel="apple-touch-icon" sizes="120x120" href="{{ asset('Front/img/favicons/apple-icon-120x120.png') }}">
+    <link rel="apple-touch-icon" sizes="144x144" href="{{ asset('Front/img/favicons/apple-icon-144x144.png') }}">
+    <link rel="apple-touch-icon" sizes="152x152" href="{{ asset('Front/img/favicons/apple-icon-152x152.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('Front/img/favicons/apple-icon-180x180.png') }}">
+    <link rel="icon" type="image/png" sizes="192x192" href="{{ asset('Front/img/favicons/android-icon-192x192.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('Front/img/favicons/favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="96x96" href="{{ asset('Front/img/favicons/favicon-96x96.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('Front/img/favicons/favicon-16x16.png') }}">
+    <link rel="manifest" href="{{ asset('Front/img/favicons/manifest.json') }}">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="{{ asset('Front/img/favicons/ms-icon-144x144.png') }}">
+    <meta name="theme-color" content="#ffffff">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Radio+Canada:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- All CSS File -->
+    <link rel="stylesheet" href="{{ asset('Front/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('Front/css/fontawesome.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('Front/css/magnific-popup.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('Front/css/slick.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('Front/css/jquery.datetimepicker.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('Front/css/style.css') }}">
+
+    <style>
+        .lieu-cover-image {
+            width: 100%;
+            height: 500px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+        .lieu-header-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            padding: 30px;
+            color: white;
+        }
+        .lieu-title {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        .lieu-meta {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .lieu-description {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #6B7280;
+        }
+        .feature-box {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .feature-box-icon {
+            font-size: 24px;
+            margin-right: 15px;
+            color: var(--theme-color);
+        }
+        .similar-lieu-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 8px;
+            transition: all 0.3s;
+            background: #F9FAFB;
+        }
+        .similar-lieu-item:hover {
+            background-color: rgba(115, 103, 240, 0.1);
+            text-decoration: none;
+        }
+        .similar-lieu-image {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            object-fit: cover;
+            margin-right: 15px;
+        }
+        .review-item {
+            background: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .review-user {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        .review-date {
+            font-size: 14px;
+            color: #6B7280;
+        }
+        .star-rating {
+            color: #FFC107;
+            margin: 10px 0;
+        }
+        .gallery-thumbnail {
+            cursor: pointer;
+            transition: transform 0.3s;
+            border-radius: 8px;
+        }
+        .gallery-thumbnail:hover {
+            transform: scale(1.05);
+        }
+        #map {
+            height: 300px;
+            width: 100%;
+            border-radius: 8px;
+        }
+        .booking-card {
+            background: #fff;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        .booking-card .form-control {
+            height: 50px;
+            border-radius: 8px;
+        }
+        .booking-card textarea.form-control {
+            height: auto;
+        }
+        .section-title {
+            font-size: 28px;
+            margin-bottom: 30px;
+            position: relative;
+            padding-bottom: 15px;
+        }
+        .section-title:after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 60px;
+            height: 3px;
+            background: var(--theme-color);
+        }
+        .th-product {
+            background: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+        }
+        .th-product:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        /* QR Code Styles */
+        .qr-code-card {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+        .qr-code-card .card-header {
+            font-weight: 600;
+            font-size: 1.1rem;
+            background-color: var(--theme-color);
+            color: white;
+        }
+        .qr-code-img {
+            max-width: 100%;
+            height: auto;
+            padding: 15px;
+        }
+    </style>
+</head>
+
+<body class="">
+
+    <!--[if lte IE 9]>
+        <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
+    <![endif]-->
+
+    <!-- Preloader -->
+    <div class="preloader">
+        <button class="th-btn style3 preloaderCls">Cancel Preloader </button>
+        <div class="preloader-inner">
+            <div class="loading-window">
+                <div class="car">
+                    <div class="strike"></div>
+                    <div class="strike strike2"></div>
+                    <div class="strike strike3"></div>
+                    <div class="strike strike4"></div>
+                    <div class="strike strike5"></div>
+                    <div class="car-detail spoiler"></div>
+                    <div class="car-detail back"></div>
+                    <div class="car-detail center"></div>
+                    <div class="car-detail center1"></div>
+                    <div class="car-detail front"></div>
+                    <div class="car-detail wheel"></div>
+                    <div class="car-detail wheel wheel2"></div>
+                </div>
+            </div>
+        </div>
+    </div> 
+
+    <!-- Mobile Menu -->
+    <div class="th-menu-wrapper">
+        <div class="th-menu-area text-center">
+            <button class="th-menu-toggle"><i class="fal fa-times"></i></button>
+            <div class="mobile-logo">
+                <a href="index.html"><img src="{{ asset('Front/img/logo-white3.svg') }}" alt="GoldenTouch"></a>
+            </div>
+            <div class="th-mobile-menu">
+                <ul>
+                    <li><a href="{{ path('app_lieu_index') }}">Lieux</a></li>
+                    <li><a href="{{ path('app_reservation_index') }}">Réservations</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header Area -->
+    <header class="th-header header-layout7">
+        <div class="header-top">
+            <div class="container">
+                <div class="row justify-content-center justify-content-md-between align-items-center gy-2">
+                    <div class="col-auto d-none d-md-block">
+                        <div class="header-links">
+                            <ul>
+                                <li><i class="fa-thin fa-envelope"></i><a href="mailto:GoldenTouch@gmail.com">GoldenTouch@gmail.com</a></li>
+                                <li><i class="fa-thin fa-phone"></i><a href="tel:+468254762443">(+468) 254 762 443</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <div class="header-right">
+                            <div class="langauge">
+                                <select class="form-select nice-select">
+                                    <option selected="">Français</option>
+                                    <option>English</option>
+                                </select>
+                            </div>
+                            <div class="header-social">
+                                <span class="social-title">Suivez-nous :</span>
+                                <a href="https://www.facebook.com/"><i class="fab fa-facebook-f"></i></a>
+                                <a href="https://www.twitter.com/"><i class="fab fa-twitter"></i></a>
+                                <a href="https://www.linkedin.com/"><i class="fab fa-linkedin-in"></i></a>
+                                <a href="https://www.instagram.com/"><i class="fab fa-instagram"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="sticky-wrapper">
+            <div class="menu-area">
+                <div class="container">
+                    <div class="row align-items-center justify-content-between">
+                        <div class="col-auto">
+                            <div class="header-logo">
+                                <img src="{{ asset('Front/img/logo44.png') }}" alt="GoldenTouch" style="height: 130px;">
+                            </div>
+                        </div>
+                        <div class="col-auto me-xl-auto">
+                            <nav class="main-menu d-none d-lg-block">
+                                <ul>
+                                    <li><a href="{{ path('front_index') }}">Accueil</a></li>
+                                    <li class="menu-item-has-children">
+                                        <a href="{{ path('app_lieu_index') }}">Lieux</a>
+                                        <ul class="sub-menu">
+                                            <li><a href="{{ path('app_lieu_new') }}">Ajouter Lieu</a></li>
+                                            <li><a href="{{ path('app_lieu_index') }}">Liste Lieux</a></li>
+                                        </ul>
+                                    </li>
+                                    <li><a href="{{ path('app_reservation_index') }}">Réservations</a></li>
+                                    <li><a href="contact.html">Contact</a></li>
+                                </ul>
+                            </nav>
+                            <button class="th-menu-toggle d-inline-block d-lg-none"><i class="far fa-bars"></i></button>
+                        </div>
+                        <div class="col-auto d-none d-xl-block">
+                            <div class="header-button">
+                                <button type="button" class="icon-btn searchBoxToggler"><i class="far fa-search"></i></button>
+                                <a href="#" class="icon-btn sideMenuToggler"><i class="far fa-bars"></i></a>
+                                <a href="#bookingSection" class="th-btn">RÉSERVER <i class="fa-regular fa-arrow-right ms-2"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="logo-shape"><img src="{{ asset('Front/img/logo-shape.svg') }}" alt=""></div>
+    </header>
+
+    <!-- Breadcrumb -->
+    <div class="breadcumb-wrapper" data-bg-src="{{ asset('Front/img/breadcumb/breadcumb-bg.jpg') }}">
+        <div class="container z-index-common">
+            <h1 class="breadcumb-title">{{ lieu.name }}</h1>
+            <ul class="breadcumb-menu">
+                <li><a href="{{ path('front_index') }}">Accueil</a></li>
+                <li><a href="{{ path('app_lieu_index') }}">Lieux</a></li>
+                <li>{{ lieu.name }}</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Lieu Details -->
+    <section class="th-product-wrapper product-details space-top space-extra-bottom">
+        <div class="container">
+            <div class="row gx-60">
+                <div class="col-lg-8">
+                    <!-- Lieu Header with Image -->
+                    <div class="lieu-header position-relative mb-30">
+                        <div class="lieu-engagement position-absolute top-0 end-0 m-3 z-index-1">
+                            <button class="btn btn-icon btn-label-secondary me-1" onclick="shareLieu()">
+                                <i class="ti ti-share"></i>
+                            </button>
+                            <button class="btn btn-icon btn-label-danger" onclick="toggleFavorite(this)">
+                                <i class="ti ti-heart"></i>
+                            </button>
+                        </div>
+                        <img src="{{ asset('uploads/lieux/' ~ lieu.imageUrl|default('default.jpg')) }}" 
+                             class="lieu-cover-image" 
+                             alt="{{ lieu.name }}">
+                        <div class="lieu-header-overlay">
+                            <h1 class="lieu-title">{{ lieu.name }}</h1>
+                            <div class="lieu-meta">
+                                <span class="badge bg-primary">{{ lieu.category|default('Non spécifié') }}</span>
+                                {% if lieu.price < 1000 %}
+                                    <span class="badge bg-success">Économique</span>
+                                {% endif %}
+                                {% if lieu.capacity > 500 %}
+                                    <span class="badge bg-warning">Grande capacité</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Info Cards -->
+                    <div class="row mb-30">
+                        <div class="col-md-4 mb-3">
+                            <div class="card bg-label-primary h-100">
+                                <div class="card-body">
+                                    <div class="feature-box">
+                                        <div class="feature-box-icon">
+                                            <i class="fas fa-euro-sign"></i>
+                                        </div>
+                                        <div>
+                                            <h5 class="mb-1">Prix</h5>
+                                            <p class="mb-0">{{ lieu.price }} €</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="card bg-label-success h-100">
+                                <div class="card-body">
+                                    <div class="feature-box">
+                                        <div class="feature-box-icon">
+                                            <i class="fas fa-users"></i>
+                                        </div>
+                                        <div>
+                                            <h5 class="mb-1">Capacité</h5>
+                                            <p class="mb-0">{{ lieu.capacity }} personnes</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="card bg-label-info h-100">
+                                <div class="card-body">
+                                    <div class="feature-box">
+                                        <div class="feature-box-icon">
+                                            <i class="fas fa-map-marker-alt"></i>
+                                        </div>
+                                        <div>
+                                            <h5 class="mb-1">Localisation</h5>
+                                            <p class="mb-0">{{ lieu.location }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="card mb-30">
+                        <div class="card-body">
+                            <h3 class="section-title">Description</h3>
+                            <p class="lieu-description">
+                                {{ lieu.description|default('Aucune description disponible pour ce lieu.')|nl2br }}
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Features -->
+                    <div class="card mb-30">
+                        <div class="card-body">
+                            <h3 class="section-title">Équipements & Services</h3>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="feature-box">
+                                        <i class="fas fa-check feature-box-icon"></i>
+                                        <span>Salle climatisée</span>
+                                    </div>
+                                    <div class="feature-box">
+                                        <i class="fas fa-check feature-box-icon"></i>
+                                        <span>Parking privé</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="feature-box">
+                                        <i class="fas fa-check feature-box-icon"></i>
+                                        <span>Cuisine équipée</span>
+                                    </div>
+                                    <div class="feature-box">
+                                        <i class="fas fa-check feature-box-icon"></i>
+                                        <span>Accès handicapé</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Gallery -->
+                    <div class="card mb-30">
+                        <div class="card-body">
+                            <h3 class="section-title">Galerie</h3>
+                            <div class="row g-3">
+                                {% for i in 1..4 %}
+                                <div class="col-6 col-md-3">
+                                    <img src="{{ asset('uploads/lieux/gallery-' ~ i ~ '.jpg') }}" 
+                                         class="img-fluid rounded gallery-thumbnail" 
+                                         alt="Gallery image {{ i }}"
+                                         onclick="openGalleryModal({{ i }})">
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Map -->
+                    <div class="card mb-30">
+                        <div class="card-body">
+                            <h3 class="section-title">Localisation</h3>
+                            <div id="map"></div>
+                        </div>
+                    </div>
+
+                    <!-- Reviews -->
+                    <div class="card">
+                        <div class="card-body">
+                            <h3 class="section-title">Avis</h3>
+                            {% if avis|length > 0 %}
+                                {% for avi in avis %}
+                                    <div class="review-item">
+                                        <div class="d-flex justify-content-between">
+                                            <div>
+                                                <h6 class="review-user">{{ avi.userName }}</h6>
+                                                <span class="review-date">{{ avi.createdAt|date('d/m/Y H:i') }}</span>
+                                            </div>
+                                            <div class="star-rating">
+                                                {% for i in 1..5 %}
+                                                    {% if i <= avi.rating %}
+                                                        <i class="fas fa-star"></i>
+                                                    {% else %}
+                                                        <i class="far fa-star"></i>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                        <p class="mt-2 mb-0">{{ avi.comment }}</p>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                <div class="text-center py-4">
+                                    <i class="fas fa-comment-slash fs-3 mb-2 text-muted"></i>
+                                    <p class="mb-0">Aucun avis pour ce lieu pour le moment.</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Booking, QR Code and Similar Lieux -->
+                <div class="col-lg-4">
+                    <!-- Booking Card -->
+                    <div class="booking-card mb-30" id="bookingSection">
+                        <h3 class="section-title">Réserver ce lieu</h3>
+                        <form id="bookingForm">
+                            <div class="mb-3">
+                                <label class="form-label">Date</label>
+                                <input type="date" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Nombre de personnes</label>
+                                <input type="number" class="form-control" min="1" max="{{ lieu.capacity }}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Type d'événement</label>
+                                <select class="form-select">
+                                    <option>Mariage</option>
+                                    <option>Anniversaire</option>
+                                    <option>Conférence</option>
+                                    <option>Autre</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Notes spéciales</label>
+                                <textarea class="form-control" rows="3"></textarea>
+                            </div>
+                            <button type="submit" class="th-btn w-100">
+                                <i class="fas fa-calendar-plus me-2"></i> Réserver maintenant
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- QR Code Card -->
+                    <div class="card mb-30">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0"><i class="fas fa-qrcode me-2"></i> QR Code</h5>
+                        </div>
+                        <div class="card-body text-center">
+                            <img src="{{ path('app_lieu_qr_code', {'id': lieu.id}) }}" 
+                                 alt="QR Code pour {{ lieu.name }}" 
+                                 class="img-fluid mb-3 qr-code-img">
+                            <p class="text-muted mb-3">Scannez ce code pour accéder à cette page</p>
+                            <a href="{{ path('app_lieu_qr_code', {'id': lieu.id}) }}" 
+                               class="btn btn-sm btn-primary">
+                                <i class="fas fa-download me-1"></i> Télécharger
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Similar Lieux -->
+                    {% if similarLieux|length > 0 %}
+                        <div class="card">
+                            <div class="card-body">
+                                <h3 class="section-title">Lieux similaires</h3>
+                                {% for similar in similarLieux %}
+                                    <a href="{{ path('app_lieu_details', {'id': similar.id}) }}" class="similar-lieu-item">
+                                        <img src="{{ asset('uploads/lieux/' ~ similar.imageUrl|default('default.jpg')) }}" 
+                                             class="similar-lieu-image" 
+                                             alt="{{ similar.name }}">
+                                        <div>
+                                            <h6 class="mb-1">{{ similar.name }}</h6>
+                                            <p class="mb-0 text-primary">{{ similar.price }} €</p>
+                                        </div>
+                                    </a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Modal -->
+    <div class="modal fade" id="galleryModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <img id="modalImage" src="" class="img-fluid" alt="">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Review Modal -->
+    <div class="modal fade" id="reviewModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Ajouter un avis</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="reviewForm">
+                        <div class="mb-3">
+                            <label class="form-label">Note</label>
+                            <div class="star-rating">
+                                <i class="far fa-star rating-star" data-value="1"></i>
+                                <i class="far fa-star rating-star" data-value="2"></i>
+                                <i class="far fa-star rating-star" data-value="3"></i>
+                                <i class="far fa-star rating-star" data-value="4"></i>
+                                <i class="far fa-star rating-star" data-value="5"></i>
+                                <input type="hidden" name="rating" id="ratingInput" value="0">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Commentaire</label>
+                            <textarea class="form-control" rows="4" placeholder="Décrivez votre expérience..."></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="th-btn style2" data-bs-dismiss="modal">Annuler</button>
+                    <button type="button" class="th-btn" onclick="submitReview()">Soumettre</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer-wrapper footer-layout7" data-bg-src="{{ asset('Front/img/bg/footer_bg_1.jpg') }}">
+        <div class="widget-area">
+            <div class="container">
+                <div class="row justify-content-between">
+                    <div class="col-md-6 col-xl-auto">
+                        <div class="widget footer-widget">
+                            <div class="th-widget-about">
+                                <div class="about-logo">
+                                    <a href="index.html"><img src="{{ asset('Front/img/logo-white3.svg') }}" alt="GoldenTouch"></a>
+                                </div>
+                                <p class="about-text">GoldenTouch révolutionne la planification d'événements avec des solutions tout-en-un pour des expériences inoubliables.</p>
+                                <div class="working-time">
+                                    <span class="title">HORAIRES D'OUVERTURE</span>
+                                    <p class="desc">Lun-Sam : 09h00 à 18h30</p>
+                                </div>
+                                <div class="th-social footer-social">
+                                    <a href="https://www.facebook.com/"><i class="fab fa-facebook-f"></i></a>
+                                    <a href="https://www.twitter.com/"><i class="fab fa-twitter"></i></a>
+                                    <a href="https://www.linkedin.com/"><i class="fab fa-linkedin-in"></i></a>
+                                    <a href="https://www.instagram.com/"><i class="fab fa-instagram"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-xl-2">
+                        <div class="widget widget_nav_menu footer-widget">
+                            <h3 class="widget_title">Liens rapides</h3>
+                            <div class="menu-all-pages-container">
+                                <ul class="menu">
+                                    <li><a href="about.html">À propos</a></li>
+                                    <li><a href="{{ path('app_lieu_index') }}">Lieux</a></li>
+                                    <li><a href="{{ path('app_reservation_index') }}">Réservations</a></li>
+                                    <li><a href="contact.html">Contact</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-xl-auto">
+                        <div class="widget footer-widget">
+                            <h3 class="widget_title">Coordonnées</h3>
+                            <div class="th-widget-about">
+                                <h4 class="footer-info-title">Téléphone</h4>
+                                <p class="footer-info"><i class="fa-sharp fa-solid fa-phone"></i><a class="text-inherit"
+                                        href="tel:+33123456789">+33 1 23 45 67 89</a></p>
+                                <h4 class="footer-info-title">Email</h4>
+                                <p class="footer-info"><i class="fas fa-envelope"></i><a class="text-inherit"
+                                        href="mailto:contact@goldentouch.com">contact{{ '@' }}goldentouch.com</a></p>
+                                <h4 class="footer-info-title">Adresse</h4>
+                                <p class="footer-info"><i class="fas fa-map-marker-alt"></i>123 Rue des Événements, 75001 Paris, France</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-xl-3">
+                        <div class="widget footer-widget">
+                            <h4 class="widget_title">Newsletter</h4>
+                            <div class="newsletter-widget">
+                                <p class="md-20">Abonnez-vous pour recevoir nos actualités et offres exclusives.</p>
+                                <div class="footer-search-contact mt-25">
+                                    <form>
+                                        <input class="form-control" type="email" placeholder="Votre email">
+                                    </form>
+                                    <div class="footer-btn mt-10">
+                                        <button type="submit" class="th-btn style3 fw-btn">S'abonner <i
+                                                class="fa-regular fa-arrow-right"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="copyright-wrap">
+            <div class="container">
+                <p class="copyright-text">© 2023 <a href="#">GoldenTouch</a>. Tous droits réservés.</p>
+            </div>
+        </div>
+        <div class="footer-shape"><img src="{{ asset('Front/img/shape/footer_shape.png') }}" alt="forme"></div>
+    </footer>
+
+    <!-- Scroll To Top -->
+    <div class="scroll-top">
+        <svg class="progress-circle svg-content" width="100%" height="100%" viewBox="-1 -1 102 102">
+            <path d="M50,1 a49,49 0 0,1 0,98 a49,49 0 0,1 0,-98" style="transition: stroke-dashoffset 10ms linear 0s; stroke-dasharray: 307.919, 307.919; stroke-dashoffset: 307.919;"></path>
+        </svg>
+    </div>
+
+    <!-- All Js File -->
+    <script src="{{ asset('Front/js/vendor/jquery-3.6.0.min.js') }}"></script>
+    <script src="{{ asset('Front/js/slick.min.js') }}"></script>
+    <script src="{{ asset('Front/js/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('Front/js/jquery.magnific-popup.min.js') }}"></script>
+    <script src="{{ asset('Front/js/jquery.counterup.min.js') }}"></script>
+    <script src="{{ asset('Front/js/imagesloaded.pkgd.min.js') }}"></script>
+    <script src="{{ asset('Front/js/isotope.pkgd.min.js') }}"></script>
+    <script src="{{ asset('Front/js/nice-select.min.js') }}"></script>
+    <script src="{{ asset('Front/js/jquery.datetimepicker.min.js') }}"></script>
+    <script src="{{ asset('Front/js/wow.min.js') }}"></script>
+    <script src="{{ asset('Front/js/main.js') }}"></script>
+
+    <!-- Google Maps API -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap" async defer></script>
+
+    <script>
+        // Initialize map
+        function initMap() {
+            // Replace with actual coordinates from your Lieu entity
+            const location = { lat: 36.8065, lng: 10.1815 }; // Example: Tunis coordinates
+            const map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 15,
+                center: location,
+            });
+            new google.maps.Marker({
+                position: location,
+                map: map,
+                title: "{{ lieu.name }}"
+            });
+        }
+
+        // Gallery modal
+        function openGalleryModal(imageNumber) {
+            const modalImage = document.getElementById('modalImage');
+            modalImage.src = "{{ asset('uploads/lieux/gallery-') }}" + imageNumber + ".jpg";
+            const modal = new bootstrap.Modal(document.getElementById('galleryModal'));
+            modal.show();
+        }
+
+        // Share lieu
+        function shareLieu() {
+            if (navigator.share) {
+                navigator.share({
+                    title: '{{ lieu.name }}',
+                    text: 'Découvrez ce magnifique lieu pour vos événements',
+                    url: window.location.href
+                });
+            } else {
+                // Fallback for browsers that don't support Web Share API
+                alert('Partagez ce lien : ' + window.location.href);
+            }
+        }
+
+        // Toggle favorite
+        function toggleFavorite(button) {
+            const icon = button.querySelector('i');
+            if (icon.classList.contains('fa-heart')) {
+                icon.classList.remove('fa-heart');
+                icon.classList.add('fa-heart');
+                button.classList.remove('btn-label-danger');
+                button.classList.add('btn-danger');
+            } else {
+                icon.classList.remove('fa-heart');
+                icon.classList.add('fa-heart');
+                button.classList.remove('btn-danger');
+                button.classList.add('btn-label-danger');
+            }
+        }
+
+        // Handle booking form submission
+        document.getElementById('bookingForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Votre demande de réservation a été envoyée avec succès !');
+        });
+
+        // Rating stars interaction
+        document.querySelectorAll('.rating-star').forEach(star => {
+            star.addEventListener('click', function() {
+                const value = this.getAttribute('data-value');
+                document.getElementById('ratingInput').value = value;
+                
+                // Update stars display
+                document.querySelectorAll('.rating-star').forEach(s => {
+                    if (s.getAttribute('data-value') <= value) {
+                        s.classList.add('fas');
+                        s.classList.add('fa-star');
+                        s.classList.remove('far');
+                    } else {
+                        s.classList.remove('fas');
+                        s.classList.add('far');
+                    }
+                });
+            });
+        });
+
+        // Submit review
+        function submitReview() {
+            const rating = document.getElementById('ratingInput').value;
+            if (rating == 0) {
+                alert('Veuillez donner une note');
+                return;
+            }
+            
+            alert('Merci pour votre avis !');
+            const modal = bootstrap.Modal.getInstance(document.getElementById('reviewModal'));
+            modal.hide();
+        }
+    </script>
+</body>
+</html>

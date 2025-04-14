@@ -290,7 +290,7 @@
         </div>
     </div>
 
-    <!-- Create/Edit Location Modal -->
+    <!-- Edit Location Modal -->
     <div class="modal fade" id="locationModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
@@ -298,7 +298,7 @@
                     <h5 class="modal-title" id="modalTitle">Edit Location</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form id="locationForm" onsubmit="handleLocationSubmit(event)" enctype="multipart/form-data">
+                <form id="locationForm" enctype="multipart/form-data">
                     <div class="modal-body">
                         <input type="hidden" id="locationId" name="id">
                         <div class="mb-3">
@@ -307,7 +307,7 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label" for="description">Description</label>
-                            <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+                            <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
                         </div>
                         <div class="row">
                             <div class="col-md-6 mb-3">
@@ -329,17 +329,18 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label" for="ville">City</label>
-                                <input type="text" class="form-control" id="ville" name="ville">
+                                <input type="text" class="form-control" id="ville" name="ville" required>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label" for="category">Category</label>
-                                <input type="text" class="form-control" id="category" name="category">
+                                <input type="text" class="form-control" id="category" name="category" required>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label" for="imageUrl">Image</label>
                                 <input type="file" class="form-control" id="imageUrl" name="imageUrl">
+                                <small class="text-muted">Leave empty to keep current image</small>
                             </div>
                         </div>
                     </div>
@@ -363,28 +364,47 @@
     <script src="{{ asset('vendor/libs/sweetalert2/sweetalert2.js') }}"></script>
 
     <script>
-        $(document).ready(function() {
-            // Initialize Flatpickr if needed
-            // flatpickr('.flatpickr', {
-            //     dateFormat: 'Y-m-d',
-            //     minDate: 'today'
-            // });
-        });
-
-        // Handle form submission
-        function handleLocationSubmit(event) {
-            event.preventDefault();
-            const form = event.target;
+    $(document).ready(function() {
+        // Initialize the form submission
+        $('#locationForm').on('submit', function(e) {
+            e.preventDefault();
+            
+            const form = e.target;
             const formData = new FormData(form);
             const locationId = formData.get('id');
-            const url = locationId ? `{{ path('admin_lieu_update', {'id': 'LOCATION_ID'}) }}`.replace('LOCATION_ID', locationId)
-                                  : '{{ path('admin_lieu_create') }}';
+            const isUpdate = !!locationId;
+            
+            // For updates, ensure we're using the correct field name Symfony expects
+            if (isUpdate) {
+                const imageFile = formData.get('imageUrl');
+                if (imageFile && imageFile.name) {
+                    formData.delete('imageUrl');
+                    formData.append('lieuImage', imageFile);
+                }
+                // Add _method=PUT for Symfony to recognize it as a PUT request
+                formData.append('_method', 'PUT');
+            }
+
+            const url = `/admin/lieu/${locationId}/update`;
+
+            // Show loading state
+            const submitBtn = form.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span> Processing...';
 
             fetch(url, {
-                method: locationId ? 'PUT' : 'POST',
-                body: formData
+                method: 'POST', // Always use POST, with _method parameter for overrides
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
             .then(data => {
                 if (data.success) {
                     Swal.fire({
@@ -394,41 +414,116 @@
                         showConfirmButton: false,
                         timer: 1500
                     }).then(() => {
+                        // Close modal and refresh page
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('locationModal'));
+                        modal.hide();
                         location.reload();
                     });
                 } else {
-                    throw new Error(data.message);
+                    // Handle validation errors
+                    let errorMessage = data.message || 'An error occurred';
+                    if (data.errors && data.errors.length > 0) {
+                        errorMessage += '<ul class="text-start">';
+                        data.errors.forEach(error => {
+                            errorMessage += `<li>${error}</li>`;
+                        });
+                        errorMessage += '</ul>';
+                    }
+                    throw new Error(errorMessage);
                 }
             })
             .catch(error => {
                 Swal.fire({
                     icon: 'error',
                     title: 'Error!',
-                    text: error.message,
+                    html: error.message,
                     confirmButtonText: 'OK'
                 });
+            })
+            .finally(() => {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Save changes';
             });
-        }
+        });
+    });
 
-        // Edit location function
-        function editLocation(id) {
-            fetch(`{{ path('admin_lieu_edit', {'id': 'LOCATION_ID'}) }}`.replace('LOCATION_ID', id))
+    // Edit location function - matches the implementation from index
+    function editLocation(id) {
+        fetch(`/admin/lieu/${id}/edit`, {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const lieu = data.data;
+                
+                // Set modal title
+                $('#modalTitle').text('Edit Location');
+                
+                // Fill form with location data
+                $('#locationId').val(lieu.id);
+                $('#name').val(lieu.name);
+                $('#description').val(lieu.description);
+                $('#price').val(lieu.price);
+                $('#capacity').val(lieu.capacity);
+                $('#location').val(lieu.location);
+                $('#ville').val(lieu.ville);
+                $('#category').val(lieu.category);
+                
+                // Show modal
+                const modal = new bootstrap.Modal(document.getElementById('locationModal'));
+                modal.show();
+            } else {
+                throw new Error(data.message || 'Failed to load location data');
+            }
+        })
+        .catch(error => {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: error.message,
+                confirmButtonText: 'OK'
+            });
+        });
+    }
+
+    // Delete location - also updated to match the index implementation
+    function deleteLocation(id) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!',
+            customClass: {
+                confirmButton: 'btn btn-primary me-3',
+                cancelButton: 'btn btn-label-secondary'
+            },
+            buttonsStyling: false
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch(`/admin/lieu/${id}/delete`, {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        // For Symfony to recognize this as DELETE
+                        'X-HTTP-Method-Override': 'DELETE'
+                    }
+                })
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        const lieu = data.lieu;
-                        document.getElementById('modalTitle').textContent = 'Edit Location';
-                        document.getElementById('locationId').value = lieu.id;
-                        document.getElementById('name').value = lieu.name;
-                        document.getElementById('description').value = lieu.description;
-                        document.getElementById('price').value = lieu.price;
-                        document.getElementById('capacity').value = lieu.capacity;
-                        document.getElementById('location').value = lieu.location;
-                        document.getElementById('ville').value = lieu.ville;
-                        document.getElementById('category').value = lieu.category;
-                        
-                        const modal = new bootstrap.Modal(document.getElementById('locationModal'));
-                        modal.show();
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Deleted!',
+                            text: data.message,
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(() => {
+                            window.location.href = '/admin/lieu';
+                        });
                     } else {
                         throw new Error(data.message);
                     }
@@ -441,53 +536,9 @@
                         confirmButtonText: 'OK'
                     });
                 });
-        }
-
-        // Delete location function
-        function deleteLocation(id) {
-            Swal.fire({
-                title: 'Are you sure?',
-                text: "You won't be able to revert this!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Yes, delete it!',
-                customClass: {
-                    confirmButton: 'btn btn-primary me-3',
-                    cancelButton: 'btn btn-label-secondary'
-                },
-                buttonsStyling: false
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    fetch(`{{ path('admin_lieu_delete', {'id': 'LOCATION_ID'}) }}`.replace('LOCATION_ID', id), {
-                        method: 'DELETE'
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Deleted!',
-                                text: data.message,
-                                showConfirmButton: false,
-                                timer: 1500
-                            }).then(() => {
-                                window.location.href = '{{ path('admin_lieu_index') }}';
-                            });
-                        } else {
-                            throw new Error(data.message);
-                        }
-                    })
-                    .catch(error => {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error!',
-                            text: error.message,
-                            confirmButtonText: 'OK'
-                        });
-                    });
-                }
-            });
-        }
-    </script>
+            }
+        });
+    }
+</script>
 </body>
 </html>

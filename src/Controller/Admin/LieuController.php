@@ -91,29 +91,39 @@ class LieuController extends AbstractController
         }
     }
 
-    #[Route('/{id}', name: 'show', methods: ['GET'])]
-    public function show(Lieu $lieu): Response
-    {
-        return $this->render('admin/lieu/show.html.twig', [
-            'lieu' => $lieu
-        ]);
-    }
+    #[Route('/{id}/show', name: 'show', methods: ['GET'])]
+public function show(Lieu $lieu): Response
+{
+    return $this->render('admin/lieu/show.html.twig', [
+        'lieu' => $lieu
+    ]);
+}
 
     #[Route('/{id}/edit', name: 'edit', methods: ['GET'])]
-    public function edit(Lieu $lieu): Response
+    public function edit(Lieu $lieu): JsonResponse
     {
-        return $this->render('admin/lieu/edit.html.twig', [
-            'lieu' => $lieu
+        return $this->json([
+            'success' => true,
+            'data' => [
+                'id' => $lieu->getId(),
+                'name' => $lieu->getName(),
+                'description' => $lieu->getDescription(),
+                'price' => $lieu->getPrice(),
+                'capacity' => $lieu->getCapacity(),
+                'location' => $lieu->getLocation(),
+                'ville' => $lieu->getVille(),
+                'category' => $lieu->getCategory(),
+                'imageUrl' => $lieu->getImageUrl()
+            ]
         ]);
     }
-
-    #[Route('/{id}', name: 'update', methods: ['PUT'])]
+    
+    #[Route('/{id}/update', name: 'update', methods: ['POST','PUT'])]
     public function update(Request $request, Lieu $lieu): JsonResponse
     {
         try {
             $data = $request->request->all();
             $file = $request->files->get('lieuImage');
-            $selectedServerImage = $request->request->get('selectedServerImage');
             
             // Validation
             $errors = $this->validateLieuData($data);
@@ -125,7 +135,7 @@ class LieuController extends AbstractController
                 ], 400);
             }
             
-            // Mise à jour des propriétés
+            // Update properties
             $lieu->setName($data['name']);
             $lieu->setDescription($data['description'] ?? null);
             $lieu->setPrice((float)$data['price']);
@@ -134,11 +144,14 @@ class LieuController extends AbstractController
             $lieu->setVille($data['ville'] ?? null);
             $lieu->setCategory($data['category'] ?? null);
             
-            // Gestion de l'image
-            $this->handleLieuImage($lieu, $file, $selectedServerImage);
+            // Handle image upload if a new file was provided
+            if ($file) {
+                $newFilename = $this->uploadFile($file);
+                $lieu->setImageUrl($newFilename);
+            }
             
             $this->entityManager->flush();
-
+    
             return $this->json([
                 'success' => true,
                 'message' => 'Location updated successfully'
@@ -150,6 +163,27 @@ class LieuController extends AbstractController
                 'message' => 'Error updating location: ' . $e->getMessage()
             ], 500);
         }
+    }
+    
+    private function uploadFile(UploadedFile $file): string
+    {
+        $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+        $safeFilename = transliterator_transliterate(
+            'Any-Latin; Latin-ASCII; [^A-Za-z0-9_] remove; Lower()',
+            $originalFilename
+        );
+        $newFilename = $safeFilename.'-'.uniqid().'.'.$file->guessExtension();
+        
+        try {
+            $file->move(
+                $this->getParameter('lieu_images_directory'),
+                $newFilename
+            );
+        } catch (FileException $e) {
+            throw new \Exception('Failed to upload file: '.$e->getMessage());
+        }
+        
+        return $newFilename;
     }
 
     #[Route('/{id}', name: 'delete', methods: ['DELETE'])]

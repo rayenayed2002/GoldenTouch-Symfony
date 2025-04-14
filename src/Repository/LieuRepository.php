@@ -72,4 +72,48 @@ class LieuRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+    public function getLocationStats(): array
+{
+    $conn = $this->getEntityManager()->getConnection();
+
+    // Statistiques globales
+    $stats = $conn->executeQuery('
+        SELECT 
+            COUNT(*) as total_locations,
+            AVG(price) as avg_price,
+            SUM(capacity) as total_capacity
+        FROM lieu
+    ')->fetchAssociative();
+
+    // Répartition par catégorie
+    $stats['by_category'] = $conn->executeQuery('
+        SELECT category, COUNT(*) as count 
+        FROM lieu 
+        GROUP BY category
+        ORDER BY count DESC
+    ')->fetchAllAssociative();
+
+    // Top 5 des lieux les plus chers
+    $stats['most_expensive'] = $conn->executeQuery('
+        SELECT name, price 
+        FROM lieu 
+        ORDER BY price DESC 
+        LIMIT 5
+    ')->fetchAllAssociative();
+
+    return $stats;
+}
+
+public function getMonthlyStats(): array
+{
+    return $this->getEntityManager()->getConnection()->executeQuery('
+        SELECT 
+            DATE_FORMAT(CURRENT_DATE(), "%Y-%m") as month,
+            COUNT(*) as locations_added,
+            (SELECT COUNT(*) FROM lieu WHERE DATE_FORMAT(created_at, "%Y-%m") = DATE_FORMAT(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH), "%Y-%m")) as prev_month_count,
+            (SELECT AVG(price) FROM lieu) as avg_price
+        FROM lieu
+        WHERE DATE_FORMAT(created_at, "%Y-%m") = DATE_FORMAT(CURRENT_DATE(), "%Y-%m")
+    ')->fetchAssociative();
+}
 }
