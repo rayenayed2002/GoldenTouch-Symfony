@@ -146,4 +146,23 @@ class NotificationsAdminController extends AbstractController
             return $dateTime->format('d M, H:i');
         }
     }
+
+    #[Route('/notifications/delete/{id}', name: 'admin_notifications_delete', methods: ['DELETE'])]
+    public function deleteNotification(NotificationsAdmin $notification): JsonResponse
+    {
+        try {
+            $this->entityManager->remove($notification);
+            $this->entityManager->flush();
+            
+            return new JsonResponse([
+                'success' => true,
+                'message' => 'Notification deleted successfully'
+            ]);
+        } catch (\Exception $e) {
+            return new JsonResponse([
+                'success' => false,
+                'message' => 'Error deleting notification'
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
 }

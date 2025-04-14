@@ -769,151 +769,148 @@
 
           <!-- / Navbar -->
 
-            <!-- Layout container -->
-            <div class="layout-page">
-                <!-- Content wrapper -->
-                <div class="content-wrapper">
-                    <!-- Content -->
-                    <div class="container-xxl flex-grow-1 container-p-y">
-                        <div class="row mb-4">
-                            <div class="col-12">
-                                <div class="card">
-                                    <div class="card-header d-flex justify-content-between align-items-center">
-                                        <h5 class="mb-0">Pack Management</h5>
-                                        <div class="d-flex gap-2">
-                                            <div class="btn-group" role="group">
-                                                <button type="button" class="btn btn-outline-primary view-toggle-btn active" data-view="gallery">
-                                                    <i class="ti ti-grid-dots"></i>
-                                                </button>
-                                                <button type="button" class="btn btn-outline-primary view-toggle-btn" data-view="table">
-                                                    <i class="ti ti-table"></i>
-                                                </button>
+           <!-- Conteneur de mise en page -->
+<div class="layout-page">
+    <!-- Wrapper du contenu -->
+    <div class="content-wrapper">
+        <!-- Contenu -->
+        <div class="container-xxl flex-grow-1 container-p-y">
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Administration des packs</h5>
+                            <div class="d-flex gap-2">
+                                <div class="btn-group" role="group">
+                                    <button type="button" class="btn btn-outline-primary view-toggle-btn active" data-view="gallery">
+                                        <i class="ti ti-grid-dots"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-outline-primary view-toggle-btn" data-view="table">
+                                        <i class="ti ti-table"></i>
+                                    </button>
+                                </div>
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createPackModal">
+                                    <i class="ti ti-plus me-1"></i> Créer un nouveau pack
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <!-- Vue galerie -->
+                            <div class="gallery-view">
+                                {% for pack in packs %}
+                                <div class="col-md-4 col-lg-3">
+                                    <div class="card pack-card">
+                                        {% if pack.event.photo %}
+                                            <img src="{{ asset('uploads/packs/' ~ pack.event.photo) }}" class="pack-image" alt="{{ pack.event.nom }}">
+                                        {% else %}
+                                            <div class="pack-image d-flex align-items-center justify-content-center bg-light">
+                                                <i class="ti ti-photo text-muted" style="font-size: 3rem;"></i>
                                             </div>
-                                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createPackModal">
-                                                <i class="ti ti-plus me-1"></i> Create New Pack
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div class="card-body">
-                                        <!-- Gallery View -->
-                                        <div class="gallery-view">
-                                            {% for pack in packs %}
-                                            <div class="col-md-4 col-lg-3">
-                                                <div class="card pack-card">
-                                                    {% if pack.event.photo %}
-                                                        <img src="{{ asset('uploads/packs/' ~ pack.event.photo) }}" class="pack-image" alt="{{ pack.event.nom }}">
-                                                    {% else %}
-                                                        <div class="pack-image d-flex align-items-center justify-content-center bg-light">
-                                                            <i class="ti ti-photo text-muted" style="font-size: 3rem;"></i>
-                                                        </div>
-                                                    {% endif %}
-                                                    
-                                                    {% if pack.capacite < 5 %}
-                                                        <div class="pack-badge">
-                                                            <span class="badge bg-danger">Limited Spots!</span>
-                                                        </div>
-                                                    {% endif %}
-                                                    
-                                                    <div class="card-body">
-                                                        <h5 class="card-title">{{ pack.event.nom }}</h5>
-                                                        <p class="card-text text-truncate">{{ pack.description }}</p>
-                                                        <div class="d-flex justify-content-between align-items-center">
-                                                            <div class="pack-price">${{ pack.prix }}</div>
-                                                            <div class="pack-capacity">
-                                                                <i class="ti ti-users"></i> {{ pack.capacite }}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    
-                                                    <div class="pack-stats">
-                                                        <div class="row g-0 text-center">
-                                                            <div class="col">
-                                                                <div class="h6 mb-0">{{ pack.duree }}h</div>
-                                                                <small>Duration</small>
-                                                            </div>
-                                                            <div class="col">
-                                                                <div class="h6 mb-0">{{ pack.endDate ? pack.endDate|date('M d') : 'No End' }}</div>
-                                                                <small>End Date</small>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    
-                                                    <div class="quick-actions">
-                                                        <div class="btn-group shadow">
-                                                            <button type="button" class="btn btn-primary btn-sm" onclick="editPack({{ pack.id }})">
-                                                                <i class="ti ti-edit"></i>
-                                                            </button>
-                                                            <button type="button" class="btn btn-primary btn-sm" onclick="viewPackDetails({{ pack.id }})">
-                                                                <i class="ti ti-eye"></i>
-                                                            </button>
-                                                            <button type="button" class="btn btn-danger btn-sm" onclick="deletePack({{ pack.id }})">
-                                                                <i class="ti ti-trash"></i>
-                                                            </button>
-                                                        </div>
-                                                    </div>
+                                        {% endif %}
+                                        
+                                        {% if pack.capacite < 5 %}
+                                            <div class="pack-badge">
+                                                <span class="badge bg-danger">Places limitées !</span>
+                                            </div>
+                                        {% endif %}
+                                        
+                                        <div class="card-body">
+                                            <h5 class="card-title">{{ pack.event.nom }}</h5>
+                                            <p class="card-text text-truncate">{{ pack.description }}</p>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <div class="pack-price">{{ pack.prix }}€</div>
+                                                <div class="pack-capacity">
+                                                    <i class="ti ti-users"></i> {{ pack.capacite }}
                                                 </div>
                                             </div>
-                                            {% endfor %}
                                         </div>
                                         
-                                        <!-- Table View -->
-                                        <div class="table-view">
-                                            <table id="packsTable" class="table table-hover dt-responsive nowrap w-100">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Image</th>
-                                                        <th>Event</th>
-                                                        <th>Description</th>
-                                                        <th>Price</th>
-                                                        <th>Capacity</th>
-                                                        <th>Duration</th>
-                                                        <th>End Date</th>
-                                                        <th>Actions</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {% for pack in packs %}
-                                                    <tr>
-                                                        <td>
-                                                            {% if pack.event.photo %}
-                                                                <img src="{{ asset('uploads/packs/' ~ pack.event.photo) }}" class="rounded" width="40" height="40" style="object-fit: cover;" alt="{{ pack.event.nom }}">
-                                                            {% else %}
-                                                                <i class="ti ti-photo text-muted"></i>
-                                                            {% endif %}
-                                                        </td>
-                                                        <td>{{ pack.event.nom }}</td>
-                                                        <td>{{ pack.description }}</td>
-                                                        <td>${{ pack.prix }}</td>
-                                                        <td>
-                                                            <span class="badge bg-label-primary">{{ pack.capacite }} spots</span>
-                                                        </td>
-                                                        <td>{{ pack.duree }}h</td>
-                                                        <td>{{ pack.endDate ? pack.endDate|date('Y-m-d') : '' }}</td>
-                                                        <td>
-                                                            <div class="d-flex gap-2">
-                                                                <button type="button" class="btn btn-sm btn-icon btn-primary" 
-                                                                        onclick="editPack({{ pack.id }})"
-                                                                        data-bs-toggle="tooltip" 
-                                                                        data-bs-placement="top" 
-                                                                        title="Edit">
-                                                                    <i class="ti ti-edit"></i>
-                                                                </button>
-                                                                <button type="button" class="btn btn-sm btn-icon btn-danger"
-                                                                        onclick="deletePack({{ pack.id }})"
-                                                                        data-bs-toggle="tooltip"
-                                                                        data-bs-placement="top"
-                                                                        title="Delete">
-                                                                    <i class="ti ti-trash"></i>
-                                                                </button>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                    {% endfor %}
-                                                </tbody>
-                                            </table>
+                                        <div class="pack-stats">
+                                            <div class="row g-0 text-center">
+                                                <div class="col">
+                                                    <div class="h6 mb-0">{{ pack.duree }}h</div>
+                                                    <small>Durée</small>
+                                                </div>
+                                                <div class="col">
+                                                    <div class="h6 mb-0">{{ pack.endDate ? pack.endDate|date('d M') : 'Sans fin' }}</div>
+                                                    <small>Date de fin</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="quick-actions">
+                                            <div class="btn-group shadow">
+                                                <button type="button" class="btn btn-primary btn-sm" onclick="editPack({{ pack.id }})">
+                                                    <i class="ti ti-edit"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-primary btn-sm" onclick="viewPackDetails({{ pack.id }})">
+                                                    <i class="ti ti-eye"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-danger btn-sm" onclick="deletePack({{ pack.id }})">
+                                                    <i class="ti ti-trash"></i>
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
+                                {% endfor %}
+                            </div>
+                            
+                            <!-- Vue tableau -->
+                            <div class="table-view">
+                                <table id="packsTable" class="table table-hover dt-responsive nowrap w-100">
+                                    <thead>
+                                        <tr>
+                                            <th>Image</th>
+                                            <th>Événement</th>
+                                            <th>Description</th>
+                                            <th>Prix</th>
+                                            <th>Capacité</th>
+                                            <th>Durée</th>
+                                            <th>Date de fin</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for pack in packs %}
+                                        <tr>
+                                            <td>
+                                                {% if pack.event.photo %}
+                                                    <img src="{{ asset('uploads/packs/' ~ pack.event.photo) }}" class="rounded" width="40" height="40" style="object-fit: cover;" alt="{{ pack.event.nom }}">
+                                                {% else %}
+                                                    <i class="ti ti-photo text-muted"></i>
+                                                {% endif %}
+                                            </td>
+                                            <td>{{ pack.event.nom }}</td>
+                                            <td>{{ pack.description }}</td>
+                                            <td>{{ pack.prix }}€</td>
+                                            <td>
+                                                <span class="badge bg-label-primary">{{ pack.capacite }} places</span>
+                                            </td>
+                                            <td>{{ pack.duree }}h</td>
+                                            <td>{{ pack.endDate ? pack.endDate|date('d/m/Y') : '' }}</td>
+                                            <td>
+                                                <div class="d-flex gap-2">
+                                                    <button type="button" class="btn btn-sm btn-icon btn-primary" 
+                                                            onclick="editPack({{ pack.id }})"
+                                                            data-bs-toggle="tooltip" 
+                                                            data-bs-placement="top" 
+                                                            title="Modifier">
+                                                        <i class="ti ti-edit"></i>
+                                                    </button>
+                                                    <button type="button" class="btn btn-sm btn-icon btn-danger"
+                                                            onclick="deletePack({{ pack.id }})"
+                                                            data-bs-toggle="tooltip"
+                                                            data-bs-placement="top"
+                                                            title="Supprimer">
+                                                        <i class="ti ti-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
@@ -921,84 +918,79 @@
             </div>
         </div>
     </div>
+</div>
 
-    <!-- Create/Edit Pack Modal -->
-    <div class="modal fade" id="packModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalTitle">Create New Pack</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                {{ form_start(form, {
-                    'attr': {
-                        'id': 'packForm',
-                        'class': 'needs-validation',
-                        'novalidate': 'novalidate',
-                        'action': path('admin_pack_update', {'id': 'packId'}),
-                        'method': 'POST'
-                    }
-                }) }}
-                    <div class="modal-body">
-                        <input type="hidden" id="packId" name="id">
-                        <div class="mb-3">
-                            <label class="form-label" for="{{ form.event.vars.id }}">Event</label>
-                            {{ form_widget(form.event, {'attr': {'class': 'form-select', 'required': 'required'}}) }}
-                            <div class="invalid-feedback">Please select an event.</div>
-                            <div class="invalid-feedback">Veuillez sélectionner un événement.</div>
-                            {{ form_errors(form.event) }}
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label" for="{{ form.description.vars.id }}">Description</label>
-                            {{ form_widget(form.description, {'attr': {'class': 'form-control', 'required': 'required'}}) }}
-                            <div class="invalid-feedback">Please provide a description.</div>
-                            <div class="invalid-feedback">Veuillez fournir une description.</div>
-                            {{ form_errors(form.description) }}
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label" for="{{ form.prix.vars.id }}">Price</label>
-                                <div class="input-group">
-                                    <span class="input-group-text">$</span>
-                                    {{ form_widget(form.prix, {'attr': {'class': 'form-control', 'required': 'required', 'step': '0.01', 'min': '0'}}) }}
-                                </div>
-                                <div class="invalid-feedback">Please provide a valid price.</div>
-                                <div class="invalid-feedback">Veuillez fournir un prix valide.</div>
-                                {{ form_errors(form.prix) }}
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label" for="{{ form.capacite.vars.id }}">Capacity</label>
-                                {{ form_widget(form.capacite, {'attr': {'class': 'form-control', 'required': 'required', 'min': '1'}}) }}
-                                <div class="invalid-feedback">Please provide a valid capacity.</div>
-                                <div class="invalid-feedback">Veuillez fournir une capacité valide.</div>
-                                {{ form_errors(form.capacite) }}
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label" for="{{ form.duree.vars.id }}">Duration (hours)</label>
-                                {{ form_widget(form.duree, {'attr': {'class': 'form-control', 'required': 'required', 'min': '1'}}) }}
-                                <div class="invalid-feedback">Please provide a valid duration.</div>
-                                <div class="invalid-feedback">Veuillez fournir une durée valide.</div>
-                                {{ form_errors(form.duree) }}
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label" for="{{ form.endDate.vars.id }}">End Date</label>
-                                {{ form_widget(form.endDate, {'attr': {'class': 'form-control flatpickr'}}) }}
-                                <div class="invalid-feedback">Please provide a valid date.</div>
-                                <div class="invalid-feedback">Veuillez fournir une date valide.</div>
-                                {{ form_errors(form.endDate) }}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Save changes</button>
-                    </div>
-                {{ form_end(form) }}
+<!-- Modal Création/Modification de pack -->
+<div class="modal fade" id="packModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle">Créer un nouveau pack</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
             </div>
+            {{ form_start(form, {
+                'attr': {
+                    'id': 'packForm',
+                    'class': 'needs-validation',
+                    'novalidate': 'novalidate',
+                    'action': path('admin_pack_update', {'id': 'packId'}),
+                    'method': 'POST'
+                }
+            }) }}
+                <div class="modal-body">
+                    <input type="hidden" id="packId" name="id">
+                    <div class="mb-3">
+                        <label class="form-label" for="{{ form.event.vars.id }}">Événement</label>
+                        {{ form_widget(form.event, {'attr': {'class': 'form-select', 'required': 'required'}}) }}
+                        <div class="invalid-feedback">Veuillez sélectionner un événement.</div>
+                        {{ form_errors(form.event) }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="{{ form.description.vars.id }}">Description</label>
+                        {{ form_widget(form.description, {'attr': {'class': 'form-control', 'required': 'required'}}) }}
+                        <div class="invalid-feedback">Veuillez fournir une description.</div>
+                        {{ form_errors(form.description) }}
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label" for="{{ form.prix.vars.id }}">Prix</label>
+                            <div class="input-group">
+                                <span class="input-group-text">€</span>
+                                {{ form_widget(form.prix, {'attr': {'class': 'form-control', 'required': 'required', 'step': '0.01', 'min': '0'}}) }}
+                            </div>
+                            <div class="invalid-feedback">Veuillez fournir un prix valide.</div>
+                            {{ form_errors(form.prix) }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label" for="{{ form.capacite.vars.id }}">Capacité</label>
+                            {{ form_widget(form.capacite, {'attr': {'class': 'form-control', 'required': 'required', 'min': '1'}}) }}
+                            <div class="invalid-feedback">Veuillez fournir une capacité valide.</div>
+                            {{ form_errors(form.capacite) }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label" for="{{ form.duree.vars.id }}">Durée (heures)</label>
+                            {{ form_widget(form.duree, {'attr': {'class': 'form-control', 'required': 'required', 'min': '1'}}) }}
+                            <div class="invalid-feedback">Veuillez fournir une durée valide.</div>
+                            {{ form_errors(form.duree) }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label" for="{{ form.endDate.vars.id }}">Date de fin</label>
+                            {{ form_widget(form.endDate, {'attr': {'class': 'form-control flatpickr'}}) }}
+                            <div class="invalid-feedback">Veuillez fournir une date valide.</div>
+                            {{ form_errors(form.endDate) }}
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Fermer</button>
+                    <button type="submit" class="btn btn-primary">Enregistrer</button>
+                </div>
+            {{ form_end(form) }}
         </div>
     </div>
+</div>
 
     <!-- Core JS -->
     <script src="{{ asset('vendor/libs/jquery/jquery.js') }}"></script>
@@ -1158,7 +1150,7 @@
                 .then(data => {
                     if (data.success) {
                         const pack = data.pack;
-                        document.getElementById('modalTitle').textContent = 'Edit Pack';
+                        document.getElementById('modalTitle').textContent = 'Modifier le pack';
                         document.getElementById('packId').value = pack.id;
                         
                         // Get form elements using their names
@@ -1193,51 +1185,52 @@
                 });
         }
 
-        // Delete pack
-        function deletePack(id) {
-            Swal.fire({
-                title: 'Are you sure?',
-                text: "You won't be able to revert this!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Yes, delete it!',
-                customClass: {
-                    confirmButton: 'btn btn-primary me-3',
-                    cancelButton: 'btn btn-label-secondary'
-                },
-                buttonsStyling: false
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    fetch(`{{ path('admin_pack_delete', {'id': 'PACK_ID'}) }}`.replace('PACK_ID', id), {
-                        method: 'DELETE'
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Deleted!',
-                                text: data.message,
-                                showConfirmButton: false,
-                                timer: 1500
-                            }).then(() => {
-                                location.reload();
-                            });
-                        } else {
-                            throw new Error(data.message);
-                        }
-                    })
-                    .catch(error => {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error!',
-                            text: error.message,
-                            confirmButtonText: 'OK'
-                        });
+        // Supprimer un pack
+function deletePack(id) {
+    Swal.fire({
+        title: 'Êtes-vous sûr ?',
+        text: "Cette action est irréversible !",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Oui, supprimer !',
+        cancelButtonText: 'Annuler',
+        customClass: {
+            confirmButton: 'btn btn-danger me-3',
+            cancelButton: 'btn btn-label-secondary'
+        },
+        buttonsStyling: false
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch(`{{ path('admin_pack_delete', {'id': 'PACK_ID'}) }}`.replace('PACK_ID', id), {
+                method: 'DELETE'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Supprimé !',
+                        text: data.message,
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(() => {
+                        location.reload();
                     });
+                } else {
+                    throw new Error(data.message);
                 }
+            })
+            .catch(error => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erreur !',
+                    text: error.message,
+                    confirmButtonText: 'OK'
+                });
             });
         }
+    });
+}
         
         // View pack details function
         function viewPackDetails(id) {
