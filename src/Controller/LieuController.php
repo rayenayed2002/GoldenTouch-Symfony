@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Controller;
-
+use App\Entity\ReserverLieu;
 use App\Entity\Lieu;
 use App\Entity\Avis;
 use App\Form\LieuType; 
@@ -116,25 +116,29 @@ class LieuController extends AbstractController
         ]);
     }
 
-    #[Route('/lieu/search-autocomplete', name: 'app_lieu_search_autocomplete', methods: ['GET'])]
-    public function searchAutocomplete(Request $request): JsonResponse
-    {
-        $searchTerm = $request->query->get('term', '');
-        $lieux = $this->lieuRepository->searchByName($searchTerm);
+// Dans LieuController.php
+// Dans LieuController.php
+#[Route('/lieu/search-autocomplete', name: 'app_lieu_search_autocomplete', methods: ['GET'])]
+public function searchAutocomplete(Request $request): JsonResponse
+{
+    $searchTerm = $request->query->get('term', '');
+    $lieux = $this->lieuRepository->searchByName($searchTerm);
 
-        $results = [];
-        foreach ($lieux as $lieu) {
-            $results[] = [
-                'id' => $lieu->getId(),
-                'name' => $lieu->getName(),
-                'location' => $lieu->getLocation(),
-                'category' => $lieu->getCategory(),
-                'image' => $lieu->getImageUrl() ? 'uploads/lieux/' . $lieu->getImageUrl() : 'Front/img/placeholder.jpg'
-            ];
-        }
-
-        return new JsonResponse($results);
+    $results = [];
+    foreach ($lieux as $lieu) {
+        $results[] = [
+            'id' => $lieu->getId(),
+            'text' => $lieu->getName(), // Important pour la compatibilité
+            'name' => $lieu->getName(),
+            'location' => $lieu->getLocation(),
+            'category' => $lieu->getCategory(),
+            'image' => $lieu->getImageUrl() ? '/uploads/lieux/' . $lieu->getImageUrl() : '/Front/img/placeholder.jpg',
+            'url' => $this->generateUrl('app_lieu_details', ['id' => $lieu->getId()])
+        ];
     }
+
+    return $this->json($results); // Utilisez cette méthode au lieu de new JsonResponse
+}
 
     #[Route('/lieu', name: 'app_lieu_index')]
     public function indexLieu(Request $request): Response
@@ -210,28 +214,58 @@ class LieuController extends AbstractController
     }
 
     #[Route('/lieu/{id}', name: 'app_lieu_details')]
-    public function details(Lieu $lieu): Response
-    {
-        $similarLieux = $this->lieuRepository->findBy(
-            ['category' => $lieu->getCategory()], 
-            ['price' => 'ASC'], 
-            4
-        );
+public function details(Lieu $lieu, Request $request): Response
+{
+    $similarLieux = $this->lieuRepository->findBy(
+        ['category' => $lieu->getCategory()], 
+        ['price' => 'ASC'], 
+        4
+    );
 
-        $similarLieux = array_filter($similarLieux, fn($similar) => $similar->getId() !== $lieu->getId());
-        $similarLieux = array_slice($similarLieux, 0, 3);
+    $similarLieux = array_filter($similarLieux, fn($similar) => $similar->getId() !== $lieu->getId());
+    $similarLieux = array_slice($similarLieux, 0, 3);
 
-        $avis = $this->entityManager->getRepository(Avis::class)->findAvisWithUserInfo($lieu->getId());
+    $avis = $this->entityManager->getRepository(Avis::class)->findAvisWithUserInfo($lieu->getId());
 
-        return $this->render('lieu/details.html.twig', [
-            'lieu' => $lieu,
-            'similarLieux' => $similarLieux,
-            'popularLieux' => $this->lieuRepository->findPopularLieux(),
-            'avis' => $avis,
-            'qr_code_url' => $this->generateUrl('app_lieu_qr_code', ['id' => $lieu->getId()])
-        ]);
+    if ($request->isMethod('POST')) {
+        $reservation = new ReserverLieu();
+        
+        // Configurez la réservation selon votre entité existante
+        $reservation->setLieuId($lieu->getId());
+        $reservation->setEventId(1); // ID d'événement statique comme demandé
+        $reservation->setStatus('pending'); // Statut par défaut
+        
+        try {
+            $dateReservation = new \DateTime($request->request->get('date'));
+            $reservation->setDateReservation($dateReservation);
+            $reservation->setCreatedAt(new \DateTime());
+        } catch (\Exception $e) {
+            $this->addFlash('error', 'Format de date invalide');
+            return $this->redirectToRoute('app_lieu_details', ['id' => $lieu->getId()]);
+        }
+
+        // Validation du nombre de personnes (à stocker ailleurs si nécessaire)
+        $people = (int)$request->request->get('people');
+        if ($people < 1 || $people > $lieu->getCapacity()) {
+            $this->addFlash('error', 'Nombre de personnes invalide');
+            return $this->redirectToRoute('app_lieu_details', ['id' => $lieu->getId()]);
+        }
+
+        $this->entityManager->persist($reservation);
+        $this->entityManager->flush();
+
+        $this->addFlash('success', 'Réservation confirmée pour le ' . $dateReservation->format('d/m/Y'));
+        return $this->redirectToRoute('app_lieu_details', ['id' => $lieu->getId()]);
     }
 
+    return $this->render('lieu/details.html.twig', [
+        'lieu' => $lieu,
+        'similarLieux' => $similarLieux,
+        'popularLieux' => $this->lieuRepository->findPopularLieux(),
+        'avis' => $avis,
+        'qr_code_url' => $this->generateUrl('app_lieu_qr_code', ['id' => $lieu->getId()])
+    ]);
+}
     #[Route('/reservations', name: 'app_reservation_index')]
     public function reservations(): Response
     {

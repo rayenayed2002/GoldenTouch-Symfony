@@ -513,35 +513,36 @@
                 <!-- Right Column: Booking, QR Code and Similar Lieux -->
                 <div class="col-lg-4">
                     <!-- Booking Card -->
-                    <div class="booking-card mb-30" id="bookingSection">
-                        <h3 class="section-title">Réserver ce lieu</h3>
-                        <form id="bookingForm">
-                            <div class="mb-3">
-                                <label class="form-label">Date</label>
-                                <input type="date" class="form-control" required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Nombre de personnes</label>
-                                <input type="number" class="form-control" min="1" max="{{ lieu.capacity }}" required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Type d'événement</label>
-                                <select class="form-select">
-                                    <option>Mariage</option>
-                                    <option>Anniversaire</option>
-                                    <option>Conférence</option>
-                                    <option>Autre</option>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Notes spéciales</label>
-                                <textarea class="form-control" rows="3"></textarea>
-                            </div>
-                            <button type="submit" class="th-btn w-100">
-                                <i class="fas fa-calendar-plus me-2"></i> Réserver maintenant
-                            </button>
-                        </form>
-                    </div>
+<div class="booking-card mb-30" id="bookingSection">
+    <h3 class="section-title">Réserver ce lieu</h3>
+    <form id="bookingForm" method="POST" action="{{ path('app_lieu_details', {'id': lieu.id}) }}">
+        <input type="hidden" name="lieu_id" value="{{ lieu.id }}">
+        <div class="mb-3">
+            <label class="form-label">Date</label>
+            <input type="date" class="form-control" name="date" required min="{{ 'now'|date('Y-m-d') }}">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Nombre de personnes</label>
+            <input type="number" class="form-control" name="people" min="1" max="{{ lieu.capacity }}" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Type d'événement</label>
+            <select class="form-select" name="event_type" required>
+                <option value="Mariage">Mariage</option>
+                <option value="Anniversaire">Anniversaire</option>
+                <option value="Conférence">Conférence</option>
+                <option value="Autre">Autre</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Notes spéciales</label>
+            <textarea class="form-control" name="notes" rows="3"></textarea>
+        </div>
+        <button type="submit" class="th-btn w-100">
+            <i class="fas fa-calendar-plus me-2"></i> Réserver maintenant
+        </button>
+    </form>
+</div>
 
                     <!-- QR Code Card -->
                     <div class="card mb-30">
@@ -791,11 +792,33 @@
             }
         }
 
-        // Handle booking form submission
-        document.getElementById('bookingForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            alert('Votre demande de réservation a été envoyée avec succès !');
-        });
+       // Handle booking form submission
+document.getElementById('bookingForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    // Validate form
+    const dateInput = this.querySelector('input[name="date"]');
+    const peopleInput = this.querySelector('input[name="people"]');
+    const eventTypeInput = this.querySelector('select[name="event_type"]');
+    
+    if (!dateInput.value) {
+        alert('Veuillez sélectionner une date');
+        return;
+    }
+    
+    if (!peopleInput.value || peopleInput.value < 1 || peopleInput.value > {{ lieu.capacity }}) {
+        alert('Veuillez entrer un nombre valide de personnes (1-{{ lieu.capacity }})');
+        return;
+    }
+    
+    if (!eventTypeInput.value) {
+        alert('Veuillez sélectionner un type d\'événement');
+        return;
+    }
+    
+    // Submit form if validation passes
+    this.submit();
+});
 
         // Rating stars interaction
         document.querySelectorAll('.rating-star').forEach(star => {
