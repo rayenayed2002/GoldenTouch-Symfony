@@ -415,8 +415,8 @@ body {
                             <li class="menu-item-has-children">
                                 <a href="#">Materielles</a>
                                 <ul class="sub-menu">
-                                    <li><a href="#">Ajout Materielles</a></li>
-                                    <li><a href="#">Liste Materielles</a></li>
+                                   <li><a href="{{ path('app_mes_reservations') }}">Mes Reséservations</a></li>
+                                    <li><a href="{{ path('app_materiels_index') }}">Liste Materielles</a></li> 
                                 </ul>
                             </li>
                             <li class="menu-item-has-children">
@@ -485,128 +485,124 @@ body {
 <section class="space-top space-extra-bottom">
     <div class="container">
         <div class="row flex-row-reverse">
-            <!-- 🟦 MAIN CONTENT (MATERIELS) -->
+            <!-- 🟨 MAIN CONTENT (MATERIELS) -->
             <div class="col-xl-9 col-lg-8">
-                <div class="th-sort-bar">
+                <div class="th-sort-bar mb-4">
                     <div class="row justify-content-between align-items-center">
-                        
                         <div class="col-md-auto">
                             <form class="woocommerce-ordering" method="get">
-                                <select name="orderby" class="orderby" aria-label="Shop order">
-                                    <option value="menu_order" selected>Default Sorting</option>
-                                    <option value="price_asc">Sort by price: low to high</option>
-                                    <option value="price_desc">Sort by price: high to low</option>
-                                    <option value="name">Sort by name</option>
-                                    <option value="quantity">Sort by quantity</option>
+                                <select name="orderby" class="orderby form-select bg-warning text-dark" aria-label="Shop order">
+                                    <option value="menu_order" selected>Trier par défaut</option>
+                                    <option value="price_asc">Prix croissant</option>
+                                    <option value="price_desc">Prix décroissant</option>
+                                    <option value="name">Nom</option>
+                                    <option value="quantity">Quantité</option>
                                 </select>
                             </form>
                         </div>
                     </div>
                 </div>
 
-    <div class="row gy-4">
-    {% for reservation in reservations %}
-    <div class="col-md-6 col-lg-4">
-        <div class="card h-100">
-            <!-- Image du matériel -->
-            {% if reservation.materielle.photoMat %}
-            <img src="{{ asset('uploads/materiels/' ~ reservation.materielle.photoMat) }}" 
-                 class="card-img-top" 
-                 alt="{{ reservation.materielle.nomMat }}"
-                 style="height: 200px; object-fit: cover;">
-            {% else %}
-            <img src="{{ asset('path/to/default/image.jpg') }}" 
-                 class="card-img-top" 
-                 alt="Image par défaut"
-                 style="height: 200px; object-fit: cover;">
-            {% endif %}
-            
-            <div class="card-body">
-                <h5 class="card-title">{{ reservation.materielle.nomMat }}</h5>
-                <h6 class="card-subtitle mb-2 text-muted">
-                    Pour l'événement: {{ reservation.event.nom }}
-                </h6>
-                
-                <!-- Détails du matériel -->
-                <div class="card-text mb-3">
-                    <div class="d-flex justify-content-between mb-2">
-                        <span class="text-muted">Quantité réservée:</span>
-                        <span>{{ reservation.quantite }}</span>
+                <div class="row gy-4">
+                    {% for reservation in reservations %}
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card h-100 border border-warning shadow-sm rounded-3">
+                            <!-- Image du matériel -->
+                            {% if reservation.materielle.photoMat %}
+                                <img src="{{ asset('uploads/materiels/' ~ reservation.materielle.photoMat) }}" 
+                                     class="card-img-top rounded-top-3" 
+                                     alt="{{ reservation.materielle.nomMat }}"
+                                     style="height: 200px; object-fit: cover;">
+                            {% else %}
+                                <img src="{{ asset('path/to/default/image.jpg') }}" 
+                                     class="card-img-top rounded-top-3" 
+                                     alt="Image par défaut"
+                                     style="height: 200px; object-fit: cover;">
+                            {% endif %}
+
+                            <div class="card-body">
+                                <h5 class="card-title text-warning">{{ reservation.materielle.nomMat }}</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">
+                                    Pour l'événement: {{ reservation.event.nom }}
+                                </h6>
+
+                                <div class="card-text mb-3">
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span class="text-muted">Quantité réservée:</span>
+                                        <span class="fw-bold text-warning">{{ reservation.quantite }}</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span class="text-muted">Prix unitaire:</span>
+                                        <span class="fw-bold text-warning">{{ reservation.materielle.prixMat }} €</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <span class="text-muted">Total:</span>
+                                        <span class="fw-bold text-dark">{{ reservation.quantite * reservation.materielle.prixMat }} €</span>
+                                    </div>
+                                </div>
+
+                                <a href="{{ path('app_reservation_show', {'id': reservation.idReserv}) }}" 
+                                   class="btn btn-warning w-100">
+                                    Voir le matériel
+                                </a>
+                            </div>
+                        </div>
                     </div>
-                    
-                    <div class="d-flex justify-content-between mb-2">
-                        <span class="text-muted">Prix unitaire:</span>
-                        <span>{{ reservation.materielle.prixMat }} €</span>
-                    </div>
-                    
-                    <div class="d-flex justify-content-between">
-                        <span class="text-muted">Total:</span>
-                        <span class="fw-bold">{{ reservation.quantite * reservation.materielle.prixMat }} €</span>
-                    </div>
+                    {% endfor %}
                 </div>
-                
-                <a href="{{ path('app_reservation_show', {'id': reservation.idReserv}) }}" 
-                   class="btn btn-sm btn-outline-primary w-100">
-                    Voir le matériel
-                </a>
-            </div>
-        </div>
-    </div>
-    {% endfor %}
-</div>
 
                 <div class="th-pagination text-center pt-50">
-                    <ul>
-                        <li><a href="blog.html">1</a></li>
-                        <li><a href="blog.html">2</a></li>
-                        <li><a href="blog.html">3</a></li>
-                        <li><a href="blog.html"><i class="far fa-arrow-right"></i></a></li>
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item"><a class="page-link text-warning" href="blog.html">1</a></li>
+                        <li class="page-item"><a class="page-link text-warning" href="blog.html">2</a></li>
+                        <li class="page-item"><a class="page-link text-warning" href="blog.html">3</a></li>
+                        <li class="page-item"><a class="page-link text-warning" href="blog.html"><i class="far fa-arrow-right"></i></a></li>
                     </ul>
                 </div>
             </div>
 
             <!-- 🟨 SIDEBAR -->
             <div class="col-xl-3 col-lg-4">
-                <aside class="sidebar-area sidebar-shop">
-                    <div class="widget widget_search">
-                        <form class="search-form">
-                            <input type="text" placeholder="Search...">
-                            <button type="submit"><i class="far fa-search"></i></button>
+                <aside class="sidebar-area sidebar-shop border border-warning rounded-3 p-3 shadow-sm">
+                    <div class="widget widget_search mb-4">
+                        <form class="search-form d-flex">
+                            <input type="text" class="form-control border-warning" placeholder="Search...">
+                            <button type="submit" class="btn btn-warning ms-2"><i class="far fa-search"></i></button>
                         </form>
                     </div>
 
-                    <div class="widget widget_categories">
-                        <h3 class="widget_title">Categories</h3>
-                        <ul>
-                            <li><a href="blog.html">Electronics</a> <span>(8)</span></li>
-                            <li><a href="blog.html">Tools</a> <span>(6)</span></li>
-                            <li><a href="blog.html">Furniture</a> <span>(5)</span></li>
-                            <li><a href="blog.html">Vehicles</a> <span>(2)</span></li>
-                            <li><a href="blog.html">Office Equipment</a> <span>(7)</span></li>
-                            <li><a href="blog.html">Other</a> <span>(9)</span></li>
+                    <div class="widget widget_categories mb-4">
+                        <h3 class="widget_title text-warning">Categories</h3>
+                        <ul class="list-unstyled">
+                            <li><a class="text-dark" href="blog.html">Electronics</a> <span class="text-warning">(8)</span></li>
+                            <li><a class="text-dark" href="blog.html">Tools</a> <span class="text-warning">(6)</span></li>
+                            <li><a class="text-dark" href="blog.html">Furniture</a> <span class="text-warning">(5)</span></li>
+                            <li><a class="text-dark" href="blog.html">Vehicles</a> <span class="text-warning">(2)</span></li>
+                            <li><a class="text-dark" href="blog.html">Office Equipment</a> <span class="text-warning">(7)</span></li>
+                            <li><a class="text-dark" href="blog.html">Other</a> <span class="text-warning">(9)</span></li>
                         </ul>
                     </div>
 
-                    <div class="widget widget_price_filter">
-                        <h4 class="widget_title">Filter By Price</h4>
+                    <div class="widget widget_price_filter mb-4">
+                        <h4 class="widget_title text-warning">Filter By Price</h4>
                         <div class="price_slider_wrapper">
                             <div class="price_label">
-                                Price: <span class="from">$0</span> — <span class="to">$500</span>
+                                Price: <span class="from text-warning">$0</span> — <span class="to text-warning">$500</span>
                             </div>
                             <div class="price_slider"></div>
-                            <button type="submit" class="button">Filter</button>
+                            <button type="submit" class="btn btn-warning mt-2 w-100">Filter</button>
                         </div>
                     </div>
 
                     <div class="widget widget_tag_cloud">
-                        <h3 class="widget_title">Popular Tags</h3>
+                        <h3 class="widget_title text-warning">Popular Tags</h3>
                         <div class="tagcloud">
-                            <a href="blog.html">New</a>
-                            <a href="blog.html">Used</a>
-                            <a href="blog.html">High Quality</a>
-                            <a href="blog.html">Equipment</a>
-                            <a href="blog.html">Rental</a>
-                            <a href="blog.html">Tools</a>
+                            <a href="blog.html" class="badge bg-warning text-dark me-1 mb-1">New</a>
+                            <a href="blog.html" class="badge bg-warning text-dark me-1 mb-1">Used</a>
+                            <a href="blog.html" class="badge bg-warning text-dark me-1 mb-1">High Quality</a>
+                            <a href="blog.html" class="badge bg-warning text-dark me-1 mb-1">Equipment</a>
+                            <a href="blog.html" class="badge bg-warning text-dark me-1 mb-1">Rental</a>
+                            <a href="blog.html" class="badge bg-warning text-dark me-1 mb-1">Tools</a>
                         </div>
                     </div>
                 </aside>
@@ -614,6 +610,7 @@ body {
         </div>
     </div>
 </section>
+
 
 
 

@@ -415,8 +415,8 @@ body {
                             <li class="menu-item-has-children">
                                 <a href="#">Materielles</a>
                                 <ul class="sub-menu">
-                                    <li><a href="#">Ajout Materielles</a></li>
-                                    <li><a href="#">Liste Materielles</a></li>
+                                    <li><a href="{{ path('app_mes_reservations') }}">Mes Reséservations</a></li>
+                                    <li><a href="{{ path('app_materiels_index') }}">Liste Materielles</a></li> 
                                 </ul>
                             </li>
                             <li class="menu-item-has-children">
@@ -462,44 +462,56 @@ body {
 
 
 
-
 <div class="container mt-5">
     <div class="row">
         <div class="col-md-8 mx-auto">
-            <div class="card shadow">
-                <div class="card-header bg-primary text-white">
+            <div class="card shadow rounded-4 border-0">
+                <div class="card-header bg-warning text-white rounded-top-4">
                     <h3 class="mb-0">Modifier la Réservation</h3>
                 </div>
 
-                <div class="card-body">
-                    <form method="post">
-                        <div class="mb-3">
-                            <label for="quantite" class="form-label">Quantité</label>
-                            <input type="number" id="quantite" name="quantite" class="form-control"
-                                   value="{{ reservation.quantite }}" min="1" required>
-                        </div>
+                <div class="card-body bg-light rounded-bottom-4">
+                   <form method="post">
+    <div class="mb-3">
+        <label for="quantite" class="form-label fw-semibold text-warning">Quantité</label>
+        <input type="number" id="quantite" name="quantite" class="form-control border-warning"
+               value="{{ reservation.quantite }}" min="1" required>
+    </div>
 
-                        <div class="d-flex justify-content-between">
-                            <a href="{{ path('app_reservation_show', {'id': reservation.idReserv}) }}"
-                               class="btn btn-secondary">
-                                Annuler
-                            </a>
-                            <button type="submit" class="btn btn-success">
-                                Enregistrer les modifications
-                            </button>
-                        </div>
-                    </form>
+    <div class="mb-3">
+        <label for="event" class="form-label fw-semibold text-warning">Événement</label>
+        <select id="event" name="id_event" class="form-select border-warning" required>
+            {% for event in events %}
+                <option value="{{ event.id }}" {% if event.id == reservation.event.id %}selected{% endif %}>
+                    {{ event.nom }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="d-flex justify-content-between">
+        <a href="{{ path('app_reservation_show', {'id': reservation.idReserv}) }}"
+           class="btn btn-outline-secondary rounded-pill px-4">
+            Annuler
+        </a>
+        <button type="submit" class="btn btn-warning rounded-pill px-4 text-white fw-semibold">
+            Enregistrer les modifications
+        </button>
+    </div>
+</form>
+
                 </div>
             </div>
 
-            <div class="mt-3">
-                <a href="{{ path('app_reservations') }}" class="btn btn-outline-primary">
+            <div class="mt-3 text-center">
+                <a href="{{ path('app_mes_reservations') }}" class="btn btn-warning rounded-pill px-4 text-white">
                     Retour à la liste des réservations
                 </a>
             </div>
         </div>
     </div>
 </div>
+
 
 
 

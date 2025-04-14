@@ -465,23 +465,38 @@ body {
 
 <div class="content-wrapper">
     <div class="container-xxl flex-grow-1 container-p-y" style="margin-bottom: 100px;">
+        {# Affichage des messages flash #}
+        {% for message in app.flashes('error') %}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong>Erreur :</strong> {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+        
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <strong>Succès :</strong> {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+
         <div class="container mt-3">
-            <div class="card shadow-lg">
-                <div class="card-body p-4">
+            <div class="card shadow-lg rounded-4 border-0">
+                <div class="card-body p-4 bg-light rounded-4">
                     <div class="row g-4">
                         <!-- Colonne Image -->
                         <div class="col-md-5">
                             <div class="position-relative">
                                 <img src="{{ asset('uploads/materiels/' ~ materiel.photoMat|default('default.jpg')) }}" 
                                      alt="{{ materiel.nomMat }}" 
-                                     class="img-fluid rounded-3 w-100" 
+                                     class="img-fluid rounded-3 w-100 border border-warning"
                                      style="height: 300px; object-fit: cover;">
-                                <span class="position-absolute top-0 start-0 bg-primary text-white px-3 py-1 rounded-end">
+                                <span class="position-absolute top-0 start-0 bg-warning text-white px-3 py-1 rounded-end">
                                     {{ materiel.quantiteMat }} unités disponibles
                                 </span>
                             </div>
                             <div class="mb-4">
-                                <a href="{{ path('app_materielss') }}" class="btn btn-outline-secondary">
+                                <a href="{{ path('app_materiels_index') }}" class="btn btn-outline-warning rounded-pill px-4">
                                     <i class="fas fa-arrow-left me-2"></i>Retour à la liste
                                 </a>
                             </div>
@@ -489,34 +504,48 @@ body {
                         
                         <!-- Colonne Détails -->
                         <div class="col-md-7">
-                            <h2 class="fw-bold mb-3">{{ materiel.nomMat }}</h2>
+                            <h2 class="fw-bold mb-3 text-warning">{{ materiel.nomMat }}</h2>
                             
                             <div class="mb-4">
-                                <h5 class="text-primary">Description</h5>
+                                <h5 class="text-warning">Description</h5>
                                 <p class="text-muted">{{ materiel.descriptionMat|default('Aucune description disponible') }}</p>
                             </div>
+                            
+                            {# Vérification si l'utilisateur a déjà réservé ce matériel #}
+                            {% set alreadyReserved = false %}
+                            {% if app.user %}
+                                {% for reservation in app.user.reservMats %}
+                                    {% if reservation.materielle.id == materiel.idMat %}
+                                        {% set alreadyReserved = true %}
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
                             
                             <!-- Formulaire de réservation -->
                             <form action="{{ path('app_reserv_mat_new') }}" method="post" id="reservationForm">
                                 <input type="hidden" name="id_mat" value="{{ materiel.idMat }}">
                                 
-                                <!-- Champ de quantité ajouté ici -->
                                 <div class="mb-3">
-                                    <label for="quantite" class="form-label">Quantité</label>
+                                    <label for="quantite" class="form-label text-warning fw-semibold">Quantité</label>
                                     <input type="number" 
                                            id="quantite" 
                                            name="quantite" 
-                                           class="form-control" 
+                                           class="form-control border-warning {{ alreadyReserved ? 'bg-light' : '' }}"
                                            min="1" 
                                            max="{{ materiel.quantiteMat }}"
                                            value="1"
-                                           required>
-                                    <small class="text-muted">Maximum disponible: {{ materiel.quantiteMat }}</small>
+                                           required
+                                           {{ alreadyReserved ? 'readonly' : '' }}>
+                                    <small class="text-muted">Maximum disponible : {{ materiel.quantiteMat }}</small>
                                 </div>
                                 
                                 <div class="mb-3">
-                                    <label for="evenement" class="form-label">Choisir un événement :</label>
-                                    <select id="evenement" name="id_event" class="form-select" required>
+                                    <label for="evenement" class="form-label text-warning fw-semibold">Choisir un événement :</label>
+                                    <select id="evenement" 
+                                            name="id_event" 
+                                            class="form-select border-warning {{ alreadyReserved ? 'bg-light' : '' }}" 
+                                            required
+                                            {{ alreadyReserved ? 'disabled' : '' }}>
                                         <option value="">Sélectionnez un événement</option>
                                         {% for event in events %}
                                             <option value="{{ event.id }}">{{ event.nom }}</option>
@@ -526,27 +555,40 @@ body {
                                 
                                 <div class="d-flex justify-content-between align-items-center mb-4">
                                     <div>
-                                        <h5 class="text-primary">Prix total</h5>
+                                        <h5 class="text-warning">Prix total</h5>
                                         <h4 class="fw-bold text-success" id="prixTotal">
                                             {{ materiel.prixMat|number_format(2, '.', ',') }} TND
                                         </h4>
                                     </div>
                                     
-                                    <button type="submit" class="btn btn-primary btn-lg px-4 py-2" id="reserverBtn">
-                                        <i class="fas fa-calendar-check me-2"></i>Réserver
-                                    </button>
+                                    {% if alreadyReserved %}
+                                        <button type="button" class="btn btn-secondary btn-lg px-4 py-2 text-white fw-semibold" disabled>
+                                            <i class="fas fa-check-circle me-2"></i>Déjà réservé
+                                        </button>
+                                    {% else %}
+                                        <button type="submit" class="btn btn-warning btn-lg px-4 py-2 text-white fw-semibold" id="reserverBtn">
+                                            <i class="fas fa-calendar-check me-2"></i>Réserver
+                                        </button>
+                                    {% endif %}
                                 </div>
                             </form>
+                            
+                            <!-- Message si déjà réservé -->
+                            {% if alreadyReserved %}
+                                <div class="alert alert-warning mt-3">
+                                    <i class="fas fa-exclamation-circle me-2"></i>
+                                    Vous avez déjà réservé ce matériel. Consultez vos <a href="{{ path('app_mes_reservations') }}" class="alert-link">réservations</a>.
+                                </div>
+                            {% endif %}
                             
                             <!-- Informations supplémentaires -->
                             <div class="border-top pt-3">
                                 <div class="row">
                                     <div class="col-6">
-                                        <p class="mb-1"><i class="fas fa-box-open text-muted me-2"></i> Stock: {{ materiel.quantiteMat }}</p>
+                                        <p class="mb-1"><i class="fas fa-box-open text-muted me-2"></i> Stock : {{ materiel.quantiteMat }}</p>
+                                        <p class="mb-1"><i class="fas fa-money-bill-wave text-muted me-2"></i> Prix unitaire : {{ materiel.prixMat|number_format(2, '.', ',') }} TND</p>
                                     </div>
-                                    <div class="col-6">
-                                        <p class="mb-1"><i class="fas fa-barcode text-muted me-2"></i> Réf: MAT-{{ materiel.idMat }}</p>
-                                    </div>
+                                 
                                 </div>
                             </div>
                         </div>
@@ -556,8 +598,6 @@ body {
         </div>
     </div>
 </div>
-
-
 
 
 

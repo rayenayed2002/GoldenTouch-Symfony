@@ -50,18 +50,27 @@ final class MaterielsController extends AbstractController
         $form->handleRequest($request);
     
         if ($form->isSubmitted() && $form->isValid()) {
-            // Récupérer le fichier uploadé
+    
+            // Vérification si nom_mat existe déjà
+            $existingMateriel = $entityManager->getRepository(Materielle::class)
+                ->findOneBy(['nom_mat' => $materiel->getNom_mat()]);
+    
+            if ($existingMateriel) {
+                $this->addFlash('error', 'Un matériel avec ce nom existe déjà.');
+                return $this->redirectToRoute('app_materiels_new');
+            }
+    
+            // Récupération de la photo
             $photoFile = $form->get('photo_mat')->getData();
-            
             if ($photoFile) {
                 if (!$photoFile instanceof \Symfony\Component\HttpFoundation\File\UploadedFile) {
                     throw new \Exception('Le fichier uploadé est invalide.');
                 }
-            
+    
                 $originalFilename = pathinfo($photoFile->getClientOriginalName(), PATHINFO_FILENAME);
                 $safeFilename = $slugger->slug($originalFilename);
                 $newFilename = $safeFilename . '-' . uniqid() . '.' . $photoFile->guessExtension();
-            
+    
                 try {
                     $photoFile->move(
                         $this->getParameter('materiel_directory'),
@@ -70,19 +79,19 @@ final class MaterielsController extends AbstractController
                 } catch (FileException $e) {
                     throw new \Exception('Erreur lors de l\'upload du fichier.');
                 }
-            
+    
                 $materiel->setPhotoMat($newFilename);
-            
-                // ⚡️ Appel à Gemini après l'upload
+    
+                // Appel à Gemini après upload
                 $imagePath = $this->getParameter('materiel_directory') . '/' . $newFilename;
                 $description = $this->generateDescriptionFromImageWithGemini($imagePath);
                 $materiel->setDescriptionMat($description);
             }
-            
     
             $entityManager->persist($materiel);
             $entityManager->flush();
     
+            $this->addFlash('success', 'Matériel ajouté avec succès.');
             return $this->redirectToRoute('app_materielss');
         }
     
@@ -90,6 +99,8 @@ final class MaterielsController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
+    
+    
    
 #[Route('/materiels/{id}/delete', name: 'app_materiels_delete', methods: ['POST'])]
 public function delete(Request $request, Materielle $materiel, EntityManagerInterface $entityManager): Response
@@ -263,9 +274,26 @@ public function showDetails(Materielle $materielle,EventRepository $eventReposit
 }
 private function generateDescriptionFromImageWithGemini(string $imagePath): string
 {
-    $apiKey = 'AIzaSyCTc8nu8Q1JpPHo6FCZBrWZz0Xmmy_rLBs';
-    $imageData = base64_encode(file_get_contents($imagePath));
+    // 1. Verify image exists and is readable
+    if (!file_exists($imagePath)) {
+        throw new \RuntimeException("Image file not found at path: $imagePath");
+    }
 
+    // 2. Get API key with proper error handling
+    $apiKey = $this->getParameter('gemini_api_key');
+    if (empty($apiKey)) {
+        throw new \RuntimeException('Gemini API key not configured');
+    }
+
+    // 3. Prepare image data
+    try {
+        $imageData = base64_encode(file_get_contents($imagePath));
+        $mimeType = mime_content_type($imagePath) ?: 'image/jpeg'; // fallback
+    } catch (\Exception $e) {
+        throw new \RuntimeException("Failed to process image: ".$e->getMessage());
+    }
+
+    // 4. Build request payload
     $body = [
         "contents" => [
             [
@@ -273,7 +301,7 @@ private function generateDescriptionFromImageWithGemini(string $imagePath): stri
                     ["text" => "Analyse cette image et génère une description simple en français."],
                     [
                         "inline_data" => [
-                            "mime_type" => "image/jpeg",
+                            "mime_type" => $mimeType,
                             "data" => $imageData
                         ]
                     ]
@@ -282,23 +310,41 @@ private function generateDescriptionFromImageWithGemini(string $imagePath): stri
         ]
     ];
 
-    $client = HttpClient::create(); // Création directe du client
+    // 5. Make API request with improved error handling
+    $client = HttpClient::create();
     
     try {
         $response = $client->request(
             'POST',
             'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro-vision:generateContent?key='.$apiKey,
-            ['json' => $body]
+            [
+                'json' => $body,
+                'headers' => [
+                    'Content-Type' => 'application/json'
+                ],
+                'timeout' => 30 // Increase timeout if needed
+            ]
         );
 
         $data = $response->toArray();
-        return $data['candidates'][0]['content']['parts'][0]['text'] ?? 'Description non disponible.';
+        
+        // 6. Better response parsing
+        if (!isset($data['candidates'][0]['content']['parts'][0]['text'])) {
+            throw new \RuntimeException('Unexpected API response format');
+        }
+        
+        return $data['candidates'][0]['content']['parts'][0]['text'];
+        
     } catch (\Exception $e) {
-        return 'Erreur lors de la génération de la description : '.$e->getMessage();
+        // Log full error details
+        error_log("Gemini API Error: ".$e->getMessage());
+        if ($e instanceof \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface) {
+            error_log("Network error occurred");
+        }
+        
+        return 'Erreur technique: '.$e->getMessage(); // Return more detailed error
     }
 }
-
-
 
 
 }
