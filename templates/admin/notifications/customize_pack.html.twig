@@ -317,98 +317,115 @@
                             </div>
                         </div>
 
-                        <!-- Materielle Section -->
-                        <div class="card mb-4 glass-panel" data-aos="fade-up" data-aos-delay="400">
-                            <div class="card-header d-flex justify-content-between align-items-center">
-                                <h5 class="card-title mb-0"><i class="ti ti-box"></i> Matériels</h5>
-                                <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="collapse" data-bs-target="#materielsCollapse" aria-expanded="true">
-                                    <i class="ti ti-chevron-down"></i>
+                     <!-- Materielle Section -->
+<div class="card mb-4 glass-panel" data-aos="fade-up" data-aos-delay="400">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0"><i class="ti ti-box"></i> Matériels</h5>
+        <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="collapse" data-bs-target="#materielsCollapse" aria-expanded="true">
+            <i class="ti ti-chevron-down"></i>
+        </button>
+    </div>
+    <div class="card-body collapse show" id="materielsCollapse">
+        <div class="row">
+            {% for materiel in materielles %}
+                <div class="col-md-4 mb-3">
+                    <div class="card h-100">
+                        <img src="{% if materiel.photo_mat starts with '/uploads/' %}{{ materiel.photo_mat }}{% else %}{{ asset('uploads/packs/' ~ materiel.photo_mat|replace({'/Images/': ''}) ) }}{% endif %}" class="card-img-top" alt="{{ materiel.nom_mat }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ materiel.nom_mat }}</h5>
+                            <p class="card-text">
+                                <strong>Description:</strong> {{ materiel.description_mat }}<br>
+                                <strong>Quantité disponible:</strong> {{ materiel.quantite_mat }}<br>
+                                <strong>Prix:</strong> {{ materiel.prix_mat }}€<br>
+                                <strong>Catégorie:</strong> {{ materiel.categorie_mat }}
+                            </p>
+                            <div class="input-group mb-3">
+                                <input type="number" class="form-control quantity-input" 
+                                       min="1" max="{{ materiel.quantite_mat }}" 
+                                       value="1" data-id="{{ materiel.id_mat }}">
+                                <button class="btn btn-primary select-materiel" 
+                                        data-id="{{ materiel.id_mat }}"
+                                        data-name="{{ materiel.nom_mat }}"
+                                        data-price="{{ materiel.prix_mat }}"
+                                        data-available="{{ materiel.quantite_mat }}">
+                                    <i class="ti ti-plus"></i> Ajouter
                                 </button>
                             </div>
-                            <div class="card-body collapse show" id="materielsCollapse">
-                                <div class="row mb-3">
-                                    <div class="col-md-6">
-                                        <select class="form-select select2" id="materielSelect">
-                                            <option value="">Sélectionnez un matériel</option>
-                                            {% for materiel in materielles %}
-                                                <option value="{{ materiel.id_mat }}" 
-                                                        data-name="{{ materiel.nom_mat }}" 
-                                                        data-price="{{ materiel.prix_mat }}"
-                                                        data-available="{{ materiel.quantite_mat }}">
-                                                    {{ materiel.nom_mat }} ({{ materiel.quantite_mat }} disponible)
-                                                </option>
-                                            {% endfor %}
-                                        </select>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <input type="number" class="form-control" id="materielQuantity" min="1" max="100" value="1" placeholder="Quantité">
-                                    </div>
-                                    <div class="col-md-3">
-                                        <button class="btn btn-primary w-100" type="button" id="addMaterielBtn">
-                                            <i class="ti ti-plus"></i> Ajouter
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="selected-materiels mt-4">
-                                    <h6>Matériels Sélectionnés</h6>
-                                    <div class="table-responsive">
-                                        <table class="table table-hover" id="selectedMaterielsTable">
-                                            <thead>
-                                                <tr>
-                                                    <th>Matériel</th>
-                                                    <th>Quantité</th>
-                                                    <th>Prix</th>
-                                                    <th>Total</th>
-                                                    <th>Actions</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody></tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                               
-                            </div>
                         </div>
-
-                        <!-- Locations Section -->
-                        <div class="card mb-4 glass-panel" data-aos="fade-up" data-aos-delay="500">
-                            <div class="card-header d-flex justify-content-between align-items-center">
-                                <h5 class="card-title mb-0"><i class="ti ti-map-pin"></i> Emplacements</h5>
-                                <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="collapse" data-bs-target="#locationsCollapse" aria-expanded="true">
-                                    <i class="ti ti-chevron-down"></i>
-                                </button>
-                            </div>
-                            <div class="card-body collapse show" id="locationsCollapse">
-                                <div class="row mb-3">
-                                    <div class="col-md-9">
-                                        <select class="form-select select2" id="locationSelect">
-                                            <option value="">Sélectionnez un emplacement</option>
-                                            {% for location in locations %}
-                                                <option value="{{ location.id }}" 
-                                                        data-name="{{ location.name }}" 
-                                                        data-price="{{ location.price }}">
-                                                    {{ location.name }} (Capacity: {{ location.capacity }})
-                                                </option>
-                                            {% endfor %}
-                                        </select>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <button class="btn btn-primary w-100" type="button" id="addLocationBtn">
-                                            <i class="ti ti-plus"></i> Ajouter
-                                        </button>
-                                    </div>
-                                </div>
-                              
-                            </div>
-                            <div class="selected-location mt-4">
-                                    <h6>Emplacement Sélectionné</h6>
-                                    <div id="selectedLocation" class="p-3 border rounded">
-                                        Aucun emplacement sélectionné
-                                    </div>
-                                </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="selected-materiels mt-4">
+            <h6>Matériels Sélectionnés</h6>
+            <div class="table-responsive">
+                <table class="table table-hover" id="selectedMaterielsTable">
+                    <thead>
+                        <tr>
+                            <th>Matériel</th>
+                            <th>Quantité</th>
+                            <th>Prix</th>
+                            <th>Total</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Locations Section -->
+<div class="card mb-4 glass-panel" data-aos="fade-up" data-aos-delay="500">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0"><i class="ti ti-map-pin"></i> Emplacements</h5>
+        <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="collapse" data-bs-target="#locationsCollapse" aria-expanded="true">
+            <i class="ti ti-chevron-down"></i>
+        </button>
+    </div>
+    <div class="card-body collapse show" id="locationsCollapse">
+        <div class="row">
+            {% for location in locations %}
+                <div class="col-md-4 mb-3">
+                    <div class="card h-100">
+                        <img src="{{ asset('uploads/packs/' ~ location.imageUrl) }}" class="card-img-top" alt="{{ location.name }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ location.name }}</h5>
+                            <p class="card-text">
+                                <strong>Capacité:</strong> {{ location.capacity }}<br>
+                                <strong>Prix:</strong> {{ location.price }}€<br>
+                                <strong>Ville:</strong> {{ location.ville }}<br>
+                                <strong>Catégorie:</strong> {{ location.category }}
+                            </p>
+                            <button type="button" 
+                                    class="btn btn-primary select-location" 
+                                    data-id="{{ location.id }}"
+                                    data-name="{{ location.name }}"
+                                    data-price="{{ location.price }}">
+                                <i class="ti ti-plus"></i> Sélectionner
+                            </button>
                         </div>
-
-                        
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="selected-location mt-4">
+    <h6>Emplacement Sélectionné</h6>
+    <div class="table-responsive">
+        <table class="table table-hover" id="selectedLocationTable">
+            <thead>
+                <tr>
+                    <th>Nom</th>
+                    <th>Prix</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+    </div>
+</div>
 
                         <!-- Personnel Section -->
                         <div class="card mb-4 glass-panel" data-aos="fade-up" data-aos-delay="600">
@@ -488,12 +505,7 @@
                                 <div>
                                     &copy; <script>document.write(new Date().getFullYear())</script> Golden Touch
                                 </div>
-                                <div class="selected-location mt-4">
-                                    <h6>Emplacement Sélectionné</h6>
-                                    <div id="selectedLocation" class="p-3 border rounded">
-                                        Aucun emplacement sélectionné
-                                    </div>
-                                </div>
+                               
                             </div>
                         </div>
                     </footer>
@@ -528,404 +540,426 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 
-    <script>
-    // Global functions for materielle and location management
-    function updateMaterielleQuantity(id, quantity) {
-        const materielle = selectedMaterielles.get(id);
-        if (materielle) {
-            materielle.quantity = parseInt(quantity) || 1;
-            updateMaterielleTable();
-            calculateTotal();
-        }
-    }
+  <script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize variables
+    let selectedMaterielles = new Map();
+    let selectedPersonnel = new Map();
+    let selectedLocation = null;
+    const materielleAvailability = new Map();
 
-    function removeMaterielle(id) {
-        selectedMaterielles.delete(id);
-        updateMaterielleTable();
-        calculateTotal();
-    }
+    // Initialize availability map from cards
+    document.querySelectorAll('.select-materiel').forEach(button => {
+        const available = parseInt(button.dataset.available);
+        const id = button.dataset.id;
+        materielleAvailability.set(id, available);
+    });
 
-    function removeLocation() {
-        selectedLocation = null;
-        updateLocationDisplay();
-        calculateTotal();
-    }
-    
-    document.addEventListener('DOMContentLoaded', function() {
-        // Initialize variables
-        let selectedMaterielles = new Map();
-        let selectedPersonnel = new Map();
-        let selectedLocation = null;
-
-        // Helper function to show toast messages
-        function showToast(icon, title, text) {
-            Swal.fire({
-                icon: icon,
-                title: title,
-                text: text,
-                toast: true,
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 3000,
-                timerProgressBar: true,
-                customClass: {
-                    popup: 'colored-toast'
-                }
-            });
-        }
-
-        // Handle materielle selection
-        document.getElementById('addMaterielBtn').addEventListener('click', function() {
-            const select = document.getElementById('materielSelect');
-            const quantityInput = document.getElementById('materielQuantity');
-            
-            if (!select.value) {
-                showToast('warning', 'Attention', 'Veuillez sélectionner un matériel');
-                return;
+    // Helper function to show toast messages
+    function showToast(icon, title, text) {
+        Swal.fire({
+            icon: icon,
+            title: title,
+            text: text,
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            customClass: {
+                popup: 'colored-toast'
             }
-            
-            const id = select.value;
-            const selectedOption = select.options[select.selectedIndex];
-            const name = selectedOption.dataset.name;
-            const price = parseFloat(selectedOption.dataset.price);
-            const available = parseInt(selectedOption.dataset.available);
-            const quantity = parseInt(quantityInput.value) || 1;
-            
-            if (quantity > available) {
-                showToast('warning', 'Attention', `Seulement ${available} unités disponibles`);
-                return;
-            }
-            
-            if (selectedMaterielles.has(id)) {
-                showToast('warning', 'Attention', 'Ce matériel est déjà sélectionné');
-                return;
-            }
-            
-            selectedMaterielles.set(id, {
-                id: id,
-                name: name,
-                price: price,
-                quantity: quantity
-            });
-            
-            updateMaterielleTable();
-            calculateTotal();
-            showToast('success', 'Succès', 'Matériel ajouté avec succès');
         });
-        
-        document.querySelectorAll('.select-materielle').forEach(button => {
-            button.addEventListener('click', function() {
-                const id = this.dataset.id;
-                const name = this.dataset.name;
-                const price = parseFloat(this.dataset.price);
+    }
 
-                if (selectedMaterielles.has(id)) {
-                    showToast('warning', 'Attention', 'Ce matériel est déjà sélectionné');
-                    return;
-                }
+    // Handle materielle selection from cards
+    document.querySelectorAll('.select-materiel').forEach(button => {
+        button.addEventListener('click', function() {
+            const card = this.closest('.card');
+            const id = this.dataset.id;
+            const name = this.dataset.name;
+            const price = parseFloat(this.dataset.price);
+            const available = parseInt(this.dataset.available);
+            const quantityInput = card.querySelector('.quantity-input');
+            let quantity = parseInt(quantityInput.value) || 1;
 
+            // Validate quantity
+            if (quantity < 1) {
+                showToast('warning', 'Attention', 'Quantité invalide');
+                return;
+            }
+
+            // Check existing quantity
+            const existing = selectedMaterielles.get(id);
+            const totalRequested = (existing?.quantity || 0) + quantity;
+            
+            if (totalRequested > available) {
+                showToast('warning', 'Attention', `Quantité non disponible. Il reste ${available} unités`);
+                return;
+            }
+
+            // Update or add material
+            if (existing) {
+                existing.quantity += quantity;
+            } else {
                 selectedMaterielles.set(id, {
                     id: id,
                     name: name,
                     price: price,
-                    quantity: 1
+                    quantity: quantity,
+                    maxAvailable: available
                 });
+            }
 
-                updateMaterielleTable();
-                calculateTotal();
-            });
+            // Reset input and update UI
+            quantityInput.value = 1;
+            updateMaterielleTable();
+            calculateTotal();
+            showToast('success', 'Succès', `${quantity} ${name} ajouté(s)`);
         });
+    });
 
-        // Handle personnel selection
-        document.querySelectorAll('.select-personnel').forEach(button => {
-            button.addEventListener('click', function() {
-                const id = this.dataset.id;
-                const name = this.dataset.name;
-                const service = this.dataset.service;
-                const price = parseFloat(this.dataset.price);
+    // Handle personnel selection
+    document.querySelectorAll('.select-personnel').forEach(button => {
+        button.addEventListener('click', function() {
+            const id = this.dataset.id;
+            const name = this.dataset.name;
+            const service = this.dataset.service;
+            const price = parseFloat(this.dataset.price);
 
-                if (selectedPersonnel.has(id)) {
-                    showToast('warning', 'Attention', 'Ce personnel est déjà sélectionné');
-                    return;
-                }
-
-                selectedPersonnel.set(id, {
-                    id: id,
-                    name: name,
-                    service: service,
-                    price: price
-                });
-
-                updatePersonnelTable();
-                calculateTotal();
-            });
-        });
-
-        // Handle location selection
-        document.getElementById('addLocationBtn').addEventListener('click', function() {
-            const select = document.getElementById('locationSelect');
-            
-            if (!select.value) {
-                showToast('warning', 'Attention', 'Veuillez sélectionner un emplacement');
+            if (selectedPersonnel.has(id)) {
+                showToast('warning', 'Attention', 'Ce personnel est déjà sélectionné');
                 return;
             }
-            
-            if (selectedLocation) {
-                showToast('warning', 'Attention', 'Un emplacement est déjà sélectionné');
-                return;
-            }
-            
-            const id = select.value;
-            const selectedOption = select.options[select.selectedIndex];
-            const name = selectedOption.dataset.name;
-            const price = parseFloat(selectedOption.dataset.price);
-            
-            selectedLocation = {
+
+            selectedPersonnel.set(id, {
                 id: id,
                 name: name,
+                service: service,
                 price: price
-            };
-            
-            updateLocationDisplay();
+            });
+
+            updatePersonnelTable();
             calculateTotal();
-            showToast('success', 'Succès', 'Emplacement ajouté avec succès');
+            showToast('success', 'Succès', `${name} sélectionné`);
         });
-        
-        document.querySelectorAll('.select-location').forEach(button => {
-            button.addEventListener('click', function() {
-                const id = this.dataset.id;
-                const name = this.dataset.name;
-                const price = parseFloat(this.dataset.price);
+    });
 
-                if (selectedLocation) {
-                    showToast('warning', 'Attention', 'Un emplacement est déjà sélectionné');
-                    return;
-                }
+    // Handle location selection
+ // Handle location selection
+document.querySelectorAll('.select-location').forEach(button => {
+    button.addEventListener('click', function () {
+        const id = this.dataset.id;
+        const name = this.dataset.name;
+        const price = parseFloat(this.dataset.price);
 
-                selectedLocation = {
-                    id: id,
-                    name: name,
-                    price: price
-                };
+        // Check if the same location is already selected
+        if (selectedLocation?.id === id) {
+            showToast('warning', 'Attention', 'Cet emplacement est déjà sélectionné');
+            return;
+        }
 
-                updateLocationDisplay();
-                calculateTotal();
-            });
-        });
+        // Clear previous selection
+        selectedLocation = null;
 
-        // Form submission
-        document.getElementById('customizeForm').addEventListener('submit', function(e) {
-            e.preventDefault();
+        // Create new location object
+        selectedLocation = {
+            id: id,
+            name: name,
+            price: price,
+        };
 
-            const formData = {
-                id: '{{ originalPack.id }}',
-                materielles: Array.from(selectedMaterielles.values()).map(m => ({
-                    id: m.id,
-                    quantity: m.quantity,
-                    price: m.price
-                })),
-                location: selectedLocation ? {
-                    id: selectedLocation.id,
-                    name: selectedLocation.name,
-                    price: selectedLocation.price
-                } : null,
-                personnel: Array.from(selectedPersonnel.values()).map(p => ({
-                    id: p.id,
-                    name: p.name,
-                    service: p.service,
-                    price: p.price
-                }))
-            };
+        updateLocationTable();
+        calculateTotal();
+        showToast('success', 'Succès', `Emplacement ${name} sélectionné`);
+    });
+});
 
-            // Show loading state
-            const submitButton = this.querySelector('button[type="submit"]');
-            const originalText = submitButton.innerHTML;
-            submitButton.innerHTML = '<i class="ti ti-loader-2 ti-spin"></i> Enregistrement...';
-            submitButton.disabled = true;
+// Update location table
+function updateLocationTable() {
+    const tbody = document.querySelector('#selectedLocationTable tbody');
+    tbody.innerHTML = '';
 
-            fetch(this.action, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token("customize_pack") }}'
-                },
-                body: JSON.stringify(formData)
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Erreur serveur');
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data.success) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Succès !',
-                        text: 'Pack customisé avec succès !',
-                        toast: true,
-                        position: 'top-end',
-                        showConfirmButton: false,
-                        timer: 3000,
-                        timerProgressBar: true,
-                        customClass: {
-                            popup: 'colored-toast'
-                        }
-                    }).then(() => {
-                        window.location.href = '{{ path("admin_notifications") }}';
-                    });
-                } else {
-                    throw new Error(data.message || 'Erreur lors de la customisation');
-                }
-            })
-            .catch(error => {
+    if (!selectedLocation) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="3" class="text-center">Aucun emplacement sélectionné</td>
+            </tr>
+        `;
+        return;
+    }
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+        <td>${selectedLocation.name}</td>
+        <td>${selectedLocation.price.toFixed(2)}€</td>
+        <td>
+            <button class="btn btn-sm btn-danger delete-location" data-id="${selectedLocation.id}">
+                <i class="ti ti-trash"></i>
+            </button>
+        </td>
+    `;
+
+    // Add event listener for deletion
+    tr.querySelector('.delete-location').addEventListener('click', function () {
+        removeLocation(selectedLocation.id);
+    });
+
+    tbody.appendChild(tr);
+}
+
+// Remove location
+window.removeLocation = function (id) {
+    if (selectedLocation?.id === id) {
+        selectedLocation = null;
+        updateLocationTable();
+        calculateTotal();
+        showToast('success', 'Supprimé', 'Emplacement retiré');
+    }
+};
+
+// Calculate total price
+function calculateTotal() {
+    let total = 0;
+
+    // Add materials total
+    selectedMaterielles.forEach((m) => {
+        total += m.price * m.quantity;
+    });
+
+    // Add location price
+    if (selectedLocation) {
+        total += selectedLocation.price;
+    }
+
+    // Add personnel total
+    selectedPersonnel.forEach((p) => {
+        total += p.price;
+    });
+
+    document.getElementById('totalPrice').textContent = total.toFixed(2) + '€';
+}
+
+// Remove location function
+window.removeLocation = function() {
+    selectedLocation = null;
+    updateLocationDisplay();
+    calculateTotal();
+};
+
+    // Form submission
+    document.getElementById('customizeForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const formData = {
+            id: '{{ originalPack.id }}',
+            materielles: Array.from(selectedMaterielles.values()).map(m => ({
+                id: m.id,
+                quantity: m.quantity,
+                price: m.price
+            })),
+            location: selectedLocation,
+            personnel: Array.from(selectedPersonnel.values()).map(p => ({
+                id: p.id,
+                name: p.name,
+                service: p.service,
+                price: p.price
+            }))
+        };
+
+        // Show loading state
+        const submitButton = this.querySelector('button[type="submit"]');
+        const originalText = submitButton.innerHTML;
+        submitButton.innerHTML = '<i class="ti ti-loader-2 ti-spin"></i> Enregistrement...';
+        submitButton.disabled = true;
+
+        fetch(this.action, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token("customize_pack") }}'
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => {
+            if (!response.ok) throw new Error('Erreur serveur');
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
                 Swal.fire({
-                    icon: 'error',
-                    title: 'Erreur !',
-                    text: 'Une erreur est survenue lors de la customisation du pack',
-                    toast: true,
-                    position: 'top-end',
+                    icon: 'success',
+                    title: 'Succès !',
+                    text: 'Pack customisé avec succès !',
                     showConfirmButton: false,
-                    timer: 5000,
-                    timerProgressBar: true,
-                    customClass: {
-                        popup: 'colored-toast'
-                    }
+                    timer: 2000
+                }).then(() => {
+                    window.location.href = '{{ path("admin_notifications") }}';
                 });
-                console.error('Error:', error);
-            })
-            .finally(() => {
-                // Reset button state
-                submitButton.innerHTML = originalText;
-                submitButton.disabled = false;
-            });
-        });
-
-        // Helper functions
-        function updateMaterielleTable() {
-            const tbody = document.querySelector('#selectedMaterielsTable tbody');
-            tbody.innerHTML = '';
-            
-            if (selectedMaterielles.size === 0) {
-                const tr = document.createElement('tr');
-                tr.innerHTML = '<td colspan="5" class="text-center">Aucun matériel sélectionné</td>';
-                tbody.appendChild(tr);
-                return;
-            }
-            
-            selectedMaterielles.forEach(materielle => {
-                const total = materielle.price * materielle.quantity;
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${materielle.name}</td>
-                    <td>
-                        <input type="number" 
-                               class="form-control" 
-                               min="1" 
-                               value="${materielle.quantity}" 
-                               onchange="updateMaterielleQuantity('${materielle.id}', this.value)">
-                    </td>
-                    <td>${materielle.price.toFixed(2)}€</td>
-                    <td>${total.toFixed(2)}€</td>
-                    <td>
-                        <button class="btn btn-sm btn-danger" onclick="removeMaterielle('${materielle.id}')">
-                            <i class="ti ti-trash"></i>
-                        </button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        function updatePersonnelTable() {
-            const tbody = document.querySelector('#selectedPersonnelTable tbody');
-            tbody.innerHTML = '';
-            
-            selectedPersonnel.forEach(person => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${person.name}</td>
-                    <td>${person.service}</td>
-                    <td>${person.price}€</td>
-                    <td>
-                        <button class="btn btn-sm btn-danger" onclick="removePersonnel('${person.id}')">
-                            <i class="ti ti-trash"></i>
-                        </button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        function updateLocationDisplay() {
-            const locationDisplay = document.getElementById('selectedLocation');
-            if (selectedLocation) {
-                locationDisplay.innerHTML = `
-                    <div class="d-flex align-items-center">
-                        <span>${selectedLocation.name}</span>
-                        <button class="btn btn-sm btn-danger ms-2" onclick="removeLocation()">
-                            <i class="ti ti-trash"></i>
-                        </button>
-                    </div>
-                `;
             } else {
-                locationDisplay.innerHTML = 'Aucune location sélectionnée';
+                throw new Error(data.message || 'Erreur lors de la customisation');
             }
-        }
+        })
+        .catch(error => {
+            Swal.fire({
+                icon: 'error',
+                title: 'Erreur !',
+                text: error.message || 'Une erreur est survenue',
+                confirmButtonText: 'OK'
+            });
+            console.error('Error:', error);
+        })
+        .finally(() => {
+            submitButton.innerHTML = originalText;
+            submitButton.disabled = false;
+        });
+    });
 
-        function updateMaterielleQuantity(id, quantity) {
-            const materielle = selectedMaterielles.get(id);
-            if (materielle) {
-                materielle.quantity = parseInt(quantity) || 1;
-                calculateTotal();
-            }
+    // Update materials table
+    function updateMaterielleTable() {
+        const tbody = document.querySelector('#selectedMaterielsTable tbody');
+        tbody.innerHTML = '';
+        
+        if (selectedMaterielles.size === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" class="text-center">Aucun matériel sélectionné</td></tr>';
+            return;
         }
+        
+        selectedMaterielles.forEach((materielle, id) => {
+            const total = materielle.price * materielle.quantity;
+            const tr = document.createElement('tr');
+            
+            tr.innerHTML = `
+                <td>${materielle.name}</td>
+                <td>
+                    <input type="number" 
+                           class="form-control quantity-update" 
+                           min="1" 
+                           max="${materielle.maxAvailable}"
+                           value="${materielle.quantity}"
+                           data-id="${id}">
+                </td>
+                <td>${materielle.price.toFixed(2)}€</td>
+                <td>${total.toFixed(2)}€</td>
+                <td>
+                    <button class="btn btn-sm btn-danger delete-material" data-id="${id}">
+                        <i class="ti ti-trash"></i>
+                    </button>
+                </td>
+            `;
 
-        function removeMaterielle(id) {
-            selectedMaterielles.delete(id);
+            // Add event listeners
+            tr.querySelector('.quantity-update').addEventListener('change', function() {
+                const newQuantity = parseInt(this.value) || 1;
+                updateMaterielleQuantity(id, newQuantity);
+            });
+
+            tr.querySelector('.delete-material').addEventListener('click', function() {
+                removeMaterielle(id);
+            });
+
+            tbody.appendChild(tr);
+        });
+    }
+
+    // Update personnel table
+    function updatePersonnelTable() {
+        const tbody = document.querySelector('#selectedPersonnelTable tbody');
+        tbody.innerHTML = '';
+        
+        selectedPersonnel.forEach((person, id) => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${person.name}</td>
+                <td>${person.service}</td>
+                <td>${person.price.toFixed(2)}€</td>
+                <td>
+                    <button class="btn btn-sm btn-danger delete-personnel" data-id="${id}">
+                        <i class="ti ti-trash"></i>
+                    </button>
+                </td>
+            `;
+
+            tr.querySelector('.delete-personnel').addEventListener('click', function() {
+                removePersonnel(id);
+            });
+
+            tbody.appendChild(tr);
+        });
+    }
+
+    // Update location display
+    function updateLocationDisplay() {
+        const container = document.getElementById('selectedLocation');
+        container.innerHTML = selectedLocation 
+            ? `<div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <strong>${selectedLocation.name}</strong>
+                        <div class="text-muted">${selectedLocation.price.toFixed(2)}€</div>
+                    </div>
+                    <button class="btn btn-sm btn-danger delete-location">
+                        <i class="ti ti-trash"></i>
+                    </button>
+                </div>`
+            : 'Aucun emplacement sélectionné';
+
+        if (selectedLocation) {
+            container.querySelector('.delete-location').addEventListener('click', removeLocation);
+        }
+    }
+
+    // Calculate total price
+    function calculateTotal() {
+        let total = 0;
+        
+        selectedMaterielles.forEach(m => total += m.price * m.quantity);
+        if (selectedLocation) total += selectedLocation.price;
+        selectedPersonnel.forEach(p => total += p.price);
+        
+        document.getElementById('totalPrice').textContent = total.toFixed(2) + '€';
+    }
+
+    // Global functions
+    window.updateMaterielleQuantity = function(id, quantity) {
+        const materielle = selectedMaterielles.get(id);
+        if (!materielle) return;
+
+        quantity = Math.max(1, Math.min(quantity, materielle.maxAvailable));
+        
+        if (quantity !== materielle.quantity) {
+            materielle.quantity = quantity;
             updateMaterielleTable();
             calculateTotal();
         }
+    };
 
-        function removePersonnel(id) {
-            selectedPersonnel.delete(id);
+    window.removeMaterielle = function(id) {
+        if (selectedMaterielles.delete(id)) {
+            updateMaterielleTable();
+            calculateTotal();
+            showToast('success', 'Supprimé', 'Matériel retiré');
+        }
+    };
+
+    window.removePersonnel = function(id) {
+        if (selectedPersonnel.delete(id)) {
             updatePersonnelTable();
             calculateTotal();
+            showToast('success', 'Supprimé', 'Personnel retiré');
         }
+    };
 
-        function removeLocation() {
-            selectedLocation = null;
-            updateLocationDisplay();
-            calculateTotal();
-        }
-
-        function calculateTotal() {
-            let total = 0;
-
-            // Add materielles cost
-            selectedMaterielles.forEach(materielle => {
-                total += materielle.price * materielle.quantity;
-            });
-
-            // Add location cost
-            if (selectedLocation) {
-                total += selectedLocation.price;
-            }
-
-            // Add personnel cost
-            selectedPersonnel.forEach(person => {
-                total += person.price;
-            });
-
-            document.getElementById('totalPrice').textContent = total.toFixed(2) + '€';
-        }
-
-        // Initialize total price
+    window.removeLocation = function() {
+        selectedLocation = null;
+        updateLocationDisplay();
         calculateTotal();
+        showToast('success', 'Supprimé', 'Emplacement retiré');
+    };
 
-        // Initialize Select2
-        $('.select2').select2();
-    });
-    </script>
+    // Initial setup
+    calculateTotal();
+    $('.select2').select2();
+});
+</script>
 </body>
 </html>
