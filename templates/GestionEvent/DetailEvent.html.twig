@@ -1,4 +1,4 @@
-
+ 
 
 <!doctype html>
 <html class="no-js" lang="zxx">
@@ -38,7 +38,6 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Radio+Canada:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
-<script src="https://js.stripe.com/v3/"></script>
 
 
 <link rel="stylesheet" href="{{ asset('Front/css/bootstrap.min.css') }}">
@@ -129,24 +128,21 @@ body {
     .event-card:active {
         cursor: grabbing;
     }
-    .stripe-element {
-    transition: border-color 0.3s ease;
-    height: 48px;
-    padding: 12px 16px;
+.mb-40.mb-xl-0 {
+    width: 100%;
+    max-height: 400px; /* Maximum height */
+    overflow: visible; /* Show full image */
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-.stripe-element--focus {
-    border-color: #0d6efd !important;
-    box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.25);
-}
-
-.stripe-element--invalid {
-    border-color: #dc3545 !important;
-}
-
-.invalid-feedback {
-    display: block;
-    margin-top: 4px;
+.mb-40.mb-xl-0 img {
+    max-width: 100%; /* Never exceed container width */
+    max-height: 400px; /* Never exceed container height */
+    width: auto; /* Maintain original width ratio */
+    height: auto; /* Maintain original height ratio */
+    object-fit: contain; /* Show full image */
 }
 </style>
 
@@ -480,10 +476,11 @@ body {
                 <div class="col-auto d-none d-xl-block">
                     <div class="header-button">
                         <button type="button" class="icon-btn searchBoxToggler"><i class="far fa-search"></i></button>
-                     <a href="#" class="icon-btn sideMenuToggler2" id="cartIcon">
+<a href="{{ path('app_panier') }}" class="icon-btn " id="cartIcon">
     <i class="fa-regular fa-bag-shopping"></i>
     <span class="badge">5</span>
 </a>
+
                         <a href="#" class="icon-btn sideMenuToggler"><i class="far fa-bars"></i></a>
                         <a href="booking.html" class="th-btn">BOOK A TAXI<i class="fa-regular fa-arrow-right ms-2"></i></a>
                     </div>
@@ -495,6 +492,19 @@ body {
 <div class="logo-shape"><img src="{{ asset('Front/img/logo-shape.svg') }}" alt=""></div>
     </header>
 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
 
 
 
@@ -517,213 +527,257 @@ body {
 
 
 
+<section class="space">
+<div class="container">
+    <div class="row gy-4 mb-3 mb-xl-5">
+        <div class="col-xl-6">
+<div class="mb-40 mb-xl-0">
+    {% if event.photo %}
+    <img src="{{ asset('uploads/' ~ event.photo) }}" alt="{{ event.nom }}">
+    {% else %}
+    <img src="{{ asset('assets/img/event/default_event.jpg') }}" alt="Image par défaut">
+    {% endif %}
+</div>
+        </div>
+        <div class="col-xl-6 ps-3 ps-xl-5">
+            <div class="team-about">
+                <p class="team-about_desig">{{ event.type }}</p>
+                <h2 class="team-about_title">{{ event.nom }}</h2>
+                <p class="team-about_text">{{ event.description ?? 'Aucune description disponible pour cet événement.' }}</p>
+                <div class="team-info">
+                    <ul>
+                        <li><b>Catégorie :</b> <span>{{ event.categorie.value }}</span></li>
+                        <li><b>Date :</b> <span>{{ event.date|date('j F Y') }}</span></li>
+                        <li><b>Organisateur :</b> <span>{{ event.utilisateur.prenom }} {{ event.utilisateur.nom }}</span></li>
+                        <li><b>Lieu :</b> <span>{{ event.location ?? 'À déterminer' }}</span></li>
+                    </ul>
+                </div>
+                <div class="d-flex gap-3 mt-4">
+                    <!-- Bouton Édition -->
+                    <button type="button" 
+                            class="btn btn-warning" 
+                            style="background-color: #FFD700; border-color: #FFD700;"
+                            data-bs-toggle="modal" 
+                            data-bs-target="#editEventModal">
+                        <i class="fas fa-edit me-2"></i>Modifier
+                    </button>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div class="th-cart-wrapper space-top space-extra-bottom">
-    <div class="container">
-        <div class="woocommerce-notices-wrapper"></div>
-        
-        <div class="card">
-            <h5 class="card-header">Your Shopping Cart</h5>
-            
-            <div class="card-datatable table-responsive">
-                <table class="cart_table">
-                    <thead>
-                        <tr>
-                            <th class="cart-col-image">Event</th>
-                            <th class="cart-col-productname">Category</th>
-                            <th class="cart-col-price">Type</th>
-                            <th class="cart-col-quantity">Date</th>
-                            <th class="cart-col-total">Price</th>
-                            <th class="cart-col-remove">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for item in panierItems %}
-                        <tr class="cart_item">
-                            <td data-title="Event">
-                                <div class="d-flex align-items-center">
-                                    {% if item.event.photo %}
-       <a class="cart-productimage me-3" href="#" style="
-            width: 100px;
-            height: 100px;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        ">                       
-                 <img style="
-                max-width: 100%;
-                max-height: 100%;
-                object-fit: cover;
-            " src="{{ asset('uploads/' ~ item.event.photo) }}" alt="{{ item.event.nom }}">
-        </a>
-                                    {% endif %}
-                                    <a class="cart-productname" href="#">{{ item.event.nom }}</a>
-                                </div>
-                            </td>
-                            <td data-title="Category">{{ item.categorie }}</td>
-                            <td data-title="Type">{{ item.typeEvent }}</td>
-                            <td data-title="Date">{{ item.date|date('Y-m-d') }}</td>
-                            <td data-title="Price">
-                                <span class="amount"><bdi>{{ item.price }} TND</bdi></span>
-                            </td>
-                            <td data-title="Actions">
-                                <button class="btn btn-danger btn-sm remove-from-cart" 
-                                        data-id="{{ item.id }}">
-                                    <i class="fas fa-trash"></i> Remove
-                                </button>
-                            </td>
-                        </tr>
-                        {% else %}
-                        <tr>
-                            <td colspan="6" class="text-center py-4">Your cart is empty</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                    <tfoot>
-                        <tr class="order-total">
-                            <td colspan="4" class="text-end"><strong>Total:</strong></td>
-                            <td colspan="2">
-                                <strong>
-                                    <span class="amount"><bdi>{{ total }} TND</bdi></span>
-                                </strong>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="6" class="text-end">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <button class="btn btn-outline-danger" id="clear-cart">
-                                        <i class="fas fa-broom"></i> Clear Cart
-                                    </button>
-                                    <div class="d-flex gap-2">
-                                        <a href="{{ path('app_draft_events') }}" class="th-btn">
-                                            Continue Shopping
-                                        </a>
-                                        <button class="th-btn btn-primary" 
-                                                data-bs-toggle="modal" 
-                                                data-bs-target="#checkoutModal">
-                                            <i class="fas fa-shopping-bag"></i> Checkout
-                                        </button>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                    </tfoot>
-                </table>
+                    <!-- Formulaire Suppression -->
+                    <form method="POST" action="{{ path('app_event_delete', {'id': event.id}) }}">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ event.id) }}">
+                        <button type="submit" 
+                                class="btn btn-danger" 
+                                onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet événement ?')">
+                            <i class="fas fa-trash me-2"></i>Supprimer
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
+    </div>
 
-   <!-- Checkout Modal -->
-<div class="modal fade" id="checkoutModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content">
-            <!-- Modal Header -->
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title fs-4">Secure Payment Gateway</h5>
-                <button type="button" class="btn-close btn-close-black" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-
-            <!-- Modal Body -->
-            <div class="modal-body p-5">
-                <!-- Payment Summary -->
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h5 class="mb-0">Total Amount:</h5>
-                    <h3 class="mb-0 text-primary">{{ total }} TND</h3>
-                </div>
-
-                <!-- Payment Form -->
-                <form id="payment-form" class="needs-validation" novalidate>
-                    <!-- Card Number -->
-                    <div class="mb-4">
-                        <label for="card-number" class="form-label fw-medium">Card Number</label>
-                        <div id="card-number" class="stripe-element form-control p-3 border-2"></div>
-                        <div class="invalid-feedback">Please enter a valid card number</div>
+    <!-- Modal d'Édition -->
+    <div class="modal fade" id="editEventModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <form method="POST" 
+                      action="{{ path('app_event_edit', {'id': event.id}) }}" 
+                      enctype="multipart/form-data">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Modifier l'événement</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
-
-                    <!-- Card Details Row -->
-                    <div class="row g-4 mb-4">
-                        <!-- Expiry Date -->
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="card-expiry" class="form-label fw-medium">Expiration Date</label>
-                                <div id="card-expiry" class="stripe-element form-control p-3 border-2"></div>
-                                <div class="invalid-feedback">Please enter expiration date</div>
-                            </div>
+                    <div class="modal-body">
+                        <input type="hidden" name="_token" value="{{ csrf_token('edit-event') }}">
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Nom</label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   name="nom" 
+                                   value="{{ event.nom }}"
+                                   required>
                         </div>
 
-                        <!-- CVC -->
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="card-cvc" class="form-label fw-medium">CVC/CVV</label>
-                                <div id="card-cvc" class="stripe-element form-control p-3 border-2"></div>
-                                <div class="invalid-feedback">Security code required</div>
-                            </div>
+                        <div class="mb-3">
+                            <label class="form-label">Date</label>
+                            <input type="datetime-local" 
+                                   class="form-control" 
+                                   name="date" 
+                                   value="{{ event.date|date('Y-m-d\\TH:i') }}"
+                                   required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Catégorie</label>
+                            <select class="form-select" name="categorie" required>
+                                {% for categorie in categorie_options %}
+                                    <option value="{{ categorie.value }}" 
+                                        {{ event.categorie.value == categorie.value ? 'selected' }}>
+                                        {{ categorie.value }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Photo</label>
+                            <input type="file" 
+                                   class="form-control" 
+                                   name="photo" 
+                                   accept="image/*">
                         </div>
                     </div>
-
-                    <!-- Payment Button -->
-                    <div class="d-grid gap-3 mt-5">
-                        <button type="submit" class="btn btn-secondary btn-lg py-3 fw-bold" id="submit">
-                            <span id="button-text">Confirm Payment</span>
-                            <div id="spinner" class="spinner-border spinner-border-sm d-none ms-2"></div>
-                        </button>
-                        <div id="card-errors" class="text-danger small text-center"></div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                        <button type="submit" class="btn btn-primary">Enregistrer</button>
                     </div>
                 </form>
-
-                <!-- Security Assurance -->
-                <div class="mt-4 text-center">
-                    <p class="text-muted small mb-2">
-                        <i class="bi bi-lock-fill text-success"></i> Your payment is securely encrypted
-                    </p>
-                    <div class="d-flex justify-content-center gap-3">
-                        <img src="visa.svg" alt="Visa" style="height: 24px">
-                        <img src="mastercard.svg" alt="Mastercard" style="height: 24px">
-                        <img src="stripe.svg" alt="Stripe" style="height: 24px">
-                    </div>
-                </div>
             </div>
         </div>
     </div>
 </div>
 
-</div>
+        <!-- Tableaux -->
+        <div class="row gy-4">
+            <!-- Matériels -->
+            <div class="col-xl-12">
+                <div class="card mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">Matériels Requis</h5>
+                        <a href="#" class="btn btn-sm" style="background-color: #FFD700; color: #000;">Gérer Matériels</a>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Matériel</th>
+                                        <th>Quantité</th>
+                                        <th>Prix Unitaire</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for reservation in event.reservationsMaterielles %}
+                                        {% set materielle = reservation.materielle %}
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    {% if materielle.photoMat %}
+                                                    <img src="{{ asset('uploads/' ~ materielle.photoMat) }}" 
+                                                         alt="{{ materielle.nomMat }}" 
+                                                         width="40" 
+                                                         class="rounded me-2">
+                                                    {% endif %}
+                                                    {{ materielle.nomMat }}
+                                                </div>
+                                            </td>
+                                            <td>{{ reservation.quantite }}</td>
+                                            <td>{{ materielle.prixMat|format_currency('EUR') }}</td>
+                                        </tr>
+                                    {% else %}
+                                        <tr>
+                                            <td colspan="3" class="text-center">Aucun matériel requis</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Personnel -->
+            <div class="col-xl-12">
+                <div class="card mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">Personnel Assigné</h5>
+                        <a href="#" class="btn btn-sm" style="background-color: #FFD700; color: #000;">Gérer Personnel</a>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Membre</th>
+                                        <th>Service</th>
+                                        <th>Taux Horaire</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for personnel in event.personnels %}
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                {% if personnel.imageUrl %}
+                                                <img src="{{ asset('uploads/' ~ personnel.imageUrl) }}" 
+                                                     alt="{{ personnel.nomP }}" 
+                                                     width="40" 
+                                                     class="rounded me-2">
+                                                {% endif %}
+                                                {{ personnel.prenomP }} {{ personnel.nomP }}
+                                            </div>
+                                        </td>
+                                        <td>{{ personnel.serviceP }}</td>
+                                        <td>{{ personnel.tarifP|format_currency('EUR') }}</td>
+                                    </tr>
+                                    {% else %}
+                                    <tr>
+                                        <td colspan="3" class="text-center">Aucun personnel assigné</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lieu -->
+            <div class="col-xl-12">
+                <div class="card mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">Détails du Lieu</h5>
+                        <a href="#" class="btn btn-sm" style="background-color: #FFD700; color: #000;">Gérer Lieu</a>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Nom</th>
+                                        <th>Capacité</th>
+                                        <th>Localisation</th>
+                                        <th>Prix</th>
+                                        <th>Date Réservation</th>
+                                        <th>Statut</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for reservation in event.reservationsLieu %}
+                                        {% set lieu = reservation.lieu %}
+                                        <tr>
+                                            <td>{{ lieu.name }}</td>
+                                            <td>{{ lieu.capacity }}</td>
+                                            <td>{{ lieu.location }}, {{ lieu.ville }}</td>
+                                            <td>{{ lieu.price|format_currency('EUR') }}</td>
+                                            <td>{{ reservation.date_reservation|date('d/m/Y H:i') }}</td>
+                                            <td>{{ reservation.status|default('Confirmé') }}</td>
+                                        </tr>
+                                    {% else %}
+                                        <tr>
+                                            <td colspan="6" class="text-center">Aucun lieu spécifié</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 
 
 
@@ -732,42 +786,39 @@ body {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-       
-
-
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
  <footer class="footer-wrapper footer-layout7" data-bg-src="assets/img/bg/footer_bg_1.jpg">
     <div class="widget-area">
         <div class="container">
@@ -889,149 +940,4 @@ body {
 </body>
 
 </html>
-
-
-
-
-
-
-
-<script>
-
-document.addEventListener('DOMContentLoaded', function() {
-    // Remove item from cart
-    document.querySelectorAll('.remove-from-cart').forEach(button => {
-        button.addEventListener('click', function() {
-            const itemId = this.getAttribute('data-id');
-            
-            fetch('/panier/remove/' + itemId, {
-                method: 'POST',
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    window.location.reload();
-                }
-            });
-        });
-    });
-    
-    // Clear cart
-    document.getElementById('clear-cart').addEventListener('click', function() {
-        if (confirm('Are you sure you want to clear your cart?')) {
-            fetch('/panier/clear', {
-                method: 'POST',
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    window.location.reload();
-                }
-            });
-        }
-    });
-    
-    // Checkout
-    document.getElementById('checkout').addEventListener('click', function() {
-        window.location.href = '/checkout';
-    });
-});
-
-
-
-
-
-
-// Initialize Stripe
-const stripe = Stripe('pk_test_51QvjqJKNitkaIcyAlpIsRTNgLfBCjUiuYOiSMDcA5CH4JKv3hLHmLdRch010MMUgFxfNN2I5SiVfo6aQjlpvFjgO00ccWNwlhS');
-const elements = stripe.elements();
-
-// Create card elements with minimal styling
-const cardOptions = {
-  style: {
-    base: {
-      fontSize: '16px',
-      color: '#32325d',
-      '::placeholder': {
-        color: '#aab7c4'
-      }
-    },
-    invalid: {
-      color: '#fa755a'
-    }
-  }
-};
-
-const cardNumber = elements.create('cardNumber', cardOptions);
-const cardExpiry = elements.create('cardExpiry', cardOptions);
-const cardCvc = elements.create('cardCvc', cardOptions);
-
-// Mount elements to the respective divs
-cardNumber.mount('#card-number');
-cardExpiry.mount('#card-expiry');
-cardCvc.mount('#card-cvc');
-
-// Handle form submission
-document.getElementById('payment-form').addEventListener('submit', async (e) => {
-  e.preventDefault(); // Prevent form from submitting
-
-  // Show the spinner
-  document.getElementById('spinner').classList.remove('d-none');
-  document.getElementById('button-text').textContent = 'Processing...';
-
-  // Create a payment method using the card details entered by the user
-  const {error, paymentMethod} = await stripe.createPaymentMethod({
-    type: 'card',
-    card: cardNumber, // Pass the card number element
-  });
-
-  if (error) {
-    // Handle errors (show error message)
-    document.getElementById('card-errors').textContent = error.message;
-    document.getElementById('spinner').classList.add('d-none');
-    document.getElementById('button-text').textContent = 'Confirm Payment';
-  } else {
-    // Send the payment method to your server for processing
-    // Example: send it to your backend for payment confirmation
-fetch('/process-payment', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  body: JSON.stringify({
-    paymentMethodId: paymentMethod.id,
-    amount: Math.round(parseFloat('{{ total }}') * 100), // Convert euros to cents
-  }),
-})
-.then(response => response.json())
-.then(data => {
-  if (data.success) {
-    // Redirect to a confirmation page or show a success message
-    window.location.href = '/panier'; // Example redirect after success
-  } else {
-    // Handle error from backend
-    document.getElementById('card-errors').textContent = data.error || 'Payment failed.';
-  }
-})
-.catch(error => {
-  document.getElementById('card-errors').textContent = error.message;
-})
-.finally(() => {
-  // Hide spinner and reset button text
-  document.getElementById('spinner').classList.add('d-none');
-  document.getElementById('button-text').textContent = 'Confirm Payment';
-});
-
-  }
-});
-
-</script>
-
 

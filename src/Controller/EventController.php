@@ -18,6 +18,7 @@ use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Psr\Log\LoggerInterface;
 use App\Entity\Panier;
 use App\Entity\Payment;
+use App\Repository\EventRepository;
 
 use App\Entity\DetailPayment;
 
@@ -35,7 +36,8 @@ class EventController extends AbstractController
     {
         $event = new Event();
         $form = $this->createForm(EventType::class, $event); // Pass the entity instance
-        
+        $user = $entityManager->getRepository(Utilisateur::class)->find(20); // Make sure User entity is correctly imported
+
         $form->handleRequest($request);
     
         if ($form->isSubmitted() && $form->isValid()) {
@@ -53,7 +55,7 @@ class EventController extends AbstractController
             }
     
             // Set the current user
-            $event->setUtilisateur($this->getUser());
+            $event->setUtilisateur($user);
             $event->setType('EVENT'); // Ensures "EVENT" is always set
 
             // Persist to database
@@ -61,7 +63,7 @@ class EventController extends AbstractController
             $entityManager->flush();
     
             $this->addFlash('success', 'Événement créé avec succès!');
-            return $this->redirectToRoute('app_add_event');
+            return $this->redirectToRoute('app_draft_events');
         }
     
         return $this->render('GestionEvent/AddEvent.html.twig', [
@@ -72,8 +74,18 @@ class EventController extends AbstractController
     #[Route('/events/draft', name: 'app_draft_events')]
     public function draftEvents(EntityManagerInterface $entityManager): Response
     {
-        $events = $entityManager->getRepository(Event::class)->findAll();
-        
+        $qb = $entityManager->createQueryBuilder();
+    
+        $qb->select('e')
+        ->from(Event::class, 'e')
+        ->leftJoin('e.paniers', 'p')
+        ->leftJoin('e.detailPayments', 'dc') // Corrected association name
+        ->where('e.utilisateur = :userId')
+        ->andWhere('p.id IS NULL')
+        ->andWhere('dc.id IS NULL')
+        ->setParameter('userId', 20);
+        $events = $qb->getQuery()->getResult();
+    
         // Define the category labels for display
         $categoryLabels = [
             CategorieEvent::MARIAGE->value => 'Mariage',
@@ -88,16 +100,11 @@ class EventController extends AbstractController
     
         return $this->render('GestionEvent/test.html.twig', [
             'events' => $events,
-            'categoryLabels' => $categoryLabels, // Pass the category labels to the template
+            'categoryLabels' => $categoryLabels,
         ]);
     }
-    #[Route('/event/{id}', name: 'app_event_show')]
-public function show(Event $event): Response
-{
-    return $this->render('GestionEvent/show.html.twig', [
-        'event' => $event
-    ]);
-}
+    
+
 #[Route('/event/{id}/edit', name: 'app_event_edit', methods: ['POST'])]
 public function edit(
     Request $request, 
@@ -196,16 +203,18 @@ public function delete(Request $request, Event $event, EntityManagerInterface $e
             }
         }
 
+        // Remove the event from the database
         $entityManager->remove($event);
         $entityManager->flush();
 
-        // Return JSON response indicating success
-        return new JsonResponse(['success' => true]);
+        // Redirect to the draft events page after deletion
+        return $this->redirectToRoute('app_draft_events');
     }
 
-    // Return JSON response indicating failure
+    // Return JSON response indicating failure if CSRF validation fails
     return new JsonResponse(['success' => false], Response::HTTP_BAD_REQUEST);
 }
+
 
 
 #[Route('/panier/add', name: 'app_panier_add', methods: ['POST'])]
@@ -239,7 +248,7 @@ public function addToCart(Request $request, EntityManagerInterface $entityManage
     $panier->setTypeEvent('event'); // static
     $panier->setCategorie($data['categorie']);
     $panier->setDate(new \DateTime($data['date']));
-    $panier->setPrice(100); // static
+    $panier->setPrice($event->getTotalPrice());
 
     try {
         $entityManager->persist($panier);
@@ -305,15 +314,15 @@ public function clearCart(EntityManagerInterface $em): JsonResponse
     return $this->json(['success' => true]);
 }
 
-#[Route('/cart/count', name: 'app_cart_count')]
+
+#[Route('/cart/count', name: 'app_panier_count')]
 public function cartCount(EntityManagerInterface $em, Security $security): Response
 {
     $user = $em->getRepository(Utilisateur::class)->find(20); // or your static user ID
     $count = $em->getRepository(Panier::class)->count(['utilisateur' => $user]);
     
-    return new Response($count);
+    return new JsonResponse(['count' => $count]);
 }
-
 #[Route('/process-payment', name: 'app_process_payment', methods: ['POST'])]
 public function processPayment(Request $request, EntityManagerInterface $em, PanierRepository $panierRepository): JsonResponse
 {
@@ -445,6 +454,98 @@ public function processPayment(Request $request, EntityManagerInterface $em, Pan
         ], 500);
     }
 }
+
+#[Route('/MyCommandes', name: 'app_my_Commandes')]
+public function myOrders(EntityManagerInterface $em): Response
+{
+    // In production, get the authenticated user instead of hardcoding
+    $user = $em->getRepository(Utilisateur::class)->find(20);
+    
+    $payments = $em->getRepository(Payment::class)->findBy(
+        ['user' => $user],
+        ['createdAt' => 'DESC']
+    );
+    
+    return $this->render('GestionEvent/Commande.html.twig', [
+        'payments' => $payments,
+    ]);
+}
+
+
+#[Route('/delete-order', name: 'app_delete_order', methods: ['POST'])]
+public function deleteOrder(Request $request, EntityManagerInterface $em): JsonResponse
+{
+    $orderId = $request->request->get('id');
+    
+    try {
+        $payment = $em->getRepository(Payment::class)->find($orderId);
+        
+        if (!$payment) {
+            return new JsonResponse(['success' => false, 'error' => 'Order not found']);
+        }
+        
+        // Remove all related details first
+        foreach ($payment->getDetails() as $detail) {
+            $em->remove($detail);
+        }
+        
+        $em->remove($payment);
+        $em->flush();
+        
+        return new JsonResponse(['success' => true]);
+        
+    } catch (\Exception $e) {
+        return new JsonResponse(['success' => false, 'error' => $e->getMessage()]);
+    }
+}
+
+
+#[Route('/print-invoice', name: 'app_print_invoice')]
+public function printInvoice(Request $request, EntityManagerInterface $em): Response
+{
+    $orderId = $request->query->get('id');
+    $payment = $em->getRepository(Payment::class)->find($orderId);
+    
+    if (!$payment) {
+        throw $this->createNotFoundException('Order not found');
+    }
+    
+    return $this->render('GestionEvent/invoice.html.twig', [
+        'payment' => $payment,
+    ]);
+}
+
+
+#[Route('/event/{id}', name: 'event_show')]
+public function EventShow(
+    Event $event,
+    EventRepository $eventRepository,
+    EntityManagerInterface $em
+): Response {
+    $similarEvents = $eventRepository->createQueryBuilder('e')
+        ->where('e.categorie = :category')
+        ->andWhere('e.id != :currentId')
+        ->setParameter('category', $event->getCategorie()->value)
+        ->setParameter('currentId', $event->getId())
+        ->orderBy('e.date', 'ASC')
+        ->setMaxResults(6)
+        ->getQuery()
+        ->getResult();
+
+    return $this->render('GestionEvent/DetailEvent.html.twig', [
+        'event' => $event,
+        'similarEvents' => $similarEvents,
+        'categorie_options' => CategorieEvent::cases(),
+    ]);
+}
+
+
+
+
+
+
+
+
 
 
 }
