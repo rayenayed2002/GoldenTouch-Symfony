@@ -407,26 +407,129 @@
             });
         }
         
-        // Form validation
+        // Form validation and submission
         const bookingForm = document.getElementById('bookingForm');
         if (bookingForm) {
-            bookingForm.addEventListener('submit', function(event) {
-                let isValid = true;
+            // Variable pour empêcher les soumissions multiples
+            let isSubmitting = false;
+            
+            bookingForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Empêcher les soumissions multiples
+                if (isSubmitting) {
+                    console.log('Formulaire déjà en cours de soumission');
+                    return;
+                }
                 
                 // Validate date field
                 const dateField = bookingForm.querySelector('.js-datepicker');
                 if (dateField && !dateField.value) {
-                    event.preventDefault();
                     dateField.classList.add('is-invalid');
                     const errorEl = dateField.parentNode.nextElementSibling;
                     if (errorEl && errorEl.classList.contains('invalid-feedback')) {
                         errorEl.textContent = 'Veuillez sélectionner une date';
                         errorEl.style.display = 'block';
                     }
-                    isValid = false;
+                    return;
                 }
+
+                const submitBtn = bookingForm.querySelector('button[type="submit"]');
+                const formData = new FormData(bookingForm);
+
+                // Marquer comme en cours de soumission
+                isSubmitting = true;
                 
-                return isValid;
+                // Disable submit button and show loading state
+                submitBtn.setAttribute('disabled', true);
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Traitement en cours...';
+
+                fetch(bookingForm.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    const contentType = response.headers.get('content-type');
+                    if (contentType && contentType.includes('application/json')) {
+                        return response.json();
+                    } else {
+                        // Si la réponse n'est pas du JSON, c'est probablement une redirection réussie
+                        // Afficher SweetAlert avant la redirection
+                        Swal.fire({
+                            title: 'Succès!',
+                            text: 'Votre demande a été enregistrée avec succès',
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        }).then(() => {
+                            window.location.href = response.url;
+                        });
+                        return null;
+                    }
+                })
+                .then(data => {
+                    if (!data) return; // Si null, la redirection a déjà été gérée
+                    
+                    if (data.success) {
+                        // Réinitialiser le formulaire
+                        bookingForm.reset();
+                        
+                        Swal.fire({
+                            title: 'Succès!',
+                            text: data.message || 'Votre demande a été enregistrée avec succès',
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        }).then((result) => {
+                            if (data.redirect) {
+                                window.location.href = data.redirect;
+                            }
+                        });
+                    } else {
+                        // Réactiver le bouton de soumission
+                        submitBtn.removeAttribute('disabled');
+                        submitBtn.innerHTML = 'Réserver';
+                        isSubmitting = false;
+                        
+                        if (data.errors) {
+                            Object.entries(data.errors).forEach(([field, messages]) => {
+                                const fieldEl = bookingForm.querySelector(`[name="${field}"]`);
+                                if (fieldEl) {
+                                    fieldEl.classList.add('is-invalid');
+                                    const errorEl = fieldEl.parentNode.nextElementSibling;
+                                    if (errorEl && errorEl.classList.contains('invalid-feedback')) {
+                                        errorEl.textContent = messages.join(', ');
+                                        errorEl.style.display = 'block';
+                                    }
+                                }
+                            });
+                        } else {
+                            Swal.fire({
+                                title: 'Erreur!',
+                                text: data.message || 'Une erreur est survenue lors de la réservation',
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            });
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur:', error);
+                    submitBtn.removeAttribute('disabled');
+                    submitBtn.innerHTML = 'Réserver';
+                    isSubmitting = false;
+                    
+                    Swal.fire({
+                        title: 'Erreur!',
+                        text: 'Le serveur a rencontré un problème. Veuillez réessayer plus tard.',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                });
             });
         }
     });

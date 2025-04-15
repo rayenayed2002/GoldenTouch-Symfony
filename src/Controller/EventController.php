@@ -83,7 +83,7 @@ class EventController extends AbstractController
         ->where('e.utilisateur = :userId')
         ->andWhere('p.id IS NULL')
         ->andWhere('dc.id IS NULL')
-        ->setParameter('userId', 20);
+        ->setParameter('userId', 25);
         $events = $qb->getQuery()->getResult();
     
         // Define the category labels for display

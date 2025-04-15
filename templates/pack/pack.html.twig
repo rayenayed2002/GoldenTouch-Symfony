@@ -121,16 +121,16 @@ Breadcrumb Area
 ============================== -->
 <div class="breadcumb-wrapper" data-bg-src="assets/img/breadcumb/breadcumb-bg.jpg">
     <div class="container z-index-common">
-        <h1 class="breadcumb-title">Our Packs</h1>
+        <h1 class="breadcumb-title">Nos Packs</h1>
         <ul class="breadcumb-menu">
-            <li><a href="index.html">Home</a></li>
+            <li><a href="index.html">Accueil</a></li>
             <li>Packs</li>
         </ul>
     </div>
 </div>
 
 <!--==============================
-Pack Area  
+Espace Packs  
 ==============================-->
 <section class="space-top space-extra-bottom">
     <div class="container">
@@ -139,15 +139,15 @@ Pack Area
                 <div class="th-sort-bar">
                     <div class="row justify-content-between align-items-center">
                         <div class="col-md">
-                            <p class="woocommerce-result-count">Showing {{ packs.results|length }} packs</p>
+                            <p class="woocommerce-result-count">Affichage de {{ packs.results|length }} packs</p>
                         </div>
                         <div class="col-md-auto">
                             <form class="woocommerce-ordering" method="get">
-                                <select name="orderby" class="orderby" aria-label="Pack order">
-                                    <option value="menu_order" selected="selected">Default Sorting</option>
-                                    <option value="popularity">Sort by popularity</option>
-                                    <option value="price">Sort by price: low to high</option>
-                                    <option value="price-desc">Sort by price: high to low</option>
+                                <select name="orderby" class="orderby" aria-label="Ordre des packs">
+                                    <option value="menu_order" selected="selected">Tri par défaut</option>
+                                    <option value="popularity">Trier par popularité</option>
+                                    <option value="price">Trier par prix : croissant</option>
+                                    <option value="price-desc">Trier par prix : décroissant</option>
                                 </select>
                             </form>
                         </div>
@@ -162,7 +162,7 @@ Pack Area
                                 {% if pack.getPhoto() %}
                                     <img src="{{ asset('uploads/packs/' ~ pack.getPhoto()) }}" alt="{{ pack.getNom() }}">
                                 {% else %}
-                                    <img src="{{ asset('Front/img/placeholder.jpg') }}" alt="Pack Image">
+                                    <img src="{{ asset('Front/img/placeholder.jpg') }}" alt="Image du pack">
                                 {% endif %}
                                 <div class="actions">
                                     <a href="{{ path('app_pack_shop_details', {'id': pack.id}) }}" class="icon-btn"><i class="far fa-eye"></i></a>
@@ -171,13 +171,13 @@ Pack Area
                                 </div>
                             </div>
                             <div class="product-content">
-                                <div class="star-rating" role="img" aria-label="Rated 5.00 out of 5">
-                                    <span>Rated <strong class="rating">5.00</strong> out of 5</span>
+                                <div class="star-rating" role="img" aria-label="Noté 5.00 sur 5">
+                                    <span>Note : <strong class="rating">5.00</strong>/5</span>
                                 </div>
                                 <h3 class="product-title"><a href="{{ path('app_pack_shop_details', {'id': pack.id}) }}">{{ pack.nom }}</a></h3>
                                 <div class="pack-meta">
-                                    <span class="price">{{ pack.prix }} €</span>
-                                    <span class="pack-capacity"><i class="fas fa-users"></i> {{ pack.capacite }} persons</span>
+                                    <span class="price">{{ pack.prix }}&nbsp;€</span>
+                                    <span class="pack-capacity"><i class="fas fa-users"></i> {{ pack.capacite }} personnes</span>
                                 </div>
                             </div>
                         </div>
@@ -199,41 +199,41 @@ Pack Area
                 <aside class="sidebar-area sidebar-shop">
                     <div class="widget widget_search">
                         <form class="search-form">
-                            <input type="text" placeholder="Search packs...">
+                            <input type="text" placeholder="Rechercher des packs...">
                             <button type="submit"><i class="far fa-search"></i></button>
                         </form>
                     </div>
                     
                     <div class="widget widget_categories">
-                        <h3 class="widget_title">Categories</h3>
+                        <h3 class="widget_title">Catégories</h3>
                         <ul>
-                            <li><a href="blog.html">Adventure</a> <span>(8)</span></li>
-                            <li><a href="blog.html">Family</a> <span>(6)</span></li>
-                            <li><a href="blog.html">Luxury</a> <span>(5)</span></li>
-                            <li><a href="blog.html">Weekend</a> <span>(2)</span></li>
-                            <li><a href="blog.html">Custom</a> <span>(7)</span></li>
+                            <li><a href="blog.html">Aventure</a> <span>(8)</span></li>
+                            <li><a href="blog.html">Famille</a> <span>(6)</span></li>
+                            <li><a href="blog.html">Luxe</a> <span>(5)</span></li>
+                            <li><a href="blog.html">Week-end</a> <span>(2)</span></li>
+                            <li><a href="blog.html">Personnalisé</a> <span>(7)</span></li>
                         </ul>
                     </div>
                     
                     <div class="widget widget_price_filter">
-                        <h4 class="widget_title">Filter By Price</h4>
+                        <h4 class="widget_title">Filtrer par prix</h4>
                         <div class="price_slider_wrapper">
                             <div class="price_label">
-                                Price: <span class="from">$0</span> — <span class="to">$1000</span>
+                                Prix : <span class="from">0&nbsp;€</span> — <span class="to">1000&nbsp;€</span>
                             </div>
                             <div class="price_slider"></div>
-                            <button type="submit" class="button">Filter</button>
+                            <button type="submit" class="button">Filtrer</button>
                         </div>
                     </div>
                     
                     <div class="widget widget_tag_cloud">
-                        <h3 class="widget_title">Popular Tags</h3>
+                        <h3 class="widget_title">Étiquettes populaires</h3>
                         <div class="tagcloud">
-                            <a href="blog.html">Adventure</a>
-                            <a href="blog.html">Family</a>
-                            <a href="blog.html">Luxury</a>
-                            <a href="blog.html">Weekend</a>
-                            <a href="blog.html">Custom</a>
+                            <a href="blog.html">Aventure</a>
+                            <a href="blog.html">Famille</a>
+                            <a href="blog.html">Luxe</a>
+                            <a href="blog.html">Week-end</a>
+                            <a href="blog.html">Personnalisé</a>
                         </div>
                     </div>
                 </aside>
