@@ -998,7 +998,7 @@
                                 <button type="button" class="btn btn-secondary" onclick="window.location.href='{{ path('admin_notifications') }}'">
                                     <i class="ti ti-x"></i> Annuler
                                 </button>
-                                <form id="customizeForm" action="{{ path('admin_customize_pack_update', {id: demandePack.id}) }}" method="POST">
+                                <form id="customizeForm" action="{{ path('admin_customize_pack_update', {id: demandePack.id}) }}" method="POST" onsubmit="return false;">
                                     <button type="submit" class="btn btn-primary">
                                         <i class="ti ti-device-floppy"></i> Enregistrer les modifications
                                     </button>

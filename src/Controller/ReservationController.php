@@ -69,6 +69,22 @@ class ReservationController extends AbstractController
             // Set the user ID
             // Note: In a real app, you'd get this from security context
             
+            // Get the selected event from the form and set it on the reservation
+            $event = $form->get('event')->getData();
+            if ($event) {
+                $reservation->setEvent($event);
+                $reservation->setEvent_id($event->getId());
+            } else {
+                // Si aucun événement n'est sélectionné, nous devons gérer cette situation
+                // pour éviter l'erreur d'intégrité de contrainte
+                $this->addFlash('error', 'Veuillez sélectionner un événement');
+                return $this->renderForm('reservation/new.html.twig', [
+                    'reservation' => $reservation,
+                    'form' => $form,
+                    'events' => $events
+                ]);
+            }
+            
             $entityManager->persist($reservation);
             $entityManager->flush();
 
@@ -97,8 +113,8 @@ class ReservationController extends AbstractController
         $eventId = $request->request->get('event_id');
         
         // Validate input
-        if (!$lieuId || !$date || !$people || !$eventType) {
-            $this->addFlash('error', 'Tous les champs obligatoires doivent être remplis');
+        if (!$lieuId || !$date || !$people || !$eventType || !$eventId) {
+            $this->addFlash('error', 'Tous les champs obligatoires doivent être remplis, y compris l\'événement');
             return $this->redirectToRoute('app_lieu_details', ['id' => $lieuId]);
         }
         
@@ -115,6 +131,22 @@ class ReservationController extends AbstractController
         $reservation->setPrix($lieu->getPrice());
         $reservation->setCapacite($people);
         $reservation->setDateReservation(new \DateTime($date));
+        
+        // L'event_id est obligatoire pour éviter l'erreur d'intégrité de contrainte
+        if (!$eventId) {
+            $this->addFlash('error', 'Veuillez sélectionner un événement');
+            return $this->redirectToRoute('app_lieu_details', ['id' => $lieuId]);
+        }
+        
+        // Set the event relationship
+        $event = $entityManager->getRepository(Event::class)->find($eventId);
+        if (!$event) {
+            $this->addFlash('error', 'L\'événement sélectionné n\'existe pas');
+            return $this->redirectToRoute('app_lieu_details', ['id' => $lieuId]);
+        }
+        
+        $reservation->setEvent($event);
+        $reservation->setEvent_id($eventId);
         
         // Add any other needed fields here
         
@@ -153,6 +185,22 @@ class ReservationController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // Get the selected event from the form and set it on the reservation
+            $event = $form->get('event')->getData();
+            if ($event) {
+                $reservation->setEvent($event);
+                $reservation->setEvent_id($event->getId());
+            } else {
+                // Si aucun événement n'est sélectionné, nous devons gérer cette situation
+                // pour éviter l'erreur d'intégrité de contrainte
+                $this->addFlash('error', 'Veuillez sélectionner un événement');
+                return $this->renderForm('reservation/edit.html.twig', [
+                    'reservation' => $reservation,
+                    'form' => $form,
+                    'events' => $events
+                ]);
+            }
+            
             $entityManager->flush();
 
             return $this->redirectToRoute('app_reservation_index', [], Response::HTTP_SEE_OTHER);

@@ -138,6 +138,8 @@ class CustomizePackController extends AbstractController
             $event->setDateFin(new \DateTime());
             $this->entityManager->persist($event);
             $demandePack->getPack()->setEvent($event);
+            // Flush immédiatement pour obtenir un ID d'événement valide
+            $this->entityManager->flush();
         }
 
         // Delete existing reservations
@@ -189,8 +191,10 @@ class CustomizePackController extends AbstractController
                 }
                 
                 $reservation = new ReserverLieu();
-                $reservation->setLieu_id($location->getId());
-                $reservation->setEvent_id($event->getId());
+                // Utiliser la relation objet pour définir le lieu et l'événement
+                $reservation->setLieu($location);
+                $reservation->setEvent($event); // Définir l'objet Event directement
+                $reservation->setEvent_id($event->getId()); // Définir aussi l'ID pour compatibilité
                 $reservation->setDate_reservation(new \DateTime());
                 $reservation->setStatus('pending');
                 $reservation->setCreated_at(new \DateTime());
