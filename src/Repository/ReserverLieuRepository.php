@@ -2,42 +2,50 @@
 
 namespace App\Repository;
 
-use App\Entity\ReserverLieu;
+use App\Entity\ReservationLieu;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<ReserverLieu>
+ * @extends ServiceEntityRepository<ReservationLieu>
  */
 class ReserverLieuRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, ReserverLieu::class);
+        parent::__construct($registry, ReservationLieu::class);
     }
 
-    //    /**
-    //     * @return ReserverLieu[] Returns an array of ReserverLieu objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('r')
-    //            ->andWhere('r.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('r.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    public function add(ReservationLieu $entity, bool $flush = false): void
+    {
+        $this->getEntityManager()->persist($entity);
 
-    //    public function findOneBySomeField($value): ?ReserverLieu
-    //    {
-    //        return $this->createQueryBuilder('r')
-    //            ->andWhere('r.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+    }
+
+    public function remove(ReservationLieu $entity, bool $flush = false): void
+    {
+        $this->getEntityManager()->remove($entity);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+    }
+
+    /**
+     * Find reservations by user ID
+     */
+    public function findByUserId(int $userId)
+    {
+        return $this->createQueryBuilder('r')
+            ->andWhere('r.user_id = :val')
+            ->setParameter('val', $userId)
+            ->orderBy('r.date_reservation', 'DESC')
+            ->setMaxResults(10)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 }

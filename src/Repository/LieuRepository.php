@@ -28,17 +28,17 @@ class LieuRepository extends ServiceEntityRepository
             ->getResult();
     }
     public function searchByName(string $searchTerm): array
-    {
-        return $this->createQueryBuilder('l')
-            ->where('l.name LIKE :searchTerm')
-            ->orWhere('l.location LIKE :searchTerm')
-            ->orWhere('l.ville LIKE :searchTerm')
-            ->orWhere('l.category LIKE :searchTerm')
-            ->setParameter('searchTerm', '%'.$searchTerm.'%')
-            ->orderBy('l.name', 'ASC')
-            ->getQuery()
-            ->getResult();
-    }
+{
+    return $this->createQueryBuilder('l')
+        ->where('l.name LIKE :searchTerm')
+        ->orWhere('l.location LIKE :searchTerm')
+        ->orWhere('l.ville LIKE :searchTerm')
+        ->orWhere('l.category LIKE :searchTerm')
+        ->setParameter('searchTerm', '%'.$searchTerm.'%')
+        ->orderBy('l.name', 'ASC')
+        ->getQuery()
+        ->getResult();
+}
 
 
     public function findPopularLieux(int $limit = 3): array

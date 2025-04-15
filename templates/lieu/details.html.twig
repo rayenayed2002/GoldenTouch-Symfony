@@ -237,7 +237,7 @@
             <div class="th-mobile-menu">
                 <ul>
                     <li><a href="{{ path('app_lieu_index') }}">Lieux</a></li>
-                    <li><a href="{{ path('app_reservation_index') }}">Réservations</a></li>
+               
                     <li><a href="contact.html">Contact</a></li>
                 </ul>
             </div>
@@ -298,7 +298,6 @@
                                             <li><a href="{{ path('app_lieu_index') }}">Liste Lieux</a></li>
                                         </ul>
                                     </li>
-                                    <li><a href="{{ path('app_reservation_index') }}">Réservations</a></li>
                                     <li><a href="contact.html">Contact</a></li>
                                 </ul>
                             </nav>
@@ -319,7 +318,7 @@
     </header>
 
     <!-- Breadcrumb -->
-    <div class="breadcumb-wrapper" data-bg-src="{{ asset('Front/img/breadcumb/breadcumb-bg.jpg') }}">
+    <div class="breadcumb-wrapper" data-bg-src="{{ asset('uploads/lieux/' ~ lieu.imageUrl|default('default.jpg')) }}">
         <div class="container z-index-common">
             <h1 class="breadcumb-title">{{ lieu.name }}</h1>
             <ul class="breadcumb-menu">
@@ -512,36 +511,36 @@
 
                 <!-- Right Column: Booking, QR Code and Similar Lieux -->
                 <div class="col-lg-4">
-                    <!-- Booking Card -->
-                    <div class="booking-card mb-30" id="bookingSection">
-                        <h3 class="section-title">Réserver ce lieu</h3>
-                        <form id="bookingForm">
-                            <div class="mb-3">
-                                <label class="form-label">Date</label>
-                                <input type="date" class="form-control" required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Nombre de personnes</label>
-                                <input type="number" class="form-control" min="1" max="{{ lieu.capacity }}" required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Type d'événement</label>
-                                <select class="form-select">
-                                    <option>Mariage</option>
-                                    <option>Anniversaire</option>
-                                    <option>Conférence</option>
-                                    <option>Autre</option>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Notes spéciales</label>
-                                <textarea class="form-control" rows="3"></textarea>
-                            </div>
-                            <button type="submit" class="th-btn w-100">
-                                <i class="fas fa-calendar-plus me-2"></i> Réserver maintenant
-                            </button>
-                        </form>
-                    </div>
+                   <!-- Booking Card -->
+<div class="booking-card mb-30" id="bookingSection">
+    <h3 class="section-title">Réserver ce lieu</h3>
+
+
+
+    <form id="bookingForm" method="POST" action="{{ path('app_process_booking') }}" novalidate>
+    <input type="hidden" name="lieu_id" value="{{ lieu.id }}">
+    <input type="hidden" name="event_id" value="25"> <!-- ID statique -->
+    
+    <div class="mb-3">
+        <label class="form-label">Date</label>
+        <input type="date" class="form-control" name="date_reservation" required 
+               min="{{ 'now'|date('Y-m-d') }}">
+        <div class="invalid-feedback">Veuillez sélectionner une date valide</div>
+    </div>
+    
+    <div class="mb-3">
+        <label class="form-label">Nombre de personnes</label>
+        <input type="number" class="form-control" name="nb_personnes" 
+               min="1" max="{{ lieu.capacity }}" required>
+        <div class="invalid-feedback">Veuillez entrer un nombre valide</div>
+    </div>
+    
+    <button type="submit" class="th-btn w-100" id="submitBtn">
+        <i class="fas fa-calendar-plus me-2"></i> Réserver maintenant
+    </button>
+</form>
+
+</div>
 
                     <!-- QR Code Card -->
                     <div class="card mb-30">
@@ -665,7 +664,6 @@
                                 <ul class="menu">
                                     <li><a href="about.html">À propos</a></li>
                                     <li><a href="{{ path('app_lieu_index') }}">Lieux</a></li>
-                                    <li><a href="{{ path('app_reservation_index') }}">Réservations</a></li>
                                     <li><a href="contact.html">Contact</a></li>
                                 </ul>
                             </div>
@@ -738,6 +736,57 @@
     <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap" async defer></script>
 
     <script>
+    // Custom form validation
+function validateDate(input) {
+    const selectedDate = new Date(input.value);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    if (selectedDate < today) {
+        input.setCustomValidity('La date ne peut pas être dans le passé');
+        input.classList.add('is-invalid');
+    } else {
+        input.setCustomValidity('');
+        input.classList.remove('is-invalid');
+    }
+}
+
+function validateCapacity(input, maxCapacity) {
+    const value = parseInt(input.value);
+    
+    if (isNaN(value) {
+        input.setCustomValidity('Veuillez entrer un nombre valide');
+        input.classList.add('is-invalid');
+    } else if (value < 1 || value > maxCapacity) {
+        input.setCustomValidity(`Le nombre doit être entre 1 et ${maxCapacity}`);
+        input.classList.add('is-invalid');
+    } else {
+        input.setCustomValidity('');
+        input.classList.remove('is-invalid');
+    }
+}
+
+// Form submission handling
+document.getElementById('bookingForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const form = e.target;
+    const submitBtn = form.querySelector('#submitBtn');
+    
+    // Désactiver le bouton pendant le traitement
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Traitement...';
+    
+    // Soumettre le formulaire
+    form.submit();
+});
+
+// Reset validation on form reset
+document.getElementById('bookingForm').addEventListener('reset', function() {
+    this.classList.remove('was-validated');
+    const inputs = this.querySelectorAll('.is-invalid');
+    inputs.forEach(input => input.classList.remove('is-invalid'));
+});
         // Initialize map
         function initMap() {
             // Replace with actual coordinates from your Lieu entity
@@ -791,11 +840,33 @@
             }
         }
 
-        // Handle booking form submission
-        document.getElementById('bookingForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            alert('Votre demande de réservation a été envoyée avec succès !');
-        });
+       // Handle booking form submission
+document.getElementById('bookingForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    // Validate form
+    const dateInput = this.querySelector('input[name="date"]');
+    const peopleInput = this.querySelector('input[name="people"]');
+    const eventTypeInput = this.querySelector('select[name="event_type"]');
+    
+    if (!dateInput.value) {
+        alert('Veuillez sélectionner une date');
+        return;
+    }
+    
+    if (!peopleInput.value || peopleInput.value < 1 || peopleInput.value > {{ lieu.capacity }}) {
+        alert('Veuillez entrer un nombre valide de personnes (1-{{ lieu.capacity }})');
+        return;
+    }
+    
+    if (!eventTypeInput.value) {
+        alert('Veuillez sélectionner un type d\'événement');
+        return;
+    }
+    
+    // Submit form if validation passes
+    this.submit();
+});
 
         // Rating stars interaction
         document.querySelectorAll('.rating-star').forEach(star => {
@@ -829,6 +900,69 @@
             const modal = bootstrap.Modal.getInstance(document.getElementById('reviewModal'));
             modal.hide();
         }
+        document.addEventListener('DOMContentLoaded', function() {
+    const bookingForm = document.getElementById('bookingForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const formMessage = document.getElementById('formMessage');
+
+    bookingForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        // Validation côté client
+        if (!bookingForm.checkValidity()) {
+            bookingForm.classList.add('was-validated');
+            return;
+        }
+
+        // Désactiver le bouton pendant le traitement
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Traitement...';
+
+        try {
+            const formData = new FormData(bookingForm);
+            const response = await fetch(bookingForm.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Accept': 'application/json'
+                }
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                // Succès
+                formMessage.innerHTML = `
+                    <div class="alert alert-success">
+                        ${result.message || 'Réservation effectuée avec succès!'}
+                    </div>
+                `;
+                bookingForm.reset();
+                bookingForm.classList.remove('was-validated');
+                
+                // Redirection après 2 secondes
+                setTimeout(() => {
+                }, 2000);
+            } else {
+                // Erreur
+                formMessage.innerHTML = `
+                    <div class="alert alert-danger">
+                        ${result.message || 'Une erreur est survenue lors de la réservation.'}
+                    </div>
+                `;
+            }
+        } catch (error) {
+            formMessage.innerHTML = `
+                <div class="alert alert-danger">
+                    Erreur réseau: ${error.message}
+                </div>
+            `;
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-calendar-plus me-2"></i> Réserver maintenant';
+        }
+    });
+});
     </script>
 </body>
 </html>

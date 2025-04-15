@@ -18,6 +18,7 @@
     <link rel="stylesheet" href="{{ asset('Front/css/style.css') }}">
 
     <style>
+        /* Styles pour les cartes de lieux */
         .lieu-card {
             transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             margin-bottom: 30px;
@@ -71,16 +72,68 @@
             font-size: 0.9rem;
             color: #666;
         }
-        .lieu-actions {
-            display: flex;
-            gap: 10px;
-        }
+        
+        /* Styles pour la section de recherche */
         .search-section {
             margin-bottom: 50px;
             background: #f8f9fa;
             padding: 30px;
             border-radius: 15px;
         }
+        
+        /* Styles pour les résultats de recherche */
+        .search-results-dropdown {
+            position: absolute;
+            width: 100%;
+            max-height: 300px;
+            overflow-y: auto;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 0 0 8px 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            z-index: 1000;
+            display: none;
+        }
+        .search-result-item {
+            padding: 10px 15px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: inherit;
+        }
+        .search-result-item:hover, .search-result-item.active {
+            background-color: #f0f7ff;
+        }
+        .search-result-item img {
+            width: 40px;
+            height: 40px;
+            border-radius: 4px;
+            margin-right: 10px;
+            object-fit: cover;
+        }
+        .search-result-info {
+            flex: 1;
+        }
+        .search-result-info h6 {
+            margin-bottom: 2px;
+            font-size: 0.9rem;
+            color: #333;
+        }
+        .search-result-info p {
+            margin: 0;
+            font-size: 0.8rem;
+            color: #666;
+        }
+        .search-loading, .no-results {
+            padding: 10px;
+            text-align: center;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        /* Autres styles */
         .lieu-location {
             display: flex;
             align-items: center;
@@ -104,59 +157,6 @@
         .pagination .page-link {
             color: var(--theme-color);
         }
-        .search-results-dropdown {
-            position: absolute;
-            width: 100%;
-            max-height: 300px;
-            overflow-y: auto;
-            background: white;
-            border: 1px solid #ddd;
-            border-radius: 0 0 8px 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            z-index: 1000;
-            display: none;
-        }
-        .search-result-item {
-            padding: 10px 15px;
-            border-bottom: 1px solid #eee;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-        }
-        .search-result-item:hover {
-            background-color: #f8f9fa;
-        }
-        .search-result-item img {
-            width: 40px;
-            height: 40px;
-            border-radius: 4px;
-            margin-right: 10px;
-            object-fit: cover;
-        }
-        .search-result-info {
-            flex: 1;
-        }
-        .search-result-info h6 {
-            margin-bottom: 2px;
-            font-size: 0.9rem;
-        }
-        .search-result-info p {
-            margin: 0;
-            font-size: 0.8rem;
-            color: #666;
-        }
-        .search-loading {
-            padding: 10px;
-            text-align: center;
-            color: #666;
-            font-size: 0.9rem;
-        }
-        .no-results {
-            padding: 10px;
-            text-align: center;
-            color: #666;
-            font-size: 0.9rem;
-        }
     </style>
 </head>
 
@@ -179,27 +179,26 @@
     <!-- Lieu List Section -->
     <section class="space-top space-extra-bottom">
         <div class="container">
-            <!-- Search Section -->
-            <div class="search-section">
-                <div class="row justify-content-center">
-                    <div class="col-lg-8 position-relative">
-                        <form class="search-form" id="searchForm" action="{{ path('app_lieu_index') }}" method="get">
-                            <input type="hidden" name="filter" value="{{ currentFilter }}">
-                            <div class="input-group">
-                                <input type="text" 
-                                       class="form-control" 
-                                       id="searchInput"
-                                       name="search"
-                                       value="{{ searchTerm ?? '' }}"
-                                       placeholder="Rechercher un lieu..."
-                                       autocomplete="off">
-                                <button class="th-btn style3" type="submit"><i class="fas fa-search"></i></button>
-                            </div>
-                        </form>
-                        <div class="search-results-dropdown" id="searchResults"></div>
-                    </div>
+            <!-- Search Section - Modifiée pour la recherche en temps réel -->
+            <!-- Remplacez la section de recherche par ceci -->
+<!-- Dans votre template Twig -->
+<div class="search-section">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 position-relative">
+            <div class="input-group">
+                <input type="text" 
+                       class="form-control" 
+                       id="searchInput"
+                       placeholder="Rechercher un lieu..."
+                       autocomplete="off">
+                <div class="input-group-append">
+                    <span class="input-group-text"><i class="fas fa-search"></i></span>
                 </div>
             </div>
+            <div class="search-results-dropdown" id="searchResults"></div>
+        </div>
+    </div>
+</div>
 
             <!-- Lieu Grid -->
             <div class="row flex-row-reverse">
@@ -297,6 +296,7 @@
                     {% endif %}
                 </div>
                 
+                <!-- Sidebar -->
                 <div class="col-xl-3 col-lg-4">
                     <aside class="sidebar-area sidebar-shop">
                         <div class="widget widget_search">
@@ -360,53 +360,119 @@
     <script src="{{ asset('Front/js/slick.min.js') }}"></script>
     <script src="{{ asset('Front/js/main.js') }}"></script>
 
-    <!-- Script ajouté pour la recherche -->
+    <!-- Script pour la recherche en temps réel -->
     <script>
         $(document).ready(function() {
-            const searchInput = $('#searchInput');
-            const searchResults = $('#searchResults');
-            let searchTimeout;
-            
-            searchInput.on('input', function() {
-                clearTimeout(searchTimeout);
-                const term = $(this).val().trim();
-                
-                if (term.length < 2) {
-                    searchResults.hide().empty();
-                    return;
-                }
-                
-                searchResults.html('<div class="search-loading">Recherche en cours...</div>').show();
-                
-                searchTimeout = setTimeout(() => {
-                    $.get('{{ path("app_lieu_search_autocomplete") }}', { term: term }, function(data) {
-                        if (data.length > 0) {
-                            let html = '';
-                            data.forEach(item => {
-                                html += `
-                                    <a href="{{ path('app_lieu_details', {'id': 'PLACEHOLDER'}) }}".replace('PLACEHOLDER', item.id) class="search-result-item">
-                                        <img src="/${item.image}" alt="${item.name}">
-                                        <div class="search-result-info">
-                                            <h6>${item.name}</h6>
-                                            <p>${item.location} • ${item.category}</p>
-                                        </div>
-                                    </a>
-                                `;
-                            });
-                            searchResults.html(html);
-                        } else {
-                            searchResults.html('<div class="no-results">Aucun résultat trouvé</div>');
-                        }
+    const searchInput = $('#searchInput');
+    const searchResults = $('#searchResults');
+    let searchXHR = null;
+
+    searchInput.on('input', function() {
+        const term = $(this).val().trim();
+        
+        // Masquer les résultats si moins de 2 caractères
+        if (term.length < 2) {
+            searchResults.hide().empty();
+            return;
+        }
+        
+        // Annuler la requête précédente si elle existe
+        if (searchXHR) {
+            searchXHR.abort();
+        }
+        
+        // Afficher le loader
+        searchResults.html('<div class="search-loading">Recherche en cours...</div>').show();
+        
+        // Lancer la recherche
+        searchXHR = $.ajax({
+            url: '{{ path("app_lieu_search_autocomplete") }}',
+            type: 'GET',
+            data: { term: term },
+            dataType: 'json',
+            success: function(data) {
+                if (data.length > 0) {
+                    let html = '';
+                    data.forEach(function(item) {
+                        html += `
+                            <a href="${item.url}" class="search-result-item">
+                                <img src="${item.image}" alt="${item.name}" onerror="this.src='{{ asset('Front/img/placeholder.jpg') }}'">
+                                <div class="search-result-info">
+                                    <h6>${item.name}</h6>
+                                    <p>${item.location} • ${item.category}</p>
+                                </div>
+                            </a>
+                        `;
                     });
-                }, 300);
-            });
-            
-            $(document).on('click', function(e) {
-                if (!$(e.target).closest('#searchInput, #searchResults').length) {
-                    searchResults.hide();
+                    searchResults.html(html).show();
+                } else {
+                    searchResults.html('<div class="no-results">Aucun résultat trouvé</div>').show();
                 }
-            });
+            },
+            error: function(xhr, status, error) {
+                if (status !== 'abort') {
+                    searchResults.html('<div class="no-results">Erreur lors de la recherche</div>').show();
+                }
+            },
+            complete: function() {
+                searchXHR = null;
+            }
         });
+    });
+
+    // Fermer les résultats quand on clique ailleurs
+    $(document).on('click', function(e) {
+        if (!$(e.target).closest('#searchInput, #searchResults').length) {
+            searchResults.hide();
+        }
+    });
+
+    // Gestion de la navigation clavier
+    searchInput.on('keydown', function(e) {
+        const items = searchResults.find('.search-result-item');
+        if (items.length === 0) return;
+
+        const active = items.filter('.active');
+        
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            if (active.length) {
+                active.removeClass('active');
+                const next = active.next('.search-result-item');
+                next.length ? next.addClass('active') : items.first().addClass('active');
+            } else {
+                items.first().addClass('active');
+            }
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            if (active.length) {
+                active.removeClass('active');
+                const prev = active.prev('.search-result-item');
+                prev.length ? prev.addClass('active') : items.last().addClass('active');
+            } else {
+                items.last().addClass('active');
+            }
+        } else if (e.key === 'Enter' && active.length) {
+            e.preventDefault();
+            window.location.href = active.attr('href');
+            return;
+        }
+
+        // Faire défiler vers l'élément actif
+        const newActive = items.filter('.active');
+        if (newActive.length) {
+            searchResults.scrollTop(
+                newActive.position().top + searchResults.scrollTop() - searchResults.offset().top
+            );
+        }
+    });
+
+    // Redirection quand on clique sur un résultat
+    searchResults.on('click', '.search-result-item', function(e) {
+        e.preventDefault();
+        window.location.href = $(this).attr('href');
+    });
+});
     </script>
 </body>
 </html>
