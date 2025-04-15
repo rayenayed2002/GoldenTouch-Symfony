@@ -8,6 +8,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use App\Entity\ReserverLieu;
+use App\Entity\Lieu;
+use App\Entity\Event;
 
 class ReserverLieuController extends AbstractController
 {
@@ -16,16 +19,9 @@ class ReserverLieuController extends AbstractController
     {
         // Récupérer les données du formulaire
         $lieuId = $request->request->get('lieu_id');
-        $eventId = $request->request->get('event_id'); // ID statique 25
-        $userId = $request->request->get('user_id'); // ID statique 25
+        $eventId = $request->request->get('event_id');
+        $userId = $request->request->get('user_id');
         $dateReservation = $request->request->get('date_reservation');
-        // Formater la date pour qu'elle soit correctement stockée
-        if ($dateReservation) {
-            // Convertir la date au format timestamp pour éviter le problème avec ON UPDATE CURRENT_TIMESTAMP
-            $dateObj = new \DateTime($dateReservation);
-            $dateReservation = $dateObj->format('Y-m-d H:i:s');
-        }
-        $status = $request->request->get('status', 'pending');
         
         // Vérifier que les données nécessaires sont présentes
         if (!$lieuId || !$eventId || !$userId || !$dateReservation) {
@@ -34,19 +30,27 @@ class ReserverLieuController extends AbstractController
         }
         
         try {
-            // Créer la requête SQL pour insérer directement dans la table reserver_lieu
-            $conn = $entityManager->getConnection();
+            // Créer une nouvelle instance de ReserverLieu
+            $reservation = new ReserverLieu();
             
-            $sql = "INSERT INTO reserver_lieu (lieu_id, event_id, date_reservation, status, created_at) 
-                   VALUES (:lieu_id, :event_id, :date_reservation, :status, NOW())";
+            // Récupérer les entités Lieu et Event
+            $lieu = $entityManager->getRepository(Lieu::class)->find($lieuId);
+            $event = $entityManager->getRepository(Event::class)->find($eventId);
             
-            $stmt = $conn->prepare($sql);
-            $stmt->executeStatement([
-                'lieu_id' => $lieuId,
-                'event_id' => $eventId,
-                'date_reservation' => $dateReservation,
-                'status' => $status
-            ]);
+            if (!$lieu || !$event) {
+                throw new \Exception('Lieu ou événement non trouvé');
+            }
+            
+            // Configurer la réservation
+            $reservation->setLieu($lieu);
+            $reservation->setEvent($event);
+            $reservation->setEvent_id($eventId);
+            $reservation->setDate_reservation(new \DateTime($dateReservation));
+            $reservation->setStatus($request->request->get('status', 'pending'));
+            
+            // Persister et sauvegarder la réservation
+            $entityManager->persist($reservation);
+            $entityManager->flush();
             
             $this->addFlash('success', 'Réservation effectuée avec succès!');
         } catch (\Exception $e) {
@@ -56,4 +60,5 @@ class ReserverLieuController extends AbstractController
         // Rediriger vers la page de détails du lieu
         return $this->redirectToRoute('app_lieu_details', ['id' => $lieuId]);
     }
-}
+    }
+?>
