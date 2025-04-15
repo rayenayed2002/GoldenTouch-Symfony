@@ -1,12 +1,14 @@
 <?php
 
 namespace App\Controller;
+
 use App\Entity\ReserverLieu;
 use App\Entity\Lieu;
 use App\Entity\Avis;
-use App\Form\LieuType; 
+use App\Form\LieuType;
 use App\Repository\LieuRepository;
 use App\Repository\AvisRepository;
+use App\Repository\EventRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -85,6 +87,7 @@ class LieuController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
+
     
 
     #[Route('/lieux', name: 'app_lieux')]
@@ -213,8 +216,8 @@ public function searchAutocomplete(Request $request): JsonResponse
         ]);
     }
 
-    #[Route('/lieu/{id}', name: 'app_lieu_details')]
-public function details(Lieu $lieu, Request $request): Response
+    #[Route('/lieu/{id}', name: 'app_lieu_details', methods: ['GET'])]
+public function details(Lieu $lieu, Request $request, EventRepository $eventRepository): Response
 {
     $similarLieux = $this->lieuRepository->findBy(
         ['category' => $lieu->getCategory()], 
@@ -226,54 +229,68 @@ public function details(Lieu $lieu, Request $request): Response
     $similarLieux = array_slice($similarLieux, 0, 3);
 
     $avis = $this->entityManager->getRepository(Avis::class)->findAvisWithUserInfo($lieu->getId());
-
-    if ($request->isMethod('POST')) {
-        $reservation = new ReserverLieu();
-        
-        // Configurez la réservation selon votre entité existante
-        $reservation->setLieuId($lieu->getId());
-        $reservation->setEventId(1); // ID d'événement statique comme demandé
-        $reservation->setStatus('pending'); // Statut par défaut
-        
-        try {
-            $dateReservation = new \DateTime($request->request->get('date'));
-            $reservation->setDateReservation($dateReservation);
-            $reservation->setCreatedAt(new \DateTime());
-        } catch (\Exception $e) {
-            $this->addFlash('error', 'Format de date invalide');
-            return $this->redirectToRoute('app_lieu_details', ['id' => $lieu->getId()]);
-        }
-
-        // Validation du nombre de personnes (à stocker ailleurs si nécessaire)
-        $people = (int)$request->request->get('people');
-        if ($people < 1 || $people > $lieu->getCapacity()) {
-            $this->addFlash('error', 'Nombre de personnes invalide');
-            return $this->redirectToRoute('app_lieu_details', ['id' => $lieu->getId()]);
-        }
-
-        $this->entityManager->persist($reservation);
-        $this->entityManager->flush();
-
-        $this->addFlash('success', 'Réservation confirmée pour le ' . $dateReservation->format('d/m/Y'));
-        return $this->redirectToRoute('app_lieu_details', ['id' => $lieu->getId()]);
-    }
+    
+    // Récupérer les événements pour l'utilisateur avec ID = 55 (statique)
+    $userId = 55;
+    $events = $eventRepository->createQueryBuilder('e')
+        ->where('e.utilisateur = :userId')
+        ->setParameter('userId', $userId)
+        ->getQuery()
+        ->getResult();
 
     return $this->render('lieu/details.html.twig', [
         'lieu' => $lieu,
         'similarLieux' => $similarLieux,
         'popularLieux' => $this->lieuRepository->findPopularLieux(),
         'avis' => $avis,
-        'qr_code_url' => $this->generateUrl('app_lieu_qr_code', ['id' => $lieu->getId()])
+        'qr_code_url' => $this->generateUrl('app_lieu_qr_code', ['id' => $lieu->getId()]),
+        'events' => $events
     ]);
 }
-    #[Route('/reservations', name: 'app_reservation_index')]
-    public function reservations(): Response
-    {
-        // Ajoutez ici la logique pour afficher les réservations
-        return $this->render('reservation/index.html.twig', [
-            // Passer les données nécessaires au template
-        ]);
+
+#[Route('/process-booking', name: 'app_process_booking', methods: ['POST'])]
+public function processBooking(Request $request): Response
+{
+    // Récupération des données
+    $lieuId = $request->request->getInt('lieu_id');
+    $eventId = $request->request->getInt('event_id'); // 25
+    $dateString = $request->request->get('date_reservation');
+    
+    // Validation basique
+    if (!$lieuId || !$dateString) {
+        $this->addFlash('error', 'Tous les champs obligatoires doivent être remplis');
+        return $this->redirectToRoute('app_lieu_details', ['id' => $lieuId]);
     }
+
+    try {
+        // Vérification du lieu
+        $lieu = $this->lieuRepository->find($lieuId);
+        if (!$lieu) {
+            $this->addFlash('error', 'Lieu non trouvé');
+            return $this->redirectToRoute('app_lieu_index');
+        }
+
+        // Création de la réservation
+        $reservation = new ReserverLieu();
+        $reservation->setLieuId($lieuId);
+        $reservation->setEventId($eventId);
+        $reservation->setDateReservation(new \DateTime($dateString));
+        $reservation->setStatus('pending');
+
+        $this->entityManager->persist($reservation);
+        $this->entityManager->flush();
+
+        $this->addFlash('success', 'Réservation confirmée!');
+        return $this->redirectToRoute('app_lieu_details', ['id' => $lieuId]);
+
+    } catch (\Exception $e) {
+        $this->addFlash('error', 'Erreur lors de la réservation: ' . $e->getMessage());
+        return $this->redirectToRoute('app_lieu_details', ['id' => $lieuId]);
+    }
+}
+
+
+    
     public function advancedSearch(array $criteria): array
 {
     $queryBuilder = $this->createQueryBuilder('l');
