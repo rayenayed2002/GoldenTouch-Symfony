@@ -43,63 +43,58 @@ final class MaterielsController extends AbstractController
   
 
     #[Route('/materiels/new', name: 'app_materiels_new')]
-    public function new(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
-    {
-        $materiel = new Materielle();
-        $form = $this->createForm(MaterielleType::class, $materiel);
-        $form->handleRequest($request);
-    
-        if ($form->isSubmitted() && $form->isValid()) {
-    
-            // Vérification si nom_mat existe déjà
-            $existingMateriel = $entityManager->getRepository(Materielle::class)
-                ->findOneBy(['nom_mat' => $materiel->getNom_mat()]);
-    
-            if ($existingMateriel) {
-                $this->addFlash('error', 'Un matériel avec ce nom existe déjà.');
-                return $this->redirectToRoute('app_materiels_new');
-            }
-    
-            // Récupération de la photo
-            $photoFile = $form->get('photo_mat')->getData();
-            if ($photoFile) {
-                if (!$photoFile instanceof \Symfony\Component\HttpFoundation\File\UploadedFile) {
-                    throw new \Exception('Le fichier uploadé est invalide.');
-                }
-    
-                $originalFilename = pathinfo($photoFile->getClientOriginalName(), PATHINFO_FILENAME);
-                $safeFilename = $slugger->slug($originalFilename);
-                $newFilename = $safeFilename . '-' . uniqid() . '.' . $photoFile->guessExtension();
-    
-                try {
-                    $photoFile->move(
-                        $this->getParameter('materiel_directory'),
-                        $newFilename
-                    );
-                } catch (FileException $e) {
-                    throw new \Exception('Erreur lors de l\'upload du fichier.');
-                }
-    
-                $materiel->setPhotoMat($newFilename);
-    
-                // Appel à Gemini après upload
-                $imagePath = $this->getParameter('materiel_directory') . '/' . $newFilename;
-                $description = $this->generateDescriptionFromImageWithGemini($imagePath);
-                $materiel->setDescriptionMat($description);
-            }
-    
-            $entityManager->persist($materiel);
-            $entityManager->flush();
-    
-            $this->addFlash('success', 'Matériel ajouté avec succès.');
-            return $this->redirectToRoute('app_materielss');
+public function new(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
+{
+    $materiel = new Materielle();
+    $form = $this->createForm(MaterielleType::class, $materiel);
+    $form->handleRequest($request);
+
+    if ($form->isSubmitted() && $form->isValid()) {
+
+        // Vérification si nom_mat existe déjà
+        $existingMateriel = $entityManager->getRepository(Materielle::class)
+            ->findOneBy(['nom_mat' => $materiel->getNom_mat()]);
+
+        if ($existingMateriel) {
+            $this->addFlash('error', 'Un matériel avec ce nom existe déjà.');
+            return $this->redirectToRoute('app_materiels_new');
         }
-    
-        return $this->render('materiels/show.html.twig', [
-            'form' => $form->createView(),
-        ]);
+
+        // Récupération de la photo
+        $photoFile = $form->get('photo_mat')->getData();
+        if ($photoFile) {
+            if (!$photoFile instanceof \Symfony\Component\HttpFoundation\File\UploadedFile) {
+                throw new \Exception('Le fichier uploadé est invalide.');
+            }
+
+            $originalFilename = pathinfo($photoFile->getClientOriginalName(), PATHINFO_FILENAME);
+            $safeFilename = $slugger->slug($originalFilename);
+            $newFilename = $safeFilename . '-' . uniqid() . '.' . $photoFile->guessExtension();
+
+            try {
+                $photoFile->move(
+                    $this->getParameter('materiel_directory'),
+                    $newFilename
+                );
+            } catch (\Symfony\Component\HttpFoundation\File\Exception\FileException $e) {
+                throw new \Exception('Erreur lors de l\'upload du fichier.');
+            }
+
+            $materiel->setPhotoMat($newFilename);
+        }
+
+        $entityManager->persist($materiel);
+        $entityManager->flush();
+
+        $this->addFlash('success', 'Matériel ajouté avec succès.');
+        return $this->redirectToRoute('app_materielss');
     }
-    
+
+    return $this->render('materiels/show.html.twig', [
+        'form' => $form->createView(),
+    ]);
+}
+
     
    
 #[Route('/materiels/{id}/delete', name: 'app_materiels_delete', methods: ['POST'])]

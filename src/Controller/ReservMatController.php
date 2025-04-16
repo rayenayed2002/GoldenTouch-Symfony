@@ -174,5 +174,17 @@ final class ReservMatController extends AbstractController
 
         return $this->redirectToRoute('app_mes_reservations');
     }
+    #[Route('/reservations/{id}', name: 'app_reservation_details', methods: ['GET'])]
+public function details(ReservMat $reservation): Response
+{
+    // Vérifie si la réservation existe (géré automatiquement par le param converter)
+    if (!$reservation) {
+        throw $this->createNotFoundException('Réservation non trouvée');
+    }
+
+    return $this->render('materiels/deR.html.twig', [
+        'reservation' => $reservation,
+    ]);
+}
 
 }

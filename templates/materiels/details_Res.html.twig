@@ -466,19 +466,19 @@ body {
     <div class="row">
         <div class="col-md-8 mx-auto">
             <div class="card shadow rounded-4 border-0">
-            {% if app.request.get('already_reserved') %}
-    <div class="alert alert-danger rounded-3 text-center fw-bold">
-        Vous avez déjà réservé ce matériel !
-    </div>
-{% endif %}
+                {% if app.request.get('already_reserved') %}
+                    <div class="alert alert-danger rounded-3 text-center fw-bold">
+                        Vous avez déjà réservé ce matériel !
+                    </div>
+                {% endif %}
 
-{% for label, messages in app.flashes %}
-    {% for message in messages %}
-        <div class="alert alert-{{ label }} rounded-3 text-center fw-bold">
-            {{ message }}
-        </div>
-    {% endfor %}
-{% endfor %}
+                {% for label, messages in app.flashes %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ label }} rounded-3 text-center fw-bold">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endfor %}
 
                 <div class="card-header bg-warning text-white rounded-top-4">
                     <h3 class="mb-0">Détails de la Réservation</h3>
@@ -488,7 +488,11 @@ body {
                     <!-- Section Matériel -->
                     <div class="row mb-4 align-items-center">
                         <div class="col-md-4">
-                          
+                            <!-- Ajout de l'image du matériel -->
+                            <img src="{{ asset('uploads/materiels/' ~ reservation.materielle.photoMat) }}" 
+                                 alt="{{ reservation.materielle.nomMat }}"
+                                 class="img-fluid rounded-3 border border-warning"
+                                 style="max-height: 200px; object-fit: cover;">
                         </div>
                         <div class="col-md-8">
                             <h4 class="text-warning">{{ reservation.materielle.nomMat }}</h4>
@@ -559,9 +563,6 @@ body {
         </div>
     </div>
 </div>
-
-
-
 
  <footer class="footer-wrapper footer-layout7" data-bg-src="assets/img/bg/footer_bg_1.jpg">
     <div class="widget-area">
