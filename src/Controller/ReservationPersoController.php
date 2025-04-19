@@ -47,15 +47,11 @@ class ReservationPersoController extends AbstractController
         ]);
     }
 
-
-
-    
-
     #[Route('/new/{idP}/{id}', name: 'app_reservation_perso_new', methods: ['GET', 'POST'])]
     public function new(
         Request $request,
         int $idP,
-        int $id,  
+        int $id,  // This is the Event ID
         EntityManagerInterface $entityManager,
         PersonnelRepository $personnelRepository,
         EventRepository $eventRepository
@@ -93,10 +89,6 @@ class ReservationPersoController extends AbstractController
         
         return $this->redirectToRoute('app_reservation_perso_index', ['event' => $id]);
     }
-
-
-
-
 
     #[Route('/check-cancel/{idR}/{eventId}', name: 'app_reservation_perso_check_cancel', methods: ['GET'])]
     public function checkCancel(
@@ -136,11 +128,6 @@ class ReservationPersoController extends AbstractController
         // Sinon, permettre l'annulation
         return $this->json(['canCancel' => true, 'reason' => 'allowed']);
     }
-    
-
-
-
-
     
     #[Route('/delete/{idR}', name: 'app_reservation_perso_delete', methods: ['POST'])]
     public function delete(
