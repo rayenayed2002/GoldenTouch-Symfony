@@ -98,12 +98,21 @@
         
         .table-view {
             display: none;
+            width: 100%;
+        }
+        
+        .table-view.active {
+            display: block;
         }
         
         .gallery-view {
             display: flex;
             flex-wrap: wrap;
             gap: 20px;
+        }
+        
+        .gallery-view.active {
+            display: flex;
         }
         
         .pack-price {
@@ -121,6 +130,37 @@
         }
 
         /* Notifications styles */
+        .dropdown-notifications-list {
+            max-height: 350px;
+            overflow-y: auto;
+            padding: 0;
+            margin: 0;
+        }
+        .dropdown-menu.dropdown-menu-end {
+            min-width: 340px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+            border-radius: 0.5rem;
+        }
+        .list-group-item.dropdown-notifications-item {
+            border: none;
+            border-bottom: 1px solid #f0f0f0;
+            padding: 1rem 1.25rem;
+        }
+        .list-group-item.dropdown-notifications-item:last-child {
+            border-bottom: none;
+        }
+        .dropdown-menu-header {
+            background: #f8f9fa;
+            border-radius: 0.5rem 0.5rem 0 0;
+            margin-bottom: 0;
+            padding: 0.75rem 1.25rem;
+        }
+        .dropdown-menu-footer {
+            background: #f8f9fa;
+            border-radius: 0 0 0.5rem 0.5rem;
+            padding: 0.5rem 1.25rem;
+            text-align: center;
+        }
         .menu-link {
             position: relative;
             padding: 0.75rem 1rem;
@@ -220,6 +260,24 @@
             background-size: 16px 12px, 16px 12px;
             background-repeat: no-repeat;
         }
+        
+        .dataTables_filter {
+            float: none !important;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            margin-bottom: 1rem;
+            gap: 1rem;
+        }
+        
+        .dataTables_length {
+            float: left !important;
+            margin-bottom: 1rem;
+        }
+        
+        .dataTables_wrapper .row {
+            margin-bottom: 0 !important;
+        }
     </style>
 </head>
 
@@ -243,13 +301,6 @@
                 <div class="menu-inner-shadow"></div>
 
                 <ul class="menu-inner py-1">
-                    <li class="menu-item">
-                        <a href="{{ path('admin_dashboard') }}" class="menu-link">
-                            <i class="menu-icon tf-icons ti ti-dashboard"></i>
-                            <div>Dashboard</div>
-                        </a>
-                    </li>
-
                     <li class="menu-item active">
                         <a href="{{ path('admin_pack_index') }}" class="menu-link">
                             <i class="menu-icon tf-icons ti ti-package"></i>
@@ -434,7 +485,7 @@
                     data-bs-auto-close="outside"
                     aria-expanded="false">
                     <i class="ti ti-bell ti-md"></i>
-                    <span class="badge bg-danger rounded-pill badge-notifications">5</span>
+                    <span class="badge bg-danger rounded-pill badge-notifications">{{ unreadNotificationsCount }}</span>
                   </a>
                   <ul class="dropdown-menu dropdown-menu-end py-0">
                     <li class="dropdown-menu-header border-bottom">
@@ -452,221 +503,30 @@
                     </li>
                     <li class="dropdown-notifications-list scrollable-container">
                       <ul class="list-group list-group-flush">
-                        <li class="list-group-item list-group-item-action dropdown-notifications-item">
-                          <div class="d-flex">
-                            <div class="flex-shrink-0 me-3">
-                              <div class="avatar">
-    <img src="{{ asset('img/avatars/1.png') }}" alt class="h-auto rounded-circle" />
-                              </div>
-                            </div>
-                            <div class="flex-grow-1">
-                              <h6 class="mb-1">Congratulation Lettie 🎉</h6>
-                              <p class="mb-0">Won the monthly best seller gold badge</p>
-                              <small class="text-muted">1h ago</small>
-                            </div>
-                            <div class="flex-shrink-0 dropdown-notifications-actions">
-                              <a href="javascript:void(0)" class="dropdown-notifications-read"
-                                ><span class="badge badge-dot"></span
-                              ></a>
-                              <a href="javascript:void(0)" class="dropdown-notifications-archive"
-                                ><span class="ti ti-x"></span
-                              ></a>
-                            </div>
-                          </div>
-                        </li>
-                        <li class="list-group-item list-group-item-action dropdown-notifications-item">
-                          <div class="d-flex">
-                            <div class="flex-shrink-0 me-3">
-                              <div class="avatar">
-                                <span class="avatar-initial rounded-circle bg-label-danger">CF</span>
-                              </div>
-                            </div>
-                            <div class="flex-grow-1">
-                              <h6 class="mb-1">Charles Franklin</h6>
-                              <p class="mb-0">Accepted your connection</p>
-                              <small class="text-muted">12hr ago</small>
-                            </div>
-                            <div class="flex-shrink-0 dropdown-notifications-actions">
-                              <a href="javascript:void(0)" class="dropdown-notifications-read"
-                                ><span class="badge badge-dot"></span
-                              ></a>
-                              <a href="javascript:void(0)" class="dropdown-notifications-archive"
-                                ><span class="ti ti-x"></span
-                              ></a>
-                            </div>
-                          </div>
-                        </li>
-                        <li class="list-group-item list-group-item-action dropdown-notifications-item marked-as-read">
-                          <div class="d-flex">
-                            <div class="flex-shrink-0 me-3">
-                              <div class="avatar">
-    <img src="{{ asset('img/avatars/2.png') }}" alt class="h-auto rounded-circle" />
-                              </div>
-                            </div>
-                            <div class="flex-grow-1">
-                              <h6 class="mb-1">New Message ✉️</h6>
-                              <p class="mb-0">You have new message from Natalie</p>
-                              <small class="text-muted">1h ago</small>
-                            </div>
-                            <div class="flex-shrink-0 dropdown-notifications-actions">
-                              <a href="javascript:void(0)" class="dropdown-notifications-read"
-                                ><span class="badge badge-dot"></span
-                              ></a>
-                              <a href="javascript:void(0)" class="dropdown-notifications-archive"
-                                ><span class="ti ti-x"></span
-                              ></a>
-                            </div>
-                          </div>
-                        </li>
-                        <li class="list-group-item list-group-item-action dropdown-notifications-item">
-                          <div class="d-flex">
-                            <div class="flex-shrink-0 me-3">
-                              <div class="avatar">
-                                <span class="avatar-initial rounded-circle bg-label-success"
-                                  ><i class="ti ti-shopping-cart"></i
-                                ></span>
-                              </div>
-                            </div>
-                            <div class="flex-grow-1">
-                              <h6 class="mb-1">Whoo! You have new order 🛒</h6>
-                              <p class="mb-0">ACME Inc. made new order $1,154</p>
-                              <small class="text-muted">1 day ago</small>
-                            </div>
-                            <div class="flex-shrink-0 dropdown-notifications-actions">
-                              <a href="javascript:void(0)" class="dropdown-notifications-read"
-                                ><span class="badge badge-dot"></span
-                              ></a>
-                              <a href="javascript:void(0)" class="dropdown-notifications-archive"
-                                ><span class="ti ti-x"></span
-                              ></a>
-                            </div>
-                          </div>
-                        </li>
-                        <li class="list-group-item list-group-item-action dropdown-notifications-item marked-as-read">
-                          <div class="d-flex">
-                            <div class="flex-shrink-0 me-3">
-                              <div class="avatar">
-    <img src="{{ asset('img/avatars/9.png') }}" alt class="h-auto rounded-circle" />
-                              </div>
-                            </div>
-                            <div class="flex-grow-1">
-                              <h6 class="mb-1">Application has been approved 🚀</h6>
-                              <p class="mb-0">Your ABC project application has been approved.</p>
-                              <small class="text-muted">2 days ago</small>
-                            </div>
-                            <div class="flex-shrink-0 dropdown-notifications-actions">
-                              <a href="javascript:void(0)" class="dropdown-notifications-read"
-                                ><span class="badge badge-dot"></span
-                              ></a>
-                              <a href="javascript:void(0)" class="dropdown-notifications-archive"
-                                ><span class="ti ti-x"></span
-                              ></a>
-                            </div>
-                          </div>
-                        </li>
-                        <li class="list-group-item list-group-item-action dropdown-notifications-item marked-as-read">
-                          <div class="d-flex">
-                            <div class="flex-shrink-0 me-3">
-                              <div class="avatar">
-                                <span class="avatar-initial rounded-circle bg-label-success"
-                                  ><i class="ti ti-chart-pie"></i
-                                ></span>
-                              </div>
-                            </div>
-                            <div class="flex-grow-1">
-                              <h6 class="mb-1">Monthly report is generated</h6>
-                              <p class="mb-0">July monthly financial report is generated</p>
-                              <small class="text-muted">3 days ago</small>
-                            </div>
-                            <div class="flex-shrink-0 dropdown-notifications-actions">
-                              <a href="javascript:void(0)" class="dropdown-notifications-read"
-                                ><span class="badge badge-dot"></span
-                              ></a>
-                              <a href="javascript:void(0)" class="dropdown-notifications-archive"
-                                ><span class="ti ti-x"></span
-                              ></a>
-                            </div>
-                          </div>
-                        </li>
-                        <li class="list-group-item list-group-item-action dropdown-notifications-item marked-as-read">
-                          <div class="d-flex">
-                            <div class="flex-shrink-0 me-3">
-                              <div class="avatar">
-    <img src="{{ asset('img/avatars/5.png') }}" alt class="h-auto rounded-circle" />
-                              </div>
-                            </div>
-                            <div class="flex-grow-1">
-                              <h6 class="mb-1">Send connection request</h6>
-                              <p class="mb-0">Peter sent you connection request</p>
-                              <small class="text-muted">4 days ago</small>
-                            </div>
-                            <div class="flex-shrink-0 dropdown-notifications-actions">
-                              <a href="javascript:void(0)" class="dropdown-notifications-read"
-                                ><span class="badge badge-dot"></span
-                              ></a>
-                              <a href="javascript:void(0)" class="dropdown-notifications-archive"
-                                ><span class="ti ti-x"></span
-                              ></a>
-                            </div>
-                          </div>
-                        </li>
-                        <li class="list-group-item list-group-item-action dropdown-notifications-item">
-                          <div class="d-flex">
-                            <div class="flex-shrink-0 me-3">
-                              <div class="avatar">
-    <img src="{{ asset('img/avatars/6.png') }}" alt class="h-auto rounded-circle" />
-                              </div>
-                            </div>
-                            <div class="flex-grow-1">
-                              <h6 class="mb-1">New message from Jane</h6>
-                              <p class="mb-0">Your have new message from Jane</p>
-                              <small class="text-muted">5 days ago</small>
-                            </div>
-                            <div class="flex-shrink-0 dropdown-notifications-actions">
-                              <a href="javascript:void(0)" class="dropdown-notifications-read"
-                                ><span class="badge badge-dot"></span
-                              ></a>
-                              <a href="javascript:void(0)" class="dropdown-notifications-archive"
-                                ><span class="ti ti-x"></span
-                              ></a>
-                            </div>
-                          </div>
-                        </li>
-                        <li class="list-group-item list-group-item-action dropdown-notifications-item marked-as-read">
-                          <div class="d-flex">
-                            <div class="flex-shrink-0 me-3">
-                              <div class="avatar">
-                                <span class="avatar-initial rounded-circle bg-label-warning"
-                                  ><i class="ti ti-alert-triangle"></i
-                                ></span>
-                              </div>
-                            </div>
-                            <div class="flex-grow-1">
-                              <h6 class="mb-1">CPU is running high</h6>
-                              <p class="mb-0">CPU Utilization Percent is currently at 88.63%,</p>
-                              <small class="text-muted">5 days ago</small>
-                            </div>
-                            <div class="flex-shrink-0 dropdown-notifications-actions">
-                              <a href="javascript:void(0)" class="dropdown-notifications-read"
-                                ><span class="badge badge-dot"></span
-                              ></a>
-                              <a href="javascript:void(0)" class="dropdown-notifications-archive"
-                                ><span class="ti ti-x"></span
-                              ></a>
-                            </div>
-                          </div>
-                        </li>
-                      </ul>
-                    </li>
-                    <li class="dropdown-menu-footer border-top">
-                      <a
-                        href="javascript:void(0);"
-                        class="dropdown-item d-flex justify-content-center text-primary p-2 h-px-40 mb-1 align-items-center">
-                        View all notifications
-                      </a>
-                    </li>
-                  </ul>
-                </li>
+                        {% for notification in latestNotifications %}
+                            <li class="list-group-item list-group-item-action dropdown-notifications-item p-0">
+                              <a href="{{ path('admin_customize_pack_show', {'id': notification.demandePack.id}) }}" class="d-flex align-items-stretch text-decoration-none text-dark w-100 p-3" style="cursor:pointer;">
+                                <div class="flex-shrink-0 me-3">
+                                  <div class="avatar">
+                                    <span class="avatar-initial rounded-circle bg-label-info"><i class="ti ti-bell"></i></span>
+                                  </div>
+                                </div>
+                                <div class="flex-grow-1">
+                                  <h6 class="mb-1">{{ notification.titre|default('Notification') }}</h6>
+                                  <p class="mb-0">{{ notification.message|raw }}</p>
+                                  <small class="text-muted">{{ notification.dateCreation ? notification.dateCreation|date('d/m/Y H:i') : '' }}</small>
+                                </div>
+                                <div class="flex-shrink-0 dropdown-notifications-actions align-self-center">
+                                  <span class="badge badge-dot"></span>
+                                </div>
+                              </a>
+                            </li>
+                          {% else %}
+                            <li class="list-group-item text-center text-muted">No notifications</li>
+                          {% endfor %}
+                        </ul>
+                      </li>
+                    </ul>
                 <!--/ Notification -->
 
                 <!-- User -->
@@ -769,6 +629,18 @@
 
           <!-- / Navbar -->
 
+<style>
+  /* Custom style to ensure the admin controls are never overlapped by the navbar */
+  .card-header.mt-4 {
+    margin-top: 2.5rem !important;
+  }
+  @media (max-width: 991.98px) {
+    .card-header.mt-4 {
+      margin-top: 3.5rem !important;
+    }
+  }
+</style>
+
            <!-- Conteneur de mise en page -->
 <div class="layout-page">
     <!-- Wrapper du contenu -->
@@ -778,25 +650,148 @@
             <div class="row mb-4">
                 <div class="col-12">
                     <div class="card">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <h5 class="mb-0">Administration des packs</h5>
-                            <div class="d-flex gap-2">
-                                <div class="btn-group" role="group">
-                                    <button type="button" class="btn btn-outline-primary view-toggle-btn active" data-view="gallery">
-                                        <i class="ti ti-grid-dots"></i>
-                                    </button>
-                                    <button type="button" class="btn btn-outline-primary view-toggle-btn" data-view="table">
-                                        <i class="ti ti-table"></i>
-                                    </button>
-                                </div>
-                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createPackModal">
-                                    <i class="ti ti-plus me-1"></i> Créer un nouveau pack
-                                </button>
-                            </div>
+                        <div class="card-header d-flex justify-content-between align-items-center mt-4 gap-3" style="z-index: 1; position: relative;">
+    <h5 class="mb-0">Administration des packs</h5>
+    <div class="d-flex gap-2">
+        <div class="btn-group" role="group">
+            <button type="button" class="btn btn-outline-primary view-toggle-btn active" data-view="gallery">
+                <i class="ti ti-grid-dots"></i>
+            </button>
+            <button type="button" class="btn btn-outline-primary view-toggle-btn" data-view="table">
+                <i class="ti ti-table"></i>
+            </button>
+        </div>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createPackModal">
+            <i class="ti ti-plus me-1"></i> Créer un nouveau pack
+        </button>
+    </div>
+</div>
+<!-- Pack Inspiration Assistant (now inside card, after main header) -->
+<div class="container-fluid px-0 pt-4 pb-2">
+    <div class="row g-3 justify-content-center">
+        <div class="col-12 col-lg-10">
+            <div class="card shadow inspiration-card mb-3" style="border-radius: 16px;">
+                <div class="card-body d-flex align-items-center">
+                    <i class="ti ti-sparkles me-2 fs-4 text-primary"></i>
+                    <span class="fw-semibold">Voici 3 idées basées sur les tendances actuelles :</span>
+                    <div class="ms-auto">
+                        <button class="btn btn-sm btn-outline-secondary" id="refresh-inspiration-btn" type="button">
+                            <i class="ti ti-refresh me-1"></i> Actualiser les idées
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="row g-3" id="pack-inspiration-list">
+                <!-- Dynamically loaded by JS -->
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    .inspiration-card {
+        background: #f6f9fc;
+        border: 1px solid #e3e6ec;
+    }
+    #pack-inspiration-list .card {
+        border-radius: 16px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        min-height: 320px;
+    }
+    #pack-inspiration-list .inspiration-img {
+        border-radius: 16px 16px 0 0;
+    }
+    .gallery-view, #pack-inspiration-list {
+        margin-left: 0;
+        margin-right: 0;
+    }
+</style>
+<script>
+// SweetAlert2 CDN
+if (!window.Swal) {
+    const swalScript = document.createElement('script');
+    swalScript.src = 'https://cdn.jsdelivr.net/npm/sweetalert2@11';
+    document.head.appendChild(swalScript);
+}
+
+async function loadPackInspiration() {
+    const container = document.getElementById('pack-inspiration-list');
+    container.innerHTML = '<div class="text-center w-100 py-4"><div class="spinner-border"></div></div>';
+    try {
+        const response = await fetch('/admin/pack/inspiration');
+        const isJson = response.headers.get('content-type')?.includes('application/json');
+        let ideas;
+        if (!response.ok) {
+            let errMsg = 'Erreur lors de la génération des idées.';
+            if (isJson) {
+                const errData = await response.json();
+                errMsg = errData.error || errMsg;
+            }
+            if (window.Swal) Swal.fire({icon:'error',title:'Erreur',text:errMsg});
+            container.innerHTML = `<div class='alert alert-danger w-100'>${errMsg}</div>`;
+            return;
+        }
+        ideas = await response.json();
+        container.innerHTML = '';
+        if (window.Swal) Swal.fire({icon:'success',title:'Succès',text:'Nouvelles idées générées avec succès!'});
+        ideas.forEach(insp => {
+            container.innerHTML += `
+            <div class="col-md-4">
+                <div class="card h-100 shadow inspiration-card" style="border-radius: 16px;">
+                    <div class="position-relative">
+                        <img src="${insp.image}" alt="${insp.title}" class="w-100 inspiration-img" style="height:180px;object-fit:cover;border-radius:16px 16px 0 0;">
+                        <span class="badge bg-primary position-absolute top-0 end-0 m-2">Tendance</span>
+                    </div>
+                    <div class="card-body">
+                        <h6 class="fw-bold mb-2">${insp.title}</h6>
+                        <p class="mb-2 small text-muted">${insp.description}</p>
+                        <div class="mb-2">
+                            <span class="badge bg-label-info text-primary">${insp.keywords}</span>
                         </div>
-                        <div class="card-body">
+                        <button type="button" class="btn btn-outline-primary btn-sm w-100 copy-inspiration-btn"
+                            data-title="${insp.title}"
+                            data-description="${insp.description}"
+                            data-keywords="${insp.keywords}">
+                            <i class="ti ti-copy me-1"></i> Copier cette idée
+                        </button>
+                    </div>
+                </div>
+            </div>
+            `;
+        });
+        // Re-bind copy-to-form
+        document.querySelectorAll('.copy-inspiration-btn').forEach(btn => {
+            btn.addEventListener('click', function () {
+                const modal = document.getElementById('packModal');
+                const titleInput = document.querySelector('input[name="pack[event]"]');
+                const descInput = document.querySelector('textarea[name="pack[description]"]');
+                const keywordsInput = document.querySelector('input[name="pack[keywords]"]');
+                const alertBox = document.getElementById('inspiration-copied-alert');
+                if (modal) {
+                    if (titleInput) titleInput.value = btn.getAttribute('data-title');
+                    if (descInput) descInput.value = btn.getAttribute('data-description');
+                    if (keywordsInput) keywordsInput.value = btn.getAttribute('data-keywords');
+                    if (alertBox) {
+                        alertBox.classList.remove('d-none');
+                        setTimeout(() => alertBox.classList.add('d-none'), 1500);
+                    }
+                    const bsModal = bootstrap.Modal.getOrCreateInstance(modal);
+                    bsModal.show();
+                }
+            });
+        });
+    } catch (e) {
+        container.innerHTML = `<div class='alert alert-danger w-100'>${e.message}</div>`;
+    }
+}
+document.addEventListener('DOMContentLoaded', loadPackInspiration);
+document.getElementById('refresh-inspiration-btn').addEventListener('click', loadPackInspiration);
+</script>
+    </div>
+</div>
+<!-- /Pack Inspiration Assistant -->
+    
                             <!-- Vue galerie -->
-                            <div class="gallery-view">
+                            <div class="gallery-view active row g-3 justify-content-center">
                                 {% for pack in packs %}
                                 <div class="col-md-4 col-lg-3">
                                     <div class="card pack-card">
@@ -938,6 +933,9 @@
                 }
             }) }}
                 <div class="modal-body">
+    <div id="inspiration-copied-alert" class="alert alert-success d-none" role="alert">
+        Suggestion copiée !
+    </div>
                     <input type="hidden" id="packId" name="id">
                     <div class="mb-3">
                         <label class="form-label" for="{{ form.event.vars.id }}">Événement</label>
@@ -992,6 +990,37 @@
     </div>
 </div>
 
+    <!-- Pack Inspiration Script -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const copyBtns = document.querySelectorAll('.copy-inspiration-btn');
+        const packModalBtn = document.querySelector('[data-bs-target="#createPackModal"]');
+        const modal = document.getElementById('packModal');
+        const titleInput = document.querySelector('input[name="pack[event]"]');
+        const descInput = document.querySelector('textarea[name="pack[description]"]');
+        const keywordsInput = document.querySelector('input[name="pack[keywords]"]'); // If you have a keywords field
+        const alertBox = document.getElementById('inspiration-copied-alert');
+
+        copyBtns.forEach(btn => {
+            btn.addEventListener('click', function () {
+                // Fill modal fields when modal is open
+                if (modal) {
+                    if (titleInput) titleInput.value = btn.getAttribute('data-title');
+                    if (descInput) descInput.value = btn.getAttribute('data-description');
+                    if (keywordsInput) keywordsInput.value = btn.getAttribute('data-keywords');
+                    if (alertBox) {
+                        alertBox.classList.remove('d-none');
+                        setTimeout(() => alertBox.classList.add('d-none'), 1500);
+                    }
+                    // Open modal if not already open
+                    const bsModal = bootstrap.Modal.getOrCreateInstance(modal);
+                    bsModal.show();
+                }
+            });
+        });
+    });
+    </script>
+    <!-- /Pack Inspiration Script -->
     <!-- Core JS -->
     <script src="{{ asset('vendor/libs/jquery/jquery.js') }}"></script>
     <script src="{{ asset('vendor/libs/popper/popper.js') }}"></script>
@@ -1014,14 +1043,16 @@
         $(document).ready(function() {
             // Initialize DataTable
             const packsTable = $('#packsTable').DataTable({
-                dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>t<"row"<"col-sm-12 col-md-6"i><"col-sm-12 col-md-6"p>>',
+                dom: "<'row mb-2'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +
+                     "<'row'<'col-sm-12'tr>>" +
+                     "<'row mt-2'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
                 responsive: true,
                 order: [[0, 'desc']],
                 pageLength: 10,
                 language: {
                     sLengthMenu: '_MENU_',
                     search: '',
-                    searchPlaceholder: 'Search Packs'
+                    searchPlaceholder: 'Rechercher un pack...'
                 }
             });
 
@@ -1042,13 +1073,13 @@
                 const view = $(this).data('view');
                 $('.view-toggle-btn').removeClass('active');
                 $(this).addClass('active');
-                
                 if (view === 'gallery') {
-                    $('.gallery-view').show();
-                    $('.table-view').hide();
+                    $('.gallery-view').addClass('active').show();
+                    $('.table-view').removeClass('active').hide();
                 } else {
-                    $('.gallery-view').hide();
-                    $('.table-view').show();
+                    $('.gallery-view').removeClass('active').hide();
+                    $('.table-view').addClass('active').show();
+                    packsTable.columns.adjust().responsive.recalc();
                 }
             });
             

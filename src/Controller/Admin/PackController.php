@@ -21,6 +21,225 @@ use App\Form\PackType;
 #[Route('/admin/pack', name: 'admin_pack_')]
 class PackController extends AbstractController
 {
+    #[Route('/existing-data', name: 'existing_data', methods: ['GET'])]
+    public function existingData(): JsonResponse
+    {
+        $packs = $this->packRepository->findAll();
+        $data = array_map(function($pack) {
+            return [
+                'id' => $pack->getId(),
+                'name' => $pack->getNom(),
+                'description' => $pack->getDescription(),
+            ];
+        }, $packs);
+        return new JsonResponse($data);
+    }
+
+    #[Route('/enhance-description', name: 'enhance_description', methods: ['POST'])]
+    public function enhanceDescription(Request $request): JsonResponse
+    {
+        $desc = $request->request->get('description');
+        if (!$desc) {
+            return $this->json([
+                'enhanced' => false,
+                'message' => 'Aucune description fournie.'
+            ]);
+        }
+
+        // Try grammar correction using HuggingFace T5 model
+        $corrected = null;
+        $hfError = null;
+        $usedLocalGrammarFallback = false;
+        $apiToken = $_SERVER['HUGGINGFACE_API_TOKEN'] ?? $_ENV['HUGGINGFACE_API_TOKEN'] ?? getenv('HUGGINGFACE_API_TOKEN');
+        if ($apiToken) {
+            try {
+                $client = new \GuzzleHttp\Client([
+                    'timeout' => 8,
+                ]);
+                $response = $client->post(
+                    'https://api-inference.huggingface.co/models/vennify/t5-base-grammar-correction',
+                    [
+                        'headers' => [
+                            'Authorization' => 'Bearer ' . $apiToken,
+                            'Content-Type'  => 'application/json',
+                        ],
+                        'json' => [
+                            'inputs' => $desc
+                        ]
+                    ]
+                );
+                $body = json_decode($response->getBody()->getContents(), true);
+                if (isset($body[0]['generated_text'])) {
+                    $corrected = $body[0]['generated_text'];
+                }
+            } catch (\Throwable $e) {
+                // Log and gracefully degrade
+                error_log('[EnhanceDescription] HuggingFace API error: ' . $e->getMessage());
+                $hfError = $e->getMessage();
+            }
+        }
+        // Local grammar correction fallback if API fails
+        if (!$corrected && $hfError) {
+            $usedLocalGrammarFallback = true;
+            $corrected = localGrammarCorrect($desc);
+        }
+        // Helper for local grammar correction
+        function localGrammarCorrect($txt) {
+            // Remove double spaces
+            $txt = preg_replace('/\s+/', ' ', trim($txt));
+            // Capitalize sentences
+            $txt = preg_replace_callback('/(^|[.!?]\s+)([a-z])/', function ($m) {
+                return $m[1] . strtoupper($m[2]);
+            }, $txt);
+            // Ensure ends with period
+            if ($txt && !preg_match('/[.!?]$/', $txt)) {
+                $txt .= '.';
+            }
+            return $txt;
+        }
+
+        // Use corrected text if available, otherwise fallback to original
+        $toEnhance = $corrected ?: $desc;
+        // Local enhancement logic
+        $enhanced = '✨ ' . ucfirst($toEnhance) . ' (Ce pack offre une expérience exceptionnelle et personnalisée pour tous vos événements.)';
+
+        // --- AI Vibe Classifier & Emoji Tagging ---
+        $vibe = null;
+        $emoji = null;
+        $moodTag = null;
+        $vibeError = null;
+        if ($apiToken) {
+            try {
+                $client = $client ?? new \GuzzleHttp\Client(['timeout' => 8]);
+                $vibeResponse = $client->post(
+                    'https://api-inference.huggingface.co/models/cardiffnlp/twitter-roberta-base-sentiment',
+                    [
+                        'headers' => [
+                            'Authorization' => 'Bearer ' . $apiToken,
+                            'Content-Type'  => 'application/json',
+                        ],
+                        'json' => [
+                            'inputs' => $toEnhance
+                        ]
+                    ]
+                );
+                $vibeBody = json_decode($vibeResponse->getBody()->getContents(), true);
+                // Typical output: [[{"label": "LABEL_2", "score": 0.9}, ...]]
+                if (isset($vibeBody[0]) && is_array($vibeBody[0])) {
+                    $topVibe = $vibeBody[0][0]['label'] ?? null;
+                    $vibe = $topVibe;
+                }
+            } catch (\Throwable $e) {
+                error_log('[EnhanceDescription] Vibe classifier error: ' . $e->getMessage());
+                $vibeError = $e->getMessage();
+            }
+        }
+        // Map HuggingFace sentiment/vibe to emoji and tag
+        $vibeMap = [
+            'LABEL_0' => ['emoji' => '😞', 'tag' => 'Négatif'], // negative
+            'LABEL_1' => ['emoji' => '😐', 'tag' => 'Neutre'],   // neutral
+            'LABEL_2' => ['emoji' => '😊', 'tag' => 'Positif'],  // positive
+            // Extend here for more vibes
+        ];
+        $emoji = $vibeMap[$vibe]['emoji'] ?? '';
+        $moodTag = $vibeMap[$vibe]['tag'] ?? '';
+
+        // --- Local fallback: keyword-based vibe/emoji ---
+        if ((!$emoji || !$moodTag) && !$vibeError) {
+            $descNorm = strtolower(iconv('UTF-8', 'ASCII//TRANSLIT', $toEnhance));
+            $keywordMap = [
+                'anniversaire' => ['emoji' => '🎉', 'tag' => 'Anniversaire'],
+                'chic' => ['emoji' => '💼', 'tag' => 'Chic'],
+                'élégant' => ['emoji' => '🍷', 'tag' => 'Élégant'],
+                'elegant' => ['emoji' => '🍷', 'tag' => 'Élégant'],
+                'romantique' => ['emoji' => '❤️', 'tag' => 'Romantique'],
+                'fun' => ['emoji' => '😄', 'tag' => 'Fun'],
+                'mariage' => ['emoji' => '💍', 'tag' => 'Mariage'],
+                'enfant' => ['emoji' => '🧒', 'tag' => 'Enfant'],
+                'enfants' => ['emoji' => '🧒', 'tag' => 'Enfant'],
+                'entreprise' => ['emoji' => '🏢', 'tag' => 'Entreprise'],
+                'corporate' => ['emoji' => '🏢', 'tag' => 'Entreprise'],
+                'soirée' => ['emoji' => '🌙', 'tag' => 'Soirée'],
+                'soiree' => ['emoji' => '🌙', 'tag' => 'Soirée'],
+                'buffet' => ['emoji' => '🍽️', 'tag' => 'Buffet'],
+                'dîner' => ['emoji' => '🍽️', 'tag' => 'Dîner'],
+                'diner' => ['emoji' => '🍽️', 'tag' => 'Dîner'],
+                'fête' => ['emoji' => '🥳', 'tag' => 'Fête'],
+                'fete' => ['emoji' => '🥳', 'tag' => 'Fête'],
+                'plage' => ['emoji' => '🏖️', 'tag' => 'Plage'],
+                'sport' => ['emoji' => '🏅', 'tag' => 'Sport'],
+                'nature' => ['emoji' => '🌳', 'tag' => 'Nature'],
+                'détente' => ['emoji' => '🧘', 'tag' => 'Détente'],
+                'detente' => ['emoji' => '🧘', 'tag' => 'Détente'],
+            ];
+            foreach ($keywordMap as $kw => $v) {
+                if (strpos($descNorm, $kw) !== false) {
+                    $emoji = $v['emoji'];
+                    $moodTag = $v['tag'];
+                    break;
+                }
+            }
+        }
+
+        $result = [
+            'enhanced' => true,
+            'generated_text' => $enhanced,
+            'vibe' => $vibe,
+            'emoji' => $emoji,
+            'mood_tag' => $moodTag
+        ];
+        if ($hfError) {
+            $result['hf_error'] = $hfError;
+            $result['used_fallback'] = true;
+        }
+        if ($usedLocalGrammarFallback) {
+            $result['used_local_grammar_fallback'] = true;
+        }
+        if ($vibeError) {
+            $result['vibe_error'] = $vibeError;
+        }
+        return $this->json($result);
+    }
+
+    #[Route('/check-duplicate', name: 'check_duplicate', methods: ['POST'])]
+    public function checkDuplicate(Request $request): JsonResponse
+    {
+        $name = $request->request->get('packName');
+        $desc = $request->request->get('description');
+        if (!$name && !$desc) {
+            return $this->json([
+                'duplicate' => false,
+                'message' => 'Aucun nom ou description fourni.'
+            ]);
+        }
+        $qb = $this->packRepository->createQueryBuilder('p');
+        $qb->leftJoin('p.event', 'e');
+        $qb->where('LOWER(e.nom) LIKE :name')
+            ->setParameter('name', '%' . strtolower($name) . '%');
+        if ($desc) {
+            $qb->orWhere('LOWER(p.description) LIKE :desc')
+                ->setParameter('desc', '%' . strtolower($desc) . '%');
+        }
+        $qb->setMaxResults(1);
+        $result = $qb->getQuery()->getOneOrNullResult();
+        if ($result) {
+            return $this->json([
+                'duplicate' => true,
+                'message' => 'Un pack similaire existe déjà.',
+                'pack' => [
+                    'id' => $result->getId(),
+                    'name' => $result->getNom(),
+                    'description' => $result->getDescription(),
+                ]
+            ]);
+        } else {
+            return $this->json([
+                'duplicate' => false,
+                'message' => 'Aucun pack similaire trouvé.'
+            ]);
+        }
+    }
+
     private $entityManager;
     private $packRepository;
     private $eventRepository;
@@ -36,7 +255,7 @@ class PackController extends AbstractController
     }
 
     #[Route('/', name: 'index', methods: ['GET'])]
-    public function index(): Response
+    public function index(NotificationsAdminRepository $notificationsAdminRepository): Response
     {
         $packs = $this->packRepository->findAll();
         $events = $this->eventRepository->findAll();
@@ -45,10 +264,21 @@ class PackController extends AbstractController
         $pack = new Pack();
         $form = $this->createForm(PackType::class, $pack);
 
+        // Fetch latest 4 notifications for admin (assuming adminId = 1 for now)
+        $adminId = 1; // TODO: Replace with dynamic admin ID if available
+        $latestNotifications = $notificationsAdminRepository->createQueryBuilder('n')
+            ->orderBy('n.date_creation', 'DESC')
+            ->setMaxResults(4)
+            ->getQuery()
+            ->getResult();
+        $unreadCount = $notificationsAdminRepository->countUnreadByAdminId($adminId);
+
         return $this->render('admin/pack/index.html.twig', [
             'packs' => $packs,
             'events' => $events,
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'latestNotifications' => $latestNotifications,
+            'unreadNotificationsCount' => $unreadCount,
         ]);
     }
 
@@ -604,4 +834,17 @@ private function isValidPath(string $path): bool
     
     return true;
 }
+
+
+
+    #[Route('/debug-hf-token-length', name: 'admin_pack_debug_hf_token_length', methods: ['GET'])]
+    public function debugHfTokenLength(): JsonResponse
+    {
+        $apiToken = $_SERVER['HUGGINGFACE_API_TOKEN'] ?? $_ENV['HUGGINGFACE_API_TOKEN'] ?? getenv('HUGGINGFACE_API_TOKEN');
+        return new JsonResponse([
+            'length' => strlen((string)$apiToken),
+            'empty' => empty($apiToken),
+            'set' => isset($apiToken)
+        ]);
+    }
 }

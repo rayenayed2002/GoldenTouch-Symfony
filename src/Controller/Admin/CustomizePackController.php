@@ -106,6 +106,17 @@ class CustomizePackController extends AbstractController
             $eventDate = $demandePack->getEvent()->getDate();
         }
         
+        // Force notifications for admin_id = 1 (fix for bell dropdown)
+        $adminId = 1;
+        $latestNotifications = $this->notificationsAdminRepository->createQueryBuilder('n')
+            ->andWhere('n.admin = :adminId')
+            ->setParameter('adminId', $adminId)
+            ->orderBy('n.date_creation', 'DESC')
+            ->setMaxResults(4)
+            ->getQuery()
+            ->getResult();
+        $unreadNotificationsCount = $this->notificationsAdminRepository->countUnreadByAdminId($adminId);
+
         return $this->render('admin/notifications/customize_pack.html.twig', [
             'demandePack' => $demandePack,
             'originalPack' => $pack,
@@ -113,7 +124,9 @@ class CustomizePackController extends AbstractController
             'materielles' => $materielles,
             'personnel' => $personnel,
             'locations' => $locations,
-            'eventDate' => $eventDate
+            'eventDate' => $eventDate,
+            'latestNotifications' => $latestNotifications,
+            'unreadNotificationsCount' => $unreadNotificationsCount
         ]);
     }
 

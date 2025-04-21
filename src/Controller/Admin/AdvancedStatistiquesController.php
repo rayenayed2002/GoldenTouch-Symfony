@@ -15,6 +15,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
+use App\Repository\DemandePackRepository;
+use Doctrine\ORM\Query\Expr\Join;
+
 #[Route('/admin/advanced-statistiques', name: 'admin_advanced_statistiques_')]
 class AdvancedStatistiquesController extends AbstractController
 {
@@ -49,7 +52,7 @@ class AdvancedStatistiquesController extends AbstractController
         $packCategoryPerformance = $this->getPackCategoryPerformance();
 
         return $this->render('admin/advanced_statistiques/index.html.twig', [
-            'packStats' => $packStats,
+            'packStats' => $packStats, 
             'userStats' => $userStats,
             'mostSoldPack' => $mostSoldPack,
             'averagePackPrice' => $averagePackPrice,
@@ -67,6 +70,26 @@ class AdvancedStatistiquesController extends AbstractController
             'packCategoryPerformance' => $packCategoryPerformance,
         ]);
     }
+
+
+    
+#[Route('/demande-packs', name: 'demande_packs')]
+public function demandePacksList(DemandePackRepository $demandePackRepository): Response
+{
+    // Eager load related entities to avoid N+1 queries
+    $demandes = $this->entityManager->getRepository(DemandePack::class)
+        ->createQueryBuilder('d')
+        ->leftJoin('d.utilisateur', 'u')->addSelect('u')
+        ->leftJoin('d.pack', 'p')->addSelect('p')
+        ->leftJoin('d.event', 'e')->addSelect('e')
+        ->orderBy('d.dateDemande', 'DESC')
+        ->getQuery()
+        ->getResult();
+
+    return $this->render('admin/advanced_statistiques/demande_pack_list.html.twig', [
+        'demandes' => $demandes,
+    ]);
+}
 
     /**
      * Get total number of packs and related statistics

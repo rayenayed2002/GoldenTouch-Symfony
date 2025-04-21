@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use App\Service\ReviewSentimentService;
 
 class AvisController extends AbstractController
 {
@@ -20,7 +21,8 @@ class AvisController extends AbstractController
         Request $request,
         EntityManagerInterface $entityManager,
         ValidatorInterface $validator,
-        int $packId
+        int $packId,
+        ReviewSentimentService $reviewSentimentService
     ): Response {
         $pack = $entityManager->getRepository(Pack::class)->find($packId);
         
@@ -55,6 +57,16 @@ class AvisController extends AbstractController
         $avis->setNote((int) $request->request->get('rating', 5));
         $avis->setCommentaire($request->request->get('comment'));
         $avis->setDateCreation(new \DateTime());
+
+        // AI Sentiment Analysis via Hugging Face
+        $stars = $reviewSentimentService->analyzeSentiment($avis->getCommentaire() ?? '');
+        $sentiment = $reviewSentimentService->ratingToSentiment($stars);
+        $avis->setSentiment($sentiment);
+        // Optionally store stars in a separate field if you want
+        if ($sentiment === 'negative') {
+            $this->addFlash('warning', '⚠️ This review was flagged as negative by AI. Please review it.');
+            // Optionally: log or notify admin here
+        }
         
         // Set both the ID and the User object to ensure it's saved
         $avis->setIdUtilisateur($userId);

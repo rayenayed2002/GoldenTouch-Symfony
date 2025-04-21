@@ -36,22 +36,29 @@ class NotificationsAdminController extends AbstractController
     #[Route('/notifications', name: 'admin_notifications')]
     public function index(Request $request): Response
     {
-        // Get the current admin ID (in a real app, this would come from the authenticated user)
-        $adminId = 1; // Placeholder - replace with actual admin ID from authentication
-        
-        // Get filter from request or default to 'all'
-        $filter = $request->query->get('filter', 'all');
-        
-        // Get notifications based on filter
-        $notifications = $this->getFilteredNotifications($adminId, $filter);
-        
-        // Count unread notifications
+        // Show ALL notifications for admin_id = 1 in the table
+        $adminId = 1;
+        $notifications = $this->notificationsAdminRepository->createQueryBuilder('n')
+            ->andWhere('n.admin = :adminId')
+            ->setParameter('adminId', $adminId)
+            ->orderBy('n.date_creation', 'DESC')
+            ->getQuery()
+            ->getResult();
         $unreadCount = $this->notificationsAdminRepository->countUnreadByAdminId($adminId);
-        
+        $filter = $request->query->get('filter', 'all'); // keep for compatibility
+        // For bell dropdown: latest 4 notifications
+        $latestNotifications = $this->notificationsAdminRepository->createQueryBuilder('n')
+            ->andWhere('n.admin = :adminId')
+            ->setParameter('adminId', $adminId)
+            ->orderBy('n.date_creation', 'DESC')
+            ->setMaxResults(4)
+            ->getQuery()
+            ->getResult();
         return $this->render('admin/notifications/index.html.twig', [
             'notifications' => $notifications,
             'unreadCount' => $unreadCount,
-            'currentFilter' => $filter
+            'currentFilter' => $filter,
+            'latestNotifications' => $latestNotifications
         ]);
     }
 
