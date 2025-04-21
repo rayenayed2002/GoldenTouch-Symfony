@@ -98,19 +98,7 @@
     <!-- Pack List Section -->
     <section class="space-top space-extra-bottom">
         <div class="container">
-            <!-- Search Section -->
-            <div class="search-section">
-                <div class="row justify-content-center">
-                    <div class="col-lg-8">
-                        <form class="search-form">
-                            <div class="input-group">
-                                <input type="text" class="form-control" placeholder="Rechercher un pack...">
-                                <button class="th-btn style3"><i class="fas fa-search"></i></button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
+            
 
             <!-- Pack Grid -->
            <!--==============================
@@ -155,34 +143,41 @@ Espace Packs
                 </div>
                 
                 <div class="row gy-40">
-                    {% for pack in packs.results %}
-                    <div class="col-xl-4 col-sm-6">
-                        <div class="th-product">
-                            <div class="product-img">
-                                {% if pack.getPhoto() %}
-                                    <img src="{{ asset('uploads/packs/' ~ pack.getPhoto()) }}" alt="{{ pack.getNom() }}">
-                                {% else %}
-                                    <img src="{{ asset('Front/img/placeholder.jpg') }}" alt="Image du pack">
-                                {% endif %}
-                                <div class="actions">
-                                    <a href="{{ path('app_pack_shop_details', {'id': pack.id}) }}" class="icon-btn"><i class="far fa-eye"></i></a>
-                                    <a href="{{ path('app_pack_booking', {'id': pack.id}) }}" class="icon-btn"><i class="far fa-cart-plus"></i></a>
-                                    <a href="#" class="icon-btn"><i class="far fa-heart"></i></a>
-                                </div>
-                            </div>
-                            <div class="product-content">
-                                <div class="star-rating" role="img" aria-label="Noté 5.00 sur 5">
-                                    <span>Note : <strong class="rating">5.00</strong>/5</span>
-                                </div>
-                                <h3 class="product-title"><a href="{{ path('app_pack_shop_details', {'id': pack.id}) }}">{{ pack.nom }}</a></h3>
-                                <div class="pack-meta">
-                                    <span class="price">{{ pack.prix }}&nbsp;€</span>
-                                    <span class="pack-capacity"><i class="fas fa-users"></i> {{ pack.capacite }} personnes</span>
-                                </div>
-                            </div>
-                        </div>
+    {% if packs.results is empty %}
+        <div class="col-12">
+            <div class="alert alert-warning">Aucun pack trouvé pour votre recherche.</div>
+        </div>
+    {% else %}
+        {% for pack in packs.results %}
+        <div class="col-xl-4 col-sm-6">
+            <div class="th-product">
+                <div class="product-img">
+                    {% if pack.getPhoto() %}
+                        <img src="{{ asset('uploads/packs/' ~ pack.getPhoto()) }}" alt="{{ pack.getNom() }}">
+                    {% else %}
+                        <img src="{{ asset('Front/img/placeholder.jpg') }}" alt="Image du pack">
+                    {% endif %}
+                    <div class="actions">
+                        <a href="{{ path('app_pack_shop_details', {'id': pack.id}) }}" class="icon-btn"><i class="far fa-eye"></i></a>
+                        <a href="{{ path('app_pack_booking', {'id': pack.id}) }}" class="icon-btn"><i class="far fa-cart-plus"></i></a>
+                        <a href="#" class="icon-btn"><i class="far fa-heart"></i></a>
                     </div>
-                    {% endfor %}
+                </div>
+                <div class="product-content">
+                    <div class="star-rating" role="img" aria-label="Noté 5.00 sur 5">
+                        <span>Note : <strong class="rating">5.00</strong>/5</span>
+                    </div>
+                    <h3 class="product-title"><a href="{{ path('app_pack_shop_details', {'id': pack.id}) }}">{{ pack.nom }}</a></h3>
+                    <div class="pack-meta">
+                        <span class="price">{{ pack.getPrix()|number_format(2, '.', '') }}&nbsp;€</span>
+                        <span class="pack-capacity"><i class="fas fa-users"></i> {{ pack.capacite }} personnes</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% endif %}
+
                 </div>
                 
                 <div class="th-pagination text-center pt-50">
@@ -198,10 +193,40 @@ Espace Packs
             <div class="col-xl-3 col-lg-4">
                 <aside class="sidebar-area sidebar-shop">
                     <div class="widget widget_search">
-                        <form class="search-form">
-                            <input type="text" placeholder="Rechercher des packs...">
+                        <form class="search-form" id="pack-search-form" method="get" action="{{ path('app_pack_index') }}">
+                            <input type="text" name="q" id="pack-search-input" value="{{ app.request.get('q') }}" placeholder="Rechercher des packs..." autocomplete="off">
                             <button type="submit"><i class="far fa-search"></i></button>
                         </form>
+                        <script>
+(function() {
+    var input = document.getElementById('pack-search-input');
+    var form = document.getElementById('pack-search-form');
+    var debounce;
+    // Restore scroll and focus after reload
+    window.addEventListener('DOMContentLoaded', function() {
+        if (window.sessionStorage.getItem('packSearchScroll')) {
+            window.scrollTo(0, parseInt(window.sessionStorage.getItem('packSearchScroll'), 10));
+            window.sessionStorage.removeItem('packSearchScroll');
+        }
+        if (input) {
+            input.focus();
+            // Move cursor to end
+            var val = input.value;
+            input.value = '';
+            input.value = val;
+        }
+    });
+    if (input && form) {
+        input.addEventListener('input', function() {
+            clearTimeout(debounce);
+            debounce = setTimeout(function() {
+                window.sessionStorage.setItem('packSearchScroll', window.scrollY);
+                form.submit();
+            }, 300);
+        });
+    }
+})();
+</script>
                     </div>
                     
                     <div class="widget widget_categories">

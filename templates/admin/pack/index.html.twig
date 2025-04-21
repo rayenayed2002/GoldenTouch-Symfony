@@ -330,13 +330,69 @@
             <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
               <!-- Search -->
               <div class="navbar-nav align-items-center">
-                <div class="nav-item navbar-search-wrapper mb-0">
-                  <a class="nav-item nav-link search-toggler d-flex align-items-center px-0" href="javascript:void(0);">
-                    <i class="ti ti-search ti-md me-2"></i>
-                    <span class="d-none d-md-inline-block text-muted">Search (Ctrl+/)</span>
-                  </a>
-                </div>
-              </div>
+  <div class="navbar-nav align-items-center position-relative">
+  <div class="nav-item navbar-search-wrapper mb-0">
+    <a class="nav-item nav-link search-toggler d-flex align-items-center px-0" id="admin-pack-search-bar-trigger" href="javascript:void(0);">
+      <i class="ti ti-search ti-md me-2"></i>
+      <span class="d-none d-md-inline-block text-muted">Rechercher (Ctrl+/)</span>
+    </a>
+    <div id="admin-pack-search-dropdown" style="display:none; position:absolute; top:100%; left:0; z-index:9999; min-width:260px; background:white; box-shadow:0 6px 24px rgba(0,0,0,0.13); border-radius:8px; padding:12px;">
+      <form method="get" action="{{ path('admin_pack_index') }}" style="margin:0;">
+        <div class="input-group">
+          <input type="text" name="q" id="admin-pack-search-input-navbar" class="form-control" value="{{ app.request.get('q') }}" placeholder="Rechercher des packs..." autocomplete="off" autofocus>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<script>
+(function() {
+  const trigger = document.getElementById('admin-pack-search-bar-trigger');
+  const dropdown = document.getElementById('admin-pack-search-dropdown');
+  const input = document.getElementById('admin-pack-search-input-navbar');
+  let isOpen = false;
+  let debounceTimer = null;
+  const form = input && input.closest('form');
+
+  function openDropdown() {
+    dropdown.style.display = 'block';
+    setTimeout(() => { input && input.focus(); }, 50);
+    isOpen = true;
+  }
+  function closeDropdown() {
+    dropdown.style.display = 'none';
+    isOpen = false;
+  }
+  trigger.addEventListener('click', function(e) {
+    e.preventDefault();
+    if (!isOpen) openDropdown();
+    else closeDropdown();
+  });
+  document.addEventListener('keydown', function(e) {
+    if ((e.ctrlKey && e.key === '/') || (e.ctrlKey && e.key === '÷')) {
+      openDropdown();
+      e.preventDefault();
+    }
+    if (e.key === 'Escape' && isOpen) {
+      closeDropdown();
+    }
+  });
+  document.addEventListener('mousedown', function(e) {
+    if (isOpen && !dropdown.contains(e.target) && !trigger.contains(e.target)) {
+      closeDropdown();
+    }
+  });
+  if (input && form) {
+    input.addEventListener('input', function() {
+      if (debounceTimer) clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(function() {
+        form.submit();
+      }, 400);
+    });
+  }
+})();
+</script>
+</div>
               <!-- /Search -->
 
               <ul class="navbar-nav flex-row align-items-center ms-auto">
@@ -732,7 +788,7 @@ async function loadPackInspiration() {
         }
         ideas = await response.json();
         container.innerHTML = '';
-        if (window.Swal) Swal.fire({icon:'success',title:'Succès',text:'Nouvelles idées générées avec succès!'});
+        
         ideas.forEach(insp => {
             container.innerHTML += `
             <div class="col-md-4">
@@ -852,8 +908,38 @@ document.getElementById('refresh-inspiration-btn').addEventListener('click', loa
                             </div>
                             
                             <!-- Vue tableau -->
-                            <div class="table-view">
-                                <table id="packsTable" class="table table-hover dt-responsive nowrap w-100">
+<!-- Removed duplicate search bar, now handled in navbar -->
+    <script>
+    (function() {
+        var input = document.getElementById('admin-pack-search-input');
+        var form = document.getElementById('admin-pack-search-form');
+        var debounce;
+        window.addEventListener('DOMContentLoaded', function() {
+            if (window.sessionStorage.getItem('adminPackSearchScroll')) {
+                window.scrollTo(0, parseInt(window.sessionStorage.getItem('adminPackSearchScroll'), 10));
+                window.sessionStorage.removeItem('adminPackSearchScroll');
+            }
+            if (input) {
+                input.focus();
+                var val = input.value;
+                input.value = '';
+                input.value = val;
+            }
+        });
+        if (input && form) {
+            input.addEventListener('input', function() {
+                clearTimeout(debounce);
+                debounce = setTimeout(function() {
+                    window.sessionStorage.setItem('adminPackSearchScroll', window.scrollY);
+                    form.submit();
+                }, 300);
+            });
+        }
+    })();
+    </script>
+</div>
+<div class="table-view">
+    <table id="packsTable" class="table table-hover dt-responsive nowrap w-100">
                                     <thead>
                                         <tr>
                                             <th>Image</th>

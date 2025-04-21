@@ -255,9 +255,14 @@ class PackController extends AbstractController
     }
 
     #[Route('/', name: 'index', methods: ['GET'])]
-    public function index(NotificationsAdminRepository $notificationsAdminRepository): Response
+    public function index(Request $request, NotificationsAdminRepository $notificationsAdminRepository): Response
     {
-        $packs = $this->packRepository->findAll();
+        $q = $request->query->get('q');
+        if ($q && trim($q) !== '') {
+            $packs = $this->packRepository->search($q);
+        } else {
+            $packs = $this->packRepository->findAll();
+        }
         $events = $this->eventRepository->findAll();
         
         // Create a new Pack instance for the form

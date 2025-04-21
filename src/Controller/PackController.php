@@ -62,21 +62,41 @@ class PackController extends AbstractController
         $filter = $request->query->get('filter', 'all');
         $page = $request->query->getInt('page', 1);
         $limit = 10;
-        
-        $allPacks = $this->packRepository->findAllPaginated($page, $limit);
+        $searchTerm = $request->query->get('q');
+
+        if ($searchTerm) {
+            $searchResults = $this->packRepository->search($searchTerm);
+            // Simple manual pagination for search results
+            $totalItems = count($searchResults);
+            $pagesCount = max(1, ceil($totalItems / $limit));
+            $offset = ($page - 1) * $limit;
+            $paginatedResults = array_slice($searchResults, $offset, $limit);
+            $packs = [
+                'results' => $paginatedResults,
+                'currentPage' => $page,
+                'lastPage' => $pagesCount,
+                'hasPreviousPage' => $page > 1,
+                'hasNextPage' => $page < $pagesCount
+            ];
+        } else {
+            $allPacks = $this->packRepository->findAllPaginated($page, $limit);
+            $packs = [
+                'results' => $allPacks['results'],
+                'currentPage' => $allPacks['currentPage'],
+                'lastPage' => $allPacks['lastPage'],
+                'hasPreviousPage' => $allPacks['hasPreviousPage'],
+                'hasNextPage' => $allPacks['hasNextPage']
+            ];
+        }
+
         $trendingPacks = $this->packRepository->findBy([], ['prix' => 'DESC'], 3);
         $newPacks = $this->packRepository->findBy([], ['id' => 'DESC'], 3);
-
-        $packs = match ($filter) {
-            'trending' => ['results' => $trendingPacks, 'currentPage' => 1, 'lastPage' => 1, 'hasPreviousPage' => false, 'hasNextPage' => false],
-            'new' => ['results' => $newPacks, 'currentPage' => 1, 'lastPage' => 1, 'hasPreviousPage' => false, 'hasNextPage' => false],
-            default => ['results' => $allPacks['results'], 'currentPage' => $allPacks['currentPage'], 'lastPage' => $allPacks['lastPage'], 'hasPreviousPage' => $allPacks['hasPreviousPage'], 'hasNextPage' => $allPacks['hasNextPage']],
-        };
 
         return $this->render('pack/pack.html.twig', [
             'packs' => $packs,
             'trendingPacks' => ['results' => $trendingPacks, 'currentPage' => 1, 'lastPage' => 1, 'hasPreviousPage' => false, 'hasNextPage' => false],
-            'currentFilter' => $filter
+            'currentFilter' => $filter,
+            'searchTerm' => $searchTerm
         ]);
     }
 

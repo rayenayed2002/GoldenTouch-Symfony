@@ -36,14 +36,42 @@ class NotificationsAdminController extends AbstractController
     #[Route('/notifications', name: 'admin_notifications')]
     public function index(Request $request): Response
     {
-        // Show ALL notifications for admin_id = 1 in the table
         $adminId = 1;
-        $notifications = $this->notificationsAdminRepository->createQueryBuilder('n')
+        $q = $request->query->get('q');
+        $qb = $this->notificationsAdminRepository->createQueryBuilder('n')
             ->andWhere('n.admin = :adminId')
-            ->setParameter('adminId', $adminId)
+            ->setParameter('adminId', $adminId);
+
+        if ($q && trim($q) !== '') {
+    $qLower = mb_strtolower($q);
+    // Try to match YYYY-MM-DD or YYYY-MM or YYYY
+    if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $qLower)) {
+        [$year, $month, $day] = explode('-', $qLower);
+        $qb->andWhere('LOWER(n.message) LIKE :q OR (YEAR(n.date_creation) = :year AND MONTH(n.date_creation) = :month AND DAY(n.date_creation) = :day)')
+            ->setParameter('q', "%$qLower%")
+            ->setParameter('year', $year)
+            ->setParameter('month', $month)
+            ->setParameter('day', $day);
+    } elseif (preg_match('/^\d{4}-\d{2}$/', $qLower)) {
+        [$year, $month] = explode('-', $qLower);
+        $qb->andWhere('LOWER(n.message) LIKE :q OR (YEAR(n.date_creation) = :year AND MONTH(n.date_creation) = :month)')
+            ->setParameter('q', "%$qLower%")
+            ->setParameter('year', $year)
+            ->setParameter('month', $month);
+    } elseif (preg_match('/^\d{4}$/', $qLower)) {
+        $qb->andWhere('LOWER(n.message) LIKE :q OR YEAR(n.date_creation) = :year')
+            ->setParameter('q', "%$qLower%")
+            ->setParameter('year', $qLower);
+    } else {
+        $qb->andWhere('LOWER(n.message) LIKE :q')
+            ->setParameter('q', "%$qLower%") ;
+    }
+}
+        $notifications = $qb
             ->orderBy('n.date_creation', 'DESC')
             ->getQuery()
             ->getResult();
+
         $unreadCount = $this->notificationsAdminRepository->countUnreadByAdminId($adminId);
         $filter = $request->query->get('filter', 'all'); // keep for compatibility
         // For bell dropdown: latest 4 notifications
