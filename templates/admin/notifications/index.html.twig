@@ -687,42 +687,79 @@
                                     <div class="col-md-4 user_status"></div>
                                 </div>
                             </div>
-                            <div class="card-datatable table-responsive">
-                                <table class="datatables-users table border-top">
-                                    <thead>
-    <tr>
-        <th>ID</th>
-        <th>Message</th>
-        <th>Statut</th>
-        <th>Créé le</th>
-        <th>Actions</th>
-    </tr>
-</thead>
-                                    <tbody>
-                                        {% for notification in notifications %}
-                                            <tr>
-                                                <td>{{ notification.id }}</td>
-                                                <td>{{ notification.message }}</td>
-                                                <td>{{ notification.statut }}</td>
-                                                <td>{{ notification.dateCreation|date('Y-m-d H:i:s') }}</td>
-                                                <td>
-                                                    <div class="dropdown">
-    <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
-        <i class="ti ti-dots-vertical"></i>
-    </button>
-    <div class="dropdown-menu">
-        <a class="dropdown-item" href="{{ path('admin_customize_pack_show', {'id': notification.demandePack.id}) }}">
-            <i class="ti ti-eye me-1"></i> Voir le pack
-        </a>
-        <a class="dropdown-item delete-notification" href="javascript:void(0);" data-id="{{ notification.id }}">
-            <i class="ti ti-trash me-1"></i> Supprimer
-        </a>
+                            <div class="px-3 pt-3">
+    <div class="glass-panel mb-3 p-3 d-flex flex-wrap align-items-center justify-content-between" style="box-shadow:0 2px 24px rgba(115,103,240,0.08);">
+        <form id="notification-filter-form" class="row g-2 w-100" method="get" action="">
+            <div class="col-md-3 col-12">
+                <select class="form-select" name="status" onchange="document.getElementById('notification-filter-form').submit()">
+                    <option value="all" {% if app.request.get('status','all') == 'all' %}selected{% endif %}>Tous les statuts</option>
+                    <option value="LU" {% if app.request.get('status') == 'LU' %}selected{% endif %}>Lu</option>
+                    <option value="NON_LU" {% if app.request.get('status') == 'NON_LU' %}selected{% endif %}>Non lu</option>
+                </select>
+            </div>
+            <div class="col-md-3 col-12">
+                <input type="date" class="form-control" name="date" value="{{ app.request.get('date','') }}" onchange="document.getElementById('notification-filter-form').submit()">
+            </div>
+            <div class="col-md-6 col-12 text-end">
+                <span class="text-muted small">Filtrez par statut ou date pour trouver rapidement vos notifications.</span>
+            </div>
+        </form>
     </div>
 </div>
-                                                </td>
-                                            </tr>
-                                        {% endfor %}
-                                    </tbody>
+<div class="card-datatable table-responsive">
+    <table class="datatables-users table border-top">
+        <thead>
+<tr>
+    <th>ID</th>
+    <th>Message</th>
+    <th>Statut</th>
+    <th>Créé le</th>
+    <th>Actions</th>
+</tr>
+</thead>
+                                    <tbody>
+    {% for notification in notifications %}
+        <tr class="notification-row {% if notification.statut == 'LU' %}notification-read{% else %}notification-unread{% endif %}">
+            <td>{{ notification.id }}</td>
+            <td>{{ notification.message }}</td>
+            <td>
+                <span class="badge {% if notification.statut == 'LU' %}bg-success{% else %}bg-warning text-dark{% endif %}">
+                    {{ notification.statut == 'LU' ? 'Lu' : 'Non lu' }}
+                </span>
+            </td>
+            <td>{{ notification.dateCreation|date('Y-m-d H:i:s') }}</td>
+            <td>
+                <div class="dropdown">
+                    <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                        <i class="ti ti-dots-vertical"></i>
+                    </button>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" href="{{ path('admin_customize_pack_show', {'id': notification.demandePack.id}) }}">
+                            <i class="ti ti-eye me-1"></i> Voir le pack
+                        </a>
+                        <a class="dropdown-item delete-notification" href="javascript:void(0);" data-id="{{ notification.id }}">
+                            <i class="ti ti-trash me-1"></i> Supprimer
+                        </a>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    {% endfor %}
+</tbody>
+<style>
+.notification-row.notification-read {
+    background: rgba(220, 255, 220, 0.6);
+    transition: background 0.2s;
+}
+.notification-row.notification-unread {
+    background: rgba(255, 240, 200, 0.7);
+    transition: background 0.2s;
+}
+.notification-row:hover {
+    background: rgba(115, 103, 240, 0.08) !important;
+    box-shadow: 0 2px 16px rgba(115, 103, 240, 0.08);
+}
+</style>
                                 </table>
                             </div>
                         </div>
