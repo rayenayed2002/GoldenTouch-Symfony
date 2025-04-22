@@ -1,0 +1,46 @@
+{# templates/lieu/favoris.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes lieux favoris{% endblock %}
+
+{% block body %}
+<div class="container my-5">
+    <h1 class="mb-4">Mes lieux favoris</h1>
+    
+    {% if lieux|length > 0 %}
+        <div class="row">
+            {% for lieu in lieux %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    {% if lieu.imageUrl %}
+                        <img src="{{ asset(lieu.imageUrl) }}" class="card-img-top" alt="{{ lieu.name }}">
+                    {% else %}
+                        <img src="{{ asset('Front/img/placeholder.jpg') }}" class="card-img-top" alt="Lieu Image">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ lieu.name }}</h5>
+                        <p class="card-text">
+                            {% if lieu.description %}
+                                {{ lieu.description|length > 100 ? lieu.description|slice(0, 100) ~ '...' : lieu.description }}
+                            {% else %}
+                                Aucune description disponible
+                            {% endif %}
+                        </p>
+                    </div>
+                    <div class="card-footer bg-white">
+                        <a href="{{ path('app_lieu_details', {'id': lieu.id}) }}" class="btn btn-primary">Voir détails</a>
+                        <button class="btn btn-outline-danger toggle-favori" data-lieu-id="{{ lieu.id }}">
+                            <i class="fas fa-heart"></i> Retirer
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            Vous n'avez aucun lieu favori pour le moment.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

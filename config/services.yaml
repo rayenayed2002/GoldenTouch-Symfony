@@ -51,3 +51,4 @@ services:
 
     # Subscriber pour le calendrier (existant)
     App\EventSubscriber\CalendarSubscriber:
+    
