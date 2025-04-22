@@ -201,6 +201,37 @@ class PackController extends AbstractController
         return $this->json($result);
     }
 
+    #[Route('/search', name: 'search', methods: ['GET'])]
+    public function search(Request $request): JsonResponse
+    {
+        $q = $request->query->get('q', '');
+        $packs = [];
+        if ($q && trim($q) !== '') {
+            $packs = $this->packRepository->createQueryBuilder('p')
+                ->leftJoin('p.event', 'e')
+                ->where('LOWER(e.nom) LIKE :q OR LOWER(p.description) LIKE :q')
+                ->setParameter('q', '%' . strtolower($q) . '%')
+                ->getQuery()->getResult();
+        } else {
+            $packs = $this->packRepository->findAll();
+        }
+        $result = array_map(function($pack) {
+            return [
+                'id' => $pack->getId(),
+                'event' => [
+                    'nom' => $pack->getEvent() ? $pack->getEvent()->getNom() : '',
+                    'photo' => $pack->getEvent() ? $pack->getEvent()->getPhoto() : null,
+                ],
+                'description' => $pack->getDescription(),
+                'prix' => $pack->getPrix(),
+                'capacite' => $pack->getCapacite(),
+                'duree' => $pack->getDuree(),
+                'endDate' => $pack->getEndDate() ? $pack->getEndDate()->format('Y-m-d') : null,
+            ];
+        }, $packs);
+        return $this->json(['success' => true, 'packs' => $result]);
+    }
+
     #[Route('/check-duplicate', name: 'check_duplicate', methods: ['POST'])]
     public function checkDuplicate(Request $request): JsonResponse
     {

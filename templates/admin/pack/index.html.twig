@@ -386,9 +386,87 @@
     input.addEventListener('input', function() {
       if (debounceTimer) clearTimeout(debounceTimer);
       debounceTimer = setTimeout(function() {
-        form.submit();
+        doAjaxPackSearch(input.value);
       }, 400);
     });
+    input.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        doAjaxPackSearch(input.value);
+      }
+    });
+  }
+
+  // AJAX pack search function
+  async function doAjaxPackSearch(query) {
+    try {
+      const url = `/admin/pack/search?q=${encodeURIComponent(query)}`;
+      const resp = await fetch(url, {headers: {'X-Requested-With':'XMLHttpRequest'}});
+      const data = await resp.json();
+      if (data.success) {
+        renderPackViews(data.packs);
+      }
+    } catch (err) {
+      console.error('AJAX search error:', err);
+    }
+  }
+
+  // Render packs in both gallery and table views
+  function renderPackViews(packs) {
+    // Gallery view
+    const gallery = document.querySelector('.gallery-view');
+    if (gallery) {
+      let html = '';
+      for (const pack of packs) {
+        html += `<div class="col-md-4 col-lg-3">
+          <div class="card pack-card">
+            ${pack.event.photo ? `<img src="/uploads/packs/${pack.event.photo}" class="pack-image" alt="${pack.event.nom}">` : `<div class='pack-image d-flex align-items-center justify-content-center bg-light'><i class='ti ti-photo text-muted' style='font-size: 3rem;'></i></div>`}
+            ${pack.capacite < 5 ? `<div class='pack-badge'><span class='badge bg-danger'>Places limitées !</span></div>` : ''}
+            <div class="card-body">
+              <h5 class="card-title">${pack.event.nom}</h5>
+              <p class="card-text text-truncate">${pack.description}</p>
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="pack-price">${pack.prix}€</div>
+                <div class="pack-capacity"><i class="ti ti-users"></i> ${pack.capacite}</div>
+              </div>
+            </div>
+            <div class="pack-stats">
+              <div class="row g-0 text-center">
+                <div class="col"><div class="h6 mb-0">${pack.duree}h</div><small>Durée</small></div>
+                <div class="col"><div class="h6 mb-0">${pack.endDate ? (new Date(pack.endDate)).toLocaleDateString('fr-FR', {day:'2-digit', month:'short'}) : 'Sans fin'}</div><small>Date de fin</small></div>
+              </div>
+            </div>
+            <div class="quick-actions"><div class="btn-group shadow">
+              <button type='button' class='btn btn-primary btn-sm' onclick='editPack(${pack.id})'><i class='ti ti-edit'></i></button>
+              <button type='button' class='btn btn-primary btn-sm' onclick='viewPackDetails(${pack.id})'><i class='ti ti-eye'></i></button>
+              <button type='button' class='btn btn-danger btn-sm' onclick='deletePack(${pack.id})'><i class='ti ti-trash'></i></button>
+            </div></div>
+          </div>
+        </div>`;
+      }
+      gallery.innerHTML = html || `<div class='col-12 text-center text-muted py-4'>Aucun pack trouvé.</div>`;
+    }
+    // Table view
+    const tableBody = document.querySelector('.table-view tbody');
+    if (tableBody) {
+      let html = '';
+      for (const pack of packs) {
+        html += `<tr>
+          <td>${pack.event.photo ? `<img src="/uploads/packs/${pack.event.photo}" class="rounded" width="40" height="40" style="object-fit: cover;" alt="${pack.event.nom}">` : `<i class='ti ti-photo text-muted'></i>`}</td>
+          <td>${pack.event.nom}</td>
+          <td>${pack.description}</td>
+          <td>${pack.prix}€</td>
+          <td><span class="badge bg-label-primary">${pack.capacite} places</span></td>
+          <td>${pack.duree}h</td>
+          <td>${pack.endDate ? (new Date(pack.endDate)).toLocaleDateString('fr-FR') : ''}</td>
+          <td><div class='d-flex gap-2'>
+            <button type='button' class='btn btn-sm btn-icon btn-primary' onclick='editPack(${pack.id})' data-bs-toggle='tooltip' data-bs-placement='top' title='Modifier'><i class='ti ti-edit'></i></button>
+            <button type='button' class='btn btn-sm btn-icon btn-danger' onclick='deletePack(${pack.id})' data-bs-toggle='tooltip' data-bs-placement='top' title='Supprimer'><i class='ti ti-trash'></i></button>
+          </div></td>
+        </tr>`;
+      }
+      tableBody.innerHTML = html || `<tr><td colspan='8' class='text-center text-muted'>Aucun pack trouvé.</td></tr>`;
+    }
   }
 })();
 </script>

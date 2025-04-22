@@ -339,6 +339,7 @@
     dropdown.style.display = 'none';
     isOpen = false;
   }
+
   trigger.addEventListener('click', function(e) {
     e.preventDefault();
     if (!isOpen) openDropdown();
@@ -362,8 +363,20 @@
     input.addEventListener('input', function() {
       if (debounceTimer) clearTimeout(debounceTimer);
       debounceTimer = setTimeout(function() {
-        form.submit();
+        // AJAX search
+        const query = input.value;
+        const url = form.action + '?q=' + encodeURIComponent(query);
+        fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+          .then(response => response.text())
+          .then(html => {
+            document.getElementById('notifications-table-body').innerHTML = html;
+            // Optionally, re-bind delete/mark-as-read events here if needed
+          });
       }, 400);
+    });
+    // Prevent default submit
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
     });
   }
 })();
@@ -717,34 +730,8 @@
     <th>Actions</th>
 </tr>
 </thead>
-                                    <tbody>
-    {% for notification in notifications %}
-        <tr class="notification-row {% if notification.statut == 'LU' %}notification-read{% else %}notification-unread{% endif %}">
-            <td>{{ notification.id }}</td>
-            <td>{{ notification.message }}</td>
-            <td>
-                <span class="badge {% if notification.statut == 'LU' %}bg-success{% else %}bg-warning text-dark{% endif %}">
-                    {{ notification.statut == 'LU' ? 'Lu' : 'Non lu' }}
-                </span>
-            </td>
-            <td>{{ notification.dateCreation|date('Y-m-d H:i:s') }}</td>
-            <td>
-                <div class="dropdown">
-                    <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
-                        <i class="ti ti-dots-vertical"></i>
-                    </button>
-                    <div class="dropdown-menu">
-                        <a class="dropdown-item" href="{{ path('admin_customize_pack_show', {'id': notification.demandePack.id}) }}">
-                            <i class="ti ti-eye me-1"></i> Voir le pack
-                        </a>
-                        <a class="dropdown-item delete-notification" href="javascript:void(0);" data-id="{{ notification.id }}">
-                            <i class="ti ti-trash me-1"></i> Supprimer
-                        </a>
-                    </div>
-                </div>
-            </td>
-        </tr>
-    {% endfor %}
+                                    <tbody id="notifications-table-body">
+    {% include 'admin/notifications/_table_rows.html.twig' with {notifications: notifications} %}
 </tbody>
 <style>
 .notification-row.notification-read {
@@ -988,4 +975,5 @@
     document.addEventListener('DOMContentLoaded', fetchUnreadCount);
 </script>
 
+</body>
 </html>

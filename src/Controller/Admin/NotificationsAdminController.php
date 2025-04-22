@@ -97,12 +97,17 @@ class NotificationsAdminController extends AbstractController
             ->setMaxResults(4)
             ->getQuery()
             ->getResult();
-        return $this->render('admin/notifications/index.html.twig', [
-            'notifications' => $notifications,
-            'unreadCount' => $unreadCount,
-            'currentFilter' => $filter,
-            'latestNotifications' => $latestNotifications
-        ]);
+        if ($request->isXmlHttpRequest()) {
+    return $this->render('admin/notifications/_table_rows.html.twig', [
+        'notifications' => $notifications
+    ]);
+}
+return $this->render('admin/notifications/index.html.twig', [
+    'notifications' => $notifications,
+    'unreadCount' => $unreadCount,
+    'currentFilter' => $filter,
+    'latestNotifications' => $latestNotifications
+]);
     }
 
     #[Route('/notifications/mark-read/{id}', name: 'admin_notifications_mark_read')]
