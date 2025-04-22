@@ -36,23 +36,78 @@ class NotificationsAdminController extends AbstractController
     #[Route('/notifications', name: 'admin_notifications')]
     public function index(Request $request): Response
     {
-        // Get the current admin ID (in a real app, this would come from the authenticated user)
-        $adminId = 1; // Placeholder - replace with actual admin ID from authentication
-        
-        // Get filter from request or default to 'all'
-        $filter = $request->query->get('filter', 'all');
-        
-        // Get notifications based on filter
-        $notifications = $this->getFilteredNotifications($adminId, $filter);
-        
-        // Count unread notifications
+        $adminId = 1;
+        $q = $request->query->get('q');
+        $status = $request->query->get('status', 'all');
+        $date = $request->query->get('date');
+
+        $qb = $this->notificationsAdminRepository->createQueryBuilder('n')
+            ->andWhere('n.admin = :adminId')
+            ->setParameter('adminId', $adminId);
+
+        if ($status !== 'all' && in_array($status, ['LU', 'NON_LU'])) {
+            $qb->andWhere('n.statut = :status')->setParameter('status', $status);
+        }
+        if ($date && preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {
+            $start = $date . ' 00:00:00';
+            $end = $date . ' 23:59:59';
+            $qb->andWhere('n.date_creation BETWEEN :start AND :end')
+                ->setParameter('start', $start)
+                ->setParameter('end', $end);
+        }
+
+        if ($q && trim($q) !== '') {
+            $qLower = mb_strtolower($q);
+            // Try to match YYYY-MM-DD or YYYY-MM or YYYY
+            if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $qLower)) {
+                [$year, $month, $day] = explode('-', $qLower);
+                $qb->andWhere('LOWER(n.message) LIKE :q OR (YEAR(n.date_creation) = :year AND MONTH(n.date_creation) = :month AND DAY(n.date_creation) = :day)')
+                    ->setParameter('q', "%$qLower%")
+                    ->setParameter('year', $year)
+                    ->setParameter('month', $month)
+                    ->setParameter('day', $day);
+            } elseif (preg_match('/^\d{4}-\d{2}$/', $qLower)) {
+                [$year, $month] = explode('-', $qLower);
+                $qb->andWhere('LOWER(n.message) LIKE :q OR (YEAR(n.date_creation) = :year AND MONTH(n.date_creation) = :month)')
+                    ->setParameter('q', "%$qLower%")
+                    ->setParameter('year', $year)
+                    ->setParameter('month', $month);
+            } elseif (preg_match('/^\d{4}$/', $qLower)) {
+                $qb->andWhere('LOWER(n.message) LIKE :q OR YEAR(n.date_creation) = :year')
+                    ->setParameter('q', "%$qLower%")
+                    ->setParameter('year', $qLower);
+            } else {
+                $qb->andWhere('LOWER(n.message) LIKE :q')
+                    ->setParameter('q', "%$qLower%") ;
+            }
+        }
+
+        $notifications = $qb
+            ->orderBy('n.date_creation', 'DESC')
+            ->getQuery()
+            ->getResult();
+
         $unreadCount = $this->notificationsAdminRepository->countUnreadByAdminId($adminId);
-        
-        return $this->render('admin/notifications/index.html.twig', [
-            'notifications' => $notifications,
-            'unreadCount' => $unreadCount,
-            'currentFilter' => $filter
-        ]);
+        $filter = $request->query->get('filter', 'all'); // keep for compatibility
+        // For bell dropdown: latest 4 notifications
+        $latestNotifications = $this->notificationsAdminRepository->createQueryBuilder('n')
+            ->andWhere('n.admin = :adminId')
+            ->setParameter('adminId', $adminId)
+            ->orderBy('n.date_creation', 'DESC')
+            ->setMaxResults(4)
+            ->getQuery()
+            ->getResult();
+        if ($request->isXmlHttpRequest()) {
+    return $this->render('admin/notifications/_table_rows.html.twig', [
+        'notifications' => $notifications
+    ]);
+}
+return $this->render('admin/notifications/index.html.twig', [
+    'notifications' => $notifications,
+    'unreadCount' => $unreadCount,
+    'currentFilter' => $filter,
+    'latestNotifications' => $latestNotifications
+]);
     }
 
     #[Route('/notifications/mark-read/{id}', name: 'admin_notifications_mark_read')]

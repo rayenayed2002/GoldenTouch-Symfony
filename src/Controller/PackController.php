@@ -9,6 +9,7 @@ use App\Entity\NotificationsAdmin;
 use App\Repository\PackRepository;
 use App\Repository\AvisRepository;
 use App\Repository\UtilisateurRepository;
+use App\Repository\DemandePackRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,6 +20,7 @@ use App\Form\DemandePackType;
 use App\Form\BookingType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Clock\ClockInterface;
+use App\Service\GrammarCorrectionService;
 
 class PackController extends AbstractController
 {
@@ -26,8 +28,12 @@ class PackController extends AbstractController
         private PackRepository $packRepository,
         private AvisRepository $avisRepository,
         private EntityManagerInterface $entityManager,
-        private UtilisateurRepository $utilisateurRepository
+        private UtilisateurRepository $utilisateurRepository,
+        private GrammarCorrectionService $grammarCorrectionService,
+        private \App\Service\ToxicityDetectionService $toxicityDetectionService
     ) {}
+
+
 
     #[Route('/packs', name: 'app_packs')]
     public function index(Request $request): Response
@@ -56,21 +62,41 @@ class PackController extends AbstractController
         $filter = $request->query->get('filter', 'all');
         $page = $request->query->getInt('page', 1);
         $limit = 10;
-        
-        $allPacks = $this->packRepository->findAllPaginated($page, $limit);
+        $searchTerm = $request->query->get('q');
+
+        if ($searchTerm) {
+            $searchResults = $this->packRepository->search($searchTerm);
+            // Simple manual pagination for search results
+            $totalItems = count($searchResults);
+            $pagesCount = max(1, ceil($totalItems / $limit));
+            $offset = ($page - 1) * $limit;
+            $paginatedResults = array_slice($searchResults, $offset, $limit);
+            $packs = [
+                'results' => $paginatedResults,
+                'currentPage' => $page,
+                'lastPage' => $pagesCount,
+                'hasPreviousPage' => $page > 1,
+                'hasNextPage' => $page < $pagesCount
+            ];
+        } else {
+            $allPacks = $this->packRepository->findAllPaginated($page, $limit);
+            $packs = [
+                'results' => $allPacks['results'],
+                'currentPage' => $allPacks['currentPage'],
+                'lastPage' => $allPacks['lastPage'],
+                'hasPreviousPage' => $allPacks['hasPreviousPage'],
+                'hasNextPage' => $allPacks['hasNextPage']
+            ];
+        }
+
         $trendingPacks = $this->packRepository->findBy([], ['prix' => 'DESC'], 3);
         $newPacks = $this->packRepository->findBy([], ['id' => 'DESC'], 3);
-
-        $packs = match ($filter) {
-            'trending' => ['results' => $trendingPacks, 'currentPage' => 1, 'lastPage' => 1, 'hasPreviousPage' => false, 'hasNextPage' => false],
-            'new' => ['results' => $newPacks, 'currentPage' => 1, 'lastPage' => 1, 'hasPreviousPage' => false, 'hasNextPage' => false],
-            default => ['results' => $allPacks['results'], 'currentPage' => $allPacks['currentPage'], 'lastPage' => $allPacks['lastPage'], 'hasPreviousPage' => $allPacks['hasPreviousPage'], 'hasNextPage' => $allPacks['hasNextPage']],
-        };
 
         return $this->render('pack/pack.html.twig', [
             'packs' => $packs,
             'trendingPacks' => ['results' => $trendingPacks, 'currentPage' => 1, 'lastPage' => 1, 'hasPreviousPage' => false, 'hasNextPage' => false],
-            'currentFilter' => $filter
+            'currentFilter' => $filter,
+            'searchTerm' => $searchTerm
         ]);
     }
 
@@ -103,11 +129,11 @@ class PackController extends AbstractController
         );
 
         $demandePacks = $this->entityManager->getRepository(DemandePack::class)
-            ->createQueryBuilder('dp')
-            ->leftJoin('dp.utilisateur', 'u')
-            ->addSelect('u')
-            ->getQuery()
-            ->getResult();
+        ->createQueryBuilder('dp')
+        ->leftJoin('dp.utilisateur', 'u')
+        ->addSelect('u')
+        ->getQuery()
+        ->getResult();
 
         $avis = $this->entityManager->getRepository(Avis::class)->findAvisWithUserInfo($pack->getId());
 
@@ -166,7 +192,30 @@ class PackController extends AbstractController
                     $notification->setAdmin($entityManager->getReference('App\Entity\Utilisateur', 1));
                     $notification->setUtilisateur($entityManager->getReference('App\Entity\Utilisateur', 25));
                     $notification->setDemandePack($demande);
-                    $notification->setMessage("Nouvelle demande pour " . $pack->getNom());
+                    // Toxicity detection and masking for admin notification
+                    $userMessage = $formData['message'] ?? 'Aucun message';
+                    // Only use English toxicity detection (translation-based) for masking/admin
+                    $toxicityResult = $this->toxicityDetectionService->detect($userMessage);
+                    $labelsEn = $toxicityResult['en'] ?? [];
+                    $isToxic = false;
+                    foreach ($labelsEn as $label) {
+                        if ($label['label'] === 'toxic' && $label['score'] > 0.5) {
+                            $isToxic = true;
+                            break;
+                        }
+                    }
+                    if ($isToxic) {
+                        $maskedMessage = $this->toxicityDetectionService->maskToxicWords($userMessage, $labelsEn);
+                        $adminMessage = $maskedMessage;
+                    } else {
+                        $adminMessage = $this->grammarCorrectionService->correct($userMessage) ?: $userMessage;
+                    }
+                    $notification->setMessage(sprintf(
+                        "Nouvelle demande de réservation pour le pack %s\nNombre de personnes: %d\nMessage: %s",
+                        $pack->getNom(),
+                        $formData['personCount'],
+                        $adminMessage
+                    ));
                     $notification->setStatut('NON_LU');
                     $notification->setDateCreation(new \DateTime());
                     

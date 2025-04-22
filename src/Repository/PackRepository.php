@@ -9,6 +9,21 @@ use Doctrine\ORM\Tools\Pagination\Paginator;
 
 class PackRepository extends ServiceEntityRepository
 {
+    /**
+     * Search packs by name or description
+     * @param string $term
+     * @return Pack[]
+     */
+    public function search(string $term): array
+    {
+        $qb = $this->createQueryBuilder('p')
+            ->leftJoin('p.event', 'e');
+        $qb->where($qb->expr()->like('p.description', ':term'))
+           ->orWhere($qb->expr()->like('e.nom', ':term'))
+           ->setParameter('term', '%' . $term . '%');
+        return $qb->getQuery()->getResult();
+    }
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Pack::class);
@@ -37,7 +52,7 @@ class PackRepository extends ServiceEntityRepository
     public function findTrendingPacks(int $limit = 3): array
     {
         return $this->createQueryBuilder('p')
-            ->orderBy('p.capacity', 'DESC')
+            ->orderBy('p.capacite', 'DESC')
             ->setMaxResults($limit)
             ->getQuery()
             ->getResult();

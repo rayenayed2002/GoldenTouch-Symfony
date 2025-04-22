@@ -68,30 +68,7 @@
          <!--==============================
     preloader
   ============================== -->
-    <div class="preloader">
-        <button class="th-btn style3 preloaderCls">Cancel Preloader </button>
-        <a href="{{ path('app_pack_shop_details', {'id': pack.id}) }}" class="btn btn-icon btn-label-secondary me-1">
-            <i class="fas fa-eye"></i>
-        </a>
-        <div class="preloader-inner">
-            <div class="loading-window">
-                <div class="car">
-                    <div class="strike"></div>
-                    <div class="strike strike2"></div>
-                    <div class="strike strike3"></div>
-                    <div class="strike strike4"></div>
-                    <div class="strike strike5"></div>
-                    <div class="car-detail spoiler"></div>
-                    <div class="car-detail back"></div>
-                    <div class="car-detail center"></div>
-                    <div class="car-detail center1"></div>
-                    <div class="car-detail front"></div>
-                    <div class="car-detail wheel"></div>
-                    <div class="car-detail wheel wheel2"></div>
-                </div>
-            </div>
-        </div>
-    </div> 
+    
 
 
     <!--==============================
@@ -511,24 +488,22 @@
         
         <!-- Comment Form -->
        
-     {% set hasPurchased = false %}
-{% set userId = app.user ? app.user.id : 25 %}
+    {% set hasPurchased = false %}
+    {% for demande in demandePacks %}
+        {% if demande.pack.id == pack.id and demande.statut == 'CONFIRMÉ' %}
+            {% set hasPurchased = true %}
+        {% endif %}
+    {% endfor %}
 
-{% for demande in demandePacks %}
-    {% if demande.pack.id == pack.id and demande.statut == 'CONFIRMÉ' and demande.utilisateur.id == userId %}
-        {% set hasPurchased = true %}
-    {% endif %}
-{% endfor %}
-
-{% if hasPurchased %}
+    {% if hasPurchased %}
     <div class="th-comment-form">
         <div class="form-title">
-    <h3 class="blog-inner-title">Ajouter un avis</h3>
-</div>
-<form action="{{ path('app_avis_add', {'packId': pack.id}) }}" method="POST" class="review-form" novalidate>
-    <div class="row">
-        <div class="form-group rating-select d-flex align-items-center">
-            <label>Votre note</label>
+            <h3 class="blog-inner-title">Ajouter un avis</h3>
+        </div>
+        <form action="{{ path('app_avis_add', {'packId': pack.id}) }}" method="POST" class="review-form" novalidate>
+            <div class="row">
+                <div class="form-group rating-select d-flex align-items-center">
+                    <label>Votre note</label>
                     <p class="stars">
                         <span>
                             {% for i in 1..5 %}
@@ -557,11 +532,12 @@
             </div>
         </form>
     </div>
-{% else %}
-    <div class="alert alert-info">
-      <p>Vous devez acheter ce pack avant de pouvoir laisser un avis.</p>
-    </div>
-{% endif %}
+    {% else %}
+        <div class="alert alert-info">
+            <p><i class="fas fa-info-circle"></i> Pour laisser un avis, vous devez d'abord acheter ce pack et avoir une commande avec le statut "CONFIRMÉ".</p>
+            <a href="{{ path('app_pack_booking', {'id': pack.id}) }}" class="th-btn mt-3">Acheter ce pack</a>
+        </div>
+    {% endif %}
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {

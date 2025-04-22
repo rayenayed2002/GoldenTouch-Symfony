@@ -35,6 +35,17 @@
     <link rel="stylesheet" href="{{ asset('vendor/libs/animate-css/animate.css') }}" />
     
     <style>
+    /* Ensure notification dropdown scroll works and is visually consistent */
+    .dropdown-notifications-list.scrollable-container {
+        max-height: 320px;
+        overflow-y: auto;
+        min-width: 350px;
+    }
+    .dropdown-notifications-list .list-group {
+        max-height: 320px;
+        overflow-y: auto;
+    }
+
         /* Glassmorphism Effects */
         .glassmorphism-ui {
             backdrop-filter: blur(10px);
@@ -261,7 +272,7 @@
                     <li class="menu-item">
                         <a href="{{ path('admin_advanced_statistiques_index') }}" class="menu-link">
                             <i class="menu-icon tf-icons ti ti-dashboard"></i>
-                            <div>Dashboard</div>
+                            <div>Advanced Statistics</div>
                         </a>
                     </li>
 
@@ -295,14 +306,81 @@
 
             <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
               <!-- Search -->
-              <div class="navbar-nav align-items-center">
-                <div class="nav-item navbar-search-wrapper mb-0">
-                  <a class="nav-item nav-link search-toggler d-flex align-items-center px-0" href="javascript:void(0);">
-                    <i class="ti ti-search ti-md me-2"></i>
-                    <span class="d-none d-md-inline-block text-muted">Rechercher (Ctrl+/)</span>
-                  </a>
-                </div>
-              </div>
+              <div class="navbar-nav align-items-center position-relative">
+  <div class="nav-item navbar-search-wrapper mb-0">
+    <a class="nav-item nav-link search-toggler d-flex align-items-center px-0" id="admin-notification-search-bar-trigger" href="javascript:void(0);">
+      <i class="ti ti-search ti-md me-2"></i>
+      <span class="d-none d-md-inline-block text-muted">Rechercher (Ctrl+/)</span>
+    </a>
+    <div id="admin-notification-search-dropdown" style="display:none; position:absolute; top:100%; left:0; z-index:9999; min-width:260px; background:white; box-shadow:0 6px 24px rgba(0,0,0,0.13); border-radius:8px; padding:12px;">
+      <form method="get" action="{{ path('admin_notifications') }}" style="margin:0;">
+        <div class="input-group">
+          <input type="text" name="q" id="admin-notification-search-input-navbar" class="form-control" value="{{ app.request.get('q') }}" placeholder="Rechercher par 'Message' ou 'Créé le'..." autocomplete="off" autofocus>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<script>
+(function() {
+  const trigger = document.getElementById('admin-notification-search-bar-trigger');
+  const dropdown = document.getElementById('admin-notification-search-dropdown');
+  const input = document.getElementById('admin-notification-search-input-navbar');
+  let isOpen = false;
+  let debounceTimer = null;
+  const form = input && input.closest('form');
+
+  function openDropdown() {
+    dropdown.style.display = 'block';
+    setTimeout(() => { input && input.focus(); }, 50);
+    isOpen = true;
+  }
+  function closeDropdown() {
+    dropdown.style.display = 'none';
+    isOpen = false;
+  }
+
+  trigger.addEventListener('click', function(e) {
+    e.preventDefault();
+    if (!isOpen) openDropdown();
+    else closeDropdown();
+  });
+  document.addEventListener('keydown', function(e) {
+    if ((e.ctrlKey && e.key === '/') || (e.ctrlKey && e.key === '÷')) {
+      openDropdown();
+      e.preventDefault();
+    }
+    if (e.key === 'Escape' && isOpen) {
+      closeDropdown();
+    }
+  });
+  document.addEventListener('mousedown', function(e) {
+    if (isOpen && !dropdown.contains(e.target) && !trigger.contains(e.target)) {
+      closeDropdown();
+    }
+  });
+  if (input && form) {
+    input.addEventListener('input', function() {
+      if (debounceTimer) clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(function() {
+        // AJAX search
+        const query = input.value;
+        const url = form.action + '?q=' + encodeURIComponent(query);
+        fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+          .then(response => response.text())
+          .then(html => {
+            document.getElementById('notifications-table-body').innerHTML = html;
+            // Optionally, re-bind delete/mark-as-read events here if needed
+          });
+      }, 400);
+    });
+    // Prevent default submit
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+    });
+  }
+})();
+</script>
               <!-- /Search -->
 
               <ul class="navbar-nav flex-row align-items-center ms-auto">
@@ -467,211 +545,32 @@
                         ></a>
                       </div>
                     </li>
-                    <li class="dropdown-notifications-list scrollable-container">
-                      <ul class="list-group list-group-flush">
-                        <li class="list-group-item list-group-item-action dropdown-notifications-item">
-                          <div class="d-flex">
-                            <div class="flex-shrink-0 me-3">
-                              <div class="avatar">
-    <img src="{{ asset('img/avatars/1.png') }}" alt class="h-auto rounded-circle" />
-                              </div>
-                            </div>
-                            <div class="flex-grow-1">
-                              <h6 class="mb-1">Félicitations Lettie 🎉</h6>
-                              <p class="mb-0">A gagné le badge d'or du meilleur vendeur du mois</p>
-                              <small class="text-muted">Il y a 1h</small>
-                            </div>
-                            <div class="flex-shrink-0 dropdown-notifications-actions">
-                              <a href="javascript:void(0)" class="dropdown-notifications-read"
-                                ><span class="badge badge-dot"></span
-                              ></a>
-                              <a href="javascript:void(0)" class="dropdown-notifications-archive"
-                                ><span class="ti ti-x"></span
-                              ></a>
-                            </div>
-                          </div>
-                        </li>
-                        <li class="list-group-item list-group-item-action dropdown-notifications-item">
-                          <div class="d-flex">
-                            <div class="flex-shrink-0 me-3">
-                              <div class="avatar">
-                                <span class="avatar-initial rounded-circle bg-label-danger">CF</span>
-                              </div>
-                            </div>
-                            <div class="flex-grow-1">
-                              <h6 class="mb-1">Charles Franklin</h6>
-                              <p class="mb-0">Accepted your connection</p>
-                              <small class="text-muted">12hr ago</small>
-                            </div>
-                            <div class="flex-shrink-0 dropdown-notifications-actions">
-                              <a href="javascript:void(0)" class="dropdown-notifications-read"
-                                ><span class="badge badge-dot"></span
-                              ></a>
-                              <a href="javascript:void(0)" class="dropdown-notifications-archive"
-                                ><span class="ti ti-x"></span
-                              ></a>
-                            </div>
-                          </div>
-                        </li>
-                        <li class="list-group-item list-group-item-action dropdown-notifications-item marked-as-read">
-                          <div class="d-flex">
-                            <div class="flex-shrink-0 me-3">
-                              <div class="avatar">
-    <img src="{{ asset('img/avatars/2.png') }}" alt class="h-auto rounded-circle" />
-                              </div>
-                            </div>
-                            <div class="flex-grow-1">
-                              <h6 class="mb-1">New Message ✉️</h6>
-                              <p class="mb-0">You have new message from Natalie</p>
-                              <small class="text-muted">1h ago</small>
-                            </div>
-                            <div class="flex-shrink-0 dropdown-notifications-actions">
-                              <a href="javascript:void(0)" class="dropdown-notifications-read"
-                                ><span class="badge badge-dot"></span
-                              ></a>
-                              <a href="javascript:void(0)" class="dropdown-notifications-archive"
-                                ><span class="ti ti-x"></span
-                              ></a>
-                            </div>
-                          </div>
-                        </li>
-                        <li class="list-group-item list-group-item-action dropdown-notifications-item">
-                          <div class="d-flex">
-                            <div class="flex-shrink-0 me-3">
-                              <div class="avatar">
-                                <span class="avatar-initial rounded-circle bg-label-success"
-                                  ><i class="ti ti-shopping-cart"></i
-                                ></span>
-                              </div>
-                            </div>
-                            <div class="flex-grow-1">
-                              <h6 class="mb-1">Whoo! You have new order 🛒</h6>
-                              <p class="mb-0">ACME Inc. made new order $1,154</p>
-                              <small class="text-muted">1 day ago</small>
-                            </div>
-                            <div class="flex-shrink-0 dropdown-notifications-actions">
-                              <a href="javascript:void(0)" class="dropdown-notifications-read"
-                                ><span class="badge badge-dot"></span
-                              ></a>
-                              <a href="javascript:void(0)" class="dropdown-notifications-archive"
-                                ><span class="ti ti-x"></span
-                              ></a>
-                            </div>
-                          </div>
-                        </li>
-                        <li class="list-group-item list-group-item-action dropdown-notifications-item marked-as-read">
-                          <div class="d-flex">
-                            <div class="flex-shrink-0 me-3">
-                              <div class="avatar">
-    <img src="{{ asset('img/avatars/9.png') }}" alt class="h-auto rounded-circle" />
-                              </div>
-                            </div>
-                            <div class="flex-grow-1">
-                              <h6 class="mb-1">Application has been approved 🚀</h6>
-                              <p class="mb-0">Your ABC project application has been approved.</p>
-                              <small class="text-muted">2 days ago</small>
-                            </div>
-                            <div class="flex-shrink-0 dropdown-notifications-actions">
-                              <a href="javascript:void(0)" class="dropdown-notifications-read"
-                                ><span class="badge badge-dot"></span
-                              ></a>
-                              <a href="javascript:void(0)" class="dropdown-notifications-archive"
-                                ><span class="ti ti-x"></span
-                              ></a>
-                            </div>
-                          </div>
-                        </li>
-                        <li class="list-group-item list-group-item-action dropdown-notifications-item marked-as-read">
-                          <div class="d-flex">
-                            <div class="flex-shrink-0 me-3">
-                              <div class="avatar">
-                                <span class="avatar-initial rounded-circle bg-label-success"
-                                  ><i class="ti ti-chart-pie"></i
-                                ></span>
-                              </div>
-                            </div>
-                            <div class="flex-grow-1">
-                              <h6 class="mb-1">Monthly report is generated</h6>
-                              <p class="mb-0">July monthly financial report is generated</p>
-                              <small class="text-muted">3 days ago</small>
-                            </div>
-                            <div class="flex-shrink-0 dropdown-notifications-actions">
-                              <a href="javascript:void(0)" class="dropdown-notifications-read"
-                                ><span class="badge badge-dot"></span
-                              ></a>
-                              <a href="javascript:void(0)" class="dropdown-notifications-archive"
-                                ><span class="ti ti-x"></span
-                              ></a>
-                            </div>
-                          </div>
-                        </li>
-                        <li class="list-group-item list-group-item-action dropdown-notifications-item marked-as-read">
-                          <div class="d-flex">
-                            <div class="flex-shrink-0 me-3">
-                              <div class="avatar">
-    <img src="{{ asset('img/avatars/5.png') }}" alt class="h-auto rounded-circle" />
-                              </div>
-                            </div>
-                            <div class="flex-grow-1">
-                              <h6 class="mb-1">Send connection request</h6>
-                              <p class="mb-0">Peter sent you connection request</p>
-                              <small class="text-muted">4 days ago</small>
-                            </div>
-                            <div class="flex-shrink-0 dropdown-notifications-actions">
-                              <a href="javascript:void(0)" class="dropdown-notifications-read"
-                                ><span class="badge badge-dot"></span
-                              ></a>
-                              <a href="javascript:void(0)" class="dropdown-notifications-archive"
-                                ><span class="ti ti-x"></span
-                              ></a>
-                            </div>
-                          </div>
-                        </li>
-                        <li class="list-group-item list-group-item-action dropdown-notifications-item">
-                          <div class="d-flex">
-                            <div class="flex-shrink-0 me-3">
-                              <div class="avatar">
-    <img src="{{ asset('img/avatars/6.png') }}" alt class="h-auto rounded-circle" />
-                              </div>
-                            </div>
-                            <div class="flex-grow-1">
-                              <h6 class="mb-1">New message from Jane</h6>
-                              <p class="mb-0">Your have new message from Jane</p>
-                              <small class="text-muted">5 days ago</small>
-                            </div>
-                            <div class="flex-shrink-0 dropdown-notifications-actions">
-                              <a href="javascript:void(0)" class="dropdown-notifications-read"
-                                ><span class="badge badge-dot"></span
-                              ></a>
-                              <a href="javascript:void(0)" class="dropdown-notifications-archive"
-                                ><span class="ti ti-x"></span
-                              ></a>
-                            </div>
-                          </div>
-                        </li>
-                        <li class="list-group-item list-group-item-action dropdown-notifications-item marked-as-read">
-                          <div class="d-flex">
-                            <div class="flex-shrink-0 me-3">
-                              <div class="avatar">
-                                <span class="avatar-initial rounded-circle bg-label-warning"
-                                  ><i class="ti ti-alert-triangle"></i
-                                ></span>
-                              </div>
-                            </div>
-                            <div class="flex-grow-1">
-                              <h6 class="mb-1">CPU is running high</h6>
-                              <p class="mb-0">CPU Utilization Percent is currently at 88.63%,</p>
-                              <small class="text-muted">5 days ago</small>
-                            </div>
-                            <div class="flex-shrink-0 dropdown-notifications-actions">
-                              <a href="javascript:void(0)" class="dropdown-notifications-read"
-                                ><span class="badge badge-dot"></span
-                              ></a>
-                              <a href="javascript:void(0)" class="dropdown-notifications-archive"
-                                ><span class="ti ti-x"></span
-                              ></a>
-                            </div>
-                          </div>
+                    <li class="dropdown-notifications-list scrollable-container" style="max-height: 320px; overflow-y: auto;">
+                      <ul class="list-group list-group-flush" style="max-height: 320px; overflow-y: auto;">
+                        {% for notification in latestNotifications|slice(0, 4) %}
+                            <li class="list-group-item list-group-item-action dropdown-notifications-item p-0">
+                                <a href="{{ path('admin_customize_pack_show', {'id': notification.demandePack.id}) }}" class="d-flex align-items-stretch text-decoration-none text-dark w-100 p-3" style="cursor:pointer;">
+                                    <div class="flex-shrink-0 me-3">
+                                        <div class="avatar">
+                                            <span class="avatar-initial rounded-circle bg-label-info"><i class="ti ti-bell"></i></span>
+                                        </div>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-1">{{ notification.titre|default('Notification') }}</h6>
+                                        <p class="mb-0" title="{{ notification.message|striptags }}">
+    {{ notification.summary is defined and notification.summary ? notification.summary : notification.message|striptags|length > 80 ? notification.message|striptags|slice(0, 80) ~ '…' : notification.message|striptags }}
+</p>
+                                        <small class="text-muted">{{ notification.dateCreation ? notification.dateCreation|date('d/m/Y H:i') : '' }}</small>
+                                    </div>
+                                    <div class="flex-shrink-0 dropdown-notifications-actions align-self-center">
+                                        <span class="badge badge-dot"></span>
+                                    </div>
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="list-group-item text-center text-muted">No notifications</li>
+                        {% endfor %}
+                            
                         </li>
                       </ul>
                     </li>
@@ -801,42 +700,53 @@
                                     <div class="col-md-4 user_status"></div>
                                 </div>
                             </div>
-                            <div class="card-datatable table-responsive">
-                                <table class="datatables-users table border-top">
-                                    <thead>
-    <tr>
-        <th>ID</th>
-        <th>Message</th>
-        <th>Statut</th>
-        <th>Créé le</th>
-        <th>Actions</th>
-    </tr>
-</thead>
-                                    <tbody>
-                                        {% for notification in notifications %}
-                                            <tr>
-                                                <td>{{ notification.id }}</td>
-                                                <td>{{ notification.message }}</td>
-                                                <td>{{ notification.statut }}</td>
-                                                <td>{{ notification.dateCreation|date('Y-m-d H:i:s') }}</td>
-                                                <td>
-                                                    <div class="dropdown">
-    <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
-        <i class="ti ti-dots-vertical"></i>
-    </button>
-    <div class="dropdown-menu">
-        <a class="dropdown-item" href="{{ path('admin_customize_pack_show', {'id': notification.demandePack.id}) }}">
-            <i class="ti ti-eye me-1"></i> Voir le pack
-        </a>
-        <a class="dropdown-item delete-notification" href="javascript:void(0);" data-id="{{ notification.id }}">
-            <i class="ti ti-trash me-1"></i> Supprimer
-        </a>
+                            <div class="px-3 pt-3">
+    <div class="glass-panel mb-3 p-3 d-flex flex-wrap align-items-center justify-content-between" style="box-shadow:0 2px 24px rgba(115,103,240,0.08);">
+        <form id="notification-filter-form" class="row g-2 w-100" method="get" action="">
+            <div class="col-md-3 col-12">
+                <select class="form-select" name="status" onchange="document.getElementById('notification-filter-form').submit()">
+                    <option value="all" {% if app.request.get('status','all') == 'all' %}selected{% endif %}>Tous les statuts</option>
+                    <option value="LU" {% if app.request.get('status') == 'LU' %}selected{% endif %}>Lu</option>
+                    <option value="NON_LU" {% if app.request.get('status') == 'NON_LU' %}selected{% endif %}>Non lu</option>
+                </select>
+            </div>
+            <div class="col-md-3 col-12">
+                <input type="date" class="form-control" name="date" value="{{ app.request.get('date','') }}" onchange="document.getElementById('notification-filter-form').submit()">
+            </div>
+            <div class="col-md-6 col-12 text-end">
+                <span class="text-muted small">Filtrez par statut ou date pour trouver rapidement vos notifications.</span>
+            </div>
+        </form>
     </div>
 </div>
-                                                </td>
-                                            </tr>
-                                        {% endfor %}
-                                    </tbody>
+<div class="card-datatable table-responsive">
+    <table class="datatables-users table border-top">
+        <thead>
+<tr>
+    <th>ID</th>
+    <th>Message</th>
+    <th>Statut</th>
+    <th>Créé le</th>
+    <th>Actions</th>
+</tr>
+</thead>
+                                    <tbody id="notifications-table-body">
+    {% include 'admin/notifications/_table_rows.html.twig' with {notifications: notifications} %}
+</tbody>
+<style>
+.notification-row.notification-read {
+    background: rgba(220, 255, 220, 0.6);
+    transition: background 0.2s;
+}
+.notification-row.notification-unread {
+    background: rgba(255, 240, 200, 0.7);
+    transition: background 0.2s;
+}
+.notification-row:hover {
+    background: rgba(115, 103, 240, 0.08) !important;
+    box-shadow: 0 2px 16px rgba(115, 103, 240, 0.08);
+}
+</style>
                                 </table>
                             </div>
                         </div>
@@ -1065,4 +975,5 @@
     document.addEventListener('DOMContentLoaded', fetchUnreadCount);
 </script>
 
+</body>
 </html>
