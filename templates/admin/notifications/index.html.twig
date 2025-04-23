@@ -704,14 +704,14 @@
     <div class="glass-panel mb-3 p-3 d-flex flex-wrap align-items-center justify-content-between" style="box-shadow:0 2px 24px rgba(115,103,240,0.08);">
         <form id="notification-filter-form" class="row g-2 w-100" method="get" action="">
             <div class="col-md-3 col-12">
-                <select class="form-select" name="status" onchange="document.getElementById('notification-filter-form').submit()">
+                <select class="form-select" name="status" id="notification-status-select">
                     <option value="all" {% if app.request.get('status','all') == 'all' %}selected{% endif %}>Tous les statuts</option>
                     <option value="LU" {% if app.request.get('status') == 'LU' %}selected{% endif %}>Lu</option>
                     <option value="NON_LU" {% if app.request.get('status') == 'NON_LU' %}selected{% endif %}>Non lu</option>
                 </select>
             </div>
             <div class="col-md-3 col-12">
-                <input type="date" class="form-control" name="date" value="{{ app.request.get('date','') }}" onchange="document.getElementById('notification-filter-form').submit()">
+                <input type="date" class="form-control" name="date" id="notification-date-input" value="{{ app.request.get('date','') }}">
             </div>
             <div class="col-md-6 col-12 text-end">
                 <span class="text-muted small">Filtrez par statut ou date pour trouver rapidement vos notifications.</span>
@@ -973,6 +973,33 @@
 
     // Initial fetch
     document.addEventListener('DOMContentLoaded', fetchUnreadCount);
+    document.addEventListener('DOMContentLoaded', function() {
+        const filterForm = document.getElementById('notification-filter-form');
+        const statusSelect = document.getElementById('notification-status-select');
+        const dateInput = document.getElementById('notification-date-input');
+        function ajaxFilterNotifications() {
+            const params = new URLSearchParams();
+            if (statusSelect.value) params.append('status', statusSelect.value);
+            if (dateInput.value) params.append('date', dateInput.value);
+            fetch(filterForm.action + '?' + params.toString(), { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById('notifications-table-body').innerHTML = html;
+                });
+        }
+        statusSelect.addEventListener('change', function(e) {
+            e.preventDefault();
+            ajaxFilterNotifications();
+        });
+        dateInput.addEventListener('change', function(e) {
+            e.preventDefault();
+            ajaxFilterNotifications();
+        });
+        filterForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            ajaxFilterNotifications();
+        });
+    });
 </script>
 
 </body>
