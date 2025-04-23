@@ -133,6 +133,19 @@
             font-size: 0.9rem;
         }
         
+        /* Styles pour la sidebar de recherche */
+        .sidebar-search-results {
+            position: absolute;
+            width: 100%;
+            max-height: 300px;
+            overflow-y: auto;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 0 0 8px 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+        
         /* Autres styles */
         .lieu-location {
             display: flex;
@@ -161,6 +174,7 @@
 </head>
 
 <body>
+
     {% include 'Front/partials/header.html.twig' %}
 
     <!-- Page Title -->
@@ -175,30 +189,135 @@
             </div>
         </div>
     </div>
-
+    <li class="nav-item">
+    <a class="nav-link" href="{{ path('app_mes_favoris') }}">
+        <i class="fas fa-heart"></i> Mes favoris
+        {% if app.session.get('favoris', [])|length > 0 %}
+            <span class="badge bg-danger">{{ app.session.get('favoris', [])|length }}</span>
+        {% endif %}
+    </a>
+</li>
+    
+    {% if currentFilter == 'reservations' %}
+<div class="container my-5">
+    <h1 class="mb-4">Mes Réservations</h1>
+    
+    {% if lieux.results|length > 0 %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>Lieu</th>
+                        <th>Date</th>
+                        <th>Statut</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for reservation in lieux.results %}
+                    <tr>
+                        <td>
+                            {% if reservation.lieu %}
+                                <a href="{{ path('app_lieu_details', {id: reservation.lieu.id}) }}">
+                                    {{ reservation.lieu.name }}
+                                </a>
+                            {% else %}
+                                Lieu #{{ reservation.lieuId }}
+                            {% endif %}
+                        </td>
+                        <td>{{ reservation.dateReservation|date('d/m/Y H:i') }}</td>
+                        <td>
+                            <span class="badge 
+                                {% if reservation.status == 'confirmed' %}bg-success
+                                {% elseif reservation.status == 'pending' %}bg-warning
+                                {% else %}bg-danger
+                                {% endif %}">
+                                {{ reservation.status }}
+                            </span>
+                        </td>
+                        <td>
+                            {% if reservation.status == 'pending' %}
+                            <form method="post" 
+                                  action="{{ path('app_reservation_cancel', {id: reservation.id}) }}" 
+                                  onsubmit="return confirm('Annuler cette réservation ?')">
+                                <button type="submit" class="btn btn-sm btn-danger">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="actions">
+    <a href="{{ path('app_lieu_details', {'id': lieu.id}) }}" class="icon-btn" title="Voir les détails"><i class="far fa-eye"></i></a>
+    <a href="{{ path('app_lieu_qr_code', {'id': lieu.id}) }}" class="icon-btn" title="Générer QR Code"><i class="fas fa-qrcode"></i></a>
+    <a href="#" class="icon-btn toggle-favori" title="Ajouter aux favoris" data-lieu-id="{{ lieu.id }}"><i class="far fa-heart{% if lieu.id in app.session.get('favoris', []) %} fas text-danger{% endif %}"></i></a>
+    </a>
+</div>
+        
+        
+        {# Pagination #}
+        {% if lieux.lastPage > 1 %}
+            <nav class="mt-4">
+                <ul class="pagination justify-content-center">
+                    {% if lieux.hasPreviousPage %}
+                        <li class="page-item">
+                            <a class="page-link" 
+                               href="{{ path('app_user_reservations', {page: lieux.currentPage - 1}) }}">
+                                &laquo; Précédent
+                            </a>
+                        </li>
+                    {% endif %}
+                    
+                    {% for i in 1..lieux.lastPage %}
+                        <li class="page-item {% if i == lieux.currentPage %}active{% endif %}">
+                            <a class="page-link" 
+                               href="{{ path('app_user_reservations', {page: i}) }}">{{ i }}</a>
+                        </li>
+                    {% endfor %}
+                    
+                    {% if lieux.hasNextPage %}
+                        <li class="page-item">
+                            <a class="page-link" 
+                               href="{{ path('app_user_reservations', {page: lieux.currentPage + 1}) }}">
+                                Suivant &raquo;
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        {% endif %}
+    {% else %}
+        <div class="alert alert-info">
+            Vous n'avez aucune réservation pour le moment.
+        </div>
+    {% endif %}
+</div>
+{% else %}
     <!-- Lieu List Section -->
     <section class="space-top space-extra-bottom">
         <div class="container">
-            <!-- Search Section - Modifiée pour la recherche en temps réel -->
-            <!-- Remplacez la section de recherche par ceci -->
-<!-- Dans votre template Twig -->
-<div class="search-section">
-    <div class="row justify-content-center">
-        <div class="col-lg-8 position-relative">
-            <div class="input-group">
-                <input type="text" 
-                       class="form-control" 
-                       id="searchInput"
-                       placeholder="Rechercher un lieu..."
-                       autocomplete="off">
-                <div class="input-group-append">
-                    <span class="input-group-text"><i class="fas fa-search"></i></span>
+            <!-- Search Section -->
+            <div class="search-section">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8 position-relative">
+                        <div class="input-group">
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="searchInput"
+                                   placeholder="Rechercher un lieu..."
+                                   autocomplete="off">
+                            <div class="input-group-append">
+                                <span class="input-group-text"><i class="fas fa-search"></i></span>
+                            </div>
+                        </div>
+                        <div class="search-results-dropdown" id="searchResults"></div>
+                    </div>
                 </div>
             </div>
-            <div class="search-results-dropdown" id="searchResults"></div>
-        </div>
-    </div>
-</div>
 
             <!-- Lieu Grid -->
             <div class="row flex-row-reverse">
@@ -228,7 +347,7 @@
                                 <div class="lieu-card">
                                     <div class="product-img">
                                         {% if lieu.imageUrl %}
-                                            <img src="{{ asset('uploads/lieux/' ~ lieu.imageUrl) }}" alt="{{ lieu.name }}" class="lieu-image">
+                                            <img src="{{ asset(lieu.imageUrl) }}" alt="{{ lieu.name }}" class="lieu-image">
                                         {% else %}
                                             <img src="{{ asset('Front/img/placeholder.jpg') }}" alt="Lieu Image" class="lieu-image">
                                         {% endif %}
@@ -301,9 +420,10 @@
                     <aside class="sidebar-area sidebar-shop">
                         <div class="widget widget_search">
                             <form class="search-form">
-                                <input type="text" placeholder="Rechercher des lieux...">
+                                <input type="text" placeholder="Rechercher des lieux..." id="sidebarSearchInput">
                                 <button type="submit"><i class="far fa-search"></i></button>
                             </form>
+                            <div class="search-results-dropdown sidebar-search-results" id="sidebarSearchResults"></div>
                         </div>
                         
                         <div class="widget widget_categories">
@@ -316,6 +436,7 @@
                                 <li><a href="blog.html">Autre</a> <span>(7)</span></li>
                             </ul>
                         </div>
+                        
                         
                         <div class="widget widget_price_filter">
                             <h4 class="widget_title">Filtrer par prix</h4>
@@ -343,6 +464,7 @@
             </div>
         </div>
     </section>
+{% endif %}
 
     {% include 'Front/partials/footer.html.twig' %}
 
@@ -362,117 +484,39 @@
 
     <!-- Script pour la recherche en temps réel -->
     <script>
-        $(document).ready(function() {
-    const searchInput = $('#searchInput');
-    const searchResults = $('#searchResults');
-    let searchXHR = null;
-
-    searchInput.on('input', function() {
-        const term = $(this).val().trim();
-        
-        // Masquer les résultats si moins de 2 caractères
-        if (term.length < 2) {
-            searchResults.hide().empty();
-            return;
-        }
-        
-        // Annuler la requête précédente si elle existe
-        if (searchXHR) {
-            searchXHR.abort();
-        }
-        
-        // Afficher le loader
-        searchResults.html('<div class="search-loading">Recherche en cours...</div>').show();
-        
-        // Lancer la recherche
-        searchXHR = $.ajax({
-            url: '{{ path("app_lieu_search_autocomplete") }}',
-            type: 'GET',
-            data: { term: term },
-            dataType: 'json',
-            success: function(data) {
-                if (data.length > 0) {
-                    let html = '';
-                    data.forEach(function(item) {
-                        html += `
-                            <a href="${item.url}" class="search-result-item">
-                                <img src="${item.image}" alt="${item.name}" onerror="this.src='{{ asset('Front/img/placeholder.jpg') }}'">
-                                <div class="search-result-info">
-                                    <h6>${item.name}</h6>
-                                    <p>${item.location} • ${item.category}</p>
-                                </div>
-                            </a>
-                        `;
-                    });
-                    searchResults.html(html).show();
+    document.querySelectorAll('.toggle-favori').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            var lieuId = btn.getAttribute('data-lieu-id');
+            fetch('/favorite/add/' + lieuId, {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ userId: 19 })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.message === 'Added to favorites') {
+                    btn.querySelector('i').classList.remove('far');
+                    btn.querySelector('i').classList.add('fas', 'text-danger');
+                    btn.setAttribute('title', 'Retirer des favoris');
+                } else if(data.message === 'Already in favorites') {
+                    btn.querySelector('i').classList.remove('far');
+                    btn.querySelector('i').classList.add('fas', 'text-danger');
+                    btn.setAttribute('title', 'Déjà dans les favoris');
                 } else {
-                    searchResults.html('<div class="no-results">Aucun résultat trouvé</div>').show();
+                    btn.querySelector('i').classList.remove('fas', 'text-danger');
+                    btn.querySelector('i').classList.add('far');
+                    btn.setAttribute('title', 'Ajouter aux favoris');
                 }
-            },
-            error: function(xhr, status, error) {
-                if (status !== 'abort') {
-                    searchResults.html('<div class="no-results">Erreur lors de la recherche</div>').show();
-                }
-            },
-            complete: function() {
-                searchXHR = null;
-            }
+            })
+            .catch(() => {
+                alert('Erreur lors de l\'ajout aux favoris.');
+            });
         });
     });
-
-    // Fermer les résultats quand on clique ailleurs
-    $(document).on('click', function(e) {
-        if (!$(e.target).closest('#searchInput, #searchResults').length) {
-            searchResults.hide();
-        }
-    });
-
-    // Gestion de la navigation clavier
-    searchInput.on('keydown', function(e) {
-        const items = searchResults.find('.search-result-item');
-        if (items.length === 0) return;
-
-        const active = items.filter('.active');
-        
-        if (e.key === 'ArrowDown') {
-            e.preventDefault();
-            if (active.length) {
-                active.removeClass('active');
-                const next = active.next('.search-result-item');
-                next.length ? next.addClass('active') : items.first().addClass('active');
-            } else {
-                items.first().addClass('active');
-            }
-        } else if (e.key === 'ArrowUp') {
-            e.preventDefault();
-            if (active.length) {
-                active.removeClass('active');
-                const prev = active.prev('.search-result-item');
-                prev.length ? prev.addClass('active') : items.last().addClass('active');
-            } else {
-                items.last().addClass('active');
-            }
-        } else if (e.key === 'Enter' && active.length) {
-            e.preventDefault();
-            window.location.href = active.attr('href');
-            return;
-        }
-
-        // Faire défiler vers l'élément actif
-        const newActive = items.filter('.active');
-        if (newActive.length) {
-            searchResults.scrollTop(
-                newActive.position().top + searchResults.scrollTop() - searchResults.offset().top
-            );
-        }
-    });
-
-    // Redirection quand on clique sur un résultat
-    searchResults.on('click', '.search-result-item', function(e) {
-        e.preventDefault();
-        window.location.href = $(this).attr('href');
-    });
-});
     </script>
 </body>
 </html>

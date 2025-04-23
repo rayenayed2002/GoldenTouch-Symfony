@@ -156,4 +156,5 @@ class Lieu
         $this->category = $category;
         return $this;
     }
+    
 }

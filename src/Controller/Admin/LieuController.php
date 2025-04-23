@@ -31,16 +31,57 @@ class LieuController extends AbstractController
         $this->lieuRepository = $lieuRepository;
         $this->validator = $validator;
     }
+    // Dans LieuController.php
 
-    #[Route('/', name: 'index', methods: ['GET'])]
-    public function index(): Response
+    #[Route('/{id}/reservations', name: 'reservations', methods: ['GET'])]
+    public function reservations(int $id): Response
     {
-        $lieux = $this->lieuRepository->findAll();
-
-        return $this->render('admin/lieu/index.html.twig', [
-            'lieux' => $lieux,
+        $lieu = $this->lieuRepository->find($id);
+        
+        if (!$lieu) {
+            throw $this->createNotFoundException('Lieu non trouvé');
+        }
+        
+        $reservations = [
+            [
+                'user' => 'Utilisateur 1',
+                'date' => '2023-01-15',
+                'end_date' => '2023-01-20',
+                'status' => 'confirmé',
+                'amount' => $lieu->getPrice()
+            ],
+            [
+                'user' => 'Utilisateur 2',
+                'date' => '2023-01-25', 
+                'end_date' => '2023-01-30',
+                'status' => 'en attente',
+                'amount' => $lieu->getPrice()
+            ]
+        ];
+        
+        return $this->render('admin/lieu/reservations.html.twig', [
+            'lieu' => $lieu,
+            'reservations' => $reservations,
         ]);
     }
+
+#[Route('/', name: 'index', methods: ['GET'])]
+public function index(): Response
+{
+    $lieux = $this->lieuRepository->findAll();
+    
+    // Simuler des données de réservation (à remplacer par votre propre logique)
+    $reservationCounts = [];
+    foreach ($lieux as $lieu) {
+        // Exemple: générer un nombre aléatoire entre 0 et 10 pour la démo
+        $reservationCounts[$lieu->getId()] = rand(0, 10);
+    }
+    
+    return $this->render('admin/lieu/index.html.twig', [
+        'lieux' => $lieux,
+        'reservationCounts' => $reservationCounts,
+    ]);
+}
 
     #[Route('/new', name: 'new', methods: ['GET'])]
     public function new(): Response
@@ -359,40 +400,37 @@ class LieuController extends AbstractController
     }
 
     private function handleLieuImage(Lieu $lieu, $file = null, ?string $selectedServerImage = null): void
-    {
-        $uploadsDir = $this->getParameter('kernel.project_dir') . '/public/uploads/locations/Images';
-        
-        // Si une nouvelle image est uploadée
-        if ($file && $file instanceof UploadedFile && $file->isValid()) {
-            // Supprimer l'ancienne image si elle existe
-            if ($lieu->getImageUrl()) {
-                $oldImage = $this->getParameter('kernel.project_dir') . '/public' . $lieu->getImageUrl();
-                if (file_exists($oldImage)) {
-                    unlink($oldImage);
-                }
-            }
-            
-            // Créer le répertoire s'il n'existe pas
-            if (!file_exists($uploadsDir)) {
-                mkdir($uploadsDir, 0777, true);
-            }
-            
-            // Générer un nom de fichier sécurisé
-            $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
-            $safeFilename = preg_replace('/[^A-Za-z0-9_]/', '', $originalFilename);
-            $newFilename = $safeFilename . '-' . uniqid() . '.' . $file->guessExtension();
-            
-            // Déplacer le fichier
-            $file->move($uploadsDir, $newFilename);
-            $lieu->setImageUrl('/uploads/locations/Images/' . $newFilename);
-        } 
-        // Si une image du serveur est sélectionnée
-        elseif ($selectedServerImage) {
-            // Vérifier que le fichier existe
-            $serverImagePath = $this->getParameter('kernel.project_dir') . '/public/uploads/locations/Images/' . basename($selectedServerImage);
-            if (file_exists($serverImagePath)) {
-                $lieu->setImageUrl('/uploads/locations/Images/' . basename($selectedServerImage));
+{
+    $projectDir = $this->getParameter('kernel.project_dir');
+    $fullUploadPath = $projectDir . '/public/uploads/lieux/Images';
+    $webPath = '/uploads/lieux/Images';
+
+    if ($file && $file instanceof UploadedFile && $file->isValid()) {
+        if ($lieu->getImageUrl()) {
+            $oldImagePath = $projectDir . '/public' . $lieu->getImageUrl();
+            if (file_exists($oldImagePath)) {
+                unlink($oldImagePath);
             }
         }
+
+        if (!file_exists($fullUploadPath)) {
+            mkdir($fullUploadPath, 0777, true);
+        }
+
+        $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+        $safeFilename = preg_replace('/[^A-Za-z0-9_-]/', '', $originalFilename);
+        $newFilename = $safeFilename . '-' . uniqid() . '.' . $file->guessExtension();
+
+        $file->move($fullUploadPath, $newFilename);
+        $lieu->setImageUrl($webPath . '/' . $newFilename); // Saves as "/uploads/lieux/Images/filename.jpg"
     }
+    elseif ($selectedServerImage) {
+        $filename = basename($selectedServerImage);
+        $fullServerPath = $fullUploadPath . '/' . $filename;
+
+        if (file_exists($fullServerPath)) {
+            $lieu->setImageUrl($webPath . '/' . $filename);
+        }
+    }
+}
 }

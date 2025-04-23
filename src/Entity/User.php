@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
 use App\Repository\UserRepository;
+use App\Entity\Favorite;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: 'user')]
@@ -164,6 +165,8 @@ class User
             new ORM\JoinColumn(name: 'pack_id', referencedColumnName: 'id')
         ]
     )]
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Favorite::class, orphanRemoval: true)]
+    private Collection $favorites;
     private Collection $basketPacks;
 
     public function __construct()
@@ -194,6 +197,14 @@ class User
         $this->basketPacks->removeElement($basketPack);
 
         return $this;
+    }
+
+    /**
+     * @return Collection|Favorite[]
+     */
+    public function getFavorites(): Collection
+    {
+        return $this->favorites;
     }
 
     public function setPurchasedPacks(?string $purchased_packs): static

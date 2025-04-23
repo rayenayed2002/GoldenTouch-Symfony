@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Repository;
-
 use App\Entity\Lieu;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -28,17 +27,18 @@ class LieuRepository extends ServiceEntityRepository
             ->getResult();
     }
     public function searchByName(string $searchTerm): array
-{
-    return $this->createQueryBuilder('l')
-        ->where('l.name LIKE :searchTerm')
-        ->orWhere('l.location LIKE :searchTerm')
-        ->orWhere('l.ville LIKE :searchTerm')
-        ->orWhere('l.category LIKE :searchTerm')
-        ->setParameter('searchTerm', '%'.$searchTerm.'%')
-        ->orderBy('l.name', 'ASC')
-        ->getQuery()
-        ->getResult();
-}
+    {
+        return $this->createQueryBuilder('l')
+            ->where('LOWER(l.name) LIKE LOWER(:searchTerm)')
+            ->orWhere('LOWER(l.location) LIKE LOWER(:searchTerm)')
+            ->orWhere('LOWER(l.ville) LIKE LOWER(:searchTerm)')
+            ->orWhere('LOWER(l.category) LIKE LOWER(:searchTerm)')
+            ->setParameter('searchTerm', '%' . $searchTerm . '%')
+            ->orderBy('l.name', 'ASC')
+            ->setMaxResults(10) // Limite les résultats
+            ->getQuery()
+            ->getResult();
+    }
 
 
     public function findPopularLieux(int $limit = 3): array
@@ -116,4 +116,5 @@ public function getMonthlyStats(): array
         WHERE DATE_FORMAT(created_at, "%Y-%m") = DATE_FORMAT(CURRENT_DATE(), "%Y-%m")
     ')->fetchAssociative();
 }
+
 }

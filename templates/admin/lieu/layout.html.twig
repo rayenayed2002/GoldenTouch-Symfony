@@ -1,0 +1,318 @@
+{# templates/admin/lieu/reservations.html.twig #}
+<!DOCTYPE html>
+<html lang="en" class="light-style layout-navbar-fixed layout-menu-fixed" dir="ltr" data-theme="theme-default">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+    <title>Réservations pour {{ lieu.name }} | Golden Touch</title>
+    <meta name="description" content="Gestion des réservations" />
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{{ asset('img/favicon/favicon.ico') }}" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="{{ asset('vendor/fonts/fontawesome.css') }}" />
+    <link rel="stylesheet" href="{{ asset('vendor/fonts/tabler-icons.css') }}" />
+
+    <!-- Core CSS -->
+    <link rel="stylesheet" href="{{ asset('vendor/css/rtl/core.css') }}" />
+    <link rel="stylesheet" href="{{ asset('vendor/css/rtl/theme-default.css') }}" />
+    <link rel="stylesheet" href="{{ asset('css/demo.css') }}" />
+
+    <!-- Vendors CSS -->
+    <link rel="stylesheet" href="{{ asset('vendor/libs/perfect-scrollbar/perfect-scrollbar.css') }}" />
+    <link rel="stylesheet" href="{{ asset('vendor/libs/node-waves/node-waves.css') }}" />
+    <link rel="stylesheet" href="{{ asset('vendor/libs/sweetalert2/sweetalert2.css') }}" />
+    
+    <style>
+        /* Styles spécifiques aux réservations */
+        .reservation-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 0.75rem;
+        }
+        
+        .reservation-table thead th {
+            background-color: #f8f9fa;
+            padding: 1rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
+            color: #6e6b7b;
+            border: none;
+        }
+        
+        .reservation-table tbody tr {
+            background-color: white;
+            transition: all 0.3s ease;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .reservation-table tbody tr:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .reservation-table td {
+            padding: 1.25rem 1rem;
+            vertical-align: middle;
+            border-top: none;
+            border-bottom: none;
+        }
+        
+        .badge-pill {
+            border-radius: 50rem;
+            padding: 0.35em 0.65em;
+            font-size: 0.75em;
+            font-weight: 600;
+        }
+        
+        .bg-success {
+            background-color: #28c76f !important;
+        }
+        
+        .bg-warning {
+            background-color: #ff9f43 !important;
+        }
+        
+        .text-end {
+            text-align: right !important;
+        }
+        
+        .alert-info {
+            background-color: rgba(115, 103, 240, 0.12);
+            border-color: rgba(115, 103, 240, 0.12);
+            color: #7367f0;
+        }
+        
+        .btn-secondary {
+            background-color: #6e6b7b;
+            border-color: #6e6b7b;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #5d5a6a;
+            border-color: #5d5a6a;
+        }
+        
+        .card {
+            border: none;
+            box-shadow: 0 4px 24px 0 rgba(34, 41, 47, 0.1);
+            border-radius: 0.5rem;
+        }
+        
+        .card-header {
+            background-color: white;
+            border-bottom: 1px solid #ebe9f1;
+            padding: 1.5rem;
+        }
+        
+        .card-body {
+            padding: 1.5rem;
+        }
+        
+        /* Animation pour les lignes du tableau */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .reservation-table tbody tr {
+            animation: fadeIn 0.3s ease forwards;
+        }
+        
+        .reservation-table tbody tr:nth-child(1) { animation-delay: 0.1s; }
+        .reservation-table tbody tr:nth-child(2) { animation-delay: 0.2s; }
+        .reservation-table tbody tr:nth-child(3) { animation-delay: 0.3s; }
+        
+        /* Styles du header de localisation */
+        .location-header {
+            position: relative;
+            background-size: cover;
+            background-position: center;
+            height: 200px;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+        
+        .location-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.7));
+        }
+        
+        .location-header-content {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 1.5rem;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Layout wrapper -->
+    <div class="layout-wrapper layout-content-navbar">
+        <div class="layout-container">
+            <!-- Menu -->
+            <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
+                <div class="app-brand demo">
+                    <a href="{{ path('admin_lieu_index') }}" class="app-brand-link">
+                        <span class="app-brand-logo demo">
+                            <svg width="32" height="22" viewBox="0 0 32 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" clip-rule="evenodd" d="M0.00172773 0V6.85398C0.00172773 6.85398 -0.133178 9.01207 1.98092 10.8388L13.6912 21.9964L19.7809 21.9181L18.8042 9.88248L16.4951 7.17289L9.23799 0H0.00172773Z" fill="#7367F0" />
+                            </svg>
+                        </span>
+                        <span class="app-brand-text demo menu-text fw-bold">Golden Touch</span>
+                    </a>
+                </div>
+
+                <div class="menu-inner-shadow"></div>
+
+                <ul class="menu-inner py-1">
+                    <li class="menu-item">
+                        <a href="{{ path('admin_lieu_index') }}" class="menu-link">
+                            <i class="menu-icon tf-icons ti ti-map-pin"></i>
+                            <div>Locations</div>
+                        </a>
+                    </li>
+                    <li class="menu-item active">
+                        <a href="#" class="menu-link">
+                            <i class="menu-icon tf-icons ti ti-calendar"></i>
+                            <div>Réservations</div>
+                        </a>
+                    </li>
+                </ul>
+            </aside>
+            <!-- / Menu -->
+
+            <!-- Layout container -->
+            <div class="layout-page">
+                <!-- Content wrapper -->
+                <div class="content-wrapper">
+                    <!-- Content -->
+                    <div class="container-xxl flex-grow-1 container-p-y">
+                        <!-- Breadcrumb -->
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <div>
+                                <h4 class="fw-bold mb-2">Réservations pour {{ lieu.name }}</h4>
+                                <nav aria-label="breadcrumb">
+                                    <ol class="breadcrumb">
+                                        <li class="breadcrumb-item">
+                                            <a href="{{ path('admin_lieu_index') }}">Locations</a>
+                                        </li>
+                                        <li class="breadcrumb-item active">Réservations</li>
+                                    </ol>
+                                </nav>
+                            </div>
+                        </div>
+
+                        <!-- Location Header -->
+                        <div class="location-header" style="background-image: url('{{ asset(lieu.imageUrl) }}')">
+                            <div class="location-header-content">
+                                <h2 class="mb-2">{{ lieu.name }}</h2>
+                                <div class="d-flex gap-3">
+                                    <div class="d-flex align-items-center">
+                                        <i class="ti ti-map-pin me-2"></i>
+                                        <span>{{ lieu.location }}</span>
+                                    </div>
+                                    <div class="d-flex align-items-center">
+                                        <i class="ti ti-users me-2"></i>
+                                        <span>{{ lieu.capacity }} places</span>
+                                    </div>
+                                    <div class="d-flex align-items-center">
+                                        <i class="ti ti-currency-dollar me-2"></i>
+                                        <span>{{ lieu.price }} €/jour</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">Liste des réservations</h5>
+                                <a href="{{ path('admin_lieu_index') }}" class="btn btn-secondary">
+                                    <i class="ti ti-arrow-left me-1"></i> Retour aux locations
+                                </a>
+                            </div>
+                            
+                            <div class="card-body">
+                                {% if reservations|length > 0 %}
+                                    <div class="table-responsive">
+                                        <table class="reservation-table">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th>Utilisateur</th>
+                                                    <th>Date début</th>
+                                                    <th>Date fin</th>
+                                                    <th>Statut</th>
+                                                    <th class="text-end">Montant</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for reservation in reservations %}
+                                                    <tr>
+                                                        <td>{{ reservation.user }}</td>
+                                                        <td>{{ reservation.date }}</td>
+                                                        <td>{{ reservation.end_date|default('-') }}</td>
+                                                        <td>
+                                                            <span class="badge badge-pill bg-{{ reservation.status == 'confirmé' ? 'success' : 'warning' }}">
+                                                                {{ reservation.status }}
+                                                            </span>
+                                                        </td>
+                                                        <td class="text-end">
+                                                            {{ reservation.amount is defined ? reservation.amount : lieu.price|number_format(2, ',', ' ') }} €
+                                                        </td>
+                                                    </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                {% else %}
+                                    <div class="alert alert-info">
+                                        <i class="ti ti-info-circle me-2"></i>
+                                        Aucune réservation trouvée pour ce lieu
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Core JS -->
+    <script src="{{ asset('vendor/libs/jquery/jquery.js') }}"></script>
+    <script src="{{ asset('vendor/libs/popper/popper.js') }}"></script>
+    <script src="{{ asset('vendor/js/bootstrap.js') }}"></script>
+    <script src="{{ asset('vendor/libs/perfect-scrollbar/perfect-scrollbar.js') }}"></script>
+    <script src="{{ asset('vendor/libs/node-waves/node-waves.js') }}"></script>
+    <script src="{{ asset('vendor/libs/hammer/hammer.js') }}"></script>
+    <script src="{{ asset('vendor/js/menu.js') }}"></script>
+    <script src="{{ asset('vendor/libs/sweetalert2/sweetalert2.js') }}"></script>
+
+    <script>
+    $(document).ready(function() {
+        // Initialisation des tooltips
+        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    });
+    </script>
+</body>
+</html>
