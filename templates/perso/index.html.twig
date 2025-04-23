@@ -743,101 +743,109 @@
           <!-- Content wrapper -->
           <div class="content-wrapper">
             <!-- Content -->
-            <div class="container-xxl flex-grow-1 container-p-y">
-              <h4 class="fw-bold py-3 mb-4">Personnels</h4>
+    <div class="container-xxl flex-grow-1 container-p-y">
+        <!-- Titre et boutons alignés à droite -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="fw-bold py-3 mb-0">Personnels</h4>
+            <div class="d-flex gap-2">
+                <a href="{{ path('app_perso_stats') }}" class="btn btn-outline-primary">
+                    <i class="ti ti-chart-pie me-1"></i> Statistiques
+                </a>
+                <a href="{{ path('oauth_google') }}" class="btn btn-outline-primary">
+                    <i class="ti ti-calendar me-1"></i> Google Calendar
+                </a>
+            </div>
+        </div>
 
-              <!-- Boutons et Filtres -->
-              <div class="row mb-4">
-                <div class="col-md-12">
-                  <div class="d-flex justify-content-between align-items-center">
+        <!-- Boutons et Filtres -->
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="d-flex justify-content-between align-items-center">
                     <button id="toggleFiltersBtn" class="btn btn-outline-primary">
-                      <i class="ti ti-filter me-1"></i> Filtres & Tri
+                        <i class="ti ti-filter me-1"></i> Filtres & Tri
                     </button>
                     
                     <div class="d-flex gap-2">
-                      <a href="{{ path('app_perso_new') }}" class="btn btn-primary">
-                        <i class="ti ti-plus me-1"></i> Ajouter un personnel
-                      </a>
-                      <a href="{{ path('app_personnel_export_pdf') }}" class="btn btn-danger">
-                        <i class="ti ti-file-text me-1"></i> Exporter PDF
-                      </a>
-                      <a href="{{ path('app_perso_stats') }}" class="btn btn-outline-primary">
-                        <i class="ti ti-chart-pie me-1"></i> Statistiques
-                      </a>
+                        <a href="{{ path('app_perso_new') }}" class="btn btn-primary">
+                            <i class="ti ti-plus me-1"></i> Ajouter un personnel
+                        </a>
+                        <a href="{{ path('app_personnel_export_pdf') }}" class="btn btn-danger">
+                            <i class="ti ti-file-text me-1"></i> Exporter PDF
+                        </a>
                     </div>
-                  </div>
                 </div>
-              </div>
+            </div>
+        </div>
 
-              <!-- Filtres et Tri -->
-              <div id="filtersContainer" class="row mb-4" style="display: none;">
-                <div class="col-md-12">
-                  <div class="card">
+        <!-- Filtres et Tri -->
+        <div id="filtersContainer" class="row mb-4" style="display: none;">
+            <div class="col-md-12">
+                <div class="card">
                     <div class="card-body">
-                      <div class="row g-3">
-                        <!-- Filtre par Statut -->
-                        <div class="col-md-3">
-                          <label for="statutFilter" class="form-label">Statut</label>
-                          <select id="statutFilter" class="form-select">
-                            <option value="">Tous les statuts</option>
-                            <option value="Disponible">Disponible</option>
-                            <option value="Non_disponible">Non_disponible</option>
-                          </select>
+                        <div class="row g-3">
+                            <!-- Filtre par Statut -->
+                            <div class="col-md-3">
+                                <label for="statutFilter" class="form-label">Statut</label>
+                                <select id="statutFilter" class="form-select">
+                                    <option value="">Tous les statuts</option>
+                                    <option value="Disponible">Disponible</option>
+                                    <option value="Non_disponible">Non_disponible</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Filtre par Service -->
+                            <div class="col-md-3">
+                                <label for="serviceFilter" class="form-label">Service</label>
+                                <select id="serviceFilter" class="form-select">
+                                    <option value="">Tous les services</option>
+                                    <option value="Sécurité">Sécurité</option>
+                                    <option value="Décorateur">Décorateur</option>
+                                    <option value="Serveur">Serveur</option>
+                                    <option value="Organisateur">Organisateur</option>
+                                    <option value="Fleuriste">Fleuriste</option>
+                                    <option value="Vidéaste">Vidéaste</option>
+                                    <option value="Chef">Chef</option>
+                                    <option value="Animateur">Animateur</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Tri par Attribut -->
+                            <div class="col-md-3">
+                                <label for="sortBy" class="form-label">Trier par</label>
+                                <select id="sortBy" class="form-select">
+                                    <option value="">Sélectionner</option>
+                                    <option value="nomP">Nom</option>
+                                    <option value="prenomP">Prénom</option>
+                                    <option value="serviceP">Service</option>
+                                    <option value="tarifP">Tarif</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Ordre de Tri -->
+                            <div class="col-md-2">
+                                <label for="sortOrder" class="form-label">Ordre</label>
+                                <select id="sortOrder" class="form-select">
+                                    <option value="ASC">Croissant</option>
+                                    <option value="DESC">Décroissant</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Boutons -->
+                            <div class="col-md-12 mt-3">
+                                <div class="d-flex justify-content-end gap-2">
+                                    <button id="applyFilters" class="btn btn-purple">
+                                        <i class="ti ti-check me-1"></i> Appliquer
+                                    </button>
+                                    <button id="resetFilters" class="btn btn-outline-secondary">
+                                        <i class="ti ti-refresh me-1"></i> Réinitialiser
+                                    </button>
+                                </div>
+                            </div>
                         </div>
-                        
-                        <!-- Filtre par Service -->
-                        <div class="col-md-3">
-                          <label for="serviceFilter" class="form-label">Service</label>
-                          <select id="serviceFilter" class="form-select">
-                            <option value="">Tous les services</option>
-                            <option value="Sécurité">Sécurité</option>
-                            <option value="Décorateur">Décorateur</option>
-                            <option value="Serveur">Serveur</option>
-                            <option value="Organisateur">Organisateur</option>
-                            <option value="Fleuriste">Fleuriste</option>
-                            <option value="Vidéaste">Vidéaste</option>
-                            <option value="Chef">Chef</option>
-                            <option value="Animateur">Animateur</option>
-                          </select>
-                        </div>
-                        
-                        <!-- Tri par Attribut -->
-                        <div class="col-md-3">
-                          <label for="sortBy" class="form-label">Trier par</label>
-                          <select id="sortBy" class="form-select">
-                            <option value="">Sélectionner</option>
-                            <option value="nomP">Nom</option>
-                            <option value="prenomP">Prénom</option>
-                            <option value="serviceP">Service</option>
-                            <option value="tarifP">Tarif</option>
-                          </select>
-                        </div>
-                        
-                        <!-- Ordre de Tri -->
-                        <div class="col-md-2">
-                          <label for="sortOrder" class="form-label">Ordre</label>
-                          <select id="sortOrder" class="form-select">
-                            <option value="ASC">Croissant</option>
-                            <option value="DESC">Décroissant</option>
-                          </select>
-                        </div>
-                        
-                        <!-- Boutons -->
-                        <div class="col-md-12 mt-3">
-                          <div class="d-flex justify-content-end gap-2">
-                            <button id="applyFilters" class="btn btn-purple">
-                              <i class="ti ti-check me-1"></i> Appliquer
-                            </button>
-                            <button id="resetFilters" class="btn btn-outline-secondary">
-                              <i class="ti ti-refresh me-1"></i> Réinitialiser
-                            </button>
-                          </div>
-                        </div>
-                      </div>
                     </div>
-                  </div>
                 </div>
-              </div>
+            </div>
+        </div>
 
               <!-- Search Bar -->
               <div class="search-container mb-4">

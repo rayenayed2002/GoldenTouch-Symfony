@@ -11,6 +11,7 @@ use App\Repository\UtilisateurRepository;
 use Tattali\CalendarBundle\TattaliCalendarBundle;
 use Knp\Component\Pager\PaginatorInterface;
 use App\Service\TwilioSmsService;
+use App\Service\GoogleCalendarService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -51,10 +52,11 @@ class ReservationPersoController extends AbstractController
     public function new(
         Request $request,
         int $idP,
-        int $id,  // This is the Event ID
+        int $id,
         EntityManagerInterface $entityManager,
         PersonnelRepository $personnelRepository,
-        EventRepository $eventRepository
+        EventRepository $eventRepository,
+        GoogleCalendarService $googleService
     ): Response {
         $personnel = $personnelRepository->find($idP);
         $event = $eventRepository->find($id);
@@ -62,26 +64,61 @@ class ReservationPersoController extends AbstractController
         if (!$personnel || !$event) {
             throw $this->createNotFoundException('Personnel ou Event non trouvé');
         }
-
-        // Vérifier si la réservation existe déjà
+    
         $existingReservation = $entityManager->getRepository(ReservationPerso::class)
             ->findOneBy([
                 'idP' => $idP,
-                'event' => $event  // Changed from 'id' to 'event'
+                'event' => $event
             ]);
         
         if ($existingReservation) {
             $this->addFlash('warning', 'Cette réservation existe déjà');
             return $this->redirectToRoute('app_reservation_perso_index', ['event' => $id]);
         }
-
+    
         $reservation = new ReservationPerso();
         $reservation->setIdP($idP);
-        $reservation->setEvent($event);  // Changed from setId() to setEvent()
-
+        $reservation->setEvent($event);
+    
         try {
             $entityManager->persist($reservation);
             $entityManager->flush();
+            
+            // Mettre à jour Google Calendar
+            $accessToken = $request->getSession()->get('google_access_token');
+            if ($accessToken) {
+                $eventData = [
+                    'nom' => $event->getNom(),
+                    'date' => $event->getDate(),
+                    'description' => sprintf(
+                        "Catégorie: %s\nType: %s",
+                        $event->getCategorie(),
+                        $event->getType()
+                    )
+                ];
+                
+                // Récupérer tous les personnels pour cet événement
+                $reservations = $entityManager->getRepository(ReservationPerso::class)
+                    ->findBy(['event' => $event]);
+                
+                $personnelList = [];
+                foreach ($reservations as $res) {
+                    $pers = $personnelRepository->find($res->getIdP());
+                    if ($pers) {
+                        $personnelList[] = [
+                            'nomP' => $pers->getNomP(),
+                            'prenomP' => $pers->getPrenomP()
+                        ];
+                    }
+                }
+                
+                try {
+                    $googleService->addEventToCalendar($eventData, $accessToken, $personnelList);
+                } catch (\Exception $e) {
+                    error_log('Google Calendar update error: '.$e->getMessage());
+                }
+            }
+            
             $this->addFlash('success', 'Réservation créée avec succès!');
         } catch (\Exception $e) {
             $this->addFlash('error', 'Erreur lors de la création: '.$e->getMessage());
@@ -135,18 +172,18 @@ class ReservationPersoController extends AbstractController
         ReservationPerso $reservation,
         EntityManagerInterface $entityManager,
         EventRepository $eventRepository,
+        PersonnelRepository $personnelRepository,
+        GoogleCalendarService $googleService,
         TwilioSmsService $twilioSmsService
     ): Response {
-        // Vérification CSRF
         if (!$this->isCsrfTokenValid('delete'.$reservation->getIdR(), $request->request->get('_token'))) {
             throw $this->createAccessDeniedException('Token CSRF invalide');
         }
     
-        // Récupérer l'événement associé
         $event = $reservation->getEvent();
         $eventId = $event->getId();
     
-        // Vérifier si l'annulation est possible (moins de 24h avant)
+        // Vérifier si l'annulation est possible
         $now = new \DateTime();
         $eventDate = $event->getDate();
         $interval = $now->diff($eventDate);
@@ -157,7 +194,7 @@ class ReservationPersoController extends AbstractController
             return $this->redirectToRoute('app_reservation_perso_index', ['event' => $eventId]);
         }
     
-        // Envoi du SMS avant suppression
+        // Envoi du SMS
         $smsMessage = sprintf(
             "[GoldenTouch] Annulation réservation #%d\nÉvénement: %s\nDate: %s",
             $reservation->getIdR(),
@@ -172,6 +209,41 @@ class ReservationPersoController extends AbstractController
         // Suppression de la réservation
         $entityManager->remove($reservation);
         $entityManager->flush();
+    
+        // Mettre à jour Google Calendar
+        $accessToken = $request->getSession()->get('google_access_token');
+        if ($accessToken) {
+            $eventData = [
+                'nom' => $event->getNom(),
+                'date' => $event->getDate(),
+                'description' => sprintf(
+                    "Catégorie: %s\nType: %s",
+                    $event->getCategorie(),
+                    $event->getType()
+                )
+            ];
+            
+            // Récupérer les personnels restants
+            $reservations = $entityManager->getRepository(ReservationPerso::class)
+                ->findBy(['event' => $event]);
+            
+            $personnelList = [];
+            foreach ($reservations as $res) {
+                $pers = $personnelRepository->find($res->getIdP());
+                if ($pers) {
+                    $personnelList[] = [
+                        'nomP' => $pers->getNomP(),
+                        'prenomP' => $pers->getPrenomP()
+                    ];
+                }
+            }
+            
+            try {
+                $googleService->addEventToCalendar($eventData, $accessToken, $personnelList);
+            } catch (\Exception $e) {
+                error_log('Google Calendar update error: '.$e->getMessage());
+            }
+        }
     
         $this->addFlash('success', 'Réservation annulée avec succès !');
         return $this->redirectToRoute('app_reservation_perso_index', ['event' => $eventId]);
