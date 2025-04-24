@@ -220,4 +220,44 @@ return $this->render('admin/notifications/index.html.twig', [
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+
+    #[Route('/notifications/bulk-delete', name: 'admin_notifications_bulk_delete', methods: ['POST'])]
+    public function bulkDelete(Request $request): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+        $ids = $data['ids'] ?? [];
+        if (empty($ids)) {
+            return new JsonResponse(['success' => false, 'message' => 'Aucune notification sélectionnée.'], 400);
+        }
+        try {
+            $notifications = $this->notificationsAdminRepository->findBy(['id' => $ids]);
+            foreach ($notifications as $notification) {
+                $this->entityManager->remove($notification);
+            }
+            $this->entityManager->flush();
+            return new JsonResponse(['success' => true]);
+        } catch (\Throwable $e) {
+            return new JsonResponse(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+    }
+
+    #[Route('/notifications/bulk-mark-read', name: 'admin_notifications_bulk_mark_read', methods: ['POST'])]
+    public function bulkMarkRead(Request $request): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+        $ids = $data['ids'] ?? [];
+        if (empty($ids)) {
+            return new JsonResponse(['success' => false, 'message' => 'Aucune notification sélectionnée.'], 400);
+        }
+        try {
+            $notifications = $this->notificationsAdminRepository->findBy(['id' => $ids]);
+            foreach ($notifications as $notification) {
+                $notification->setStatut('LU');
+            }
+            $this->entityManager->flush();
+            return new JsonResponse(['success' => true]);
+        } catch (\Throwable $e) {
+            return new JsonResponse(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+    }
 }

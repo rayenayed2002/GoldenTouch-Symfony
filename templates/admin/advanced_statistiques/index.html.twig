@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en" class="light-style layout-navbar-fixed layout-menu-fixed" dir="ltr" data-theme="theme-default">
+<html lang="fr" class="light-style layout-navbar-fixed layout-menu-fixed" dir="ltr" data-theme="theme-default">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
     <title>Statistiques Avancées - Admin</title>
-    <meta name="description" content="Admin advanced statistics" />
+    <meta name="description" content="Statistiques avancées administrateur" />
     
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="{{ asset('img/favicon/favicon.ico') }}" />
@@ -338,7 +338,7 @@
 </head>
 
 <body>
-    <!-- Layout wrapper -->
+    <!-- Enveloppe de la mise en page -->
     <div class="layout-wrapper layout-content-navbar">
         <div class="layout-container">
             <!-- Menu -->
@@ -360,7 +360,7 @@
                     <li class="menu-item">
                         <a href="{{ path('admin_advanced_statistiques_index') }}" class="menu-link">
                             <i class="menu-icon tf-icons ti ti-dashboard"></i>
-                            <div>Dashboard</div>
+                            <div>Tableau de bord</div>
                         </a>
                     </li>
                     
@@ -404,14 +404,128 @@
 
                     <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
                         <!-- Search -->
-                        <div class="navbar-nav align-items-center">
+                        <div class="navbar-nav align-items-center position-relative">
                             <div class="nav-item navbar-search-wrapper mb-0">
-                                <a class="nav-item nav-link search-toggler d-flex align-items-center px-0" href="javascript:void(0);">
+                                <a class="nav-item nav-link search-toggler d-flex align-items-center px-0" id="openSearchBar" href="javascript:void(0);">
                                     <i class="ti ti-search ti-md me-2"></i>
-                                    <span class="d-none d-md-inline-block text-muted">Search</span>
+                                    <span class="d-none d-md-inline-block text-muted">Recherche</span>
                                 </a>
+                                <input type="text" id="chartSearchInput" class="form-control ms-2 d-none" placeholder="Rechercher un graphique... (Ctrl+/)" autocomplete="off" style="width: 260px; position: absolute; top: 40px; left: 0; z-index: 1050;" />
+                                <div id="chartSearchResults" class="dropdown-menu show d-none" style="position: absolute; top: 70px; left: 0; width: 260px; z-index: 1060; max-height: 250px; overflow-y: auto;"></div>
                             </div>
                         </div>
+                        <style>
+                            #chartSearchResults {
+                                border: 1px solid #d1d5db;
+                                background: #fff;
+                                box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+                                font-size: 1rem;
+                            }
+                            #chartSearchResults .dropdown-item {
+                                padding: 0.5rem 1rem;
+                                cursor: pointer;
+                                color: #333;
+                            }
+                            #chartSearchResults .dropdown-item:hover {
+                                background: #f4f4f4;
+                                color: #7367F0;
+                            }
+                        </style>
+                        <script>
+                            (function() {
+    // Add highlight style for charts
+    const style = document.createElement('style');
+    style.innerHTML = `.chart-highlight { box-shadow: 0 0 0 4px #7367F0AA; transition: box-shadow 0.3s; z-index: 10; position: relative; }`;
+    document.head.appendChild(style);
+                                const searchToggler = document.getElementById('openSearchBar');
+                                const searchInput = document.getElementById('chartSearchInput');
+                                const resultsBox = document.getElementById('chartSearchResults');
+                                let lastQuery = '';
+
+                                function openSearch() {
+                                    searchInput.classList.remove('d-none');
+                                    searchInput.focus();
+                                    resultsBox.classList.remove('d-none');
+                                    triggerChartSearch();
+                                }
+                                function closeSearch() {
+                                    searchInput.value = '';
+                                    searchInput.classList.add('d-none');
+                                    resultsBox.classList.add('d-none');
+                                    resultsBox.innerHTML = '';
+                                }
+                                function triggerChartSearch() {
+                                    const q = searchInput.value.trim();
+                                    fetch(`/admin/advanced-statistiques/search_charts.php?q=` + encodeURIComponent(q))
+                                        .then(r => r.json())
+                                        .then(data => {
+                                            if (Array.isArray(data.results) && data.results.length > 0) {
+                                                resultsBox.innerHTML = data.results.map(item => {
+    // If it's a dashboard card, attach stat-key for dynamic panel
+    let statKey = '';
+    if (item.id === 'dashboardCardTotalPacks') statKey = 'packs';
+    if (item.id === 'dashboardCardTotalUtilisateurs') statKey = 'users';
+    if (item.id === 'dashboardCardMostSoldPack') statKey = 'mostSoldPack';
+    if (item.id === 'dashboardCardAvgPrice') statKey = 'avgPrice';
+    return `<div class='dropdown-item' data-chart-id='${item.id}'${statKey ? ` data-stat-key='${statKey}'` : ''}>${item.name}</div>`;
+}).join('');
+                                            } else {
+                                                resultsBox.innerHTML = "<div class='dropdown-item text-muted'>Aucun graphique trouvé</div>";
+                                            }
+                                        });
+                                }
+                                searchToggler.addEventListener('click', function(e) {
+                                    e.preventDefault();
+                                    openSearch();
+                                });
+                                document.addEventListener('keydown', function(e) {
+                                    if ((e.ctrlKey || e.metaKey) && e.key === '/') {
+                                        openSearch();
+                                        e.preventDefault();
+                                    } else if (e.key === 'Escape') {
+                                        closeSearch();
+                                    }
+                                });
+                                searchInput.addEventListener('input', function() {
+                                    lastQuery = searchInput.value.trim();
+                                    triggerChartSearch();
+                                });
+                                resultsBox.addEventListener('mousedown', function(e) {
+    if (e.target.classList.contains('dropdown-item')) {
+        searchInput.value = e.target.textContent;
+        resultsBox.innerHTML = '';
+        resultsBox.classList.add('d-none');
+        // Scroll to chart and highlight
+        const chartId = e.target.getAttribute('data-chart-id');
+        const statKey = e.target.getAttribute('data-stat-key');
+        if (statKey) {
+            // For dynamic stat panels (cards)
+            renderStatPanel(statKey);
+            setTimeout(() => {
+                const panelElem = document.getElementById('dynamicStatPanel');
+                if (panelElem) {
+                    panelElem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    panelElem.classList.add('chart-highlight');
+                    setTimeout(() => panelElem.classList.remove('chart-highlight'), 1500);
+                }
+            }, 350); // allow panel to render
+        } else if (chartId) {
+            const chartElem = document.getElementById(chartId);
+            if (chartElem) {
+                chartElem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                chartElem.classList.add('chart-highlight');
+                setTimeout(() => chartElem.classList.remove('chart-highlight'), 1500);
+            }
+        }
+    }
+});
+                                document.addEventListener('mousedown', function(e) {
+                                    if (!searchInput.contains(e.target) && !searchToggler.contains(e.target) && !resultsBox.contains(e.target)) {
+                                        closeSearch();
+                                    }
+                                });
+                            })();
+                        </script>
                         <!-- /Search -->
 
                         <ul class="navbar-nav flex-row align-items-center ms-auto">
@@ -433,7 +547,7 @@
                                                 </div>
                                                 <div class="flex-grow-1">
                                                     <span class="fw-semibold d-block">Admin</span>
-                                                    <small class="text-muted">Administrator</small>
+                                                    <small class="text-muted">Administrateur</small>
                                                 </div>
                                             </div>
                                         </a>
@@ -444,13 +558,13 @@
                                     <li>
                                         <a class="dropdown-item" href="#">
                                             <i class="ti ti-user-check me-2 ti-sm"></i>
-                                            <span class="align-middle">My Profile</span>
+                                            <span class="align-middle">Mon profil</span>
                                         </a>
                                     </li>
                                     <li>
                                         <a class="dropdown-item" href="#">
                                             <i class="ti ti-settings me-2 ti-sm"></i>
-                                            <span class="align-middle">Settings</span>
+                                            <span class="align-middle">Paramètres</span>
                                         </a>
                                     </li>
                                 </ul>
@@ -474,13 +588,18 @@
                                             <h3 class="mb-1">Statistiques Avancées 📊</h3>
                                             <p class="text-muted mb-0">Analyse détaillée des performances de votre entreprise</p>
                                         </div>
-                                        <div class="d-flex gap-3">
-                                            <button class="btn btn-primary d-flex align-items-center gap-2">
-                                                <i class="ri-download-cloud-2-line"></i> Télécharger Rapport
-                                            </button>
+                                        <div class="d-flex gap-3 mt-6" style="margin-top: 10rem !important;">
+    <!-- Spacer to prevent overlap -->
+
+                                            <a href="{{ path('admin_advanced_statistiques_admin_advanced_statistiques_download_pdf') }}" class="btn btn-primary d-flex align-items-center gap-2" target="_blank">
+    <i class="ri-download-cloud-2-line"></i> Télécharger Rapport
+</a>
                                             <button class="btn btn-light" id="refreshStats">
                                                 <i class="ri-refresh-line"></i>
                                             </button>
+                                            <a href="{{ path('admin_advanced_statistiques_demande_packs') }}" class="btn btn-gradient-primary d-flex align-items-center gap-2" style="background: linear-gradient(90deg, #7367F0 0%, #A9B6FF 100%); color: #fff; border: none; box-shadow: 0 4px 12px rgba(115,103,240,0.15); transition: transform 0.2s;">
+    <i class="ri-rocket-2-line"></i> Demander un Pack
+</a>
                                         </div>
                                     </div>
                                 </div>
@@ -491,11 +610,11 @@
                         <div class="row mb-4">
                             <!-- Total Packs -->
                             <div class="col-sm-6 col-lg-3" data-aos="fade-up" data-aos-delay="100">
-                                <div class="dashboard-card stat-card bg-primary bg-opacity-10 cursor-pointer" onclick="showAdvancedStatDetails('packs')">
+                                <div class="dashboard-card stat-card bg-primary bg-opacity-10 cursor-pointer" id="dashboardCardTotalPacks" onclick="showAdvancedStatDetails('packs')">
                                     <div class="d-flex justify-content-between">
                                         <div>
                                             <h6 class="text-muted mb-2">Total Packs</h6>
-                                            <h2 class="mb-0">{{ packStats.total_packs }}</h2>
+                                            <h2 class="mb-0" id="totalPacks">{{ packStats.total_packs }}</h2>
                                             <small class="text-success d-flex align-items-center mt-2">
                                                 <i class="ri-arrow-up-line me-1"></i> +{{ packStats.growth_rate }}%
                                             </small>
@@ -508,11 +627,122 @@
                                         <div class="progress-bar bg-primary" style="width: {{ packStats.growth_rate }}%"></div>
                                     </div>
                                 </div>
+                                <!-- Dynamic Stat Panel (in-page, not modal) -->
+<div style="width:80vw;position:relative">
+  <div id="dynamicStatPanel" class="my-4 w-100" style="width:100vw;">
+    <!-- Stat panel content will be injected here dynamically -->
+  </div>
+</div>
+<script>
+    // Fetch stat data via AJAX and update the panel
+    function renderStatPanel(statKey) {
+        fetch(`/admin/advanced-statistiques/stat-data/${statKey}`)
+            .then(response => response.json())
+            .then(stat => {
+                let title, icon, value, growth, desc, chartLabel, chartData;
+                if (statKey === 'packs') {
+                    title = 'Total Packs';
+                    icon = 'ri-package-line text-primary';
+                    value = stat.total_packs;
+                    growth = '+' + stat.growth_rate + '%';
+                    chartLabel = 'Packs créés';
+                    chartData = stat.chart_data;
+                } else if (statKey === 'users') {
+                    title = 'Total Utilisateurs';
+                    icon = 'ri-user-line text-success';
+                    value = stat.total_users;
+                    growth = '+' + stat.growth_rate + '%';
+                    chartLabel = 'Nouveaux utilisateurs';
+                    chartData = stat.chart_data;
+                } else if (statKey === 'mostSoldPack') {
+                    title = 'Pack le Plus Vendu';
+                    icon = 'ri-award-line text-warning';
+                    value = stat.total_sales;
+                    growth = '';
+                    desc = stat.description;
+                    chartLabel = 'Ventes';
+                    chartData = stat.chart_data;
+                } else if (statKey === 'avgPrice') {
+                    title = 'Prix Moyen des Packs';
+                    icon = 'ri-money-euro-circle-line text-info';
+                    value = '€' + stat.averagePackPrice;
+                    growth = '';
+                    chartLabel = 'Prix moyen';
+                    chartData = stat.chart_data || [];
+                }
+
+                let growthHtml = growth ? `<span class="badge bg-success ms-2">${growth}</span>` : '';
+                let descHtml = desc ? `<small class='text-muted d-block mt-2'>${desc}</small>` : '';
+                document.getElementById('dynamicStatPanel').innerHTML = `
+                    <div class='dashboard-card p-4 mb-4 w-100' style="width:100%;">
+                        <div class='d-flex align-items-center mb-3'>
+                            <i class='${icon} fs-2 me-2'></i>
+                            <h4 class='mb-0'>${title}</h4>
+                        </div>
+                        <div class='d-flex align-items-center mb-3'>
+                            <h2 class='mb-0'>${value}</h2>
+                            ${growthHtml}
+                        </div>
+                        ${descHtml}
+                        <div style='height: 220px;'>
+                            <canvas id='statPanelChart'></canvas>
+                        </div>
+                    </div>
+                `;
+                if (window.statPanelChartInstance) window.statPanelChartInstance.destroy();
+                const ctx = document.getElementById('statPanelChart').getContext('2d');
+                window.statPanelChartInstance = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: chartData.map(item => item.label),
+                        datasets: [{
+                            label: chartLabel,
+                            data: chartData.map(item => item.value),
+                            backgroundColor: 'rgba(115,103,240,0.08)',
+                            borderColor: '#7367F0',
+                            borderWidth: 2,
+                            tension: 0.4,
+                            pointRadius: 3
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            y: { beginAtZero: true },
+                            x: { title: { display: false } }
+                        }
+                    }
+                });
+            });
+    }
+    // Card click handlers
+    document.addEventListener('DOMContentLoaded', function() {
+        renderStatPanel('packs'); // Default
+        document.querySelectorAll('.stat-card.cursor-pointer').forEach(card => {
+            card.addEventListener('click', function() {
+                if (this.onclick) {
+                    // If already handled by inline onclick, skip
+                    return;
+                }
+                let type = this.getAttribute('onclick')?.match(/showAdvancedStatDetails\('(.+?)'\)/);
+                type = type ? type[1] : this.dataset.statType;
+                renderStatPanel(type);
+            });
+        });
+        // Also support inline onclick attributes
+        window.showAdvancedStatDetails = renderStatPanel;
+    });
+</script>
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
                             </div>
 
                             <!-- Total Users -->
                             <div class="col-sm-6 col-lg-3" data-aos="fade-up" data-aos-delay="200">
-                                <div class="dashboard-card stat-card bg-success bg-opacity-10 cursor-pointer" onclick="showAdvancedStatDetails('users')">
+                                <div class="dashboard-card stat-card bg-success bg-opacity-10 cursor-pointer" id="dashboardCardTotalUtilisateurs" onclick="showAdvancedStatDetails('users')">
                                     <div class="d-flex justify-content-between">
                                         <div>
                                             <h6 class="text-muted mb-2">Total Utilisateurs</h6>
@@ -533,7 +763,7 @@
 
                             <!-- Most Sold Pack -->
                             <div class="col-sm-6 col-lg-3" data-aos="fade-up" data-aos-delay="300">
-                                <div class="dashboard-card stat-card bg-warning bg-opacity-10 cursor-pointer" onclick="showAdvancedStatDetails('mostSoldPack')">
+                                <div class="dashboard-card stat-card bg-warning bg-opacity-10 cursor-pointer" id="dashboardCardMostSoldPack" onclick="showAdvancedStatDetails('mostSoldPack')">
                                     <div class="d-flex justify-content-between">
                                         <div>
                                             <h6 class="text-muted mb-2">Pack le Plus Vendu</h6>
@@ -554,7 +784,7 @@
 
                             <!-- Average Pack Price -->
                             <div class="col-sm-6 col-lg-3" data-aos="fade-up" data-aos-delay="400">
-                                <div class="dashboard-card stat-card bg-info bg-opacity-10 cursor-pointer" onclick="showAdvancedStatDetails('avgPrice')">
+                                <div class="dashboard-card stat-card bg-info bg-opacity-10 cursor-pointer" id="dashboardCardAvgPrice" onclick="showAdvancedStatDetails('avgPrice')">
                                     <div class="d-flex justify-content-between">
                                         <div>
                                             <h6 class="text-muted mb-2">Prix Moyen des Packs</h6>
@@ -1098,6 +1328,110 @@
 
     <!-- Main JS -->
     <script src="{{ asset('js/main.js') }}"></script>
+
+    <!-- Dynamic Stat Panel JS (updates in-page, not modal) -->
+<script>
+function showAdvancedStatDetails(type) {
+  const stats = {
+    packs: {
+      title: 'Détails des Packs',
+      icon: 'ri-package-line text-primary',
+      data: [
+        { label: "Aujourd'hui", value: '{{ packStats.today|default(0) }}', change: '+{{ packStats.today_growth|default(0) }}%' },
+        { label: 'Cette Semaine', value: '{{ packStats.this_week|default(0) }}', change: '+{{ packStats.week_growth|default(0) }}%' },
+        { label: 'Ce Mois', value: '{{ packStats.this_month|default(0) }}', change: '+{{ packStats.month_growth|default(0) }}%' },
+        { label: 'Cette Année', value: '{{ packStats.this_year|default(0) }}', change: '+{{ packStats.year_growth|default(0) }}%' }
+      ],
+      total: '{{ packStats.total|default(0) }}',
+      trend: {{ packStats.trend|default([0,0,0,0,0,0])|json_encode|raw }}
+    },
+    users: {
+      title: 'Détails des Utilisateurs',
+      icon: 'ri-user-line text-success',
+      data: [
+        { label: "Aujourd'hui", value: '{{ userStats.today|default(0) }}', change: '+{{ userStats.today_growth|default(0) }}%' },
+        { label: 'Cette Semaine', value: '{{ userStats.this_week|default(0) }}', change: '+{{ userStats.week_growth|default(0) }}%' },
+        { label: 'Ce Mois', value: '{{ userStats.this_month|default(0) }}', change: '+{{ userStats.month_growth|default(0) }}%' },
+        { label: 'Cette Année', value: '{{ userStats.this_year|default(0) }}', change: '+{{ userStats.year_growth|default(0) }}%' }
+      ],
+      total: '{{ userStats.total_users|default(0) }}',
+      trend: {{ userStats.trend|default([0,0,0,0,0,0])|json_encode|raw }}
+    },
+    mostSoldPack: {
+      title: 'Pack le Plus Vendu',
+      icon: 'ri-award-line text-warning',
+      data: [
+        { label: 'Total Ventes', value: '{{ mostSoldPack.total_sales|default(0) }}', change: '+{{ mostSoldPack.growth_rate|default(0) }}%' },
+        { label: 'Nom', value: '{{ mostSoldPack.name|default("") }}', change: '' },
+        { label: 'Description', value: '{{ mostSoldPack.description|default("") }}', change: '' },
+        { label: 'Catégorie', value: '{{ mostSoldPack.category|default("") }}', change: '' }
+      ],
+      total: '{{ mostSoldPack.total_sales|default(0) }}',
+      trend: {{ mostSoldPack.trend|default([0,0,0,0,0,0])|json_encode|raw }}
+    }
+  };
+  const stat = stats[type] || stats['packs'];
+  // Build the panel HTML
+  let panelHtml = `
+    <div class="dashboard-card p-4 mb-4">
+      <div class="d-flex align-items-center mb-3">
+        <i class="${stat.icon} me-2" style="font-size: 2rem;"></i>
+        <h4 class="mb-0">${stat.title}</h4>
+      </div>
+      <div class="row mb-4">
+        ${stat.data.map(item => `
+          <div class="col-sm-6 col-lg-3 mb-3">
+            <div style="background:#f8fafc; border-radius:8px; padding:1rem;">
+              <div class="d-flex align-items-center mb-2">
+                <span style="background:#4a67f0; color:#fff; border-radius:4px; font-size:0.9rem; padding:2px 8px; font-weight:600; margin-right:0.5rem;">${item.label}</span>
+                ${item.change ? `<span style="background:#e7eaff; color:#4a67f0; border-radius:4px; font-size:0.9rem; padding:2px 8px; margin-left:auto; font-weight:600;">${item.change}</span>` : ''}
+              </div>
+              <div style="font-size:2rem; font-weight:700; color:#4a67f0;">${item.value}</div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+      <div class="chart-container" style="height: 220px;">
+        <canvas id="dynamicStatTrendChart"></canvas>
+      </div>
+    </div>
+  `;
+  document.getElementById('dynamicStatPanel').innerHTML = panelHtml;
+  // Chart
+  if (window.dynamicStatTrendChart) {
+    window.dynamicStatTrendChart.destroy();
+  }
+  const ctx = document.getElementById('dynamicStatTrendChart').getContext('2d');
+  window.dynamicStatTrendChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+      datasets: [{
+        label: stat.title,
+        data: stat.trend,
+        borderColor: '#4a67f0',
+        backgroundColor: 'rgba(74,103,240,0.1)',
+        tension: 0.4,
+        fill: true,
+        pointBackgroundColor: '#4a67f0',
+        pointBorderColor: '#fff',
+        pointBorderWidth: 2,
+        pointRadius: 4
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: { x: { grid: { display: false } }, y: { grid: { borderDash: [5, 5] } } }
+    }
+  });
+}
+// Show packs panel by default on page load
+window.addEventListener('DOMContentLoaded', function() {
+  showAdvancedStatDetails('packs');
+});
+</script>
 
     <!-- Page JS -->
     <script>
@@ -1887,7 +2221,7 @@
     
     <!-- Statistics Details Modal -->
     <div class="modal fade" id="statDetailsModal" tabindex="-1" aria-labelledby="statDetailsModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
+        <!-- Modal removed: replaced by inline stats panel -->
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="statDetailsModalLabel">
@@ -1969,7 +2303,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-                    <button type="button" class="btn btn-primary">Télécharger Rapport</button>
+                    <button type="button" class="btn btn-primary">Télécharger le rapport</button>
                 </div>
             </div>
         </div>

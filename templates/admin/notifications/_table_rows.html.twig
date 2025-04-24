@@ -1,7 +1,10 @@
 {# templates/admin/notifications/_table_rows.html.twig #}
 {% for notification in notifications %}
 <tr class="notification-row {% if notification.statut == 'LU' %}notification-read{% else %}notification-unread{% endif %}">
-    <td>{{ notification.id }}</td>
+    <td>
+        <input type="checkbox" class="form-check-input notification-checkbox" value="{{ notification.id }}" aria-label="Sélectionner la notification {{ notification.id }}">
+    </td>
+
     <td>{{ notification.message }}</td>
     <td>
         <span class="badge {% if notification.statut == 'LU' %}bg-success{% else %}bg-warning text-dark{% endif %}">
@@ -26,5 +29,5 @@
     </td>
 </tr>
 {% else %}
-<tr><td colspan="5" class="text-center">Aucune notification trouvée.</td></tr>
+<tr><td colspan="6" class="text-center">Aucune notification trouvée.</td></tr>
 {% endfor %}

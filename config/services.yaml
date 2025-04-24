@@ -9,6 +9,7 @@ parameters:
     # Configuration du dossier d'upload des images du personnel
     personnel_images_directory: '%kernel.project_dir%/public/uploads/personnel'
     
+    
     # Paramètre pour la taille max des fichiers (optionnel)
     app.max_file_size: '2M'
     materiel_directory: '%kernel.project_dir%/public/uploads/materiels'
@@ -57,6 +58,15 @@ services:
             $fromNumber: '%env(TWILIO_PHONE_NUMBER)%'
             $toNumber: '%env(DESTINATION_PHONE_NUMBER)%'
 
+
+
+
     # Subscriber pour le calendrier (existant)
     App\EventSubscriber\CalendarSubscriber:
-    
+
+
+    App\Service\GoogleCalendarService:
+        arguments:
+            $googleClientId: '%env(GOOGLE_CLIENT_ID)%'
+            $googleClientSecret: '%env(GOOGLE_CLIENT_SECRET)%'
+            $googleRedirectUri: '%env(GOOGLE_REDIRECT_URI)%'

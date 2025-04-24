@@ -308,6 +308,26 @@
                     box-shadow: 0 3px 15px rgba(0, 0, 0, 0.2);
                     border-radius: 8px;
                 }
+                .weather-forecast-container {
+                    transition: all 0.3s ease;
+                }
+                .weather-info {
+                    background: linear-gradient(to right, #f8f9fa, #e9ecef);
+                    border-radius: 10px;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                }
+                .weather-info .temperature {
+                    font-size: 1.5rem;
+                    font-weight: 600;
+                    color: #2c3e50;
+                }
+                .weather-info .description {
+                    color: #6c757d;
+                }
+                .weather-icon {
+                    width: 50px;
+                    height: 50px;
+                }
                 .flatpickr-day.selected, .flatpickr-day.startRange, .flatpickr-day.endRange, .flatpickr-day.selected.inRange, .flatpickr-day.startRange.inRange, .flatpickr-day.endRange.inRange, .flatpickr-day.selected:focus, .flatpickr-day.startRange:focus, .flatpickr-day.endRange:focus, .flatpickr-day.selected:hover, .flatpickr-day.startRange:hover, .flatpickr-day.endRange:hover, .flatpickr-day.selected.prevMonthDay, .flatpickr-day.startRange.prevMonthDay, .flatpickr-day.endRange.prevMonthDay, .flatpickr-day.selected.nextMonthDay, .flatpickr-day.startRange.nextMonthDay, .flatpickr-day.endRange.nextMonthDay {
                     background: #ffb703;
                     border-color: #ffb703;
@@ -343,6 +363,7 @@
     <script src="/js/toxicity-detection.js"></script> <!-- Toxicity Detection for Notes -->
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/fr.js"></script>
+    <script src="/js/weather-forecast.js"></script> <!-- Weather Forecast Integration -->
 
     {% block javascripts %}
     <script>
@@ -516,4 +537,7 @@
     </script>
     {% endblock %}
 </body>
+
+
+
 </html>

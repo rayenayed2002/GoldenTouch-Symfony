@@ -704,14 +704,14 @@
     <div class="glass-panel mb-3 p-3 d-flex flex-wrap align-items-center justify-content-between" style="box-shadow:0 2px 24px rgba(115,103,240,0.08);">
         <form id="notification-filter-form" class="row g-2 w-100" method="get" action="">
             <div class="col-md-3 col-12">
-                <select class="form-select" name="status" onchange="document.getElementById('notification-filter-form').submit()">
+                <select class="form-select" name="status" id="notification-status-select">
                     <option value="all" {% if app.request.get('status','all') == 'all' %}selected{% endif %}>Tous les statuts</option>
                     <option value="LU" {% if app.request.get('status') == 'LU' %}selected{% endif %}>Lu</option>
                     <option value="NON_LU" {% if app.request.get('status') == 'NON_LU' %}selected{% endif %}>Non lu</option>
                 </select>
             </div>
             <div class="col-md-3 col-12">
-                <input type="date" class="form-control" name="date" value="{{ app.request.get('date','') }}" onchange="document.getElementById('notification-filter-form').submit()">
+                <input type="date" class="form-control" name="date" id="notification-date-input" value="{{ app.request.get('date','') }}">
             </div>
             <div class="col-md-6 col-12 text-end">
                 <span class="text-muted small">Filtrez par statut ou date pour trouver rapidement vos notifications.</span>
@@ -723,7 +723,8 @@
     <table class="datatables-users table border-top">
         <thead>
 <tr>
-    <th>ID</th>
+    <th><input type="checkbox" id="select-all-notifications" class="form-check-input" aria-label="Tout sélectionner"></th>
+    
     <th>Message</th>
     <th>Statut</th>
     <th>Créé le</th>
@@ -748,6 +749,177 @@
 }
 </style>
                                 </table>
+<!-- Floating Bulk Actions Bar -->
+<div id="bulk-actions-bar" class="position-fixed bottom-0 start-50 translate-middle-x bg-white shadow-lg rounded-pill p-3 d-flex gap-3 align-items-center animate__animated animate__fadeInUp d-none" style="z-index:1055; min-width:320px; margin-bottom:32px;">
+    <button id="bulk-delete-btn" class="btn btn-danger btn-icon rounded-circle pulse" title="Supprimer la sélection">
+        <i class="ti ti-trash"></i>
+    </button>
+    <button id="bulk-mark-read-btn" class="btn btn-success btn-icon rounded-circle pulse" title="Marquer comme lues">
+        <i class="ti ti-mail-opened"></i>
+    </button>
+    <span class="ms-2 fw-semibold"><span id="bulk-selected-count">0</span> sélectionné(s)</span>
+</div>
+<!-- Bulk Actions JS -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const selectAll = document.getElementById('select-all-notifications');
+        const bulkActionsBar = document.getElementById('bulk-actions-bar');
+        const bulkDeleteBtn = document.getElementById('bulk-delete-btn');
+        const bulkMarkReadBtn = document.getElementById('bulk-mark-read-btn');
+        const bulkSelectedCount = document.getElementById('bulk-selected-count');
+        function getSelectedCheckboxes() {
+            return Array.from(document.querySelectorAll('.notification-checkbox:checked'));
+        }
+        function updateBulkBar() {
+            const checked = getSelectedCheckboxes();
+            if (checked.length > 0) {
+                bulkActionsBar.classList.remove('d-none');
+                bulkSelectedCount.textContent = checked.length;
+            } else {
+                bulkActionsBar.classList.add('d-none');
+                bulkSelectedCount.textContent = 0;
+            }
+        }
+        // Select all logic
+        if (selectAll) {
+            selectAll.addEventListener('change', function() {
+                document.querySelectorAll('.notification-checkbox').forEach(cb => {
+                    cb.checked = selectAll.checked;
+                });
+                updateBulkBar();
+            });
+        }
+        // Individual checkbox logic
+        document.addEventListener('change', function(e) {
+            if (e.target.classList.contains('notification-checkbox')) {
+                const all = document.querySelectorAll('.notification-checkbox');
+                const checked = document.querySelectorAll('.notification-checkbox:checked');
+                if (selectAll) selectAll.checked = all.length === checked.length;
+                updateBulkBar();
+            }
+        });
+        // Bulk delete
+        if (bulkDeleteBtn) {
+            bulkDeleteBtn.addEventListener('click', function() {
+                const ids = getSelectedCheckboxes().map(cb => cb.value);
+                if (!ids.length) return;
+                Swal.fire({
+                    title: 'Supprimer les notifications sélectionnées?',
+                    text: `Vous êtes sur le point de supprimer ${ids.length} notification(s). Cette action est irréversible!`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Oui, supprimer',
+                    cancelButtonText: 'Annuler'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        fetch('/admin/notifications/bulk-delete', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content
+                            },
+                            body: JSON.stringify({ ids })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Supprimé !',
+                                    text: 'Les notifications ont été supprimées.',
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                });
+                                ids.forEach(id => {
+                                    const row = document.querySelector(`.notification-checkbox[value="${id}"]`).closest('tr');
+                                    if (row) row.remove();
+                                });
+                                updateBulkBar();
+                            } else {
+                                throw new Error(data.message || 'Erreur lors de la suppression');
+                            }
+                        })
+                        .catch(error => {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Erreur !',
+                                text: error.message,
+                                confirmButtonText: 'OK'
+                            });
+                        });
+                    }
+                });
+            });
+        }
+        // Bulk mark as read
+        if (bulkMarkReadBtn) {
+            bulkMarkReadBtn.addEventListener('click', function() {
+                const ids = getSelectedCheckboxes().map(cb => cb.value);
+                if (!ids.length) return;
+                Swal.fire({
+                    title: 'Marquer comme lues?',
+                    text: `Vous êtes sur le point de marquer ${ids.length} notification(s) comme lues.`,
+                    icon: 'info',
+                    showCancelButton: true,
+                    
+                    confirmButtonColor: '#28a745',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Oui, marquer comme lues',
+                    cancelButtonText: 'Annuler'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        fetch('/admin/notifications/bulk-mark-read', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content
+                            },
+                            body: JSON.stringify({ ids })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Marqué comme lu !',
+                                    text: 'Les notifications ont été mises à jour.',
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                });
+                                ids.forEach(id => {
+                                    const row = document.querySelector(`.notification-checkbox[value="${id}"]`).closest('tr');
+                                    if (row) {
+                                        row.classList.remove('notification-unread');
+                                        row.classList.add('notification-read');
+                                        row.querySelector('.badge').classList.remove('bg-warning','text-dark');
+                                        row.querySelector('.badge').classList.add('bg-success');
+                                        row.querySelector('.badge').textContent = 'Lu';
+                                    }
+                                });
+                                updateBulkBar();
+                            } else {
+                                throw new Error(data.message || 'Erreur lors de la mise à jour');
+                            }
+                        })
+                        .catch(error => {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Erreur !',
+                                text: error.message,
+                                confirmButtonText: 'OK'
+                            });
+                        });
+                    }
+                });
+            });
+        }
+    });
+</script>
                             </div>
                         </div>
                     </div>
@@ -973,6 +1145,33 @@
 
     // Initial fetch
     document.addEventListener('DOMContentLoaded', fetchUnreadCount);
+    document.addEventListener('DOMContentLoaded', function() {
+        const filterForm = document.getElementById('notification-filter-form');
+        const statusSelect = document.getElementById('notification-status-select');
+        const dateInput = document.getElementById('notification-date-input');
+        function ajaxFilterNotifications() {
+            const params = new URLSearchParams();
+            if (statusSelect.value) params.append('status', statusSelect.value);
+            if (dateInput.value) params.append('date', dateInput.value);
+            fetch(filterForm.action + '?' + params.toString(), { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById('notifications-table-body').innerHTML = html;
+                });
+        }
+        statusSelect.addEventListener('change', function(e) {
+            e.preventDefault();
+            ajaxFilterNotifications();
+        });
+        dateInput.addEventListener('change', function(e) {
+            e.preventDefault();
+            ajaxFilterNotifications();
+        });
+        filterForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            ajaxFilterNotifications();
+        });
+    });
 </script>
 
 </body>
