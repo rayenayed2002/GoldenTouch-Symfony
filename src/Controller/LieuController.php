@@ -14,11 +14,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Endroid\QrCode\Builder\Builder;
-use Endroid\QrCode\Encoding\Encoding;
-use Endroid\QrCode\ErrorCorrectionLevel\ErrorCorrectionLevelHigh;
-use Endroid\QrCode\RoundBlockSizeMode\RoundBlockSizeModeMargin;
-use Endroid\QrCode\Writer\PngWriter;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 
@@ -26,33 +21,11 @@ class LieuController extends AbstractController
 {
     public function __construct(
         private LieuRepository $lieuRepository,
-        private EntityManagerInterface $entityManager
+        private EntityManagerInterface $entityManager,
+        private UrlGeneratorInterface $urlGenerator
     ) {}
-        #[Route('/lieu/{id}/qr-code', name: 'app_lieu_qr_code')]
-        public function generateQrCode(Lieu $lieu, UrlGeneratorInterface $urlGenerator): Response
-        {
-            $safeName = rawurlencode($lieu->getName());
-            
-            $url = $urlGenerator->generate(
-                'app_lieu_details', 
-                ['id' => $lieu->getId()], 
-                UrlGeneratorInterface::ABSOLUTE_URL
-            );
-            
-            $result = Builder::create()
-                ->writer(new PngWriter())
-                ->data($url)
-                ->encoding(new Encoding('UTF-8'))
-                ->errorCorrectionLevel(new ErrorCorrectionLevelHigh())
-                ->size(300)
-                ->margin(10)
-                ->build();
-                
-            return new Response($result->getString(), 200, [
-                'Content-Type' => $result->getMimeType(),
-                'Content-Disposition' => 'attachment; filename="qr-code-'.$safeName.'.png"'
-            ]);
-        }
+
+
 
         #[Route('/lieu/new', name: 'app_lieu_new', methods: ['GET', 'POST'])]
         public function new(Request $request): Response
@@ -94,19 +67,27 @@ class LieuController extends AbstractController
         {
             $searchTerm = $request->query->get('search', '');
             $filter = $request->query->get('filter', 'all');
+            $page = $request->query->getInt('page', 1);
+            $limit = 10;
             
-            // Modification de la logique de recherche
             $allLieux = $this->lieuRepository->searchByName($searchTerm);
             $popularLieux = $this->lieuRepository->findPopularLieux();
             $newLieux = $this->lieuRepository->findNewLieux();
+            $total = count($allLieux);
+            $lastPage = ceil($total / $limit);
         
             $lieux = match ($filter) {
                 'popular' => ['results' => $popularLieux, 'currentPage' => 1, 'lastPage' => 1, 'hasPreviousPage' => false, 'hasNextPage' => false],
                 'new' => ['results' => $newLieux, 'currentPage' => 1, 'lastPage' => 1, 'hasPreviousPage' => false, 'hasNextPage' => false],
-                default => ['results' => $allLieux, 'currentPage' => 1, 'lastPage' => 1, 'hasPreviousPage' => false, 'hasNextPage' => false],
+                default => [
+                    'results' => array_slice($allLieux, ($page - 1) * $limit, $limit),
+                    'currentPage' => $page,
+                    'lastPage' => $lastPage,
+                    'hasPreviousPage' => $page > 1,
+                    'hasNextPage' => $page < $lastPage
+                ],
             };
         
-            // Modification de la réponse AJAX
             if ($request->isXmlHttpRequest()) {
                 return new Response(
                     $this->renderView('lieu/index.html.twig', [
@@ -130,26 +111,35 @@ class LieuController extends AbstractController
     // Dans LieuController.php
     // Dans LieuController.php
     #[Route('/lieu/search-autocomplete', name: 'app_lieu_search_autocomplete', methods: ['GET'])]
-    public function searchAutocomplete(Request $request): JsonResponse
-    {
-        $searchTerm = $request->query->get('term', '');
-        $lieux = $this->lieuRepository->searchByName($searchTerm);
-
-        $results = [];
-        foreach ($lieux as $lieu) {
-            $results[] = [
-                'id' => $lieu->getId(),
-                'text' => $lieu->getName(), // Important pour la compatibilité
-                'name' => $lieu->getName(),
-                'location' => $lieu->getLocation(),
-                'category' => $lieu->getCategory(),
-                'image' => $lieu->getImageUrl() ? '/uploads/lieux/' . $lieu->getImageUrl() : '/Front/img/placeholder.jpg',
-                'url' => $this->generateUrl('app_lieu_details', ['id' => $lieu->getId()])
-            ];
-        }
-
-        return $this->json($results); // Utilisez cette méthode au lieu de new JsonResponse
+public function searchAutocomplete(Request $request): JsonResponse
+{
+    $criteria = [
+        'name' => $request->query->get('name', ''),
+        'location' => $request->query->get('location', ''),
+        'category' => $request->query->get('category', ''),
+        'minPrice' => $request->query->get('minPrice'),
+        'maxPrice' => $request->query->get('maxPrice')
+    ];
+    
+    $lieux = $this->advancedSearch($criteria);
+    
+    $results = [];
+    foreach ($lieux as $lieu) {
+        $results[] = [
+            'id' => $lieu->getId(),
+            'name' => $lieu->getName(),
+            'description' => $lieu->getDescription(),
+            'location' => $lieu->getLocation(),
+            'category' => $lieu->getCategory(),
+            'price' => $lieu->getPrice(),
+            'capacity' => $lieu->getCapacity(),
+            'image' => $lieu->getImageUrl() ? '' . $lieu->getImageUrl() : '/Front/img/placeholder.jpg',
+            'url' => $this->generateUrl('app_lieu_details', ['id' => $lieu->getId()])
+        ];
     }
+    
+    return $this->json($results);
+}
 
         #[Route('/lieu', name: 'app_lieu_index')]
         public function indexLieu(Request $request): Response
@@ -225,35 +215,46 @@ class LieuController extends AbstractController
         }
 
         #[Route('/lieu/{id}', name: 'app_lieu_details', methods: ['GET'])]
-    public function details(Lieu $lieu, Request $request, EventRepository $eventRepository): Response
+    public function details(Request $request, EventRepository $eventRepository, string $id): Response
     {
-        $similarLieux = $this->lieuRepository->findBy(
-            ['category' => $lieu->getCategory()], 
-            ['price' => 'ASC'], 
-            4
-        );
+        try {
+            $lieu = $this->lieuRepository->find((int) $id);
+            
+            if (!$lieu) {
+                $this->addFlash('error', 'Le lieu demandé n\'existe pas.');
+                return $this->redirectToRoute('app_lieux');
+            }
+            
+            $similarLieux = $this->lieuRepository->findBy(
+                ['category' => $lieu->getCategory()], 
+                ['price' => 'ASC'], 
+                4
+            );
 
-        $similarLieux = array_filter($similarLieux, fn($similar) => $similar->getId() !== $lieu->getId());
-        $similarLieux = array_slice($similarLieux, 0, 3);
+            $similarLieux = array_filter($similarLieux, fn($similar) => $similar->getId() !== $lieu->getId());
+            $similarLieux = array_slice($similarLieux, 0, 3);
 
-        $avis = $this->entityManager->getRepository(Avis::class)->findAvisWithUserInfo($lieu->getId());
-        
-        // Récupérer les événements pour l'utilisateur avec ID = 55 (statique)
-        $userId = 55;
-        $events = $eventRepository->createQueryBuilder('e')
-            ->where('e.utilisateur = :userId')
-            ->setParameter('userId', $userId)
-            ->getQuery()
-            ->getResult();
+            $avis = $this->entityManager->getRepository(Avis::class)->findAvisWithUserInfo($lieu->getId());
+            
+            // Récupérer les événements pour l'utilisateur avec ID = 55 (statique)
+            $userId = 55;
+            $events = $eventRepository->createQueryBuilder('e')
+                ->where('e.utilisateur = :userId')
+                ->setParameter('userId', $userId)
+                ->getQuery()
+                ->getResult();
 
-        return $this->render('lieu/details.html.twig', [
-            'lieu' => $lieu,
-            'similarLieux' => $similarLieux,
-            'popularLieux' => $this->lieuRepository->findPopularLieux(),
-            'avis' => $avis,
-            'qr_code_url' => $this->generateUrl('app_lieu_qr_code', ['id' => $lieu->getId()]),
-            'events' => $events
-        ]);
+            return $this->render('lieu/details.html.twig', [
+                'lieu' => $lieu,
+                'similarLieux' => $similarLieux,
+                'popularLieux' => $this->lieuRepository->findPopularLieux(),
+                'avis' => $avis,
+                'events' => $events
+            ]);
+        } catch (\Exception $e) {
+            $this->addFlash('error', 'Une erreur est survenue lors du chargement du lieu.');
+            return $this->redirectToRoute('app_lieux');
+        }
     }
 
     #[Route('/process-booking', name: 'app_process_booking', methods: ['POST'])]
@@ -294,51 +295,41 @@ class LieuController extends AbstractController
 
 
         
-        public function advancedSearch(array $criteria): array
-    {
-        $queryBuilder = $this->createQueryBuilder('l');
-        
-        if (!empty($criteria['name'])) {
-            $queryBuilder->andWhere('l.name LIKE :name')
-                ->setParameter('name', '%'.$criteria['name'].'%');
-        }
-        
-        if (!empty($criteria['location'])) {
-            $queryBuilder->andWhere('l.location LIKE :location')
-                ->setParameter('location', '%'.$criteria['location'].'%');
-        }
-        
-        if (!empty($criteria['ville'])) {
-            $queryBuilder->andWhere('l.ville LIKE :ville')
-                ->setParameter('ville', '%'.$criteria['ville'].'%');
-        }
-        
-        if (!empty($criteria['category'])) {
-            $queryBuilder->andWhere('l.category = :category')
-                ->setParameter('category', $criteria['category']);
-        }
-        
-        if (!empty($criteria['minPrice'])) {
-            $queryBuilder->andWhere('l.price >= :minPrice')
-                ->setParameter('minPrice', $criteria['minPrice']);
-        }
-        
-        if (!empty($criteria['maxPrice'])) {
-            $queryBuilder->andWhere('l.price <= :maxPrice')
-                ->setParameter('maxPrice', $criteria['maxPrice']);
-        }
-        
-        if (!empty($criteria['minCapacity'])) {
-            $queryBuilder->andWhere('l.capacity >= :minCapacity')
-                ->setParameter('minCapacity', $criteria['minCapacity']);
-        }
-        
-        return $queryBuilder
-            ->orderBy('l.name', 'ASC')
-            ->getQuery()
-            ->getResult();
+    public function advancedSearch(array $criteria): array
+{
+    $queryBuilder = $this->lieuRepository->createQueryBuilder('l');
+    
+    if (!empty($criteria['name'])) {
+        $queryBuilder->andWhere('LOWER(l.name) LIKE LOWER(:name)')
+            ->setParameter('name', '%'.$criteria['name'].'%');
     }
-    // Ajoutez cette méthode dans LieuController
+    
+    if (!empty($criteria['location'])) {
+        $queryBuilder->andWhere('LOWER(l.location) LIKE LOWER(:location) OR LOWER(l.ville) LIKE LOWER(:location)')
+            ->setParameter('location', '%'.$criteria['location'].'%');
+    }
+    
+    if (!empty($criteria['category'])) {
+        $queryBuilder->andWhere('l.category = :category')
+            ->setParameter('category', $criteria['category']);
+    }
+    
+    if (!empty($criteria['minPrice'])) {
+        $queryBuilder->andWhere('l.price >= :minPrice')
+            ->setParameter('minPrice', $criteria['minPrice']);
+    }
+    
+    if (!empty($criteria['maxPrice'])) {
+        $queryBuilder->andWhere('l.price <= :maxPrice')
+            ->setParameter('maxPrice', $criteria['maxPrice']);
+    }
+    
+    return $queryBuilder
+        ->orderBy('l.name', 'ASC')
+        ->getQuery()
+        ->getResult();
+}
+
 
 
 // Remplacer la méthode userReservations existante par :
@@ -377,9 +368,7 @@ public function cancelReservation(ReserverLieu $reservation): Response
     
     return $this->redirectToRoute('app_user_reservations');
 }
-// src/Controller/LieuController.php
 
-// src/Controller/LieuController.php
 
 #[Route('/lieu/{id}/toggle-favori', name: 'app_lieu_toggle_favori', methods: ['POST'])]
 public function toggleFavori(int $id, Request $request): Response
