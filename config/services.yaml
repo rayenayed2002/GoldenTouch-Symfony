@@ -8,7 +8,6 @@ parameters:
         packs_images_directory: '%kernel.project_dir%/public/uploads/packs/Images'
         uploads_directory: '%kernel.project_dir%/public/uploads'
         photos_directory: '%kernel.project_dir%/public/uploads/photos'
-        gemini_api_key: '%env(GEMINI_API_KEY)%'  # Not the actual key, just the variable name
         default_user_id: 19
 
 

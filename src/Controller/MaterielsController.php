@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Materielle;  // <-- Add this line
 use App\Repository\MaterielleRepository;
 use App\Repository\EventRepository;
+use App\Repository\ReservMatRepository;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -244,27 +245,58 @@ public function sort(Request $request, MaterielleRepository $repo): Response
     ]);
 }
 #[Route('/liste/Mat', name: 'app_materiels_index')]
-    public function liste(MaterielleRepository $materielleRepository): Response
-    {
-        $materiels = $materielleRepository->findAll();
-
-        return $this->render('materiels/listeMat.html.twig', [
-            'materiels' => $materiels,
+public function liste(Request $request, MaterielleRepository $materielleRepository): Response
+{
+    $orderBy = $request->query->get('orderby', 'default');
+    $searchTerm = $request->query->get('search', '');
+    
+    // Construction de la requête
+    $qb = $materielleRepository->createQueryBuilder('m');
+    
+    // Ajout de la condition de recherche si terme présent
+    if (!empty($searchTerm)) {
+        $qb->where('m.nom_mat LIKE :searchTerm OR m.description_mat LIKE :searchTerm')
+           ->setParameter('searchTerm', '%'.$searchTerm.'%');
+    }
+    
+    // Application du tri
+    switch ($orderBy) {
+        case 'price_asc': $qb->orderBy('m.prix_mat', 'ASC'); break;
+        case 'price_desc': $qb->orderBy('m.prix_mat', 'DESC'); break;
+        case 'name': $qb->orderBy('m.nom_mat', 'ASC'); break;
+        case 'quantity': $qb->orderBy('m.quantite_mat', 'DESC'); break;
+    }
+    
+    $materiels = $qb->getQuery()->getResult();
+    
+    // Réponse pour AJAX
+    if ($request->isXmlHttpRequest()) {
+        return $this->render('materiels/_materiels_list.html.twig', [
+            'materiels' => $materiels
         ]);
     }
- #[Route('/materiels/{id}', name: 'app_materiels_show_Details', methods: ['GET'])]
-public function showDetails(Materielle $materielle,EventRepository $eventRepository): Response
+    
+    // Réponse normale
+    return $this->render('materiels/listeMat.html.twig', [
+        'materiels' => $materiels,
+    ]);
+}
+#[Route('/materiels/{id}', name: 'app_materiels_show_Details', methods: ['GET'])]
+public function showDetails(Materielle $materielle, EventRepository $eventRepository, ReservMatRepository $reservMatRepo): Response
 {
     $events = $eventRepository->findAll();
 
-   
+    // Formatage des données
+    $labels = [];
+    $data = [];
+    
+    
 
-    // Générer le code-barres en base64
-    // Passer le SVG ou PNG encodé à Twig
     return $this->render('materiels/detailsMat.html.twig', [
         'materiel' => $materielle,
-        'events' => $events
-
+        'events' => $events,
+        'reservationLabels' => $labels,
+        'reservationData' => $data
     ]);
 }
 private function generateDescriptionFromImageWithGemini(string $imagePath): string

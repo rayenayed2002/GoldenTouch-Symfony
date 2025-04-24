@@ -13,6 +13,13 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use App\Repository\ReservMatRepository;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
+use Endroid\QrCode\Builder\Builder;
+use Endroid\QrCode\Encoding\Encoding;
+use Endroid\QrCode\ErrorCorrectionLevel; // Seul import nécessaire pour la correction d'erreur
+use Endroid\QrCode\RoundBlockSizeMode;    // Import pour le mode de bloc
+use Endroid\QrCode\Writer\PngWriter;
 final class ReservMatController extends AbstractController
 {
     #[Route('/reservations', name: 'app_reservations')]
@@ -31,26 +38,48 @@ final class ReservMatController extends AbstractController
         ]);
     }
     #[Route('/mes-reservations', name: 'app_mes_reservations')]
-    public function mesReservations(ReservMatRepository $reservMatRepository): Response
+    public function mesReservations(Request $request, ReservMatRepository $reservMatRepository): Response
     {
-        // ID utilisateur statique
-        $userId = 19;
+        $userId = 19; // À remplacer par l'ID de l'utilisateur connecté
         
-        $reservations = $reservMatRepository->createQueryBuilder('r')
+        $orderBy = $request->query->get('orderby', 'r.id_reserv');
+        
+        $queryBuilder = $reservMatRepository->createQueryBuilder('r')
             ->leftJoin('r.materielle', 'm')
             ->leftJoin('r.event', 'e')
             ->where('r.utilisateur = :userId')
             ->setParameter('userId', $userId)
-            ->addSelect('m', 'e')
-            ->orderBy('r.id_reserv', 'DESC')
-            ->getQuery()
-            ->getResult();
+            ->addSelect('m', 'e');
+    
+        switch ($orderBy) {
+            case 'price_asc':
+                $queryBuilder->orderBy('m.prixMat', 'ASC');
+                break;
+            case 'price_desc':
+                $queryBuilder->orderBy('m.prixMat', 'DESC');
+                break;
+            case 'name':
+                $queryBuilder->orderBy('m.nomMat', 'ASC');
+                break;
+            case 'quantity':
+                $queryBuilder->orderBy('r.quantite', 'DESC');
+                break;
+            default:
+                $queryBuilder->orderBy('r.id_reserv', 'DESC');
+        }
+    
+        $reservations = $queryBuilder->getQuery()->getResult();
+    
+        if ($request->isXmlHttpRequest()) {
+            return $this->render('materiels/_reservations_list.html.twig', [
+                'reservations' => $reservations
+            ]);
+        }
     
         return $this->render('materiels/mes_reservations.html.twig', [
-            'reservations' => $reservations,
+            'reservations' => $reservations
         ]);
     }
-
     #[Route('/reserv/mat/new', name: 'app_reserv_mat_new', methods: ['POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager, ParameterBagInterface $params): Response
     {
@@ -99,6 +128,7 @@ final class ReservMatController extends AbstractController
         $reservation->setEvent($event);
         $reservation->setQuantite($quantite);
         $reservation->setUtilisateur($user);
+        // Le statut est déjà "non confirmé" par défaut, donc pas besoin de le définir ici
     
         // Mise à jour du stock
         $materiel->setQuantiteMat($materiel->getQuantiteMat() - $quantite);
@@ -106,22 +136,54 @@ final class ReservMatController extends AbstractController
         $entityManager->persist($reservation);
         $entityManager->flush();
     
-        $this->addFlash('success', 'Réservation effectuée avec succès');
+        $this->addFlash('success', 'Réservation effectuée avec succès (en attente de confirmation)');
         return $this->redirectToRoute('app_mes_reservations');
     }
-#[Route('/reservation/{id}', name: 'app_reservation_show', methods: ['GET'])]
-    public function show(ReservMat $reservation): Response
-    {
-        return $this->render('materiels/details_Res.html.twig', [
-            'reservation' => $reservation,
-        ]);
+    #[Route('/reservation/{id}', name: 'app_reservation_show', methods: ['GET'])]
+public function show(ReservMat $reservation): Response
+{
+    if (!$reservation) {
+        throw $this->createNotFoundException('Réservation non trouvée');
     }
 
+    $qrContent = sprintf(
+        "Réservation #%d\nMatériel: %s\nQuantité: %d\nStatut: %s",
+        $reservation->getIdReserv(),
+        $reservation->getMaterielle()->getNomMat(),
+        $reservation->getQuantite(),
+        $reservation->getStatut()
+    );
+
+    $qrCode = Builder::create()
+        ->writer(new PngWriter())
+        ->data($qrContent)
+        ->encoding(new Encoding('UTF-8'))
+        ->errorCorrectionLevel(ErrorCorrectionLevel::High)
+        ->size(300)
+        ->margin(20)
+        ->roundBlockSizeMode(RoundBlockSizeMode::Margin)
+        ->build();
+
+    // Vérification du statut
+    if ($reservation->getStatut() === 'non confirmé') {
+        return $this->render('materiels/details_res.html.twig', [
+            'reservation' => $reservation,
+           
+        ]);
+    } else {
+        // Pour les statuts "confirmé" ou "annulé"
+        return $this->render('materiels/DetailsSimple.html.twig', [
+            'reservation' => $reservation,
+            'qrCode' => $qrCode->getDataUri(),
+            'qrCodeBase64' => base64_encode($qrCode->getString())
+        ]);
+    }
+}
     #[Route('/reservation/{id}/edit', name: 'app_reservation_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, ReservMat $reservation, EntityManagerInterface $entityManager): Response
     {
         $events = $entityManager->getRepository(Event::class)->findAll();
-    
+  
         if ($request->isMethod('POST')) {
             $quantite = (int)$request->request->get('quantite');
             $eventId = $request->request->get('id_event');
@@ -161,6 +223,7 @@ final class ReservMatController extends AbstractController
     #[Route('/reservation/{id}', name: 'app_reservation_delete', methods: ['POST'])]
     public function delete(Request $request, ReservMat $reservation, EntityManagerInterface $entityManager): Response
     {
+       
         if ($this->isCsrfTokenValid('delete'.$reservation->getIdReserv(), $request->request->get('_token'))) {
             // Restaurer le stock avant suppression
             $materiel = $reservation->getMaterielle();
@@ -185,6 +248,102 @@ public function details(ReservMat $reservation): Response
     return $this->render('materiels/deR.html.twig', [
         'reservation' => $reservation,
     ]);
+}
+#[Route('/reservation/{id}/confirmer', name: 'app_reservation_confirmer', methods: ['POST'])]
+public function confirmerReservation(
+    Request $request,
+    int $id,
+    ReservMatRepository $reservMatRepository,  // Changed parameter name
+    EntityManagerInterface $entityManager,
+    MailerInterface $mailer
+): Response {
+    $reservation = $reservMatRepository->find($id);
+    
+    if (!$reservation) {
+        throw $this->createNotFoundException('Réservation non trouvée');
+    }
+
+    $message = $request->request->get('message');
+    
+    // Update status
+    $reservation->setStatut('confirmée');
+    $entityManager->flush();
+    
+    // Send confirmation email
+    $imagePath = $this->getParameter('kernel.project_dir') . '/public/uploads/materiels/logo.png';
+
+    $email = (new Email())
+    ->from('service.goldentouch1@gmail.com')
+    ->to($reservation->getUtilisateur()->getEmail())
+    ->subject('Confirmation de votre réservation')
+    ->text($message)
+    ->html('
+        <div style="font-family: Arial, sans-serif; color: #333;">
+            <div style="text-align: center; padding: 20px;">
+                <img src="cid:logo" alt="GoldenTouch" style="width: 150px; margin-bottom: 20px;">
+            </div>
+            <div style="background-color: #f9f9f9; padding: 20px; border-radius: 8px;">
+                <h2 style="color: #FFA500;">Merci pour votre réservation !</h2>
+                <p>Bonjour <strong>' . htmlspecialchars($reservation->getUtilisateur()->getNom()) . '</strong>,</p>
+                <p>Votre demande de réservation est maintenant <strong>confirmée</strong>.</p>
+                <p><strong>Détails :</strong></p>
+                <ul>
+                    <li>Matériel : ' . htmlspecialchars($reservation->getMaterielle()->getNomMat()) . '</li>
+                    <li>Quantité : ' . $reservation->getQuantite() . '</li>
+                    <li>Événement : ' . htmlspecialchars($reservation->getEvent()->getNom()) . '</li>
+                </ul>
+                <p>Merci de votre confiance, nous sommes ravis de vous compter parmi nos clients !</p>
+                <a href="http://127.0.0.1:8000/mes-reservations" 
+                   style="display: inline-block; margin-top: 15px; background-color: #FFA500; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px;">
+                   Voir mes réservations
+                </a>
+            </div>
+            <div style="text-align: center; font-size: 12px; color: #999; margin-top: 20px;">
+                © '.date('Y').' GoldenTouch — Tous droits réservés.
+            </div>
+        </div>
+    ');
+
+        
+    
+    $mailer->send($email);
+
+    $this->addFlash('success', 'La réservation a été confirmée et un email a été envoyé.');
+    return $this->redirectToRoute('app_reservations');
+}
+
+#[Route('/reservation/{id}/annuler', name: 'app_reservation_annuler', methods: ['POST'])]
+public function annulerReservation(
+    Request $request,
+    int $id,
+    ReservMatRepository $reservMatRepository,  // Changed parameter name
+    EntityManagerInterface $entityManager,
+    MailerInterface $mailer
+): Response {
+    $reservation = $reservMatRepository->find($id);
+    
+    if (!$reservation) {
+        throw $this->createNotFoundException('Réservation non trouvée');
+    }
+
+    $message = $request->request->get('message');
+    
+    // Update status
+    $reservation->setStatut('annulée');
+    $entityManager->flush();
+    
+    // Send cancellation email
+    $email = (new Email())
+        ->from('
+service.goldentouch1@gmail.com')
+        ->to($reservation->getUtilisateur()->getEmail())
+        ->subject('Annulation de votre réservation')
+        ->text($message);
+    
+    $mailer->send($email);
+
+    $this->addFlash('warning', 'La réservation a été annulée et un email a été envoyé.');
+    return $this->redirectToRoute('app_mes_reservations');
 }
 
 }

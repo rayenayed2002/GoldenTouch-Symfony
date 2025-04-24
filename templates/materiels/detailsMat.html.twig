@@ -128,27 +128,6 @@ body {
 
 
 
-    <div class="preloader">
-        <button class="th-btn style3 preloaderCls">Cancel Preloader </button>
-        <div class="preloader-inner">
-            <div class="loading-window">
-                <div class="car">
-                    <div class="strike"></div>
-                    <div class="strike strike2"></div>
-                    <div class="strike strike3"></div>
-                    <div class="strike strike4"></div>
-                    <div class="strike strike5"></div>
-                    <div class="car-detail spoiler"></div>
-                    <div class="car-detail back"></div>
-                    <div class="car-detail center"></div>
-                    <div class="car-detail center1"></div>
-                    <div class="car-detail front"></div>
-                    <div class="car-detail wheel"></div>
-                    <div class="car-detail wheel wheel2"></div>
-                </div>
-            </div>
-        </div>
-    </div> 
 
 
     <div class="th-menu-wrapper">
@@ -588,9 +567,10 @@ body {
                                         <p class="mb-1"><i class="fas fa-box-open text-muted me-2"></i> Stock : {{ materiel.quantiteMat }}</p>
                                         <p class="mb-1"><i class="fas fa-money-bill-wave text-muted me-2"></i> Prix unitaire : {{ materiel.prixMat|number_format(2, '.', ',') }} TND</p>
                                     </div>
-                                 
                                 </div>
                             </div>
+
+                         
                         </div>
                     </div>
                 </div>
@@ -763,7 +743,40 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
-
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        {% if reservationLabels is not empty %}
+            const ctx = document.getElementById('reservationChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: {{ reservationLabels|json_encode|raw }},
+                    datasets: [{
+                        label: 'Réservations par mois',
+                        data: {{ reservationData|json_encode|raw }},
+                        backgroundColor: 'rgba(255, 193, 7, 0.7)',
+                        borderColor: 'rgba(255, 193, 7, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                precision: 0,
+                                stepSize: 1
+                            }
+                        }
+                    }
+                }
+            });
+        {% else %}
+            console.log("Aucune donnée de réservation disponible");
+        {% endif %}
+    });
+</script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('.delete-form').forEach(form => {

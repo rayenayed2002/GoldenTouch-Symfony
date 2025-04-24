@@ -29,6 +29,7 @@ class MaterielleType extends AbstractType
             ->add('categorie', EntityType::class, [
                 'class' => Categorie::class,
                 'choice_label' => 'nom_cat',
+                'required' => false, // Add this
             ])
            
         ;

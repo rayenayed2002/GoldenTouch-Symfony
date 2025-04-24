@@ -157,12 +157,6 @@
           <div data-i18n="Liste Reservation">Liste Matériel</div>
         </a>
       </li>
-        <li class="menu-item active">
-<a href="{{ path('app_reservations') }}" class="menu-link">
-          <i class="menu-icon tf-icons ti ti-circle"></i>
-          <div data-i18n="Liste Reservation">Categories </div>
-        </a>
-      </li>
     </ul>
   </li>
 
@@ -770,8 +764,7 @@
           </nav>
 
           <!-- / Navbar -->
- <!-- Dans votre template reservationMat.html.twig -->
-<div class="content-wrapper">
+ <div class="content-wrapper">
     <!-- Content -->
     <div class="container-xxl flex-grow-1 container-p-y">
         <h4 class="fw-bold py-3 mb-4">Réservations</h4>
@@ -781,7 +774,9 @@
             <div class="row g-4">
                 {% for reservation in reservations %}
                     <div class="col-xl-4 col-lg-6 col-md-6">
-                        <a href="{{ path('app_reservation_details', {'id': reservation.idReserv}) }}" class="card-link">
+                        <a href="{{ path('app_reservation_details', {'id': reservation.idReserv}) }}" 
+                           class="card-link" 
+                           style="text-decoration: none; color: inherit;">
                             <div class="card pack-card h-100">
                                 <div class="card-body">
                                     {% if reservation.materielle %}
@@ -792,7 +787,62 @@
                                         </div>
                                     {% endif %}
                                     
-                                    <!-- Le reste de votre contenu de carte reste inchangé -->
+                                    <div class="pack-content">
+                                        <h5 class="pack-title mb-3">
+                                            {% if reservation.materielle %}
+                                                {{ reservation.materielle.nomMat }}
+                                            {% else %}
+                                                Matériel non défini
+                                            {% endif %}
+                                        </h5>
+
+                                        <div class="pack-details">
+                                            {% if reservation.materielle %}
+                                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                                    <h6 class="mb-0">Prix</h6>
+                                                    <h6 class="mb-0 text-primary">
+                                                        {{ reservation.materielle.prixMat|number_format(2, '.', ',') }} TND
+                                                    </h6>
+                                                </div>
+                                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                                    <h6 class="mb-0">Quantité disponible</h6>
+                                                    <span>{{ reservation.materielle.quantiteMat }} unités</span>
+                                                </div>
+                                            {% endif %}
+
+                                            <hr class="my-3">
+
+                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                                <h6 class="mb-0">Quantité réservée</h6>
+                                                <span>{{ reservation.quantite }} unités</span>
+                                            </div>
+                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                                <h6 class="mb-0">Événement</h6>
+                                                <span>{{ reservation.event.nom }}</span>
+                                            </div>
+                                            <!-- Ajout de la date de l'événement -->
+                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                                <h6 class="mb-0">Date de l'événement</h6>
+                                                <span>
+                                                    {% if reservation.event.date %}
+                                                        {{ reservation.event.date|date('d/m/Y') }}
+                                                    {% else %}
+                                                        Non spécifiée
+                                                    {% endif %}
+                                                </span>
+                                            </div>
+                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                                <h6 class="mb-0">Utilisateur</h6>
+                                                <span>
+                                                    {% if reservation.utilisateur %}
+                                                        {{ reservation.utilisateur.email }}
+                                                    {% else %}
+                                                        Non défini
+                                                    {% endif %}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </a>
@@ -804,19 +854,10 @@
         {% endif %}
     </div>
 </div>
-      
-
-
-
 
 
                           <!-- Action Buttons -->
-                          <div class="action-buttons mt-4">
-                            <button type="button" class="btn btn-primary me-2">
-                              <i class="ti ti-eye me-1"></i> Voir les détails
-                            </button>
-                            
-                          </div>
+                          
                         </div>
                       </div>
                     </div>

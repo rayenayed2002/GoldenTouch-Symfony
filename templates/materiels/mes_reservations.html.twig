@@ -128,27 +128,7 @@ body {
 
 
 
-    <div class="preloader">
-        <button class="th-btn style3 preloaderCls">Cancel Preloader </button>
-        <div class="preloader-inner">
-            <div class="loading-window">
-                <div class="car">
-                    <div class="strike"></div>
-                    <div class="strike strike2"></div>
-                    <div class="strike strike3"></div>
-                    <div class="strike strike4"></div>
-                    <div class="strike strike5"></div>
-                    <div class="car-detail spoiler"></div>
-                    <div class="car-detail back"></div>
-                    <div class="car-detail center"></div>
-                    <div class="car-detail center1"></div>
-                    <div class="car-detail front"></div>
-                    <div class="car-detail wheel"></div>
-                    <div class="car-detail wheel wheel2"></div>
-                </div>
-            </div>
-        </div>
-    </div> 
+   
 
 
     <div class="th-menu-wrapper">
@@ -482,15 +462,18 @@ body {
 
 
 
+{# templates/materiels/mes_reservations.html.twig #}
+
 <section class="space-top space-extra-bottom">
     <div class="container">
         <div class="row flex-row-reverse">
-            <!-- 🟨 MAIN CONTENT (MATERIELS) -->
+            <!-- MAIN CONTENT -->
             <div class="col-xl-9 col-lg-8">
+                <!-- Barre de tri -->
                 <div class="th-sort-bar mb-4">
                     <div class="row justify-content-between align-items-center">
                         <div class="col-md-auto">
-                            <form class="woocommerce-ordering" method="get">
+                            <form class="woocommerce-ordering" method="get" onsubmit="return false;">
                                 <select name="orderby" class="orderby form-select bg-warning text-dark" aria-label="Shop order">
                                     <option value="menu_order" selected>Trier par défaut</option>
                                     <option value="price_asc">Prix croissant</option>
@@ -503,10 +486,18 @@ body {
                     </div>
                 </div>
 
-                <div class="row gy-4">
+                <!-- Conteneur des réservations -->
+                <div class="row gy-4" id="reservations-container">
                     {% for reservation in reservations %}
                     <div class="col-md-6 col-lg-4">
-                        <div class="card h-100 border border-warning shadow-sm rounded-3">
+                        <div class="card h-100 border border-warning shadow-sm rounded-3 position-relative">
+                            <!-- Badge statut -->
+                            <div class="position-absolute top-0 start-0 m-2">
+                                <span class="badge bg-{{ reservation.statut == 'confirmée' ? 'success' : (reservation.statut == 'annulée' ? 'danger' : 'warning') }}">
+                                    {{ reservation.statut|capitalize }}
+                                </span>
+                            </div>
+
                             <!-- Image du matériel -->
                             {% if reservation.materielle.photoMat %}
                                 <img src="{{ asset('uploads/materiels/' ~ reservation.materielle.photoMat) }}" 
@@ -514,7 +505,7 @@ body {
                                      alt="{{ reservation.materielle.nomMat }}"
                                      style="height: 200px; object-fit: cover;">
                             {% else %}
-                                <img src="{{ asset('path/to/default/image.jpg') }}" 
+                                <img src="{{ asset('img/default-material.jpg') }}" 
                                      class="card-img-top rounded-top-3" 
                                      alt="Image par défaut"
                                      style="height: 200px; object-fit: cover;">
@@ -523,47 +514,55 @@ body {
                             <div class="card-body">
                                 <h5 class="card-title text-warning">{{ reservation.materielle.nomMat }}</h5>
                                 <h6 class="card-subtitle mb-2 text-muted">
-                                    Pour l'événement: {{ reservation.event.nom }}
+                                    Pour l'événement: {{ reservation.event.nom|default('Non spécifié') }}
                                 </h6>
 
                                 <div class="card-text mb-3">
                                     <div class="d-flex justify-content-between mb-2">
-                                        <span class="text-muted">Quantité réservée:</span>
+                                        <span>Quantité:</span>
                                         <span class="fw-bold text-warning">{{ reservation.quantite }}</span>
                                     </div>
                                     <div class="d-flex justify-content-between mb-2">
-                                        <span class="text-muted">Prix unitaire:</span>
+                                        <span>Prix unitaire:</span>
                                         <span class="fw-bold text-warning">{{ reservation.materielle.prixMat }} €</span>
                                     </div>
                                     <div class="d-flex justify-content-between">
-                                        <span class="text-muted">Total:</span>
+                                        <span>Total:</span>
                                         <span class="fw-bold text-dark">{{ reservation.quantite * reservation.materielle.prixMat }} €</span>
                                     </div>
                                 </div>
 
                                 <a href="{{ path('app_reservation_show', {'id': reservation.idReserv}) }}" 
-                                   class="btn btn-warning w-100">
-                                    Voir le matériel
+                                   class="btn btn-warning w-100 mt-auto">
+                                    Voir détails
                                 </a>
                             </div>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="col-12">
+                        <div class="alert alert-info text-center">
+                            Aucune réservation trouvée.
                         </div>
                     </div>
                     {% endfor %}
                 </div>
 
+                <!-- Pagination -->
                 <div class="th-pagination text-center pt-50">
                     <ul class="pagination justify-content-center">
-                        <li class="page-item"><a class="page-link text-warning" href="blog.html">1</a></li>
-                        <li class="page-item"><a class="page-link text-warning" href="blog.html">2</a></li>
-                        <li class="page-item"><a class="page-link text-warning" href="blog.html">3</a></li>
-                        <li class="page-item"><a class="page-link text-warning" href="blog.html"><i class="far fa-arrow-right"></i></a></li>
+                        <li class="page-item"><a class="page-link text-warning" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link text-warning" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link text-warning" href="#">3</a></li>
+                        <li class="page-item"><a class="page-link text-warning" href="#"><i class="far fa-arrow-right"></i></a></li>
                     </ul>
                 </div>
             </div>
 
-            <!-- 🟨 SIDEBAR -->
+            <!-- SIDEBAR -->
             <div class="col-xl-3 col-lg-4">
                 <aside class="sidebar-area sidebar-shop border border-warning rounded-3 p-3 shadow-sm">
+                    <!-- Widgets de la sidebar -->
                     <div class="widget widget_search mb-4">
                         <form class="search-form d-flex">
                             <input type="text" class="form-control border-warning" placeholder="Search...">
@@ -574,12 +573,12 @@ body {
                     <div class="widget widget_categories mb-4">
                         <h3 class="widget_title text-warning">Categories</h3>
                         <ul class="list-unstyled">
-                            <li><a class="text-dark" href="blog.html">Electronics</a> <span class="text-warning">(8)</span></li>
-                            <li><a class="text-dark" href="blog.html">Tools</a> <span class="text-warning">(6)</span></li>
-                            <li><a class="text-dark" href="blog.html">Furniture</a> <span class="text-warning">(5)</span></li>
-                            <li><a class="text-dark" href="blog.html">Vehicles</a> <span class="text-warning">(2)</span></li>
-                            <li><a class="text-dark" href="blog.html">Office Equipment</a> <span class="text-warning">(7)</span></li>
-                            <li><a class="text-dark" href="blog.html">Other</a> <span class="text-warning">(9)</span></li>
+                            <li><a class="text-dark" href="#">Electronics</a> <span class="text-warning">(8)</span></li>
+                            <li><a class="text-dark" href="#">Tools</a> <span class="text-warning">(6)</span></li>
+                            <li><a class="text-dark" href="#">Furniture</a> <span class="text-warning">(5)</span></li>
+                            <li><a class="text-dark" href="#">Vehicles</a> <span class="text-warning">(2)</span></li>
+                            <li><a class="text-dark" href="#">Office Equipment</a> <span class="text-warning">(7)</span></li>
+                            <li><a class="text-dark" href="#">Other</a> <span class="text-warning">(9)</span></li>
                         </ul>
                     </div>
 
@@ -597,12 +596,12 @@ body {
                     <div class="widget widget_tag_cloud">
                         <h3 class="widget_title text-warning">Popular Tags</h3>
                         <div class="tagcloud">
-                            <a href="blog.html" class="badge bg-warning text-dark me-1 mb-1">New</a>
-                            <a href="blog.html" class="badge bg-warning text-dark me-1 mb-1">Used</a>
-                            <a href="blog.html" class="badge bg-warning text-dark me-1 mb-1">High Quality</a>
-                            <a href="blog.html" class="badge bg-warning text-dark me-1 mb-1">Equipment</a>
-                            <a href="blog.html" class="badge bg-warning text-dark me-1 mb-1">Rental</a>
-                            <a href="blog.html" class="badge bg-warning text-dark me-1 mb-1">Tools</a>
+                            <a href="#" class="badge bg-warning text-dark me-1 mb-1">New</a>
+                            <a href="#" class="badge bg-warning text-dark me-1 mb-1">Used</a>
+                            <a href="#" class="badge bg-warning text-dark me-1 mb-1">High Quality</a>
+                            <a href="#" class="badge bg-warning text-dark me-1 mb-1">Equipment</a>
+                            <a href="#" class="badge bg-warning text-dark me-1 mb-1">Rental</a>
+                            <a href="#" class="badge bg-warning text-dark me-1 mb-1">Tools</a>
                         </div>
                     </div>
                 </aside>
@@ -611,7 +610,57 @@ body {
     </div>
 </section>
 
-
+{% block javascripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const orderSelect = document.querySelector('.orderby');
+    
+    if (orderSelect) {
+        orderSelect.addEventListener('change', function() {
+            const selectedValue = this.value;
+            const container = document.getElementById('reservations-container');
+            
+            if (container) {
+                // Afficher un indicateur de chargement
+                container.innerHTML = `
+                    <div class="col-12 text-center my-5">
+                        <div class="spinner-border text-warning" style="width: 3rem; height: 3rem;" role="status">
+                            <span class="visually-hidden">Chargement...</span>
+                        </div>
+                        <p class="mt-2">Chargement en cours...</p>
+                    </div>
+                `;
+                
+                fetch('{{ path('app_mes_reservations') }}?orderby=' + selectedValue, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) throw new Error('Erreur réseau');
+                    return response.text();
+                })
+                .then(html => {
+                    container.innerHTML = html;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    container.innerHTML = `
+                        <div class="col-12 text-center text-danger py-5">
+                            <i class="fas fa-exclamation-triangle fa-2x mb-2"></i>
+                            <p>Erreur lors du chargement des données</p>
+                            <button onclick="window.location.reload()" class="btn btn-warning">
+                                Réessayer
+                            </button>
+                        </div>
+                    `;
+                });
+            }
+        });
+    }
+});
+</script>
+{% endblock %}
 
 
 
