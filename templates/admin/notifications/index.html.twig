@@ -306,21 +306,23 @@
 
             <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
               <!-- Search -->
-              <div class="navbar-nav align-items-center position-relative">
-  <div class="nav-item navbar-search-wrapper mb-0">
-    <a class="nav-item nav-link search-toggler d-flex align-items-center px-0" id="admin-notification-search-bar-trigger" href="javascript:void(0);">
-      <i class="ti ti-search ti-md me-2"></i>
-      <span class="d-none d-md-inline-block text-muted">Rechercher (Ctrl+/)</span>
-    </a>
-    <div id="admin-notification-search-dropdown" style="display:none; position:absolute; top:100%; left:0; z-index:9999; min-width:260px; background:white; box-shadow:0 6px 24px rgba(0,0,0,0.13); border-radius:8px; padding:12px;">
-      <form method="get" action="{{ path('admin_notifications') }}" style="margin:0;">
-        <div class="input-group">
-          <input type="text" name="q" id="admin-notification-search-input-navbar" class="form-control" value="{{ app.request.get('q') }}" placeholder="Rechercher par 'Message' ou 'Créé le'..." autocomplete="off" autofocus>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
+              <div class="navbar-nav align-items-center">
+                <div class="navbar-nav align-items-center position-relative">
+                  <div class="nav-item navbar-search-wrapper mb-0">
+                    <a class="nav-item nav-link search-toggler d-flex align-items-center px-0" id="admin-notification-search-bar-trigger" href="javascript:void(0);">
+                      <i class="ti ti-search ti-md me-2"></i>
+                      <span class="d-none d-md-inline-block text-muted">Rechercher (Ctrl+/)</span>
+                    </a>
+                    <div id="admin-notification-search-dropdown" style="display:none; position:absolute; top:100%; left:0; z-index:9999; min-width:260px; background:white; box-shadow:0 6px 24px rgba(0,0,0,0.13); border-radius:8px; padding:12px;">
+                      <form method="get" action="{{ path('admin_notifications') }}" style="margin:0;">
+                        <div class="input-group">
+                          <input type="text" name="q" id="admin-notification-search-input-navbar" class="form-control" value="{{ app.request.get('q') }}" placeholder="Rechercher par 'Message' ou 'Créé le'..." autocomplete="off" autofocus>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
 <script>
 (function() {
   const trigger = document.getElementById('admin-notification-search-bar-trigger');
@@ -439,13 +441,13 @@
                   <div class="dropdown-menu dropdown-menu-end py-0">
                     <div class="dropdown-menu-header border-bottom">
                       <div class="dropdown-header d-flex align-items-center py-3">
-                        <h5 class="text-body mb-0 me-auto">Raccourcis</h5>
+                        <h5 class="text-body mb-0 me-auto">Shortcuts</h5>
                         <a
                           href="javascript:void(0)"
                           class="dropdown-shortcuts-add text-body"
                           data-bs-toggle="tooltip"
                           data-bs-placement="top"
-                          title="Ajouter des raccourcis"
+                          title="Add shortcuts"
                           ><i class="ti ti-sm ti-apps"></i
                         ></a>
                       </div>
@@ -454,66 +456,33 @@
                       <div class="row row-bordered overflow-visible g-0">
                         <div class="dropdown-shortcuts-item col">
                           <span class="dropdown-shortcuts-icon rounded-circle mb-2">
-                            <i class="ti ti-calendar fs-4"></i>
+                            <i class="ti ti-shopping-cart fs-4"></i>
                           </span>
-                          <a href="app-calendar.html" class="stretched-link">Calendrier</a>
-                          <small class="text-muted mb-0">Rendez-vous</small>
+                          <a href="{{ path('admin_advanced_statistiques_demande_packs') }}" class="stretched-link">Liste Demande Pack</a>
+                          <small class="text-muted mb-0">Liste des demandes de packs</small>
                         </div>
-                        <div class="dropdown-shortcuts-item col">
-                          <span class="dropdown-shortcuts-icon rounded-circle mb-2">
-                            <i class="ti ti-file-invoice fs-4"></i>
-                          </span>
-                          <a href="app-invoice-list.html" class="stretched-link">Factures</a>
-                          <small class="text-muted mb-0">Gérer les comptes</small>
-                        </div>
-                      </div>
-                      <div class="row row-bordered overflow-visible g-0">
-                        <div class="dropdown-shortcuts-item col">
-                          <span class="dropdown-shortcuts-icon rounded-circle mb-2">
-                            <i class="ti ti-users fs-4"></i>
-                          </span>
-                          <a href="app-user-list.html" class="stretched-link">Utilisateurs</a>
-                          <small class="text-muted mb-0">Gérer les utilisateurs</small>
-                        </div>
-                        <div class="dropdown-shortcuts-item col">
-                          <span class="dropdown-shortcuts-icon rounded-circle mb-2">
-                            <i class="ti ti-lock fs-4"></i>
-                          </span>
-                          <a href="app-access-roles.html" class="stretched-link">Gestion des rôles</a>
-                          <small class="text-muted mb-0">Permissions</small>
-                        </div>
-                      </div>
-                      <div class="row row-bordered overflow-visible g-0">
                         <div class="dropdown-shortcuts-item col">
                           <span class="dropdown-shortcuts-icon rounded-circle mb-2">
                             <i class="ti ti-chart-bar fs-4"></i>
                           </span>
-                          <a href="index.html" class="stretched-link">Tableau de bord</a>
-                          <small class="text-muted mb-0">Profil utilisateur</small>
-                        </div>
-                        <div class="dropdown-shortcuts-item col">
-                          <span class="dropdown-shortcuts-icon rounded-circle mb-2">
-                            <i class="ti ti-settings fs-4"></i>
-                          </span>
-                          <a href="pages-account-settings-account.html" class="stretched-link">Paramètres</a>
-                          <small class="text-muted mb-0">Paramètres du compte</small>
+                          <a href="{{ path('admin_advanced_statistiques_index') }}" class="stretched-link">Advanced Statistiques</a>
+                          <small class="text-muted mb-0">advanced statistiques</small>
                         </div>
                       </div>
                       <div class="row row-bordered overflow-visible g-0">
                         <div class="dropdown-shortcuts-item col">
-                          <span class="dropdown-shortcuts-icon rounded-circle mb-2">
-                            <i class="ti ti-help fs-4"></i>
-                          </span>
-                          <a href="pages-help-center-landing.html" class="stretched-link">Centre d'aide</a>
-                          <small class="text-muted mb-0">FAQ & Articles</small>
-                        </div>
+                          
                         <div class="dropdown-shortcuts-item col">
                           <span class="dropdown-shortcuts-icon rounded-circle mb-2">
-                            <i class="ti ti-square fs-4"></i>
+                            <i class="ti ti-bell fs-4"></i>
                           </span>
-                          <a href="modal-examples.html" class="stretched-link">Fenêtres modales</a>
-                          <small class="text-muted mb-0">Popups utiles</small>
+                          <a href="{{ path('admin_notifications') }}" class="stretched-link">Notifications</a>
+                          <small class="text-muted mb-0">Notifications</small>
                         </div>
+                      </div>
+                    
+                        
+                        
                       </div>
                     </div>
                   </div>
