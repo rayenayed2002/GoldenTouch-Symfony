@@ -87,7 +87,7 @@ class Personnel
         maxMessage: "Le service ne peut pas dépasser {{ limit }} caractères"
     )]
     #[Assert\Choice(
-        choices: ["Photographie", "Vidéographie", "Animation", "Décorateur", "Catering", "Logistique"],
+        choices: ["Sécurité", "Décorateur", "Serveur", "Organisateur", "Fleuriste", "Vidéaste", "Chef", "Animateur"],
         message: "Veuillez choisir un service valide"
     )]
     private ?string $serviceP = null;

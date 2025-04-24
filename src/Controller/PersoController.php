@@ -7,8 +7,8 @@ use App\Form\PersonnelType;
 use App\Entity\ReservationPerso;
 use App\Entity\Event;
 use App\Entity\Personnel;
-use App\Repository\UtilisateurRepository;
-use App\Service\PdfGenerator; 
+use App\Repository\UtilisateurRepository; 
+use App\Service\PdfGenerator;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use App\Repository\PersonnelRepository;
@@ -45,8 +45,17 @@ final class PersoController extends AbstractController
             6
         );
         
+
+    // Récupérer les top 3 personnels avec le plus de réservations
+    $topPersonnels = $personnelRepository->findTopReservedPersonnels();
+    $topPersonnelIds = array_map(function($item) {
+        return $item['personnel']->getIdP();
+    }, $topPersonnels);
+
+
         return $this->render('perso/index.html.twig', [
             'personnels' => $personnels,
+            'topPersonnelIds' => $topPersonnelIds,
         ]);
     }
 

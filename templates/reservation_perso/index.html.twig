@@ -255,7 +255,7 @@
         font-size: 14px;
     }
 }
-tyle>
+
     /* Nouveau style innovant pour le ComboBox */
     .goldentouch-combo {
         position: relative;
@@ -341,6 +341,84 @@ tyle>
         background: linear-gradient(90deg, #FFD700, #FFC107);
         border-radius: 3px;
     }
+
+
+
+/* Ajoutez ceci à votre section de style existante */
+.search-container {
+    position: relative;
+    margin-bottom: 30px;
+}
+
+#searchInput {
+    border-radius: 10px 0 0 10px !important;
+    padding: 12px 20px;
+    border: 2px solid rgba(255, 215, 0, 0.3);
+    transition: all 0.3s ease;
+}
+
+#searchInput:focus {
+    border-color: #FFD700;
+    box-shadow: 0 0 0 0.25rem rgba(255, 215, 0, 0.25);
+    outline: none;
+}
+
+#searchButton {
+    border-radius: 0 !important;
+    padding: 12px 20px;
+    background: linear-gradient(135deg, #FFD700 0%, #FFC107 100%);
+    border: none;
+    transition: all 0.3s ease;
+}
+
+#searchButton:hover {
+    background: linear-gradient(135deg, #FFC107 0%, #FFA000 100%);
+}
+
+
+#resetSearch {
+    border-radius: 0 10px 10px 0 !important;
+    padding: 12px 15px;
+    transition: all 0.3s ease;
+}
+
+#searchStatus {
+    min-height: 20px;
+    font-size: 0.85rem;
+}
+
+#searchResults {
+    transition: all 0.3s ease;
+}
+
+.search-highlight {
+    background-color: #FFF9C4;
+    font-weight: 600;
+    padding: 0 2px;
+    border-radius: 3px;
+}
+.no-results-card {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 30px;
+    text-align: center;
+}
+
+.no-results-card .icon-box {
+    margin-bottom: 20px;
+}
+
+.no-results-card h5 {
+    color: #333;
+    font-weight: 600;
+}
+
+
+
+
+.animate__animated {
+    animation-duration: 0.5s;
+}
 </style>
 
 </head>
@@ -707,6 +785,31 @@ tyle>
     </div>
 </div>
             
+
+<div class="search-container mb-4 position-relative">
+    <div class="input-group input-group-merge">
+        <span class="input-group-text"><i class="ti ti-search"></i></span>
+        <input type="text" 
+               id="searchInput" 
+               class="form-control" 
+               placeholder="Rechercher un personnel (nom, prénom, service...)" 
+               aria-label="Recherche">
+        <button class="btn btn-primary" type="button" id="searchButton">
+            <i class="ti ti-search"></i>
+        </button>
+        <button class="btn btn-outline-secondary" type="button" id="resetSearch" style="display:none;">
+            <i class="ti ti-x"></i>
+        </button>
+    </div>
+    <div id="searchSpinner" class="text-center my-3" style="display:none;">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Chargement...</span>
+        </div>
+    </div>
+    <div id="searchStatus" class="small text-muted mt-1"></div>
+    <div id="searchResults" class="mt-3"></div>
+</div>
+         
             <!-- Cartes de personnel -->
             <div class="row gy-5">
                 {% for personnel in personnels %}
@@ -751,15 +854,16 @@ tyle>
                             {% endfor %}
                             
                             {% if isReserved %}
-                                <form method="post" action="{{ path('app_reservation_perso_delete', {'idR': reservationId}) }}" class="w-100" id="cancelForm-{{ reservationId }}">
-                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ reservationId) }}">
-                                    <input type="hidden" name="event_id" value="{{ selectedEventId }}">
-                                    <button class="th-btn fw-btn btn-danger cancel-btn"
-                                            data-reservation-id="{{ reservationId }}"
-                                            title="Annuler cette réservation">
-                                        <i class="fa-regular fa-calendar-xmark me-2"></i>Annuler
-                                    </button>
-                                </form>
+<form method="post" action="{{ path('app_reservation_perso_delete', {'idR': reservationId}) }}" class="w-100" id="cancelForm-{{ reservationId }}">
+    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ reservationId) }}">
+    <input type="hidden" name="event_id" value="{{ selectedEventId }}">
+    <button class="th-btn fw-btn cancel-btn"
+            style="background-color: #dc3545; border-color: #dc3545;"
+            data-reservation-id="{{ reservationId }}"
+            title="Annuler cette réservation">
+        <i class="fa-regular fa-calendar-xmark me-2"></i>Annuler
+    </button>
+</form>
                             {% else %}
                                 <button class="th-btn fw-btn reserve-btn" 
                                         data-personnel-id="{{ personnel.idP }}"
@@ -1015,5 +1119,94 @@ tyle>
             });
         });
     </script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('searchInput');
+    const searchButton = document.getElementById('searchButton');
+    const resetButton = document.getElementById('resetSearch');
+    const searchResults = document.getElementById('searchResults');
+    const searchStatus = document.getElementById('searchStatus');
+    const searchSpinner = document.getElementById('searchSpinner');
+    const defaultContent = document.querySelector('.row.gy-5');
+    const eventSelect = document.getElementById('event-select');
+    let searchTimeout;
+
+    // Fonction de recherche
+    const performSearch = () => {
+        const term = searchInput.value.trim();
+        const selectedEventId = eventSelect.value;
+        
+        if (term.length >= 2) {
+            searchSpinner.style.display = 'block';
+            searchStatus.textContent = 'Recherche en cours...';
+            searchResults.innerHTML = '';
+            if (defaultContent) defaultContent.style.display = 'none';
+            resetButton.style.display = 'block';
+            
+            fetch(`/reservation/perso/search?q=${encodeURIComponent(term)}&event=${selectedEventId}`)
+                .then(response => {
+                    if (!response.ok) throw new Error(`Erreur HTTP: ${response.status}`);
+                    return response.json();
+                })
+                .then(data => {
+                    searchResults.innerHTML = data.html;
+                    searchStatus.textContent = data.count > 0 
+                        ? `${data.count} résultat(s) trouvé(s)` 
+                        : 'Aucun résultat trouvé';
+                })
+                .catch(error => {
+                    searchResults.innerHTML = `
+                        <div class="alert alert-danger alert-dismissible fade show">
+                            <i class="ti ti-alert-octagon me-2"></i>
+                            Erreur lors de la recherche: ${error.message}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    `;
+                    searchStatus.textContent = 'Erreur lors de la recherche';
+                    console.error('Search error:', error);
+                })
+                .finally(() => {
+                    searchSpinner.style.display = 'none';
+                });
+        } else if (term.length === 0) {
+            resetSearch();
+        }
+    };
+
+    // Réinitialisation de la recherche
+    const resetSearch = () => {
+        searchInput.value = '';
+        searchResults.innerHTML = '';
+        searchStatus.textContent = '';
+        if (defaultContent) defaultContent.style.display = 'block';
+        searchSpinner.style.display = 'none';
+        resetButton.style.display = 'none';
+    };
+
+    // Écouteurs d'événements
+    searchInput.addEventListener('input', () => {
+        clearTimeout(searchTimeout);
+        if (searchInput.value.trim().length >= 2) {
+            searchTimeout = setTimeout(performSearch, 300);
+        } else if (searchInput.value.trim().length === 0) {
+            resetSearch();
+        }
+    });
+
+    searchButton.addEventListener('click', performSearch);
+    resetButton.addEventListener('click', resetSearch);
+
+    searchInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') performSearch();
+    });
+
+    // Afficher le bouton de réinitialisation si le champ a du texte au chargement
+    if (searchInput.value.trim().length > 0) {
+        resetButton.style.display = 'block';
+    }
+});
+</script>
+
+
 </body>
 </html>
