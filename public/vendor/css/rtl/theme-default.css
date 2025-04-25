@@ -276,18 +276,13 @@ button.list-group-item-primary.active {
 
 .btn-primary {
   color: #fff;
-  background: linear-gradient(72.47deg, #FFD700 22.16%, rgb(235, 198, 51) 76.47%);
+  background-color: #FFD700;
   border-color: #FFD700;
-  transition: all 0.3s ease; /* Ajout d'une transition fluide */
 }
-
 .btn-primary:hover {
-  color: #fff;
-
-  background: linear-gradient(72.47deg,rgb(235, 198, 51) 22.16%, #FFD700 76.47%) !important;
-  border-color: #FFD700 !important;
-  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3); /* Ombre dorée */
-  transform: translateY(-1px); /* Effet de légère élévation */
+  color: #fff !important;
+  background-color: #685dd8 !important;
+  border-color: #685dd8 !important;
 }
 .btn-check:focus + .btn-primary, .btn-primary:focus, .btn-primary.focus {
   color: #fff;
@@ -705,25 +700,25 @@ FFD700
   color: #fff;
 }
 .menu.bg-primary.menu-vertical .menu-item.active > .menu-link:not(.menu-toggle) {
-  background: linear-gradient(72.47deg, #FFD700 22.16%, #FFF8E7 76.47%);
-  box-shadow: 0px 2px 6px 0px rgba(255, 215, 0, 0.3);
-  color: #333 !important;
+  background: linear-gradient(72.47deg, #FFD700 22.16%, rgba(184, 134, 11, 0.7) 76.47%);
+  box-shadow: 0px 2px 6px 0px rgba(184, 134, 11, 0.48);
+  color: #fff !important;
 }
 
 [dir=rtl] .menu.bg-primary.menu-vertical .menu-item.active > .menu-link:not(.menu-toggle) {
-  background: linear-gradient(72.47deg, #FFF8E7 22.16%, #FFD700 76.47%) !important;
+  background: linear-gradient(72.47deg, rgba(184, 134, 11, 0.7) 22.16%, #FFD700 76.47%) !important;
 }
 
 .menu.bg-primary.menu-horizontal .menu-inner > .menu-item.active > .menu-link.menu-toggle {
-  background: linear-gradient(72.47deg, #FFD700 22.16%, #FFFAF0 76.47%);
-  color: #333 !important;
-  box-shadow: 0px 2px 6px 0px rgba(255, 215, 0, 0.3);
+  background: linear-gradient(72.47deg, #FFD700 22.16%, rgba(184, 134, 11, 0.7) 76.47%);
+  color: #fff !important;
+  box-shadow: 0px 2px 6px 0px rgba(184, 134, 11, 0.48);
 }
 
 [dir=rtl] .menu.bg-primary.menu-horizontal .menu-inner > .menu-item.active > .menu-link.menu-toggle {
-  background: linear-gradient(72.47deg, #FFFAF0 22.16%, #FFD700 76.47%);
-  box-shadow: 0px 2px 6px 0px rgba(255, 215, 0, 0.3);
-  color: #333 !important;
+  background: linear-gradient(72.47deg, rgba(184, 134, 11, 0.7) 22.16%, #FFD700 76.47%);
+  box-shadow: 0px 2px 6px 0px rgba(184, 134, 11, 0.48);
+  color: #fff !important;
 }
 
 .menu.bg-primary.menu-horizontal .menu-inner .menu-item:not(.menu-item-closing) > .menu-sub,
@@ -1389,30 +1384,25 @@ li.ui-timepicker-selected,
 .bg-menu-theme .menu-item.active > .menu-link {
   color: #5d596c;
 }
-/* Vertical Menu */
-/* Vertical Menu */
 .bg-menu-theme.menu-vertical .menu-item.active > .menu-link:not(.menu-toggle) {
-  background: linear-gradient(72.47deg, #FFD700 22.16%, #E6C34A 76.47%); /* Lighter gold */
-  box-shadow: 0px 2px 6px 0px rgba(230, 195, 74, 0.3);
+  background: linear-gradient(72.47deg, #FFD700 22.16%, rgba(184, 134, 11, 0.7) 76.47%);
+  box-shadow: 0px 2px 6px 0px rgba(184, 134, 11, 0.48);
   color: #fff !important;
 }
 
-/* RTL Vertical Menu */
 [dir=rtl] .bg-menu-theme.menu-vertical .menu-item.active > .menu-link:not(.menu-toggle) {
-  background: linear-gradient(72.47deg, #E6C34A 22.16%, #FFD700 76.47%) !important;
+  background: linear-gradient(72.47deg, rgba(184, 134, 11, 0.7) 22.16%, #FFD700 76.47%) !important;
 }
 
-/* Horizontal Menu */
 .bg-menu-theme.menu-horizontal .menu-inner > .menu-item.active > .menu-link.menu-toggle {
-  background: linear-gradient(72.47deg, #FFD700 22.16%, #D4B020 76.47%); /* Softer gold */
+  background: linear-gradient(72.47deg, #FFD700 22.16%, rgba(184, 134, 11, 0.7) 76.47%);
   color: #fff !important;
-  box-shadow: 0px 2px 6px 0px rgba(212, 176, 32, 0.3);
+  box-shadow: 0px 2px 6px 0px rgba(184, 134, 11, 0.48);
 }
 
-/* RTL Horizontal Menu */
 [dir=rtl] .bg-menu-theme.menu-horizontal .menu-inner > .menu-item.active > .menu-link.menu-toggle {
-  background: linear-gradient(72.47deg, #D4B020 22.16%, #FFD700 76.47%);
-  box-shadow: 0px 2px 6px 0px rgba(212, 176, 32, 0.3);
+  background: linear-gradient(72.47deg, rgba(184, 134, 11, 0.7) 22.16%, #FFD700 76.47%);
+  box-shadow: 0px 2px 6px 0px rgba(184, 134, 11, 0.48);
   color: #fff !important;
 }
 

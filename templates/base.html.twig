@@ -1,18 +1,16 @@
-
-
 <!doctype html>
 <html class="no-js" lang="zxx">
 
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>{% block title %}Taxiar - Online Taxi Service HTML Template - Home 1{% endblock %}</title>
-        <meta name="author" content="Taxiar">
-    <meta name="description" content="{% block description %}Taxiar - Online Taxi Service HTML Template{% endblock %}">
-    <meta name="keywords" content="{% block keywords %}Taxiar - Online Taxi Service HTML Template{% endblock %}">       <meta name="robots" content="INDEX,FOLLOW">
+    <title>Taxiar - Online Taxi Service HTML Template - Home 1</title>
+    <meta name="author" content="Taxiar">
+    <meta name="description" content="Taxiar - Online Taxi Service HTML Template">
+    <meta name="keywords" content="Taxiar - Online Taxi Service HTML Template">
+    <meta name="robots" content="INDEX,FOLLOW">
 
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    {% block favicons %}
 
 <link rel="apple-touch-icon" sizes="57x57" href="{{ asset('Front/img/favicons/apple-icon-57x57.png') }}">
 <link rel="apple-touch-icon" sizes="60x60" href="{{ asset('Front/img/favicons/apple-icon-60x60.png') }}">
@@ -31,18 +29,14 @@
 <meta name="msapplication-TileColor" content="#ffffff">
 <meta name="msapplication-TileImage" content="{{ asset('Front/img/favicons/ms-icon-144x144.png') }}">
 <meta name="theme-color" content="#ffffff">
-    {% endblock %}
 
-    {% block fonts %}
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Radio+Canada:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
-    {% endblock %}
 
-    {% block stylesheets %}
 
 <link rel="stylesheet" href="{{ asset('Front/css/bootstrap.min.css') }}">
 <link rel="stylesheet" href="{{ asset('Front/css/fontawesome.min.css') }}">
@@ -50,98 +44,8 @@
 <link rel="stylesheet" href="{{ asset('Front/css/slick.min.css') }}">
 <link rel="stylesheet" href="{{ asset('Front/css/jquery.datetimepicker.min.css') }}">
 <link rel="stylesheet" href="{{ asset('Front/css/style.css') }}">
-    {% endblock %}
-    {% block inline_styles %}
-
-<style> 
-/* Body background */
-body {
-    background-color: #f8f7fa;
-}
-
-/* Event Card Style */
-.th-product {
-    background-color: #ffffff;
-    border: 2px solid gold;
-    border-radius: 12px;
-    transition: all 0.3s ease;
-    margin: 10px;
-    padding: 10px;
-    height: 100%; /* Helps cards be uniform height */
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    cursor: pointer;
-
-}
-
-/* Image wrapper to control sizing and spacing */
-.product-img {
-    overflow: hidden;
-    border-radius: 8px;
-    margin-bottom: 15px;
-}
-
-/* Image style - same height and zoom on hover */
-.product-img img {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-    transition: transform 0.3s ease;
-    border-radius: 8px;
-    display: block;
-}
-
-/* Zoom effect on hover */
-.th-product:hover .product-img img {
-    transform: scale(1.05);
-}
-
-/* Card hover effect */
-.th-product:hover {
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
-    transform: translateY(-5px);
-}
-
-  .th-product .product-img::before {
-        content: none !important;
-        background-color: transparent !important;
-        opacity: 0 !important;
-        transform: none !important;
-        transition: none !important;
-        visibility: visible !important;
-    }
-    
-    /* Disable hover state */
-    .th-product:hover .product-img::before {
-        opacity: 0 !important;
-        visibility: hidden !important;
-    }
-    
-    /* Remove any other hover effects */
-    .th-product:hover {
-        transform: none !important;
-        box-shadow: none !important;
-    }
-        #cartIcon.dragover {
-        transform: scale(1.1);
-        color: #4CAF50;
-    }
-    .event-card {
-        cursor: grab;
-        transition: transform 0.2s;
-    }
-    
-    .event-card:active {
-        cursor: grabbing;
-    }
-        {% endblock %}
-
-</style>
-
 
 </head>
-    {% block body %}
 
 <body class="">
 
@@ -171,7 +75,6 @@ body {
             </div>
         </div>
     </div> 
-<input type="hidden" name="_token" value="{{ csrf_token('add_to_cart') }}">
 
 
     <div class="th-menu-wrapper">
@@ -429,10 +332,18 @@ body {
                                 <a href="index.html">Pack</a>
                             </li>
                             <li class="menu-item-has-children">
-                                <a href="#">Event Planner</a>
+                                <a href="#">User</a>
                                 <ul class="sub-menu">
-                                    <li><a href="#">Ajout Event</a></li>
-                                    <li><a href="#">Liste Event</a></li>
+                                    {% if app.user %} 
+                                    {% if is_granted('ROLE_ADMIN') %}
+                                    <li><a href="{{ path('admin_dashboard_index') }}">Admin Dashboard</a></li>
+                                    {% endif %}
+									<li><a href="{{ path('user_account_index') }}">Profile</a></li>
+                                    <li><a href="{{ logout_path('main') }}">Logout</a></li>
+                                    {% else %}
+                                    <li><a href="{{ path('login') }}">Login</a></li>
+                                    <li><a href="{{ path('registration') }}">Register</a></li>
+                                    {% endif %}
                                 </ul>
                             </li>
                             <li class="menu-item-has-children">
@@ -470,11 +381,8 @@ body {
                 <div class="col-auto d-none d-xl-block">
                     <div class="header-button">
                         <button type="button" class="icon-btn searchBoxToggler"><i class="far fa-search"></i></button>
-<a href="{{ path('app_panier') }}" class="icon-btn " id="cartIcon">
-    <i class="fa-regular fa-bag-shopping"></i>
-    <span class="badge">0</span>
-</a>
-
+                        <a href="#" class="icon-btn sideMenuToggler2"><i class="fa-regular fa-bag-shopping"></i>
+                            <span class="badge">5</span></a>
                         <a href="#" class="icon-btn sideMenuToggler"><i class="far fa-bars"></i></a>
                         <a href="booking.html" class="th-btn">BOOK A TAXI<i class="fa-regular fa-arrow-right ms-2"></i></a>
                     </div>
@@ -485,17 +393,19 @@ body {
 </div>
 <div class="logo-shape"><img src="{{ asset('Front/img/logo-shape.svg') }}" alt=""></div>
     </header>
+	<div class="th-page-wrapper">
+		<div class="th-page-content">
+			<div class="th-page-content-inner">
+				<div class="th-page-content-body">
+					{% block body %}{% endblock %}
+				</div>
+			</div>
+		</div>
+<div>
 
- <main>
-        {% block content %}{% endblock %}
-    </main>
 
 
-
-
-
-
-
+</div>
 
 
 
@@ -595,8 +505,7 @@ body {
         </svg>
     </div>
 
-   {% endblock %}
-    {% block javascripts %}
+
 
   <script src="{{ asset('Front/js/vendor/jquery-3.6.0.min.js') }}"></script>
 
@@ -618,102 +527,7 @@ body {
 <script src="{{ asset('Front/js/wow.min.js') }}"></script>
 
 <script src="{{ asset('Front/js/main.js') }}"></script>
-    {% endblock %}
 
 </body>
 
 </html>
-
-    {% block inline_scripts %}
-<script>
-
-
-document.addEventListener('DOMContentLoaded', function() {
-    // Function to update cart count from server
-    async function updateCartCount() {
-        try {
-            const response = await fetch('{{ path('app_panier_count') }}');
-            const data = await response.json();
-            document.querySelector('.badge').textContent = data.count;
-        } catch (error) {
-            console.error('Error updating cart count:', error);
-        }
-    }
-
-    // Initial cart count update
-    updateCartCount();
-
-    // Make event cards draggable
-    document.querySelectorAll('.event-card').forEach(card => {
-        card.draggable = true;
-        
-        card.addEventListener('dragstart', (e) => {
-            const eventData = {
-                idEvent: card.dataset.eventId,
-                categorie: card.dataset.categorie,
-                date: card.dataset.date
-            };
-            e.dataTransfer.setData('application/json', JSON.stringify(eventData));
-        });
-    });
-
-    // Handle drop on shopping bag
-    const shoppingBag = document.querySelector('#cartIcon');
-    
-    shoppingBag.addEventListener('dragover', (e) => {
-        e.preventDefault();
-    });
-
-    shoppingBag.addEventListener('drop', async (e) => {
-        e.preventDefault();
-        const eventData = JSON.parse(e.dataTransfer.getData('application/json'));
-        
-        try {
-            const response = await fetch('{{ path('app_panier_add') }}', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value
-                },
-                body: JSON.stringify(eventData)
-            });
-
-            if (response.ok) {
-                const result = await response.json();
-                if (result.success) {
-                    // Update cart count from server after successful add
-                    await updateCartCount();
-
-                    // Find and remove the card's parent column
-                    const cardToRemove = document.querySelector(
-                        `.event-card[data-event-id="${eventData.idEvent}"]`
-                    );
-                    
-                    if (cardToRemove) {
-                        const columnParent = cardToRemove.closest('.col-xl-4');
-                        columnParent.style.transition = 'all 0.3s ease';
-                        columnParent.style.opacity = '0';
-                        columnParent.style.transform = 'translateY(20px)';
-                        
-                        setTimeout(() => {
-                            columnParent.remove();
-                            document.querySelector('.row.gy-40').style.display = 'none';
-                            document.querySelector('.row.gy-40').offsetHeight;
-                            document.querySelector('.row.gy-40').style.display = '';
-                        }, 300);
-                    }
-                } else {
-                    alert('Failed to add to cart: ' + (result.message || 'Unknown error'));
-                }
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            alert('Failed to add to cart');
-        }
-    });
-});
-
-
-    </script>
-
-    {% endblock %}
