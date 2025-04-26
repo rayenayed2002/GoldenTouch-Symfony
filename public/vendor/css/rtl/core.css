@@ -2014,7 +2014,7 @@ progress {
   cursor: pointer;
 }
 .form-control:focus {
-  color: #FFD700;
+  color: #4b465c;
   background-color: #fff;
   border-color: #FFD700;
   outline: 0;

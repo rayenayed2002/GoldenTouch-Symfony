@@ -61,6 +61,12 @@ services:
             $authToken: '%env(TWILIO_AUTH_TOKEN)%'
             $fromNumber: '%env(TWILIO_PHONE_NUMBER)%'
             $toNumber: '%env(DESTINATION_PHONE_NUMBER)%'
+    App\Service\EmailServiceP:
+        arguments:
+            $senderEmail: 'service.goldentouch1@gmail.com'
+    App\Service\EmailServicePackReady:
+        arguments:
+            $senderEmail: 'service.goldentouch1@gmail.com'
 
 
 
