@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<<!DOCTYPE html>
 <html lang="en" class="light-style layout-navbar-fixed layout-menu-fixed" dir="ltr" data-theme="theme-default">
 <head>
     <meta charset="utf-8" />
@@ -64,7 +64,7 @@
         }
     
         /* Custom icon size for bigger notification bell and shortcut icon */
-        .notification-bell-big { font-size: 1.5rem !important; }
+        .notification-bell-big { font-size: 2rem !important; }
         .shortcut-big { font-size: 1.5rem !important; }
 
         :root {
@@ -393,7 +393,7 @@
                           
                         <div class="dropdown-shortcuts-item col">
                           <span class="dropdown-shortcuts-icon rounded-circle mb-2">
-                            <i class="ti ti-bell fs-4"></i>
+                            <i class="ti ti-bell notification-bell-big"></i>
                           </span>
                           <a href="{{ path('admin_notifications') }}" class="stretched-link">Notifications</a>
                           <small class="text-muted mb-0">Notifications</small>
@@ -416,7 +416,7 @@
         data-bs-toggle="dropdown"
         data-bs-auto-close="outside"
         aria-expanded="false">
-        <i class="ti ti-bell ti-md"></i>
+        <i class="ti ti-bell notification-bell-big"></i>
         <span id="unreadCountBadge" class="badge bg-danger rounded-pill badge-notifications">0</span>
     </a>
                   <ul class="dropdown-menu dropdown-menu-end py-0">
@@ -440,7 +440,7 @@
                                 <a href="{{ path('admin_customize_pack_show', {'id': notification.demandePack.id}) }}" class="d-flex align-items-stretch text-decoration-none text-dark w-100 p-3" style="cursor:pointer;">
                                     <div class="flex-shrink-0 me-3">
                                         <div class="avatar">
-                                            <span class="avatar-initial rounded-circle bg-label-info"><i class="ti ti-bell"></i></span>
+                                            <span class="avatar-initial rounded-circle bg-label-info"><i class="ti ti-bell notification-bell-big"></i></span>
                                         </div>
                                     </div>
                                     <div class="flex-grow-1">
@@ -478,36 +478,6 @@
                   <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
                     <div class="avatar avatar-online">
                       <img src="{{ asset('img/avatars/1.png') }}" alt class="h-auto rounded-circle">
-                    </div>
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </nav>
-          <!-- / Navbar -->
-
-
-
-      <!-- Core JS -->
-      <script src="{{ asset('vendor/libs/jquery/jquery.js') }}"></script>
-      <script src="{{ asset('vendor/libs/popper/popper.js') }}"></script>
-      <script src="{{ asset('vendor/js/bootstrap.js') }}"></script>
-      <script src="{{ asset('vendor/libs/perfect-scrollbar/perfect-scrollbar.js') }}"></script>
-      <script src="{{ asset('vendor/libs/node-waves/node-waves.js') }}"></script>
-      <script src="{{ asset('vendor/libs/hammer/hammer.js') }}"></script>
-      <script src="{{ asset('vendor/libs/i18n/i18n.js') }}"></script>
-      <script src="{{ asset('vendor/libs/typeahead-js/typeahead.js') }}"></script>
-      <script src="{{ asset('vendor/js/menu.js') }}"></script>
-
-      <!-- Vendors JS -->
-      <script src="{{ asset('vendor/libs/datatables-bs5/datatables-bootstrap5.js') }}"></script>
-      <script src="{{ asset('vendor/libs/sweetalert2/sweetalert2.js') }}"></script>
-      <script src="{{ asset('vendor/libs/flatpickr/flatpickr.js') }}"></script>
-
-      <!-- Main JS -->
-      <script src="{{ asset('js/main.js') }}"></script>
-    </body>
-</html>ded-circle" />
                     </div>
                   </a>
                   <ul class="dropdown-menu dropdown-menu-end">
@@ -830,5 +800,26 @@
         }
     });
     </script>
+<script>
+// Fix Popper margin warning by using offset modifier for Bootstrap dropdowns
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('[data-bs-toggle="dropdown"]').forEach(function(el) {
+            if (typeof bootstrap !== 'undefined' && bootstrap.Dropdown) {
+                new bootstrap.Dropdown(el, {
+                    popperConfig: function (defaultBsPopperConfig) {
+                        defaultBsPopperConfig.modifiers = defaultBsPopperConfig.modifiers || [];
+                        defaultBsPopperConfig.modifiers.push({
+                            name: 'offset',
+                            options: {
+                                offset: [0, 8], // Adjust as needed
+                            },
+                        });
+                        return defaultBsPopperConfig;
+                    }
+                });
+            }
+        });
+    });
+</script>
 </body>
 </html>
