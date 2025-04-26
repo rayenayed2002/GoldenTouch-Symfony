@@ -36,8 +36,8 @@ class Avis
     #[Assert\Length(
         min: 5,
         max: 1000,
-        minMessage: 'Your comment must be at least {{ limit }} characters',
-        maxMessage: 'Your comment cannot be longer than {{ limit }} characters'
+        minMessage: 'Votre commentaire doit contenir au moins {{ limit }} caractères',
+        maxMessage: 'Votre commentaire ne peut excéder {{ limit }} caractères'
     )]
     private ?string $commentaire = null;
 

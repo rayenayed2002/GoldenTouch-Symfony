@@ -1016,7 +1016,7 @@
                         // Show validation error message
                         Swal.fire({
                             title: 'Validation Error',
-                            text: 'Please fill in all required fields before proceeding.',
+                            text: 'Veuillez remplir tous les champs obligatoires avant de continuer.',
                             icon: 'error',
                             confirmButtonText: 'OK'
                         });
@@ -1275,7 +1275,7 @@
                 const formData = new FormData(this);
                 
                 // Add upload path information to ensure images go to the correct directory
-                formData.append('uploadPath', 'public/uploads/locations/Images');
+                formData.append('uploadPath', 'public/uploads/lieux/Images');
                 
                 // Show loading state
                 const submitBtn = $(this).find('button[type="submit"]');

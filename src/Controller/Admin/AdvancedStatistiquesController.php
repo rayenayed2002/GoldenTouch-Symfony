@@ -15,9 +15,133 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
+use App\Repository\DemandePackRepository;
+use Doctrine\ORM\Query\Expr\Join;
+
 #[Route('/admin/advanced-statistiques', name: 'admin_advanced_statistiques_')]
 class AdvancedStatistiquesController extends AbstractController
 {
+    #[Route('/download-pdf', name: 'admin_advanced_statistiques_download_pdf')]
+    public function downloadPdf(\Knp\Snappy\Pdf $knpSnappyPdf): \Symfony\Component\HttpFoundation\Response
+    {
+        // Gather the same stats as in index
+        $packStats = $this->getPackStats();
+        $userStats = $this->getUserStats();
+        $mostSoldPack = $this->getMostSoldPack();
+        $averagePackPrice = $this->getAveragePackPrice();
+
+        // Chart 1: Évolution des réservations (Line)
+        // Transform reservation trends to ['labels'=>[], 'data'=>[]] for chart
+        $reservationTrendsRaw = $this->getReservationTrends(); // array of ['week'=>..., 'reservation_count'=>...]
+        $reservationTrends = [
+            'labels' => [],
+            'data' => []
+        ];
+        foreach ($reservationTrendsRaw as $row) {
+            $reservationTrends['labels'][] = $row['week'];
+            $reservationTrends['data'][] = $row['reservation_count'];
+        }
+        $reservationTrendsConfig = [
+            'type' => 'line',
+            'data' => [
+                'labels' => $reservationTrends['labels'],
+                'datasets' => [[
+                    'label' => 'Réservations',
+                    'data' => $reservationTrends['data'],
+                    'borderColor' => 'rgba(115,103,240,1)',
+                    'backgroundColor' => 'rgba(115,103,240,0.1)',
+                    'fill' => true
+                ]]
+            ],
+            'options' => [
+                'plugins' => [
+                    'legend' => ['display' => false]
+                ]
+            ]
+        ];
+        $reservationTrendsChartBase64 = $this->getChartBase64($reservationTrendsConfig);
+
+        // Chart 2: Répartition des ventes des packs (Pie)
+        // Transform pack type distribution to ['labels'=>[], 'data'=>[]] for chart
+        $packTypeDistributionRaw = $this->getPackTypeDistribution(); // array of ['event_type'=>..., 'pack_count'=>...]
+        $packTypeDistribution = [
+            'labels' => [],
+            'data' => []
+        ];
+        foreach ($packTypeDistributionRaw as $row) {
+            $packTypeDistribution['labels'][] = $row['event_type'];
+            $packTypeDistribution['data'][] = $row['pack_count'];
+        }
+        $packsSalesConfig = [
+            'type' => 'pie',
+            'data' => [
+                'labels' => $packTypeDistribution['labels'],
+                'datasets' => [[
+                    'data' => $packTypeDistribution['data'],
+                    'backgroundColor' => [
+                        'rgba(115,103,240,0.8)',
+                        'rgba(40,199,111,0.8)',
+                        'rgba(255,159,67,0.8)',
+                        'rgba(0,207,232,0.8)',
+                        'rgba(234,84,85,0.8)'
+                    ]
+                ]]
+            ]
+        ];
+        $packsSalesChartBase64 = $this->getChartBase64($packsSalesConfig);
+
+        // Chart 3: Utilisateurs actifs par période (Bar)
+        $usersActive = $this->getUsersActiveTrends(); // ['labels'=>[], 'data'=>[]]
+        $usersActiveConfig = [
+            'type' => 'bar',
+            'data' => [
+                'labels' => $usersActive['labels'],
+                'datasets' => [[
+                    'label' => 'Utilisateurs actifs',
+                    'data' => $usersActive['data'],
+                    'backgroundColor' => 'rgba(0,207,232,0.8)'
+                ]]
+            ]
+        ];
+        $usersActiveChartBase64 = $this->getChartBase64($usersActiveConfig);
+
+        // Render the PDF HTML with charts
+        $html = $this->renderView('admin/advanced_statistiques/report_pdf.html.twig', [
+            'packStats' => $packStats,
+            'userStats' => $userStats,
+            'mostSoldPack' => $mostSoldPack,
+            'averagePackPrice' => $averagePackPrice,
+            'reservationTrendsChartBase64' => $reservationTrendsChartBase64,
+            'packsSalesChartBase64' => $packsSalesChartBase64,
+            'usersActiveChartBase64' => $usersActiveChartBase64,
+        ]);
+        // Generate PDF
+        $pdfContent = $knpSnappyPdf->getOutputFromHtml($html);
+        return new \Symfony\Component\HttpFoundation\Response($pdfContent, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="rapport-statistiques.pdf"'
+        ]);
+    }
+
+    // Util: Générer un graphique Chart.js via QuickChart.io et retourner du base64
+    private function getChartBase64(array $chartConfig): string
+    {
+        $url = 'https://quickchart.io/chart?c=' . urlencode(json_encode($chartConfig));
+        $image = @file_get_contents($url);
+        if ($image === false) {
+            return '';
+        }
+        return base64_encode($image);
+    }
+
+    // Dummy pour la démo: à remplacer par vos vraies données
+    private function getUsersActiveTrends(): array
+    {
+        return [
+            'labels' => ['Semaine 1', 'Semaine 2', 'Semaine 3'],
+            'data' => [5, 15, 8]
+        ];
+    }
     private $entityManager;
 
     public function __construct(EntityManagerInterface $entityManager)
@@ -49,7 +173,7 @@ class AdvancedStatistiquesController extends AbstractController
         $packCategoryPerformance = $this->getPackCategoryPerformance();
 
         return $this->render('admin/advanced_statistiques/index.html.twig', [
-            'packStats' => $packStats,
+            'packStats' => $packStats, 
             'userStats' => $userStats,
             'mostSoldPack' => $mostSoldPack,
             'averagePackPrice' => $averagePackPrice,
@@ -67,6 +191,70 @@ class AdvancedStatistiquesController extends AbstractController
             'packCategoryPerformance' => $packCategoryPerformance,
         ]);
     }
+
+    #[Route('/stat-data/{type}', name: 'admin_advanced_statistiques_stat_data', methods: ['GET'])]
+    public function statData(string $type): \Symfony\Component\HttpFoundation\JsonResponse
+    {
+        switch ($type) {
+            case 'packs':
+                $data = $this->getPackStats();
+                $data['chart_data'] = [
+                    ['label' => 'Jan', 'value' => 10],
+                    ['label' => 'Feb', 'value' => 15],
+                    ['label' => 'Mar', 'value' => 8],
+                    ['label' => 'Apr', 'value' => 20],
+                ];
+                break;
+            case 'users':
+                $data = $this->getUserStats();
+                $data['chart_data'] = [
+                    ['label' => 'Jan', 'value' => 5],
+                    ['label' => 'Feb', 'value' => 9],
+                    ['label' => 'Mar', 'value' => 7],
+                    ['label' => 'Apr', 'value' => 12],
+                ];
+                break;
+            case 'mostSoldPack':
+                $data = $this->getMostSoldPack();
+                $data['chart_data'] = [
+                    ['label' => 'Jan', 'value' => 30],
+                    ['label' => 'Feb', 'value' => 35],
+                    ['label' => 'Mar', 'value' => 28],
+                    ['label' => 'Apr', 'value' => 40],
+                ];
+                break;
+            case 'avgPrice':
+                $data = ['averagePackPrice' => $this->getAveragePackPrice()];
+                $data['chart_data'] = [
+                    ['label' => 'Jan', 'value' => 120],
+                    ['label' => 'Feb', 'value' => 130],
+                    ['label' => 'Mar', 'value' => 110],
+                    ['label' => 'Apr', 'value' => 140],
+                ];
+                break;
+            default:
+                return $this->json(['error' => 'Invalid type'], 400);
+        }
+        return $this->json($data);
+    }
+
+    #[Route('/demande-packs', name: 'demande_packs')]
+    public function demandePacksList(DemandePackRepository $demandePackRepository): Response
+{
+    // Eager load related entities to avoid N+1 queries
+    $demandes = $this->entityManager->getRepository(DemandePack::class)
+        ->createQueryBuilder('d')
+        ->leftJoin('d.utilisateur', 'u')->addSelect('u')
+        ->leftJoin('d.pack', 'p')->addSelect('p')
+        ->leftJoin('d.event', 'e')->addSelect('e')
+        ->orderBy('d.dateDemande', 'DESC')
+        ->getQuery()
+        ->getResult();
+
+    return $this->render('admin/advanced_statistiques/demande_pack_list.html.twig', [
+        'demandes' => $demandes,
+    ]);
+}
 
     /**
      * Get total number of packs and related statistics

@@ -501,11 +501,131 @@
             object-fit: cover;
         }
     </style>
+<script>
+// --- Description Enhancer (Backend AJAX) ---
+document.addEventListener('DOMContentLoaded', function() {
+    const enhanceBtn = document.getElementById('enhanceDescriptionBtn');
+    const descField = document.getElementById('description');
+    const enhanceLoading = document.getElementById('enhanceLoading');
+    // Remove any previously attached event listeners to avoid duplicates
+    if (enhanceBtn._hasEnhancer) return;
+    enhanceBtn._hasEnhancer = true;
+    if (enhanceBtn && descField) {
+        enhanceBtn.addEventListener('click', function() {
+            const desc = descField.value.trim();
+            if (!desc) {
+                Swal.fire({ icon: 'warning', title: 'Description vide', text: 'Veuillez saisir une description à améliorer.' });
+                return;
+            }
+            enhanceBtn.disabled = true;
+            enhanceLoading.style.display = '';
+            fetch('/admin/pack/enhance-description', {
+                method: 'POST',
+                headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                body: new URLSearchParams({ description: desc })
+            })
+            .then(res => res.json())
+            .then(result => {
+                if (result.enhanced && result.generated_text) {
+                    descField.value = result.generated_text;
+                    Swal.fire({ icon: 'success', title: 'Description améliorée !', toast: true, position: 'top-end', showConfirmButton: false, timer: 1800 });
+                } else {
+                    Swal.fire({ icon: 'error', title: 'Erreur', text: result.message || 'Aucune amélioration reçue.' });
+                }
+            })
+            .catch(() => {
+                Swal.fire({ icon: 'error', title: 'Erreur', text: 'Impossible de contacter le serveur.' });
+            })
+            .finally(() => {
+                enhanceBtn.disabled = false;
+                enhanceLoading.style.display = 'none';
+            });
+        });
+    }
+});
+// --- End Description Enhancer ---
+</script>
 
     <!-- Helpers -->
     <script src="{{ asset('vendor/js/helpers.js') }}"></script>
     <script src="{{ asset('vendor/js/template-customizer.js') }}"></script>
     <script src="{{ asset('js/config.js') }}"></script>
+    <!-- Compromise.js for keyword extraction (supports French/English) -->
+    <script src="https://unpkg.com/compromise@13.11.3/builds/compromise.min.js"></script>
+    <script src="https://unpkg.com/compromise/one.min.js"></script>
+    <style>
+        .tag-suggestions {
+            margin-top: 0.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        .tag-suggestion {
+            background: #f3f0ff;
+            color: #7367f0;
+            border: 1px solid #e0e0e0;
+            border-radius: 16px;
+            padding: 0.25rem 0.75rem;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .tag-suggestion.selected {
+            background: #7367f0;
+            color: #fff;
+            border-color: #7367f0;
+        }
+        .tag-suggestion .remove-tag {
+            margin-left: 0.5rem;
+            color: #d33;
+            cursor: pointer;
+            font-weight: bold;
+        }
+    </style>
+<script>
+// --- Description Enhancer (Backend AJAX) ---
+document.addEventListener('DOMContentLoaded', function() {
+    const enhanceBtn = document.getElementById('enhanceDescriptionBtn');
+    const descField = document.getElementById('description');
+    const enhanceLoading = document.getElementById('enhanceLoading');
+    // Remove any previously attached event listeners to avoid duplicates
+    if (enhanceBtn._hasEnhancer) return;
+    enhanceBtn._hasEnhancer = true;
+    if (enhanceBtn && descField) {
+        enhanceBtn.addEventListener('click', function() {
+            const desc = descField.value.trim();
+            if (!desc) {
+                Swal.fire({ icon: 'warning', title: 'Description vide', text: 'Veuillez saisir une description à améliorer.' });
+                return;
+            }
+            enhanceBtn.disabled = true;
+            enhanceLoading.style.display = '';
+            fetch('/admin/pack/enhance-description', {
+                method: 'POST',
+                headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                body: new URLSearchParams({ description: desc })
+            })
+            .then(res => res.json())
+            .then(result => {
+                if (result.enhanced && result.generated_text) {
+                    descField.value = result.generated_text;
+                    Swal.fire({ icon: 'success', title: 'Description améliorée !', toast: true, position: 'top-end', showConfirmButton: false, timer: 1800 });
+                } else {
+                    Swal.fire({ icon: 'error', title: 'Erreur', text: result.message || 'Aucune amélioration reçue.' });
+                }
+            })
+            .catch(() => {
+                Swal.fire({ icon: 'error', title: 'Erreur', text: 'Impossible de contacter le serveur.' });
+            })
+            .finally(() => {
+                enhanceBtn.disabled = false;
+                enhanceLoading.style.display = 'none';
+            });
+        });
+    }
+});
+// --- End Description Enhancer ---
+</script>
 </head>
 
 <body>
@@ -574,35 +694,37 @@
                         <div class="row">
                             <div class="col-12">
                                 <div class="card glassmorphism-ui mb-4 fade-in">
-                                    <div class="card-header d-flex justify-content-between align-items-center">
-                                        <h4 class="mb-0"><i class="ti ti-package me-2"></i>Create New Pack</h4>
-                                        <a href="{{ path('admin_pack_index') }}" class="btn btn-label-secondary">
-                                            <i class="ti ti-arrow-left me-1"></i>Back to Packs
-                                        </a>
-                                    </div>
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h4 class="mb-0"><i class="ti ti-package me-2"></i>Créer un nouveau pack</h4>
+        <a href="{{ path('admin_pack_index') }}" class="btn btn-label-secondary">
+            <i class="ti ti-arrow-left me-1"></i>Retour aux packs
+        </a>
+    </div>
+</div>
                                     <div class="card-body">
-                                        <!-- Step Indicator -->
-                                        <div class="step-indicator mb-4">
-                                            <div class="step active" data-step="1">
-                                                <div class="step-circle">1</div>
-                                                <div class="step-connector"></div>
-                                                <div class="step-title">Basic Info</div>
-                                            </div>
-                                            <div class="step" data-step="2">
-                                                <div class="step-circle">2</div>
-                                                <div class="step-connector"></div>
-                                                <div class="step-title">Details</div>
-                                            </div>
-                                            <div class="step" data-step="3">
-                                                <div class="step-circle">3</div>
-                                                <div class="step-connector"></div>
-                                                <div class="step-title">Media</div>
-                                            </div>
-                                            <div class="step" data-step="4">
-                                                <div class="step-circle">4</div>
-                                                <div class="step-title">Review</div>
-                                            </div>
-                                        </div>
+    <!-- Indicateur d'étapes -->
+    <div class="step-indicator mb-4">
+        <div class="step active" data-step="1">
+            <div class="step-circle">1</div>
+            <div class="step-connector"></div>
+            <div class="step-title">Informations de base</div>
+        </div>
+        <div class="step" data-step="2">
+            <div class="step-circle">2</div>
+            <div class="step-connector"></div>
+            <div class="step-title">Détails</div>
+        </div>
+        <div class="step" data-step="3">
+            <div class="step-circle">3</div>
+            <div class="step-connector"></div>
+            <div class="step-title">Médias</div>
+        </div>
+        <div class="step" data-step="4">
+            <div class="step-circle">4</div>
+            <div class="step-title">Vérification</div>
+        </div>
+    </div>
+</div>
 
                                         <!-- Pack Creation Form -->
                                         <form id="createPackForm" class="needs-validation" novalidate>
@@ -613,247 +735,259 @@
                                                     <div class="col-md-6">
                                                         <div class="form-floating mb-3">
                                                             <select class="form-select" id="category" name="category" required>
-                                                                <option value="" selected disabled>Select a category</option>
+                                                                <option value="" selected disabled>Sélectionnez une catégorie</option>
                                                                 <option value="Mariage">Mariage</option>
                                                                 <option value="Anniversaire">Anniversaire</option>
                                                                 <option value="Conférence">Conférence</option>
                                                                 <option value="Séminaire">Séminaire</option>
                                                                 <option value="Autre">Autre</option>
                                                             </select>
-                                                            <label for="category">Category</label>
-                                                            <div class="invalid-feedback">Please select a category.</div>
+                                                            <label for="category">Catégorie</label>
+<div class="invalid-feedback">Veuillez sélectionner une catégorie.</div>
                                                         </div>
                                                     </div>
                                                     <div class="col-12">
-                                                        <div class="form-floating mb-3">
-                                                            <input type="text" class="form-control" id="packName" name="packName" placeholder="Pack Name" required>
-                                                            <label for="packName">Pack Name</label>
-                                                            <div class="invalid-feedback">Please provide a pack name.</div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-12">
-                                                        <div class="form-floating mb-3">
-                                                            <textarea class="form-control" id="description" name="description" style="height: 100px" placeholder="Description" required></textarea>
-                                                            <label for="description">Description</label>
-                                                            <div class="invalid-feedback">Please provide a description.</div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="d-flex justify-content-end mt-3">
-                                                    <button type="button" class="btn btn-primary next-step" data-next="2">
-                                                        Next <i class="ti ti-arrow-right ms-1"></i>
-                                                    </button>
-                                                </div>
-                                            </div>
+    <div class="form-floating mb-3">
+        <input type="text" class="form-control" id="packName" name="packName" placeholder="Nom du pack" required>
+        <label for="packName">Nom du pack</label>
+        <div class="invalid-feedback">Veuillez saisir un nom pour le pack.</div>
+    </div>
+</div>
+<div class="col-12">
+    <div class="form-floating mb-3 position-relative">
+    <textarea class="form-control" id="description" name="description" style="height: 100px" placeholder="Description" required></textarea>
+    <label for="description">Description</label>
+    <div class="invalid-feedback">Veuillez saisir une description.</div>
+    <button type="button" id="enhanceDescriptionBtn" class="btn btn-sm btn-outline-primary position-absolute" style="top: 8px; right: 8px; z-index: 2;">
+        🔄 Améliorer le texte
+    </button>
+    <span id="enhanceLoading" class="spinner-border spinner-border-sm text-primary position-absolute" style="top: 12px; right: 170px; display: none; z-index: 2;" role="status"></span>
+</div>
+</div>
+<div class="col-12">
+    <div id="tagSuggestionContainer">
+        <label class="form-label" style="margin-bottom: 0.25rem;">Suggestions de tags :</label>
+        <div class="tag-suggestions" id="tagSuggestions"></div>
+        <input type="hidden" name="tags" id="selectedTags">
+    </div>
+</div>
+</div>
+<div class="d-flex justify-content-end mt-3">
+    <button type="button" class="btn btn-primary next-step" data-next="2">
+        Suivant <i class="ti ti-arrow-right ms-1"></i>
+    </button>
+</div>
+</div>
 
                                             <!-- Step 2: Details -->
-                                            <div class="form-section" id="step2">
-                                                <div class="row g-3">
-                                                    <div class="col-md-6">
-                                                        <div class="form-floating mb-3">
-                                                            <div class="input-group input-group-merge">
-                                                                <span class="input-group-text">$</span>
-                                                                <div class="form-floating">
-                                                                    <input type="number" class="form-control" id="prix" name="prix" placeholder="Price" step="0.01" min="0" required>
-                                                                    <label for="prix">Price</label>
-                                                                </div>
-                                                            </div>
-                                                            <div class="invalid-feedback">Please provide a valid price.</div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <div class="form-floating mb-3">
-                                                            <input type="number" class="form-control" id="capacite" name="capacite" placeholder="Capacity" min="1" required>
-                                                            <label for="capacite">Capacity</label>
-                                                            <div class="invalid-feedback">Please provide a valid capacity.</div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <div class="form-floating mb-3">
-                                                            <input type="number" class="form-control" id="duree" name="duree" placeholder="Duration" min="1" required>
-                                                            <label for="duree">Duration (hours)</label>
-                                                            <div class="invalid-feedback">Please provide a valid duration.</div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <div class="form-floating mb-3">
-                                                            <input type="text" class="form-control flatpickr" id="date" name="date" placeholder="Start Date" required data-default-date="today">
-                                                            <label for="date">Start Date</label>
-                                                            <div class="invalid-feedback">Please provide a start date.</div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <div class="form-floating mb-3">
-                                                            <input type="text" class="form-control flatpickr" id="endDate" name="endDate" placeholder="End Date">
-                                                            <label for="endDate">End Date (optional)</label>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="d-flex justify-content-between mt-3">
-                                                    <button type="button" class="btn btn-label-secondary prev-step" data-prev="1">
-                                                        <i class="ti ti-arrow-left me-1"></i> Previous
-                                                    </button>
-                                                    <button type="button" class="btn btn-primary next-step" data-next="3">
-                                                        Next <i class="ti ti-arrow-right ms-1"></i>
-                                                    </button>
-                                                </div>
-                                            </div>
+                                           <div class="form-section" id="step2">
+    <div class="row g-3">
+        <div class="col-md-6">
+            <div class="form-floating mb-3">
+                <div class="input-group input-group-merge">
+                    <span class="input-group-text">$</span>
+                    <div class="form-floating">
+                        <input type="number" class="form-control" id="prix" name="prix" placeholder="Prix" step="0.01" min="0" required>
+                        <label for="prix">Prix</label>
+                    </div>
+                </div>
+                <div class="invalid-feedback">Veuillez saisir un prix valide.</div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-floating mb-3">
+                <input type="number" class="form-control" id="capacite" name="capacite" placeholder="Capacité" min="1" required>
+                <label for="capacite">Capacité</label>
+                <div class="invalid-feedback">Veuillez saisir une capacité valide.</div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-floating mb-3">
+                <input type="number" class="form-control" id="duree" name="duree" placeholder="Durée" min="1" required>
+                <label for="duree">Durée (heures)</label>
+                <div class="invalid-feedback">Veuillez saisir une durée valide.</div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-floating mb-3">
+                <input type="text" class="form-control flatpickr" id="date" name="date" placeholder="Date de début" required data-default-date="today">
+                <label for="date">Date de début</label>
+                <div class="invalid-feedback">Veuillez saisir une date de début.</div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-floating mb-3">
+                <input type="text" class="form-control flatpickr" id="endDate" name="endDate" placeholder="Date de fin">
+                <label for="endDate">Date de fin (optionnel)</label>
+            </div>
+        </div>
+    </div>
+    <div class="d-flex justify-content-between mt-3">
+        <button type="button" class="btn btn-label-secondary prev-step" data-prev="1">
+            <i class="ti ti-arrow-left me-1"></i> Précédent
+        </button>
+        <button type="button" class="btn btn-primary next-step" data-next="3">
+            Suivant <i class="ti ti-arrow-right ms-1"></i>
+        </button>
+    </div>
+</div>
 
-                                            <!-- Step 3: Media -->
-                                            <div class="form-section" id="step3">
-                                                <div class="row g-3">
-                                                    <div class="col-12">
-                                                        <label class="form-label">Pack Image</label>
-                                                        <ul class="nav nav-tabs mb-3" role="tablist">
-                                                            <li class="nav-item">
-                                                                <button class="nav-link active" id="upload-tab" data-bs-toggle="tab" data-bs-target="#upload-content" type="button" role="tab" aria-controls="upload-content" aria-selected="true">
-                                                                    <i class="ti ti-upload me-1"></i> Upload New Image
-                                                                </button>
-                                                            </li>
-                                                            <li class="nav-item">
-                                                                <button class="nav-link" id="server-tab" data-bs-toggle="tab" data-bs-target="#server-content" type="button" role="tab" aria-controls="server-content" aria-selected="false">
-                                                                    <i class="ti ti-server me-1"></i> Select from Server
-                                                                </button>
-                                                            </li>
-                                                        </ul>
-                                                        <div class="tab-content">
-                                                            <!-- Upload New Image Tab -->
-                                                            <div class="tab-pane fade show active" id="upload-content" role="tabpanel" aria-labelledby="upload-tab">
-                                                                <div class="image-upload-area" id="imageUploadArea">
-                                                                    <input type="file" id="packImage" name="packImage" accept="image/*" class="d-none">
-                                                                    <div id="imageUploadPlaceholder">
-                                                                        <i class="ti ti-upload upload-icon mb-2"></i>
-                                                                        <h6>Drop your image here or click to browse</h6>
-                                                                        <p class="text-muted small">Supports JPG, PNG or GIF up to 5MB</p>
-                                                                    </div>
-                                                                    <div id="imagePreviewContainer" class="text-center mt-3 d-none">
-                                                                        <img id="imagePreview" class="img-fluid rounded shadow-sm" style="max-height: 200px;">
-                                                                        <div class="mt-2">
-                                                                            <button type="button" class="btn btn-sm btn-outline-danger" id="removeImage">
-                                                                                <i class="ti ti-trash me-1"></i> Remove
-                                                                            </button>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            
-                                                            <!-- Select from Server Tab -->
-                                                            <div class="tab-pane fade" id="server-content" role="tabpanel" aria-labelledby="server-tab">
-                                                                <div class="server-browser glass-panel p-3">
-                                                                    <div class="d-flex justify-content-between align-items-center mb-3">
-                                                                        <div class="directory-path">
-                                                                            <span class="badge bg-label-primary">
-                                                                                <i class="ti ti-folder me-1"></i> uploads/packs/Images
-                                                                            </span>
-                                                                        </div>
-                                                                        <button type="button" id="refreshServerImages" class="btn btn-sm btn-outline-primary">
-                                                                            <i class="ti ti-refresh me-1"></i> Refresh
-                                                                        </button>
-                                                                    </div>
-                                                                    
-                                                                    <div id="serverImagesContainer" class="row g-3 server-images-grid">
-                                                                        <div class="col-12 text-center py-5">
-                                                                            <div class="spinner-border text-primary" role="status">
-                                                                                <span class="visually-hidden">Loading...</span>
-                                                                            </div>
-                                                                            <p class="mt-2">Loading server images...</p>
-                                                                        </div>
-                                                                    </div>
-                                                                    
-                                                                    <input type="hidden" id="selectedServerImage" name="selectedServerImage">
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-12 mt-4">
-                                                        <div class="form-check form-switch">
-                                                            <input class="form-check-input" type="checkbox" id="featuredPack" name="featuredPack">
-                                                            <label class="form-check-label" for="featuredPack">Feature this pack on homepage</label>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="d-flex justify-content-between mt-3">
-                                                    <button type="button" class="btn btn-label-secondary prev-step" data-prev="2">
-                                                        <i class="ti ti-arrow-left me-1"></i> Previous
-                                                    </button>
-                                                    <button type="button" class="btn btn-primary next-step" data-next="4">
-                                                        Review <i class="ti ti-arrow-right ms-1"></i>
-                                                    </button>
-                                                </div>
-                                            </div>
+<!-- Étape 3 : Médias -->
+<div class="form-section" id="step3">
+    <div class="row g-3">
+        <div class="col-12">
+            <label class="form-label">Image du pack</label>
+            <ul class="nav nav-tabs mb-3" role="tablist">
+                <li class="nav-item">
+                    <button class="nav-link active" id="upload-tab" data-bs-toggle="tab" data-bs-target="#upload-content" type="button" role="tab" aria-controls="upload-content" aria-selected="true">
+                        <i class="ti ti-upload me-1"></i> Téléverser une image
+                    </button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link" id="server-tab" data-bs-toggle="tab" data-bs-target="#server-content" type="button" role="tab" aria-controls="server-content" aria-selected="false">
+                        <i class="ti ti-server me-1"></i> Sélectionner depuis le serveur
+                    </button>
+                </li>
+            </ul>
+            <div class="tab-content">
+                <!-- Onglet Téléversement -->
+                <div class="tab-pane fade show active" id="upload-content" role="tabpanel" aria-labelledby="upload-tab">
+                    <div class="image-upload-area" id="imageUploadArea">
+                        <input type="file" id="packImage" name="packImage" accept="image/*" class="d-none">
+                        <div id="imageUploadPlaceholder">
+                            <i class="ti ti-upload upload-icon mb-2"></i>
+                            <h6>Déposez votre image ici ou cliquez pour parcourir</h6>
+                            <p class="text-muted small">Formats supportés : JPG, PNG ou GIF (max 5MB)</p>
+                        </div>
+                        <div id="imagePreviewContainer" class="text-center mt-3 d-none">
+                            <img id="imagePreview" class="img-fluid rounded shadow-sm" style="max-height: 200px;">
+                            <div class="mt-2">
+                                <button type="button" class="btn btn-sm btn-outline-danger" id="removeImage">
+                                    <i class="ti ti-trash me-1"></i> Supprimer
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Onglet Serveur -->
+                <div class="tab-pane fade" id="server-content" role="tabpanel" aria-labelledby="server-tab">
+                    <div class="server-browser glass-panel p-3">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="directory-path">
+                                <span class="badge bg-label-primary">
+                                    <i class="ti ti-folder me-1"></i> uploads/packs/Images
+                                </span>
+                            </div>
+                            <button type="button" id="refreshServerImages" class="btn btn-sm btn-outline-primary">
+                                <i class="ti ti-refresh me-1"></i> Actualiser
+                            </button>
+                        </div>
+                        
+                        <div id="serverImagesContainer" class="row g-3 server-images-grid">
+                            <div class="col-12 text-center py-5">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Chargement...</span>
+                                </div>
+                                <p class="mt-2">Chargement des images...</p>
+                            </div>
+                        </div>
+                        
+                        <input type="hidden" id="selectedServerImage" name="selectedServerImage">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 mt-4">
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="featuredPack" name="featuredPack">
+                <label class="form-check-label" for="featuredPack">Mettre en avant sur la page d'accueil</label>
+            </div>
+        </div>
+    </div>
+    <div class="d-flex justify-content-between mt-3">
+        <button type="button" class="btn btn-label-secondary prev-step" data-prev="2">
+            <i class="ti ti-arrow-left me-1"></i> Précédent
+        </button>
+        <button type="button" class="btn btn-primary next-step" data-next="4">
+            Vérification <i class="ti ti-arrow-right ms-1"></i>
+        </button>
+    </div>
+</div>
 
-                                            <!-- Step 4: Review -->
-                                            <div class="form-section" id="step4">
-                                                <div class="row">
-                                                    <div class="col-12">
-                                                        <div class="card glass-panel mb-4">
-                                                            <div class="card-header">
-                                                                <h5 class="mb-0">Pack Summary</h5>
-                                                            </div>
-                                                            <div class="card-body">
-                                                                <div class="row">
-                                                                    <div class="col-md-4 mb-4">
-                                                                        <div class="review-image-container mx-auto text-center">
-                                                                            <img id="reviewImage" src="" alt="Pack Preview" class="img-fluid rounded shadow-sm mb-2 review-image">
-                                                                            <div id="reviewNoImage" class="text-muted rounded p-3 bg-light text-center">
-                                                                                <i class="ti ti-photo-off fs-1 text-secondary mb-2"></i>
-                                                                                <p class="mb-0">No image selected</p>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="col-md-8">
-                                                                        <div class="row g-3">
-                                                                            <div class="col-md-6">
-                                                                                <h6 class="text-muted fw-normal">Pack Name:</h6>
-                                                                                <p id="reviewPackName" class="fw-semibold"></p>
-                                                                            </div>
-                                                                            <div class="col-md-6">
-                                                                                <h6 class="text-muted fw-normal">Category:</h6>
-                                                                                <p id="reviewCategory" class="fw-semibold"></p>
-                                                                            </div>
-                                                                            <div class="col-md-6">
-                                                                                <h6 class="text-muted fw-normal">Price:</h6>
-                                                                                <p id="reviewPrice" class="fw-semibold text-primary"></p>
-                                                                            </div>
-                                                                            <div class="col-md-6">
-                                                                                <h6 class="text-muted fw-normal">Capacity:</h6>
-                                                                                <p id="reviewCapacity" class="fw-semibold"></p>
-                                                                            </div>
-                                                                            <div class="col-md-6">
-                                                                                <h6 class="text-muted fw-normal">Duration:</h6>
-                                                                                <p id="reviewDuration" class="fw-semibold"></p>
-                                                                            </div>
-                                                                            <div class="col-md-6">
-                                                                                <h6 class="text-muted fw-normal">Start Date:</h6>
-                                                                                <p id="reviewStartDate" class="fw-semibold"></p>
-                                                                            </div>
-                                                                            <div class="col-md-6">
-                                                                                <h6 class="text-muted fw-normal">End Date:</h6>
-                                                                                <p id="reviewEndDate" class="fw-semibold"></p>
-                                                                            </div>
-                                                                            <div class="col-md-6">
-                                                                                <h6 class="text-muted fw-normal">Featured:</h6>
-                                                                                <p id="reviewFeatured" class="fw-semibold"></p>
-                                                                            </div>
-                                                                            <div class="col-12">
-                                                                                <h6 class="text-muted fw-normal">Description:</h6>
-                                                                                <p id="reviewDescription" class="fw-semibold"></p>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="d-flex justify-content-between mt-3">
-                                                    <button type="button" class="btn btn-label-secondary prev-step" data-prev="3">
-                                                        <i class="ti ti-arrow-left me-1"></i> Previous
-                                                    </button>
-                                                    <button type="submit" class="btn btn-primary pulse">
-                                                        <i class="ti ti-check me-1"></i> Create Pack
-                                                    </button>
-                                                </div>
+<!-- Étape 4 : Vérification -->
+<div class="form-section" id="step4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card glass-panel mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Résumé du pack</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 mb-4">
+                            <div class="review-image-container mx-auto text-center">
+                                <img id="reviewImage" src="" alt="Aperçu du pack" class="img-fluid rounded shadow-sm mb-2 review-image">
+                                <div id="reviewNoImage" class="text-muted rounded p-3 bg-light text-center">
+                                    <i class="ti ti-photo-off fs-1 text-secondary mb-2"></i>
+                                    <p class="mb-0">Aucune image sélectionnée</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <h6 class="text-muted fw-normal">Nom du pack :</h6>
+                                    <p id="reviewPackName" class="fw-semibold"></p>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6 class="text-muted fw-normal">Catégorie :</h6>
+                                    <p id="reviewCategory" class="fw-semibold"></p>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6 class="text-muted fw-normal">Prix :</h6>
+                                    <p id="reviewPrice" class="fw-semibold text-primary"></p>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6 class="text-muted fw-normal">Capacité :</h6>
+                                    <p id="reviewCapacity" class="fw-semibold"></p>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6 class="text-muted fw-normal">Durée :</h6>
+                                    <p id="reviewDuration" class="fw-semibold"></p>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6 class="text-muted fw-normal">Date de début :</h6>
+                                    <p id="reviewStartDate" class="fw-semibold"></p>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6 class="text-muted fw-normal">Date de fin :</h6>
+                                    <p id="reviewEndDate" class="fw-semibold"></p>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6 class="text-muted fw-normal">Mis en avant :</h6>
+                                    <p id="reviewFeatured" class="fw-semibold"></p>
+                                </div>
+                                <div class="col-12">
+                                    <h6 class="text-muted fw-normal">Description :</h6>
+                                    <p id="reviewDescription" class="fw-semibold"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="d-flex justify-content-between mt-3">
+        <button type="button" class="btn btn-label-secondary prev-step" data-prev="3">
+            <i class="ti ti-arrow-left me-1"></i> Précédent
+        </button>
+        <button type="submit" class="btn btn-primary pulse">
+            <i class="ti ti-check me-1"></i> Créer le pack
+        </button>
+    </div>
+</div>
                                             </div>
                                         </form>
                                     </div>
@@ -882,6 +1016,164 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // --- Smart Description Enhancer ---
+            const enhanceBtn = document.getElementById('enhanceDescriptionBtn');
+            const descriptionField = document.getElementById('description');
+            const enhanceLoading = document.getElementById('enhanceLoading');
+            enhanceBtn.addEventListener('click', async function() {
+                const text = descriptionField.value.trim();
+                if (!text) {
+                    descriptionField.classList.add('is-invalid');
+                    return;
+                }
+                // UI: show loading spinner
+                enhanceBtn.disabled = true;
+                enhanceLoading.style.display = '';
+                // Remove previous error
+                let errorDiv = document.getElementById('enhanceError');
+                if (errorDiv) errorDiv.remove();
+                try {
+                    const resp = await fetch('/admin/pack/enhance-description', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: 'description=' + encodeURIComponent(text)
+                    });
+                    const result = await resp.json();
+                    if (result.enhanced && result.generated_text) {
+                        descriptionField.value = result.generated_text;
+                        // Show fallback warning if grammar API failed
+                        if (result.used_fallback && result.hf_error) {
+                            showEnhanceError('Correction grammaticale indisponible : ' + result.hf_error);
+                        }
+                        if (result.used_local_grammar_fallback) {
+                            showEnhanceError('Correction grammaticale locale appliquée (simple, non IA).');
+                        }
+                        // Show Vibe/Emoji/Mood
+                        showVibe(result);
+                    } else if (result.message) {
+                        showEnhanceError(result.message);
+                    }
+                } catch (e) {
+                    showEnhanceError('Erreur lors de l\'amélioration de la description.');
+                } finally {
+                    enhanceBtn.disabled = false;
+                    enhanceLoading.style.display = 'none';
+                }
+            });
+            // Helper to show error/warning
+            function showEnhanceError(msg) {
+                let errorDiv = document.createElement('div');
+                errorDiv.id = 'enhanceError';
+                errorDiv.className = 'alert alert-warning mt-2';
+                errorDiv.innerText = msg;
+                descriptionField.parentNode.appendChild(errorDiv);
+            }
+            // Helper to show vibe/emoji/mood
+            function showVibe(result) {
+                let vibeDiv = document.getElementById('vibeDisplay');
+                if (vibeDiv) vibeDiv.remove();
+                vibeDiv = document.createElement('div');
+                vibeDiv.id = 'vibeDisplay';
+                vibeDiv.className = 'mt-2';
+                if (result.vibe_error) {
+                    vibeDiv.innerHTML = '<span class="alert alert-warning">Détection du mood/emoji indisponible : ' + result.vibe_error + '</span>';
+                } else if (result.emoji && result.mood_tag) {
+                    vibeDiv.innerHTML = `<span style="font-size:1.6em;">${result.emoji}</span> <span class="badge bg-primary">#${result.mood_tag}</span>`;
+                } else {
+                    vibeDiv.innerHTML = '';
+                }
+                descriptionField.parentNode.appendChild(vibeDiv);
+            }
+        
+            // --- Smart Tagging Logic ---
+            const packNameInput = document.getElementById('packName');
+            const descriptionInput = document.getElementById('description');
+            const tagSuggestionsDiv = document.getElementById('tagSuggestions');
+            const selectedTagsInput = document.getElementById('selectedTags');
+            let suggestedTags = [];
+            let selectedTags = [];
+            // French stopwords for filtering
+            const stopwords = [
+                'avec','et','au','aux','le','la','les','un','une','des','du','de','en','à','pour','par','sur','dans','chez','ou','mais','donc','or','ni','car','ce','cette','ces','mon','ma','mes','ton','ta','tes','son','sa','ses','notre','nos','votre','vos','leur','leurs','plus','moins','aussi','très','bien','mal','comme','que','qui','quoi','dont','où','si','là','ici','on','nous','vous','ils','elles','il','elle','je','tu','me','te','se','y','ne','pas','plus','tout','tous','toute','toutes','aucun','aucune','chaque','plusieurs','certains','certaines','autre','autres','même','mêmes','sans','sous','après','avant','depuis','pendant','vers','entre','chez','contre','selon','suite','afin','ainsi','alors','après','aujourd\'hui','autant','autrefois','autrement','avant','avec','bien','bientôt','car','cependant','certes','combien','comme','comment','d\'accord','d\'ailleurs','dans','dehors','déjà','depuis','désormais','donc','dos','droite','du','elle','elles','en','encore','enfin','ensuite','entre','envers','environ','est','et','etc','étaient','état','étions','été','être','eu','eux','fait','faites','fois','font','force','haut','hors','ici','il','ils','je','juste','là','la','le','les','leur','lui','ma','maintenant','mais','mes','mien','mienne','miennes','miens','moi','moins','mon','mot','même','ni','nommés','notre','nous','nouveaux','ou','où','par','parce','parole','pas','personnes','peu','peut','plupart','pour','pourquoi','quand','que','quel','quelle','quelles','quels','qui','sa','sans','ses','seulement','si','sien','sienne','siennes','siens','sinon','soi','soit','sommes','son','sont','sous','soyez','sujet','sur','ta','tandis','te','tellement','tels','tes','ton','tous','tout','trop','très','tu','valeur','voie','voient','vont','votre','vous','vu','ça','étaient','état','étions','été','être','avoir','a','au','aux','ce','ces','dans','des','du','elle','en','et','eux','il','je','la','le','leur','lui','ma','mais','me','même','mes','moi','mon','ne','nos','notre','nous','on','ou','par','pas','pour','qu','que','qui','sa','se','ses','son','sur','ta','te','tes','toi','ton','tu','un','une','vos','votre','vous','c','d','j','l','à','m','n','s','t','y','été','étée','étées','étés','étant','suis','es','est','sommes','êtes','sont','serai','seras','sera','serons','serez','seront','serais','serait','serions','seriez','seraient','étais','était','étions','étiez','étaient','fus','fut','fûmes','fûtes','furent','sois','soit','soyons','soyez','soient','fusse','fusses','fût','fussions','fussiez','fussent','ayant','eu','eue','eues','eus','ai','as','avons','avez','ont','aurai','auras','aura','aurons','aurez','auront','aurais','aurait','aurions','auriez','auraient','avais','avait','avions','aviez','avaient','eut','eûmes','eûtes','eurent','aie','aies','ait','ayons','ayez','aient','eusse','eusses','eût','eussions','eussiez','eussent','ceci','cela','celà','cet','cette','ici','ils','les','leurs','quel','quels','quelle','quelles','sans','soi']
+
+            function extractKeywords(text) {
+                if (!text) return [];
+                if (typeof window.nlp !== 'function') {
+                    // nlp.js not loaded, warn user and disable suggestions
+                    let warn = document.getElementById('tagSuggestionWarning');
+                    if (!warn) {
+                        warn = document.createElement('div');
+                        warn.id = 'tagSuggestionWarning';
+                        warn.className = 'alert alert-warning mt-2';
+                        warn.innerText = "Suggestions de tags désactivées : bibliothèque NLP non chargée.";
+                        tagSuggestionsDiv.parentNode.insertBefore(warn, tagSuggestionsDiv);
+                    }
+                    return [];
+                } else {
+                    let warn = document.getElementById('tagSuggestionWarning');
+                    if (warn) warn.remove();
+                }
+                let doc = window.nlp(text, {language: 'fr'});
+                let nouns = doc.nouns().out('array');
+                let terms = doc.terms().out('array');
+                let keywords = [...nouns, ...terms]
+                    .map(w => w.trim())
+                    .filter(w => w.length > 2 && !stopwords.includes(w.toLowerCase()))
+                    .map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase());
+                // Remove duplicates
+                return [...new Set(keywords)];
+            }
+
+            function updateTagSuggestions() {
+                const nameVal = packNameInput.value;
+                const descVal = descriptionInput.value;
+                const keywords = extractKeywords(nameVal + ' ' + descVal);
+                // Remove already selected tags
+                suggestedTags = keywords.filter(tag => !selectedTags.includes(tag));
+                renderTagSuggestions();
+            }
+
+            function renderTagSuggestions() {
+                tagSuggestionsDiv.innerHTML = '';
+                // Show selected tags first
+                selectedTags.forEach(tag => {
+                    const tagEl = document.createElement('span');
+                    tagEl.className = 'tag-suggestion selected';
+                    tagEl.textContent = tag;
+                    const removeBtn = document.createElement('span');
+                    removeBtn.className = 'remove-tag';
+                    removeBtn.innerHTML = '&times;';
+                    removeBtn.onclick = () => {
+                        selectedTags = selectedTags.filter(t => t !== tag);
+                        updateTagSuggestions();
+                        updateSelectedTagsInput();
+                    };
+                    tagEl.appendChild(removeBtn);
+                    tagSuggestionsDiv.appendChild(tagEl);
+                });
+                // Suggested tags
+                suggestedTags.forEach(tag => {
+                    const tagEl = document.createElement('span');
+                    tagEl.className = 'tag-suggestion';
+                    tagEl.textContent = tag;
+                    tagEl.onclick = () => {
+                        selectedTags.push(tag);
+                        updateTagSuggestions();
+                        updateSelectedTagsInput();
+                    };
+                    tagSuggestionsDiv.appendChild(tagEl);
+                });
+            }
+
+            function updateSelectedTagsInput() {
+                selectedTagsInput.value = selectedTags.join(',');
+            }
+
+            packNameInput.addEventListener('input', updateTagSuggestions);
+            descriptionInput.addEventListener('input', updateTagSuggestions);
+            // Initial render
+            updateTagSuggestions();
+        
             const form = document.getElementById('createPackForm');
             const formSections = document.querySelectorAll('.form-section');
             const steps = document.querySelectorAll('.step');
@@ -1078,7 +1370,7 @@
                         // Show validation error message
                         Swal.fire({
                             title: 'Validation Error',
-                            text: 'Please fill in all required fields before proceeding.',
+                            text: 'Veuillez remplir tous les champs obligatoires avant de continuer.',
                             icon: 'error',
                             confirmButtonText: 'OK'
                         });
@@ -1543,5 +1835,136 @@
             font-size: 12px;
         }
     </style>
+<script>
+// --- Description Enhancer (Backend AJAX) ---
+document.addEventListener('DOMContentLoaded', function() {
+    const enhanceBtn = document.getElementById('enhanceDescriptionBtn');
+    const descField = document.getElementById('description');
+    const enhanceLoading = document.getElementById('enhanceLoading');
+    // Remove any previously attached event listeners to avoid duplicates
+    if (enhanceBtn._hasEnhancer) return;
+    enhanceBtn._hasEnhancer = true;
+    if (enhanceBtn && descField) {
+        enhanceBtn.addEventListener('click', function() {
+            const desc = descField.value.trim();
+            if (!desc) {
+                Swal.fire({ icon: 'warning', title: 'Description vide', text: 'Veuillez saisir une description à améliorer.' });
+                return;
+            }
+            enhanceBtn.disabled = true;
+            enhanceLoading.style.display = '';
+            fetch('/admin/pack/enhance-description', {
+                method: 'POST',
+                headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                body: new URLSearchParams({ description: desc })
+            })
+            .then(res => res.json())
+            .then(result => {
+                if (result.enhanced && result.generated_text) {
+                    descField.value = result.generated_text;
+                    Swal.fire({ icon: 'success', title: 'Description améliorée !', toast: true, position: 'top-end', showConfirmButton: false, timer: 1800 });
+                } else {
+                    Swal.fire({ icon: 'error', title: 'Erreur', text: result.message || 'Aucune amélioration reçue.' });
+                }
+            })
+            .catch(() => {
+                Swal.fire({ icon: 'error', title: 'Erreur', text: 'Impossible de contacter le serveur.' });
+            })
+            .finally(() => {
+                enhanceBtn.disabled = false;
+                enhanceLoading.style.display = 'none';
+            });
+        });
+    }
+});
+// --- End Description Enhancer ---
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+// --- Duplicate Pack Detector (Live AJAX) ---
+let duplicateDetected = false;
+
+function debounce(fn, delay) {
+    let timeout;
+    return function(...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => fn.apply(this, args), delay);
+    };
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const packNameInput = document.getElementById('packName');
+    const descInput = document.getElementById('description');
+    const form = document.getElementById('createPackForm');
+    let lastCheckedValue = '';
+    let warningBox = null;
+
+    function showLiveDuplicateWarning(data) {
+        if (!warningBox) {
+            warningBox = document.createElement('div');
+            warningBox.className = 'duplicate-warning animated fadeInDown';
+            packNameInput.parentNode.insertAdjacentElement('afterend', warningBox);
+        }
+        warningBox.innerHTML = `
+            <div style="display:flex;align-items:center;gap:10px;color:#ff5252;background:rgba(255,82,82,0.08);padding:10px 15px;border-radius:8px;margin-top:5px;box-shadow:0 2px 8px rgba(255,82,82,0.07);font-weight:500;">
+                <i class="fas fa-exclamation-triangle pulse" style="font-size:1.4em;"></i>
+                <span>Un pack similaire existe déjà : <b>"${data.pack.name}"</b>. <span style='font-weight:400;'>Essayez un nom plus distinctif ou modifiez la description.</span></span>
+            </div>
+        `;
+        warningBox.style.display = '';
+    }
+    function hideLiveDuplicateWarning() {
+        if (warningBox) warningBox.style.display = 'none';
+    }
+
+    const checkDuplicate = debounce(function() {
+        const name = packNameInput.value.trim();
+        const desc = descInput ? descInput.value.trim() : '';
+        if (!name || name === lastCheckedValue) return;
+        lastCheckedValue = name;
+        fetch('/admin/pack/check-duplicate', {
+            method: 'POST',
+            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+            body: new URLSearchParams({ packName: name, description: desc })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.duplicate) {
+                duplicateDetected = true;
+                showLiveDuplicateWarning(data);
+            } else {
+                duplicateDetected = false;
+                hideLiveDuplicateWarning();
+            }
+        })
+        .catch(() => { duplicateDetected = false; hideLiveDuplicateWarning(); });
+    }, 400);
+
+    if (packNameInput) {
+        packNameInput.addEventListener('input', checkDuplicate);
+        packNameInput.addEventListener('blur', checkDuplicate);
+    }
+
+    // Prevent submission if duplicate detected
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            if (duplicateDetected) {
+                e.preventDefault();
+                if (warningBox) warningBox.classList.add('shake');
+                setTimeout(() => warningBox && warningBox.classList.remove('shake'), 600);
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Doublon détecté!',
+                    text: 'Un pack similaire existe déjà. Veuillez modifier le nom ou la description.',
+                    confirmButtonText: 'OK'
+                });
+                return false;
+            }
+        });
+    }
+});
+// --- End Duplicate Pack Detector (Live AJAX) ---
+</script>
 </body>
 </html>

@@ -68,30 +68,7 @@
          <!--==============================
     preloader
   ============================== -->
-    <div class="preloader">
-        <button class="th-btn style3 preloaderCls">Cancel Preloader </button>
-        <a href="{{ path('app_pack_shop_details', {'id': pack.id}) }}" class="btn btn-icon btn-label-secondary me-1">
-            <i class="fas fa-eye"></i>
-        </a>
-        <div class="preloader-inner">
-            <div class="loading-window">
-                <div class="car">
-                    <div class="strike"></div>
-                    <div class="strike strike2"></div>
-                    <div class="strike strike3"></div>
-                    <div class="strike strike4"></div>
-                    <div class="strike strike5"></div>
-                    <div class="car-detail spoiler"></div>
-                    <div class="car-detail back"></div>
-                    <div class="car-detail center"></div>
-                    <div class="car-detail center1"></div>
-                    <div class="car-detail front"></div>
-                    <div class="car-detail wheel"></div>
-                    <div class="car-detail wheel wheel2"></div>
-                </div>
-            </div>
-        </div>
-    </div> 
+    
 
 
     <!--==============================
@@ -416,7 +393,11 @@
                 </div>
                 <div class="col-lg-6 align-self-center">
                     <div class="product-about">
-                        <p class="price">${{pack.prix}}<del>$350.99</del></p>
+                        <p class="price">
+  ${{ pack.prix }}
+  <del>${{ (pack.prix * 1.15)|number_format(2, '.', ',') }}</del>
+</p>
+
                         <h2 class="product-title">{{pack.nom}}</h2>
                         <div class="product-rating">
                             <div class="star-rating" role="img" aria-label="Rated 5.00 out of 5"><span style="width:100%">Rated <strong class="rating">5.00</strong> out of 5 based on <span class="rating">1</span> customer rating</span></div>
@@ -429,28 +410,14 @@
                             <span class="tagged_as">End Date: <span>{{pack.endDate|date('Y-m-d')}}</span></span>
                         </div>
                         
-                        <div class="checklist style3">
-                            <ul>
-                                <li>Lifetime structural, one year face finish warranty</li>
-                                <li>Mapped from “Center Caps” under ” tment” tab</li>
-                                <li>Fully copatible with OEM equimpent</li>
-                            </ul>
-                        </div>
+                       
                         <div class="actions">
-                            <div class="quantity">
-                                <input type="number" class="qty-input" step="1" min="1" max="100" name="quantity" value="1" title="Qty">
-                                <button class="quantity-plus qty-btn"><i class="far fa-chevron-up"></i></button>
-                                <button class="quantity-minus qty-btn"><i class="far fa-chevron-down"></i></button>
-                            </div>
+                           
                            <button class="th-btn" onclick="window.location.href='{{ path('app_pack_booking', {'id': pack.id}) }}'">
-    Add to Cart
+    Ajouter au panier
 </button>
                         </div>
-                        <div class="product_meta">
-                            <span class="sku_wrapper">SKU: <span class="sku">wheel-fits-chevy-camaro</span></span>
-                            <span class="posted_in">Category: <a href="shop.html" rel="tag">Tires & Wheels</a></span>
-                            <span>Tags: <a href="shop.html">automotive parts</a><a href="shop.html">wheels</a></span>
-                        </div>
+                       
                     </div>
                 </div>
             </div>
@@ -459,14 +426,11 @@
                     <a class="nav-link th-btn" id="description-tab" data-bs-toggle="tab" href="#description" role="tab" aria-controls="description" aria-selected="false">description</a>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <a class="nav-link th-btn active" id="reviews-tab" data-bs-toggle="tab" href="#reviews" role="tab" aria-controls="reviews" aria-selected="true">reviews</a>
-                </li>
+<a class="nav-link th-btn active" id="reviews-tab" data-bs-toggle="tab" href="#reviews" role="tab" aria-controls="reviews" aria-selected="true">Avis</a>                </li>
             </ul>
             <div class="tab-content" id="productTabContent">
                 <div class="tab-pane fade" id="description" role="tabpanel" aria-labelledby="description-tab">
-                    <p>Conveniently build adaptive users with front-end human capital. Appropriately unleash team building technology for goal-oriented paradigms. Dynamically generate interoperable e-business vis-a-visgoal-oriented value. Completely pursue fully tested content whereas multifunctional core competencies. Progressively scale team driven process improvements before premier functionalities. Holisticly cultivate intermandated methodologies rather than virtual technology. Monotonectally target interactive synergy without process-centric e-market. Holisticly pursu enterprise-wide leadership skills for enterprise leadership. Collaboratively underwhelm standardized expertise after effective bandwidth. Conveniently productivate holistic collaboration and idea-sharing rather than granular strategic theme areas. </p>
-                    <p>Enthusiastically aggregate ethical systems for standardized mindshare. Energistically target resource maximizing leadership skills without backward-compatible action items. Credibly impact alternative expertise vis-a-vis economically sound results. Dynamically synergize empowered benefits through functional partnerships. Authoritatively empower prospective infomediaries for interactive content. Synergistically embrace 2.0 paradigms through professional intellectual capital. Interactively strategize parallel growth strategies without out-of-the-box web services. Assertively reinvent installed base.</p>
-                </div>
+                    <p class="text">{{pack.description}}</p>      </div>
 
 
                 <div class="tab-pane fade show active" id="reviews" role="tabpanel" aria-labelledby="reviews-tab">
@@ -524,24 +488,22 @@
         
         <!-- Comment Form -->
        
-     {% set hasPurchased = false %}
-{% set userId = app.user ? app.user.id : 25 %}
+    {% set hasPurchased = false %}
+    {% for demande in demandePacks %}
+        {% if demande.pack.id == pack.id and demande.statut == 'CONFIRMÉ' %}
+            {% set hasPurchased = true %}
+        {% endif %}
+    {% endfor %}
 
-{% for demande in demandePacks %}
-    {% if demande.pack.id == pack.id and demande.statut == 'CONFIRMÉ' and demande.utilisateur.id == userId %}
-        {% set hasPurchased = true %}
-    {% endif %}
-{% endfor %}
-
-{% if hasPurchased %}
+    {% if hasPurchased %}
     <div class="th-comment-form">
         <div class="form-title">
-            <h3 class="blog-inner-title">Add a review</h3>
+            <h3 class="blog-inner-title">Ajouter un avis</h3>
         </div>
-<form action="{{ path('app_avis_add', {'packId': pack.id}) }}" method="POST" class="review-form" novalidate>
+        <form action="{{ path('app_avis_add', {'packId': pack.id}) }}" method="POST" class="review-form" novalidate>
             <div class="row">
                 <div class="form-group rating-select d-flex align-items-center">
-                    <label>Your Rating</label>
+                    <label>Votre note</label>
                     <p class="stars">
                         <span>
                             {% for i in 1..5 %}
@@ -565,16 +527,17 @@
                 </div>
                
                 <div class="col-12 form-group mb-0">
-                    <button type="submit" class="th-btn">Post Review</button>
+                    <button type="submit" class="th-btn">Publier l'avis</button>
                 </div>
             </div>
         </form>
     </div>
-{% else %}
-    <div class="alert alert-info">
-        <p>You need to purchase this pack before you can leave a review.</p>
-    </div>
-{% endif %}
+    {% else %}
+        <div class="alert alert-info">
+            <p><i class="fas fa-info-circle"></i> Pour laisser un avis, vous devez d'abord acheter ce pack et avoir une commande avec le statut "CONFIRMÉ".</p>
+            <a href="{{ path('app_pack_booking', {'id': pack.id}) }}" class="th-btn mt-3">Acheter ce pack</a>
+        </div>
+    {% endif %}
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -626,7 +589,7 @@
 		==============================-->
             <div class="space-extra-top mb-30">
                 <div class="title-area text-center">
-                    <h2 class="sec-title">Related Packs</h2>
+                   <h2 class="sec-title">Packs similaires</h2>
                 </div>
                 <div class="row th-carousel" data-slide-show="4" data-lg-slide-show="3" data-md-slide-show="2" data-sm-slide-show="2" data-xs-slide-show="1" data-arrows="true">
                     {% for pack in similarPacks %}

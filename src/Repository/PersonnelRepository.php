@@ -175,4 +175,19 @@ public function findAllQueryBuilder()
     return $this->createQueryBuilder('p')
         ->orderBy('p.nomP', 'ASC');
 }
+
+
+
+
+public function findTopReservedPersonnels(int $limit = 3): array
+{
+    return $this->createQueryBuilder('p')
+        ->select('p as personnel, COUNT(r.idR) as reservationCount')
+        ->leftJoin('App\Entity\ReservationPerso', 'r', 'WITH', 'p.idP = r.idP')
+        ->groupBy('p.idP')
+        ->orderBy('reservationCount', 'DESC')
+        ->setMaxResults($limit)
+        ->getQuery()
+        ->getResult();
+}
 }

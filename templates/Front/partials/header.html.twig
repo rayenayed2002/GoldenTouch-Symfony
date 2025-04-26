@@ -5,6 +5,21 @@
             <div class="mobile-logo">
                 <a href="index.html"><img src="{{ asset('Front/img/logo.svg') }}" alt="Taxiar"></a>
             </div>
+            <!-- Barre de recherche dans la navbar -->
+            <div class="search-bar-nav">
+                <form class="d-flex" id="searchForm" action="{{ path('app_lieu_index') }}" method="GET">
+                    <input type="text" name="search" class="form-control me-2" placeholder="Rechercher un lieu...">
+                    <select name="category" class="form-select me-2">
+                        <option value="">Toutes catégories</option>
+                        <option value="Salle de fête">Salle de fête</option>
+                        <option value="Espace extérieur">Espace extérieur</option>
+                        <option value="Salle de conférence">Salle de conférence</option>
+                        <option value="Restaurant">Restaurant</option>
+                        <option value="Autre">Autre</option>
+                    </select>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i></button>
+                </form>
+            </div>
             <div class="th-mobile-menu">
                 <ul>
                     <li class="menu-item-has-children">
@@ -253,6 +268,7 @@
                             <li>
                                 <a href="{{ path('app_pack_index') }}">Pack</a>
                             </li>
+                                
                             <li class="menu-item-has-children">
                                 <a href="#">Event Planner</a>
                                 <ul class="sub-menu">

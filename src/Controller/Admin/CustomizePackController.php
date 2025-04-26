@@ -106,6 +106,17 @@ class CustomizePackController extends AbstractController
             $eventDate = $demandePack->getEvent()->getDate();
         }
         
+        // Force notifications for admin_id = 1 (fix for bell dropdown)
+        $adminId = 1;
+        $latestNotifications = $this->notificationsAdminRepository->createQueryBuilder('n')
+            ->andWhere('n.admin = :adminId')
+            ->setParameter('adminId', $adminId)
+            ->orderBy('n.date_creation', 'DESC')
+            ->setMaxResults(4)
+            ->getQuery()
+            ->getResult();
+        $unreadNotificationsCount = $this->notificationsAdminRepository->countUnreadByAdminId($adminId);
+
         return $this->render('admin/notifications/customize_pack.html.twig', [
             'demandePack' => $demandePack,
             'originalPack' => $pack,
@@ -113,7 +124,9 @@ class CustomizePackController extends AbstractController
             'materielles' => $materielles,
             'personnel' => $personnel,
             'locations' => $locations,
-            'eventDate' => $eventDate
+            'eventDate' => $eventDate,
+            'latestNotifications' => $latestNotifications,
+            'unreadNotificationsCount' => $unreadNotificationsCount
         ]);
     }
 
@@ -138,6 +151,8 @@ class CustomizePackController extends AbstractController
             $event->setDateFin(new \DateTime());
             $this->entityManager->persist($event);
             $demandePack->getPack()->setEvent($event);
+            // Flush immédiatement pour obtenir un ID d'événement valide
+            $this->entityManager->flush();
         }
 
         // Delete existing reservations
@@ -189,8 +204,10 @@ class CustomizePackController extends AbstractController
                 }
                 
                 $reservation = new ReserverLieu();
-                $reservation->setLieu_id($location->getId());
-                $reservation->setEvent_id($event->getId());
+                // Utiliser la relation objet pour définir le lieu et l'événement
+                $reservation->setLieu($location);
+                $reservation->setEvent($event); // Définir l'objet Event directement
+                $reservation->setEvent_id($event->getId()); // Définir aussi l'ID pour compatibilité
                 $reservation->setDate_reservation(new \DateTime());
                 $reservation->setStatus('pending');
                 $reservation->setCreated_at(new \DateTime());
@@ -212,7 +229,7 @@ class CustomizePackController extends AbstractController
         }
 
         // Update pack status
-        $demandePack->setStatut('CUSTOMIZED');
+        $demandePack->setStatut('CONFIRMÉ');
         
         // Calculate total price based on selections
         $totalPrice = $this->calculateTotalPrice($data);

@@ -120,6 +120,23 @@
             color: #6e6b7b;
         }
 
+        /* Validation error styles */
+        .is-invalid {
+            border-color: #ff3e1d !important;
+        }
+        
+        .invalid-feedback {
+            color: #ff3e1d;
+            font-size: 0.875em;
+            display: none;
+            width: 100%;
+            margin-top: 0.25rem;
+        }
+        
+        .is-invalid ~ .invalid-feedback {
+            display: block;
+        }
+        
         /* Notifications styles */
         .menu-link {
             position: relative;
@@ -244,7 +261,7 @@
                                             <div class="col-md-4 col-lg-3">
                                                 <div class="card location-card">
                                                     {% if lieu.imageUrl %}
-                                                        <img src="{{ asset('uploads/lieux/' ~ lieu.imageUrl) }}" class="location-image" alt="{{ lieu.name }}">
+                                                        <img src="{{ asset(lieu.imageUrl) }}" class="location-image" alt="{{ lieu.name }}">
                                                     {% else %}
                                                         <div class="location-image d-flex align-items-center justify-content-center bg-light">
                                                             <i class="ti ti-photo text-muted" style="font-size: 3rem;"></i>
@@ -258,7 +275,14 @@
                                                     {% endif %}
                                                     
                                                     <div class="card-body">
-                                                        <h5 class="card-title">{{ lieu.name }}</h5>
+                                                        <div class="d-flex justify-content-between align-items-start mb-2">
+                                                            <h5 class="card-title mb-0">{{ lieu.name }}</h5>
+                                                            <span class="badge bg-info rounded-pill" 
+                                                                  data-bs-toggle="tooltip" 
+                                                                  title="Nombre de réservations (simulé)">
+                                                                {{ reservationCounts[lieu.id] ?? 0 }}
+                                                            </span>
+                                                        </div>
                                                         <p class="card-text text-truncate">{{ lieu.description }}</p>
                                                         <div class="d-flex justify-content-between align-items-center">
                                                             <div class="location-price">${{ lieu.price }}</div>
@@ -379,55 +403,84 @@
                     <h5 class="modal-title" id="modalTitle">Create New Location</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form id="locationForm" enctype="multipart/form-data">
+                <!-- Form with novalidate attribute -->
+                <form id="locationForm" enctype="multipart/form-data" novalidate>
                     <input type="hidden" id="locationId" name="id">
                     <div class="modal-body">
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label for="name" class="form-label">Name</label>
-                                <input type="text" class="form-control" id="name" name="name" required>
+                                <label for="name" class="form-label">Name *</label>
+                                <input type="text" class="form-control" id="name" name="name">
+                                <div class="invalid-feedback" id="nameError">
+                                    Please provide a valid name (3-255 characters).
+                                </div>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="price" class="form-label">Price</label>
-                                <input type="number" step="0.01" class="form-control" id="price" name="price" required>
+                                <label for="price" class="form-label">Price *</label>
+                                <input type="number" step="0.01" class="form-control" id="price" name="price">
+                                <div class="invalid-feedback" id="priceError">
+                                    Please provide a valid price (positive number).
+                                </div>
                             </div>
                         </div>
                         
                         <div class="mb-3">
-                            <label for="description" class="form-label">Description</label>
+                            <label for="description" class="form-label">Description *</label>
                             <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+                            <div class="invalid-feedback" id="descriptionError">
+                                Please provide a description (10-2000 characters).
+                            </div>
                         </div>
                         
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label for="capacity" class="form-label">Capacity</label>
-                                <input type="number" class="form-control" id="capacity" name="capacity" required>
+                                <label for="capacity" class="form-label">Capacity *</label>
+                                <input type="number" class="form-control" id="capacity" name="capacity">
+                                <div class="invalid-feedback" id="capacityError">
+                                    Please provide a valid capacity (1-1000).
+                                </div>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="category" class="form-label">Category</label>
+                                <label for="category" class="form-label">Category *</label>
                                 <select class="form-select" id="category" name="category">
+                                    <option value="">Select a category</option>
                                     <option value="Conference Room">Conference Room</option>
                                     <option value="Event Space">Event Space</option>
                                     <option value="Coworking">Coworking</option>
                                     <option value="Office">Office</option>
                                 </select>
+                                <div class="invalid-feedback" id="categoryError">
+                                    Please select a category.
+                                </div>
                             </div>
                         </div>
                         
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label for="location" class="form-label">Address</label>
-                                <input type="text" class="form-control" id="location" name="location" required>
+                                <label for="location" class="form-label">Address *</label>
+                                <input type="text" class="form-control" id="location" name="location">
+                                <div class="invalid-feedback" id="locationError">
+                                    Please provide a valid address (5-255 characters).
+                                </div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="ville" class="form-label">City</label>
                                 <input type="text" class="form-control" id="ville" name="ville">
+                                <div class="invalid-feedback" id="villeError">
+                                    City name is too long (max 100 characters).
+                                </div>
                             </div>
                         </div>
                         
                         <div class="mb-3">
-                            <label for="imageUrl" class="form-label">Location Image</label>
-                            <input type="file" class="form-control" id="imageUrl" name="imageUrl" accept="image/*">
+                            <label for="lieuImage" class="form-label">Location Image</label>
+                            <input type="file" class="form-control" id="lieuImage" name="lieuImage" 
+                                   accept="image/jpeg,image/png,image/gif,image/webp"
+                                   data-max-size="5242880">
+                            <small class="text-muted">Accepted formats: JPEG, PNG, GIF, WebP (Max 5MB)</small>
+                            <div class="invalid-feedback" id="imageError">
+                                Please provide a valid image file (max 5MB).
+                            </div>
                             <div id="currentImageContainer" class="mt-2" style="display: none;">
                                 <small>Current Image:</small>
                                 <img id="currentImagePreview" src="" class="img-thumbnail mt-1" style="max-height: 100px;">
@@ -457,7 +510,8 @@
     <script src="{{ asset('vendor/libs/sweetalert2/sweetalert2.js') }}"></script>
     <script src="{{ asset('vendor/libs/flatpickr/flatpickr.js') }}"></script>
     <script src="{{ asset('vendor/libs/swiper/swiper.js') }}"></script>
-<script>
+    
+    <script>
     $(document).ready(function() {
         // Initialize DataTable
         const locationsTable = $('#locationsTable').DataTable({
@@ -501,31 +555,147 @@
                 $('#locationForm')[0].reset();
                 $('#locationId').val('');
                 $('#currentImageContainer').hide();
+                // Clear validation errors
+                $('.is-invalid').removeClass('is-invalid');
+                $('.invalid-feedback').hide();
             }
         });
         
+        // Enhanced client-side form validation
+        function validateForm() {
+            let isValid = true;
+            
+            // Helper function to validate field
+            function validateField(selector, validationFn, errorMsg) {
+                const field = $(selector);
+                const value = field.val().trim();
+                if (!validationFn(value)) {
+                    field.addClass('is-invalid');
+                    $(`#${field.attr('id')}Error`).text(errorMsg).show();
+                    isValid = false;
+                } else {
+                    field.removeClass('is-invalid');
+                }
+            }
+
+            // Validate name (3-255 chars)
+            validateField(
+                '#name', 
+                val => val.length >= 3 && val.length <= 255,
+                'Name must be between 3-255 characters'
+            );
+
+            // Validate price (positive number)
+            validateField(
+                '#price',
+                val => {
+                    const num = parseFloat(val);
+                    return !isNaN(num) && num >= 0 && num <= 999999.99;
+                },
+                'Price must be a positive number (max 999999.99)'
+            );
+
+            // Validate description (10-2000 chars)
+            validateField(
+                '#description',
+                val => val.length >= 10 && val.length <= 2000,
+                'Description must be between 10-2000 characters'
+            );
+
+            // Validate capacity (1-1000)
+            validateField(
+                '#capacity',
+                val => {
+                    const num = parseInt(val);
+                    return !isNaN(num) && num >= 1 && num <= 1000;
+                },
+                'Capacity must be between 1-1000'
+            );
+
+            // Validate category (selected)
+            validateField(
+                '#category',
+                val => val !== '',
+                'Please select a category'
+            );
+
+            // Validate location (5-255 chars)
+            validateField(
+                '#location',
+                val => val.length >= 5 && val.length <= 255,
+                'Address must be between 5-255 characters'
+            );
+
+            // Validate ville (optional, max 100 chars)
+            const ville = $('#ville').val().trim();
+            if (ville.length > 100) {
+                $('#ville').addClass('is-invalid');
+                $('#villeError').text('City name is too long (max 100 characters)').show();
+                isValid = false;
+            } else {
+                $('#ville').removeClass('is-invalid');
+            }
+
+            // Validate image (only for create)
+            if (!$('#locationId').val()) {
+                const imageFile = $('#lieuImage')[0].files[0];
+                if (imageFile) {
+                    const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+                    const maxSize = 5 * 1024 * 1024; // 5MB
+                    
+                    if (!validTypes.includes(imageFile.type)) {
+                        $('#lieuImage').addClass('is-invalid');
+                        $('#imageError').text('Invalid file type. Only JPEG, PNG, GIF, and WebP are allowed.').show();
+                        isValid = false;
+                    } else if (imageFile.size > maxSize) {
+                        $('#lieuImage').addClass('is-invalid');
+                        $('#imageError').text('File size exceeds 5MB limit.').show();
+                        isValid = false;
+                    } else {
+                        $('#lieuImage').removeClass('is-invalid');
+                    }
+                }
+            }
+            
+            return isValid;
+        }
+
         // Form submission handler
         $('#locationForm').on('submit', function(e) {
-    e.preventDefault();
-    const form = e.target;
-    const formData = new FormData(form);
-    const locationId = formData.get('id');
-    const isUpdate = !!locationId;
-    
-    // For updates, ensure we're using the correct field name Symfony expects
-    if (isUpdate) {
-        const imageFile = formData.get('imageUrl'); // Changed from 'image' to 'imageUrl'
-        if (imageFile) {
-            formData.delete('imageUrl');
-            formData.append('lieuImage', imageFile);
-        }
-        // Add _method=PUT for Symfony to recognize it as a PUT request
-        formData.append('_method', 'PUT');
-    }
+            e.preventDefault();
+            
+            // Reset all errors
+            $('.is-invalid').removeClass('is-invalid');
+            $('.invalid-feedback').hide();
+            
+            // Validate form
+            if (!validateForm()) {
+                // Scroll to first error
+                $('html, body').animate({
+                    scrollTop: $('.is-invalid').first().offset().top - 100
+                }, 500);
+                return;
+            }
+            
+            const form = e.target;
+            const formData = new FormData(form);
+            const locationId = formData.get('id');
+            const isUpdate = !!locationId;
+            
+            // For updates, ensure we're using the correct field name Symfony expects
+            if (isUpdate) {
+                const imageFile = formData.get('lieuImage');
+                if (imageFile) {
+                    formData.delete('lieuImage');
+                    formData.append('lieuImage', imageFile);
+                }
+                // Add _method=PUT for Symfony to recognize it as a PUT request
+                formData.append('_method', 'PUT');
+            }
 
-    const url = isUpdate 
-        ? `/admin/lieu/${locationId}/update` 
-        : '{{ path('admin_lieu_create') }}';
+            const url = isUpdate 
+                ? `/admin/lieu/${locationId}/update` 
+                : '{{ path('admin_lieu_create') }}';
 
             // Show loading state
             const submitBtn = form.querySelector('button[type="submit"]');
@@ -560,14 +730,25 @@
                         location.reload();
                     });
                 } else {
-                    // Handle validation errors
+                    // Handle validation errors from server
                     let errorMessage = data.message || 'An error occurred';
-                    if (data.errors && data.errors.length > 0) {
-                        errorMessage += '<ul class="text-start">';
-                        data.errors.forEach(error => {
-                            errorMessage += `<li>${error}</li>`;
+                    if (data.errors && Object.keys(data.errors).length > 0) {
+                        // Clear previous errors
+                        $('.is-invalid').removeClass('is-invalid');
+                        $('.invalid-feedback').hide();
+                        
+                        // Show new errors
+                        Object.entries(data.errors).forEach(([field, errors]) => {
+                            const input = $(`#${field}`);
+                            const errorContainer = $(`#${field}Error`);
+                            
+                            if (input.length && errorContainer.length) {
+                                input.addClass('is-invalid');
+                                errorContainer.text(errors.join(', ')).show();
+                            }
                         });
-                        errorMessage += '</ul>';
+                        
+                        errorMessage = 'Please correct the errors in the form.';
                     }
                     throw new Error(errorMessage);
                 }
@@ -585,57 +766,68 @@
                 submitBtn.textContent = 'Save Location';
             });
         });
+        
+        // Real-time validation for fields
+        $('input, textarea, select').on('input change', function() {
+            const field = $(this);
+            field.removeClass('is-invalid');
+            $(`#${field.attr('id')}Error`).hide();
+        });
     });
 
     // Edit location function
-   function editLocation(id) {
-    fetch(`/admin/lieu/${id}/edit`, {  // Changed from /update to /edit
-        headers: {
-            'X-Requested-With': 'XMLHttpRequest'
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            const lieu = data.data;
-            
-            // Set modal title
-            $('#modalTitle').text('Edit Location');
-            
-            // Fill form with location data
-            $('#locationId').val(lieu.id);
-            $('#name').val(lieu.name);
-            $('#description').val(lieu.description);
-            $('#price').val(lieu.price);
-            $('#capacity').val(lieu.capacity);
-            $('#location').val(lieu.location);
-            $('#ville').val(lieu.ville);
-            $('#category').val(lieu.category);
-            
-            // Show current image if exists
-            if (lieu.imageUrl) {
-                $('#currentImageContainer').show();
-                $('#currentImagePreview').attr('src', `/uploads/lieux/${lieu.imageUrl}`);
-            } else {
-                $('#currentImageContainer').hide();
+    function editLocation(id) {
+        fetch(`/admin/lieu/${id}/edit`, {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
             }
-            
-            // Show modal
-            const modal = new bootstrap.Modal(document.getElementById('locationModal'));
-            modal.show();
-        } else {
-            throw new Error(data.message || 'Failed to load location data');
-        }
-    })
-    .catch(error => {
-        Swal.fire({
-            icon: 'error',
-            title: 'Error!',
-            text: error.message,
-            confirmButtonText: 'OK'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const lieu = data.data;
+                
+                // Set modal title
+                $('#modalTitle').text('Edit Location');
+                
+                // Fill form with location data
+                $('#locationId').val(lieu.id);
+                $('#name').val(lieu.name);
+                $('#description').val(lieu.description);
+                $('#price').val(lieu.price);
+                $('#capacity').val(lieu.capacity);
+                $('#location').val(lieu.location);
+                $('#ville').val(lieu.ville);
+                $('#category').val(lieu.category);
+                
+                // Show current image if exists
+                if (lieu.imageUrl) {
+                    $('#currentImageContainer').show();
+                    $('#currentImagePreview').attr('src', lieu.imageUrl);
+                } else {
+                    $('#currentImageContainer').hide();
+                }
+                
+                // Clear validation errors
+                $('.is-invalid').removeClass('is-invalid');
+                $('.invalid-feedback').hide();
+                
+                // Show modal
+                const modal = new bootstrap.Modal(document.getElementById('locationModal'));
+                modal.show();
+            } else {
+                throw new Error(data.message || 'Failed to load location data');
+            }
+        })
+        .catch(error => {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: error.message,
+                confirmButtonText: 'OK'
+            });
         });
-    });
-}
+    }
 
     // Delete location
     function deleteLocation(id) {

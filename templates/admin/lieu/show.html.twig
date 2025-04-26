@@ -163,9 +163,21 @@
                                 </button>
                             </div>
                         </div>
+                        <!-- Dans show.html.twig, près des boutons d'action existants -->
+<div class="d-flex gap-2">
+    <a href="{{ path('admin_lieu_reservations', {'id': lieu.id}) }}" class="btn btn-info">
+        <i class="ti ti-calendar me-1"></i> Voir les réservations
+    </a>
+    <button type="button" class="btn btn-primary" onclick="editLocation({{ lieu.id }})">
+        <i class="ti ti-edit me-1"></i> Modifier
+    </button>
+    <button type="button" class="btn btn-danger" onclick="deleteLocation({{ lieu.id }})">
+        <i class="ti ti-trash me-1"></i> Supprimer
+    </button>
+</div>
 
                         <!-- Location Header -->
-                        <div class="location-header mb-4" style="background-image: url('{{ asset('uploads/lieux/' ~ lieu.imageUrl) }}')">
+                        <div class="location-header mb-4" style="background-image: url('{{ asset(lieu.imageUrl) }}')">
                             <div class="location-header-content">
                                 <h2 class="mb-2">{{ lieu.name }}</h2>
                                 <div class="d-flex gap-3">

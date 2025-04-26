@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Repository;
-
 use App\Entity\Lieu;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -30,12 +29,13 @@ class LieuRepository extends ServiceEntityRepository
     public function searchByName(string $searchTerm): array
     {
         return $this->createQueryBuilder('l')
-            ->where('l.name LIKE :searchTerm')
-            ->orWhere('l.location LIKE :searchTerm')
-            ->orWhere('l.ville LIKE :searchTerm')
-            ->orWhere('l.category LIKE :searchTerm')
-            ->setParameter('searchTerm', '%'.$searchTerm.'%')
+            ->where('LOWER(l.name) LIKE LOWER(:searchTerm)')
+            ->orWhere('LOWER(l.location) LIKE LOWER(:searchTerm)')
+            ->orWhere('LOWER(l.ville) LIKE LOWER(:searchTerm)')
+            ->orWhere('LOWER(l.category) LIKE LOWER(:searchTerm)')
+            ->setParameter('searchTerm', '%' . $searchTerm . '%')
             ->orderBy('l.name', 'ASC')
+            ->setMaxResults(10) // Limite les résultats
             ->getQuery()
             ->getResult();
     }
@@ -71,6 +71,66 @@ class LieuRepository extends ServiceEntityRepository
             ->setMaxResults($limit)
             ->getQuery()
             ->getResult();
+    }
+
+    public function searchLieux(string $searchTerm = '', string $location = '', string $category = '', ?float $minPrice = null, ?float $maxPrice = null, int $page = 1, int $limit = 10): array
+    {
+        $offset = ($page - 1) * $limit;
+        $qb = $this->createQueryBuilder('l');
+
+        if ($searchTerm) {
+            $qb->andWhere('LOWER(l.name) LIKE LOWER(:searchTerm) OR LOWER(l.description) LIKE LOWER(:searchTerm)')
+               ->setParameter('searchTerm', '%' . $searchTerm . '%');
+        }
+
+        if ($location) {
+            $qb->andWhere('LOWER(l.location) LIKE LOWER(:location) OR LOWER(l.ville) LIKE LOWER(:location)')
+               ->setParameter('location', '%' . $location . '%');
+        }
+
+        if ($category) {
+            $qb->andWhere('l.category = :category')
+               ->setParameter('category', $category);
+        }
+
+        if ($minPrice !== null) {
+            $qb->andWhere('l.price >= :minPrice')
+               ->setParameter('minPrice', $minPrice);
+        }
+
+        if ($maxPrice !== null) {
+            $qb->andWhere('l.price <= :maxPrice')
+               ->setParameter('maxPrice', $maxPrice);
+        }
+
+        $total = count($qb->getQuery()->getResult());
+        $lastPage = ceil($total / $limit);
+
+        $results = $qb->orderBy('l.id', 'ASC')
+            ->setFirstResult($offset)
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+
+        return [
+            'results' => array_map(function($lieu) {
+                return [
+                    'id' => $lieu->getId(),
+                    'name' => $lieu->getName(),
+                    'description' => $lieu->getDescription(),
+                    'location' => $lieu->getLocation(),
+                    'ville' => $lieu->getVille(),
+                    'category' => $lieu->getCategory(),
+                    'price' => $lieu->getPrice(),
+                    'capacity' => $lieu->getCapacity(),
+                    'imageUrl' => $lieu->getImageUrl()
+                ];
+            }, $results),
+            'currentPage' => $page,
+            'lastPage' => $lastPage,
+            'hasPreviousPage' => $page > 1,
+            'hasNextPage' => $page < $lastPage
+        ];
     }
     public function getLocationStats(): array
 {
@@ -116,4 +176,5 @@ public function getMonthlyStats(): array
         WHERE DATE_FORMAT(created_at, "%Y-%m") = DATE_FORMAT(CURRENT_DATE(), "%Y-%m")
     ')->fetchAssociative();
 }
+
 }

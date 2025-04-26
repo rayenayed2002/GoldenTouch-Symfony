@@ -98,19 +98,7 @@
     <!-- Pack List Section -->
     <section class="space-top space-extra-bottom">
         <div class="container">
-            <!-- Search Section -->
-            <div class="search-section">
-                <div class="row justify-content-center">
-                    <div class="col-lg-8">
-                        <form class="search-form">
-                            <div class="input-group">
-                                <input type="text" class="form-control" placeholder="Rechercher un pack...">
-                                <button class="th-btn style3"><i class="fas fa-search"></i></button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
+            
 
             <!-- Pack Grid -->
            <!--==============================
@@ -121,16 +109,16 @@ Breadcrumb Area
 ============================== -->
 <div class="breadcumb-wrapper" data-bg-src="assets/img/breadcumb/breadcumb-bg.jpg">
     <div class="container z-index-common">
-        <h1 class="breadcumb-title">Our Packs</h1>
+        <h1 class="breadcumb-title">Nos Packs</h1>
         <ul class="breadcumb-menu">
-            <li><a href="index.html">Home</a></li>
+            <li><a href="index.html">Accueil</a></li>
             <li>Packs</li>
         </ul>
     </div>
 </div>
 
 <!--==============================
-Pack Area  
+Espace Packs  
 ==============================-->
 <section class="space-top space-extra-bottom">
     <div class="container">
@@ -139,15 +127,15 @@ Pack Area
                 <div class="th-sort-bar">
                     <div class="row justify-content-between align-items-center">
                         <div class="col-md">
-                            <p class="woocommerce-result-count">Showing {{ packs.results|length }} packs</p>
+                            <p class="woocommerce-result-count">Affichage de {{ packs.results|length }} packs</p>
                         </div>
                         <div class="col-md-auto">
                             <form class="woocommerce-ordering" method="get">
-                                <select name="orderby" class="orderby" aria-label="Pack order">
-                                    <option value="menu_order" selected="selected">Default Sorting</option>
-                                    <option value="popularity">Sort by popularity</option>
-                                    <option value="price">Sort by price: low to high</option>
-                                    <option value="price-desc">Sort by price: high to low</option>
+                                <select name="orderby" class="orderby" aria-label="Ordre des packs">
+                                    <option value="menu_order" selected="selected">Tri par défaut</option>
+                                    <option value="popularity">Trier par popularité</option>
+                                    <option value="price">Trier par prix : croissant</option>
+                                    <option value="price-desc">Trier par prix : décroissant</option>
                                 </select>
                             </form>
                         </div>
@@ -155,34 +143,41 @@ Pack Area
                 </div>
                 
                 <div class="row gy-40">
-                    {% for pack in packs.results %}
-                    <div class="col-xl-4 col-sm-6">
-                        <div class="th-product">
-                            <div class="product-img">
-                                {% if pack.getPhoto() %}
-                                    <img src="{{ asset('uploads/packs/' ~ pack.getPhoto()) }}" alt="{{ pack.getNom() }}">
-                                {% else %}
-                                    <img src="{{ asset('Front/img/placeholder.jpg') }}" alt="Pack Image">
-                                {% endif %}
-                                <div class="actions">
-                                    <a href="{{ path('app_pack_shop_details', {'id': pack.id}) }}" class="icon-btn"><i class="far fa-eye"></i></a>
-                                    <a href="{{ path('app_pack_booking', {'id': pack.id}) }}" class="icon-btn"><i class="far fa-cart-plus"></i></a>
-                                    <a href="#" class="icon-btn"><i class="far fa-heart"></i></a>
-                                </div>
-                            </div>
-                            <div class="product-content">
-                                <div class="star-rating" role="img" aria-label="Rated 5.00 out of 5">
-                                    <span>Rated <strong class="rating">5.00</strong> out of 5</span>
-                                </div>
-                                <h3 class="product-title"><a href="{{ path('app_pack_shop_details', {'id': pack.id}) }}">{{ pack.nom }}</a></h3>
-                                <div class="pack-meta">
-                                    <span class="price">{{ pack.prix }} €</span>
-                                    <span class="pack-capacity"><i class="fas fa-users"></i> {{ pack.capacite }} persons</span>
-                                </div>
-                            </div>
-                        </div>
+    {% if packs.results is empty %}
+        <div class="col-12">
+            <div class="alert alert-warning">Aucun pack trouvé pour votre recherche.</div>
+        </div>
+    {% else %}
+        {% for pack in packs.results %}
+        <div class="col-xl-4 col-sm-6">
+            <div class="th-product">
+                <div class="product-img">
+                    {% if pack.getPhoto() %}
+                        <img src="{{ asset('uploads/packs/' ~ pack.getPhoto()) }}" alt="{{ pack.getNom() }}">
+                    {% else %}
+                        <img src="{{ asset('Front/img/placeholder.jpg') }}" alt="Image du pack">
+                    {% endif %}
+                    <div class="actions">
+                        <a href="{{ path('app_pack_shop_details', {'id': pack.id}) }}" class="icon-btn"><i class="far fa-eye"></i></a>
+                        <a href="{{ path('app_pack_booking', {'id': pack.id}) }}" class="icon-btn"><i class="far fa-cart-plus"></i></a>
+                        <a href="#" class="icon-btn"><i class="far fa-heart"></i></a>
                     </div>
-                    {% endfor %}
+                </div>
+                <div class="product-content">
+                    <div class="star-rating" role="img" aria-label="Noté 5.00 sur 5">
+                        <span>Note : <strong class="rating">5.00</strong>/5</span>
+                    </div>
+                    <h3 class="product-title"><a href="{{ path('app_pack_shop_details', {'id': pack.id}) }}">{{ pack.nom }}</a></h3>
+                    <div class="pack-meta">
+                        <span class="price">{{ pack.getPrix()|number_format(2, '.', '') }}&nbsp;€</span>
+                        <span class="pack-capacity"><i class="fas fa-users"></i> {{ pack.capacite }} personnes</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% endif %}
+
                 </div>
                 
                 <div class="th-pagination text-center pt-50">
@@ -197,43 +192,77 @@ Pack Area
             
             <div class="col-xl-3 col-lg-4">
                 <aside class="sidebar-area sidebar-shop">
-                    <div class="widget widget_search">
-                        <form class="search-form">
-                            <input type="text" placeholder="Search packs...">
-                            <button type="submit"><i class="far fa-search"></i></button>
-                        </form>
+                    {# --- Pack Search Filter --- #}
+<div class="widget widget_search" style="border: 2px solid #ffd700; border-radius: 10px; box-shadow: 0 2px 12px rgba(255,215,0,0.06); margin-bottom: 32px;">
+    <h4 style="color: #bfa100; margin-bottom: 12px; text-align: center;">🔎 Rechercher un pack</h4>
+    <form class="search-form" id="pack-search-form" method="get" action="{{ path('app_pack_index') }}" style="display: flex; gap: 8px; align-items: center;">
+        <input type="text" name="q" id="pack-search-input" value="{{ app.request.get('q') }}" placeholder="Rechercher des packs..." autocomplete="off" style="flex: 1; padding: 8px 12px; border-radius: 6px; border: 1px solid #ccc; font-size: 1rem;">
+        <button type="submit" style="background: #ffd700; color: #222; border: none; border-radius: 6px; padding: 8px 14px; font-weight: bold;">
+            <i class="far fa-search"></i>
+        </button>
+    </form>
+    <script>
+(function() {
+    var input = document.getElementById('pack-search-input');
+    var form = document.getElementById('pack-search-form');
+    var debounce;
+    // Restore scroll and focus after reload
+    window.addEventListener('DOMContentLoaded', function() {
+        if (window.sessionStorage.getItem('packSearchScroll')) {
+            window.scrollTo(0, parseInt(window.sessionStorage.getItem('packSearchScroll'), 10));
+            window.sessionStorage.removeItem('packSearchScroll');
+        }
+        if (input) {
+            input.focus();
+            // Move cursor to end
+            var val = input.value;
+            input.value = '';
+            input.value = val;
+        }
+    });
+    if (input && form) {
+        input.addEventListener('input', function() {
+            clearTimeout(debounce);
+            debounce = setTimeout(function() {
+                window.sessionStorage.setItem('packSearchScroll', window.scrollY);
+                form.submit();
+            }, 300);
+        });
+    }
+})();
+</script>
                     </div>
                     
                     <div class="widget widget_categories">
-                        <h3 class="widget_title">Categories</h3>
+                        <h3 class="widget_title">Catégories</h3>
                         <ul>
-                            <li><a href="blog.html">Adventure</a> <span>(8)</span></li>
-                            <li><a href="blog.html">Family</a> <span>(6)</span></li>
-                            <li><a href="blog.html">Luxury</a> <span>(5)</span></li>
-                            <li><a href="blog.html">Weekend</a> <span>(2)</span></li>
-                            <li><a href="blog.html">Custom</a> <span>(7)</span></li>
+                            <li><a href="blog.html">Aventure</a> <span>(8)</span></li>
+                            <li><a href="blog.html">Famille</a> <span>(6)</span></li>
+                            <li><a href="blog.html">Luxe</a> <span>(5)</span></li>
+                            <li><a href="blog.html">Week-end</a> <span>(2)</span></li>
+                            <li><a href="blog.html">Personnalisé</a> <span>(7)</span></li>
                         </ul>
                     </div>
                     
                     <div class="widget widget_price_filter">
-                        <h4 class="widget_title">Filter By Price</h4>
+                        <h4 class="widget_title">Filtrer par prix</h4>
                         <div class="price_slider_wrapper">
                             <div class="price_label">
-                                Price: <span class="from">$0</span> — <span class="to">$1000</span>
+                                Prix : <span class="from">0&nbsp;€</span> — <span class="to">1000&nbsp;€</span>
                             </div>
                             <div class="price_slider"></div>
-                            <button type="submit" class="button">Filter</button>
+                            <button type="submit" class="button">Filtrer</button>
                         </div>
                     </div>
                     
                     <div class="widget widget_tag_cloud">
-                        <h3 class="widget_title">Popular Tags</h3>
+                        <h3 class="widget_title">Étiquettes populaires</h3>
                         <div class="tagcloud">
-                            <a href="blog.html">Adventure</a>
-                            <a href="blog.html">Family</a>
-                            <a href="blog.html">Luxury</a>
-                            <a href="blog.html">Weekend</a>
-                            <a href="blog.html">Custom</a>
+                            <a href="blog.html">Aventure</a>
+                            <a href="blog.html">Famille</a>
+                            <a href="blog.html">Luxe</a>
+                            <a href="blog.html">Week-end</a>
+                            <a href="blog.html">Personnalisé</a>
                         </div>
                     </div>
                 </aside>

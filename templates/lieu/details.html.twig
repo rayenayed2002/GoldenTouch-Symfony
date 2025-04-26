@@ -177,24 +177,7 @@
             transform: translateY(-5px);
             box-shadow: 0 10px 25px rgba(0,0,0,0.1);
         }
-        /* QR Code Styles */
-        .qr-code-card {
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-            margin-bottom: 30px;
-        }
-        .qr-code-card .card-header {
-            font-weight: 600;
-            font-size: 1.1rem;
-            background-color: var(--theme-color);
-            color: white;
-        }
-        .qr-code-img {
-            max-width: 100%;
-            height: auto;
-            padding: 15px;
-        }
+
     </style>
 </head>
 
@@ -204,29 +187,7 @@
         <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
     <![endif]-->
 
-    <!-- Preloader -->
-    <div class="preloader">
-        <button class="th-btn style3 preloaderCls">Cancel Preloader </button>
-        <div class="preloader-inner">
-            <div class="loading-window">
-                <div class="car">
-                    <div class="strike"></div>
-                    <div class="strike strike2"></div>
-                    <div class="strike strike3"></div>
-                    <div class="strike strike4"></div>
-                    <div class="strike strike5"></div>
-                    <div class="car-detail spoiler"></div>
-                    <div class="car-detail back"></div>
-                    <div class="car-detail center"></div>
-                    <div class="car-detail center1"></div>
-                    <div class="car-detail front"></div>
-                    <div class="car-detail wheel"></div>
-                    <div class="car-detail wheel wheel2"></div>
-                </div>
-            </div>
-        </div>
-    </div> 
-
+    
     <!-- Mobile Menu -->
     <div class="th-menu-wrapper">
         <div class="th-menu-area text-center">
@@ -237,7 +198,7 @@
             <div class="th-mobile-menu">
                 <ul>
                     <li><a href="{{ path('app_lieu_index') }}">Lieux</a></li>
-                    <li><a href="{{ path('app_reservation_index') }}">Réservations</a></li>
+               
                     <li><a href="contact.html">Contact</a></li>
                 </ul>
             </div>
@@ -298,7 +259,6 @@
                                             <li><a href="{{ path('app_lieu_index') }}">Liste Lieux</a></li>
                                         </ul>
                                     </li>
-                                    <li><a href="{{ path('app_reservation_index') }}">Réservations</a></li>
                                     <li><a href="contact.html">Contact</a></li>
                                 </ul>
                             </nav>
@@ -319,13 +279,18 @@
     </header>
 
     <!-- Breadcrumb -->
-    <div class="breadcumb-wrapper" data-bg-src="{{ asset('Front/img/breadcumb/breadcumb-bg.jpg') }}">
+    <div class="breadcumb-wrapper" data-bg-src="{{ asset('uploads/lieux/' ~ lieu.imageUrl|default('default.jpg')) }}">
         <div class="container z-index-common">
             <h1 class="breadcumb-title">{{ lieu.name }}</h1>
             <ul class="breadcumb-menu">
                 <li><a href="{{ path('front_index') }}">Accueil</a></li>
                 <li><a href="{{ path('app_lieu_index') }}">Lieux</a></li>
                 <li>{{ lieu.name }}</li>
+                <li>
+    <a href="{{ path('app_user_reservations') }}">
+        <i class="fas fa-calendar-alt me-2"></i>Mes Réservations
+    </a>
+</li>
             </ul>
         </div>
     </div>
@@ -345,7 +310,7 @@
                                 <i class="ti ti-heart"></i>
                             </button>
                         </div>
-                        <img src="{{ asset('uploads/lieux/' ~ lieu.imageUrl|default('default.jpg')) }}" 
+                        <img src="{{ asset(lieu.imageUrl|default('default.jpg')) }}" 
                              class="lieu-cover-image" 
                              alt="{{ lieu.name }}">
                         <div class="lieu-header-overlay">
@@ -373,7 +338,14 @@
                                         </div>
                                         <div>
                                             <h5 class="mb-1">Prix</h5>
-                                            <p class="mb-0">{{ lieu.price }} €</p>
+                                            <div style="display: flex; align-items: center; gap: 10px;">
+                                                <span id="lieu-price" data-base-price="{{ lieu.price }}">{{ lieu.price }} €</span>
+                                                <select id="currency-selector" class="form-select form-select-sm" style="width: auto; display: inline-block;">
+                                                    <option value="EUR">€ Euro</option>
+                                                    <option value="TND">TND Dinar</option>
+                                                    <option value="USD">$ Dollar</option>
+                                                </select>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -468,6 +440,15 @@
                     </div>
 
                     <!-- Map -->
+                    <!-- Leaflet CSS -->
+                    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="anonymous" />
+                    
+                    <!-- Leaflet JavaScript -->
+                    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="anonymous"></script>
+                    
+                    <style>
+                    #map { height: 400px; width: 100%; border-radius: 8px; margin-bottom: 30px; }
+                    </style>
                     <div class="card mb-30">
                         <div class="card-body">
                             <h3 class="section-title">Localisation</h3>
@@ -475,6 +456,23 @@
                         </div>
                     </div>
 
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function() {
+                            var coordinates = '{{ lieu.location }}'.split(',').map(Number);
+                            var lat = coordinates[1];
+                            var lng = coordinates[0];
+                            
+                            var map = L.map('map').setView([lat, lng], 13);
+                            
+                            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                                attribution: '© OpenStreetMap contributors'
+                            }).addTo(map);
+
+                            var marker = L.marker([lat, lng]).addTo(map)
+                                .bindPopup('{{ lieu.name }}')
+                                .openPopup();
+                        });
+                    </script>
                     <!-- Reviews -->
                     <div class="card">
                         <div class="card-body">
@@ -512,50 +510,55 @@
 
                 <!-- Right Column: Booking, QR Code and Similar Lieux -->
                 <div class="col-lg-4">
-                    <!-- Booking Card -->
-                    <div class="booking-card mb-30" id="bookingSection">
-                        <h3 class="section-title">Réserver ce lieu</h3>
-                        <form id="bookingForm">
-                            <div class="mb-3">
-                                <label class="form-label">Date</label>
-                                <input type="date" class="form-control" required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Nombre de personnes</label>
-                                <input type="number" class="form-control" min="1" max="{{ lieu.capacity }}" required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Type d'événement</label>
-                                <select class="form-select">
-                                    <option>Mariage</option>
-                                    <option>Anniversaire</option>
-                                    <option>Conférence</option>
-                                    <option>Autre</option>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Notes spéciales</label>
-                                <textarea class="form-control" rows="3"></textarea>
-                            </div>
-                            <button type="submit" class="th-btn w-100">
-                                <i class="fas fa-calendar-plus me-2"></i> Réserver maintenant
-                            </button>
-                        </form>
-                    </div>
+                   <!-- Booking Card -->
+<div class="booking-card mb-30" id="bookingSection">
+    <h3 class="section-title">Réserver ce lieu</h3>
+
+    {% for flash_message in app.flashes('success') %}
+        <div class="alert alert-success mb-3">
+            {{ flash_message }}
+        </div>
+    {% endfor %}
+    
+    {% for flash_message in app.flashes('error') %}
+        <div class="alert alert-danger mb-3">
+            {{ flash_message }}
+        </div>
+    {% endfor %}
+
+    <form id="bookingForm" method="POST" action="{{ path('app_reserver_lieu') }}" novalidate>
+        <input type="hidden" name="lieu_id" value="{{ lieu.id }}">
+        <input type="hidden" name="event_id" value="55"> <!-- ID statique de l'événement -->
+        <input type="hidden" name="user_id" value="25"> <!-- ID statique de l'utilisateur -->
+        
+        <div class="mb-3">
+            <label class="form-label">Date de réservation</label>
+            <input type="date" class="form-control" name="date_reservation" required 
+                min="{{ 'now'|date('Y-m-d') }}">
+            <div class="invalid-feedback">Veuillez sélectionner une date valide</div>
+        </div>
+        
+        <div class="mb-3">
+            <label class="form-label">Statut</label>
+            <select class="form-control" name="status">
+                <option value="pending">En attente</option>
+                <option value="confirmed">Confirmé</option>
+                <option value="cancelled">Annulé</option>
+            </select>
+        </div>
+        
+        <button type="submit" class="th-btn w-100" id="submitBtn">
+            <i class="fas fa-calendar-plus me-2"></i> Réserver maintenant
+        </button>
+    </form>
+</div>
+
+</div>
 
                     <!-- QR Code Card -->
                     <div class="card mb-30">
                         <div class="card-header bg-primary text-white">
-                            <h5 class="mb-0"><i class="fas fa-qrcode me-2"></i> QR Code</h5>
-                        </div>
-                        <div class="card-body text-center">
-                            <img src="{{ path('app_lieu_qr_code', {'id': lieu.id}) }}" 
-                                 alt="QR Code pour {{ lieu.name }}" 
-                                 class="img-fluid mb-3 qr-code-img">
-                            <p class="text-muted mb-3">Scannez ce code pour accéder à cette page</p>
-                            <a href="{{ path('app_lieu_qr_code', {'id': lieu.id}) }}" 
-                               class="btn btn-sm btn-primary">
-                                <i class="fas fa-download me-1"></i> Télécharger
+                            </div>
                             </a>
                         </div>
                     </div>
@@ -665,7 +668,6 @@
                                 <ul class="menu">
                                     <li><a href="about.html">À propos</a></li>
                                     <li><a href="{{ path('app_lieu_index') }}">Lieux</a></li>
-                                    <li><a href="{{ path('app_reservation_index') }}">Réservations</a></li>
                                     <li><a href="contact.html">Contact</a></li>
                                 </ul>
                             </div>
@@ -738,6 +740,57 @@
     <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap" async defer></script>
 
     <script>
+    // Custom form validation
+function validateDate(input) {
+    const selectedDate = new Date(input.value);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    if (selectedDate < today) {
+        input.setCustomValidity('La date ne peut pas être dans le passé');
+        input.classList.add('is-invalid');
+    } else {
+        input.setCustomValidity('');
+        input.classList.remove('is-invalid');
+    }
+}
+
+function validateCapacity(input, maxCapacity) {
+    const value = parseInt(input.value);
+    
+    if (isNaN(value) {
+        input.setCustomValidity('Veuillez entrer un nombre valide');
+        input.classList.add('is-invalid');
+    } else if (value < 1 || value > maxCapacity) {
+        input.setCustomValidity(`Le nombre doit être entre 1 et ${maxCapacity}`);
+        input.classList.add('is-invalid');
+    } else {
+        input.setCustomValidity('');
+        input.classList.remove('is-invalid');
+    }
+}
+
+// Form submission handling
+document.getElementById('bookingForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const form = e.target;
+    const submitBtn = form.querySelector('#submitBtn');
+    
+    // Désactiver le bouton pendant le traitement
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Traitement...';
+    
+    // Soumettre le formulaire
+    form.submit();
+});
+
+// Reset validation on form reset
+document.getElementById('bookingForm').addEventListener('reset', function() {
+    this.classList.remove('was-validated');
+    const inputs = this.querySelectorAll('.is-invalid');
+    inputs.forEach(input => input.classList.remove('is-invalid'));
+});
         // Initialize map
         function initMap() {
             // Replace with actual coordinates from your Lieu entity
@@ -791,11 +844,33 @@
             }
         }
 
-        // Handle booking form submission
-        document.getElementById('bookingForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            alert('Votre demande de réservation a été envoyée avec succès !');
-        });
+       // Handle booking form submission
+document.getElementById('bookingForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    // Validate form
+    const dateInput = this.querySelector('input[name="date"]');
+    const peopleInput = this.querySelector('input[name="people"]');
+    const eventTypeInput = this.querySelector('select[name="event_type"]');
+    
+    if (!dateInput.value) {
+        alert('Veuillez sélectionner une date');
+        return;
+    }
+    
+    if (!peopleInput.value || peopleInput.value < 1 || peopleInput.value > {{ lieu.capacity }}) {
+        alert('Veuillez entrer un nombre valide de personnes (1-{{ lieu.capacity }})');
+        return;
+    }
+    
+    if (!eventTypeInput.value) {
+        alert('Veuillez sélectionner un type d\'événement');
+        return;
+    }
+    
+    // Submit form if validation passes
+    this.submit();
+});
 
         // Rating stars interaction
         document.querySelectorAll('.rating-star').forEach(star => {
@@ -829,6 +904,142 @@
             const modal = bootstrap.Modal.getInstance(document.getElementById('reviewModal'));
             modal.hide();
         }
+        document.addEventListener('DOMContentLoaded', function() {
+    const bookingForm = document.getElementById('bookingForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const formMessage = document.getElementById('formMessage');
+
+    bookingForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        // Validation côté client
+        if (!bookingForm.checkValidity()) {
+            bookingForm.classList.add('was-validated');
+            return;
+        }
+
+        // Désactiver le bouton pendant le traitement
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Traitement...';
+
+        try {
+            const formData = new FormData(bookingForm);
+            const response = await fetch(bookingForm.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Accept': 'application/json'
+                }
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                // Succès
+                formMessage.innerHTML = `
+                    <div class="alert alert-success">
+                        ${result.message || 'Réservation effectuée avec succès!'}
+                    </div>
+                `;
+                bookingForm.reset();
+                bookingForm.classList.remove('was-validated');
+                
+                // Redirection après 2 secondes
+                setTimeout(() => {
+                }, 2000);
+            } else {
+                // Erreur
+                formMessage.innerHTML = `
+                    <div class="alert alert-danger">
+                        ${result.message || 'Une erreur est survenue lors de la réservation.'}
+                    </div>
+                `;
+            }
+        } catch (error) {
+            formMessage.innerHTML = `
+                <div class="alert alert-danger">
+                    Erreur réseau: ${error.message}
+                </div>
+            `;
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-calendar-plus me-2"></i> Réserver maintenant';
+        }
+    });
+});
     </script>
+<!-- OpenRouteService Maps Integration -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="anonymous"></script>
+<style>
+#map { height: 400px; width: 100%; border-radius: 8px; margin-bottom: 30px; }
+</style>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const map = L.map('map').setView([36.8065, 10.1815], 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    const apiKey = '5b3ce3597851110001cf6248215ca5eaf6354c12be798042e76b3e0a';
+    const locationInput = '{{ lieu.location }}';
+
+    fetch(`https://api.openrouteservice.org/geocode/search?api_key=${apiKey}&text=${encodeURIComponent(locationInput)}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.features && data.features.length > 0) {
+                const coordinates = data.features[0].geometry.coordinates;
+                const marker = L.marker([coordinates[1], coordinates[0]]).addTo(map);
+                map.setView([coordinates[1], coordinates[0]], 15);
+                marker.bindPopup(`<b>{{ lieu.name }}</b><br>{{ lieu.location }}`).openPopup();
+            }
+        })
+        .catch(error => console.error('Erreur de géocodage:', error));
+});
+</script>
+        // Ajout du script pour la conversion de devise -->
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const apiKey = 'f43d95965f40837e335d9584';
+                const priceElement = document.getElementById('lieu-price');
+                const currencySelector = document.getElementById('currency-selector');
+                let basePrice = parseFloat(priceElement.getAttribute('data-base-price'));
+                let rates = { EUR: 1, TND: null, USD: null };
+        
+                function updatePriceDisplay(currency) {
+                    let converted = basePrice;
+                    if (currency !== 'EUR' && rates[currency]) {
+                        converted = basePrice * rates[currency];
+                    }
+                    let symbol = currency === 'EUR' ? '€' : (currency === 'USD' ? '$' : 'TND');
+                    priceElement.textContent = converted.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' ' + symbol;
+                }
+        
+                function fetchRates() {
+                    fetch(`https://v6.exchangerate-api.com/v6/${apiKey}/latest/EUR`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.result === 'success') {
+                                rates.USD = data.conversion_rates.USD;
+                                rates.TND = data.conversion_rates.TND;
+                            }
+                        })
+                        .catch(() => {});
+                }
+        
+                currencySelector.addEventListener('change', function() {
+                    const selected = this.value;
+                    if (selected === 'EUR' || (rates[selected] && rates[selected] !== null)) {
+                        updatePriceDisplay(selected);
+                    } else {
+                        fetchRates();
+                        setTimeout(() => updatePriceDisplay(selected), 500);
+                    }
+                });
+        
+                // Initial fetch for rates
+                fetchRates();
+            });
+        </script>
 </body>
 </html>

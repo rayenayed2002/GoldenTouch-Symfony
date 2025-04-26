@@ -11,30 +11,77 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/admin/lieu', name: 'admin_lieu_')]
 class LieuController extends AbstractController
 {
     private $entityManager;
     private $lieuRepository;
+    private $validator;
 
     public function __construct(
         EntityManagerInterface $entityManager,
-        LieuRepository $lieuRepository
+        LieuRepository $lieuRepository,
+        ValidatorInterface $validator
     ) {
         $this->entityManager = $entityManager;
         $this->lieuRepository = $lieuRepository;
+        $this->validator = $validator;
     }
+    // Dans LieuController.php
 
-    #[Route('/', name: 'index', methods: ['GET'])]
-    public function index(): Response
+    #[Route('/{id}/reservations', name: 'reservations', methods: ['GET'])]
+    public function reservations(int $id): Response
     {
-        $lieux = $this->lieuRepository->findAll();
-
-        return $this->render('admin/lieu/index.html.twig', [
-            'lieux' => $lieux,
+        $lieu = $this->lieuRepository->find($id);
+        
+        if (!$lieu) {
+            throw $this->createNotFoundException('Lieu non trouvé');
+        }
+        
+        $reservations = [
+            [
+                'user' => 'Utilisateur 1',
+                'date' => '2023-01-15',
+                'end_date' => '2023-01-20',
+                'status' => 'confirmé',
+                'amount' => $lieu->getPrice()
+            ],
+            [
+                'user' => 'Utilisateur 2',
+                'date' => '2023-01-25', 
+                'end_date' => '2023-01-30',
+                'status' => 'en attente',
+                'amount' => $lieu->getPrice()
+            ]
+        ];
+        
+        return $this->render('admin/lieu/reservations.html.twig', [
+            'lieu' => $lieu,
+            'reservations' => $reservations,
         ]);
     }
+
+#[Route('/', name: 'index', methods: ['GET'])]
+public function index(): Response
+{
+    $lieux = $this->lieuRepository->findAll();
+    
+    // Simuler des données de réservation (à remplacer par votre propre logique)
+    $reservationCounts = [];
+    foreach ($lieux as $lieu) {
+        // Exemple: générer un nombre aléatoire entre 0 et 10 pour la démo
+        $reservationCounts[$lieu->getId()] = rand(0, 10);
+    }
+    
+    return $this->render('admin/lieu/index.html.twig', [
+        'lieux' => $lieux,
+        'reservationCounts' => $reservationCounts,
+    ]);
+}
 
     #[Route('/new', name: 'new', methods: ['GET'])]
     public function new(): Response
@@ -50,12 +97,12 @@ class LieuController extends AbstractController
             $file = $request->files->get('lieuImage');
             $selectedServerImage = $request->request->get('selectedServerImage');
             
-            // Validation des champs obligatoires
-            $errors = $this->validateLieuData($data);
+            // Validation des données
+            $errors = $this->validateLieuData($data, $file, $selectedServerImage);
             if (!empty($errors)) {
                 return $this->json([
                     'success' => false,
-                    'message' => 'Validation failed',
+                    'message' => 'Des erreurs de validation ont été trouvées',
                     'errors' => $errors
                 ], 400);
             }
@@ -73,31 +120,45 @@ class LieuController extends AbstractController
             // Gestion de l'image
             $this->handleLieuImage($lieu, $file, $selectedServerImage);
             
+            // Validation de l'entité
+            $validationErrors = $this->validator->validate($lieu);
+            if (count($validationErrors) > 0) {
+                $errors = [];
+                foreach ($validationErrors as $error) {
+                    $errors[] = $error->getMessage();
+                }
+                return $this->json([
+                    'success' => false,
+                    'message' => 'Validation de l\'entité échouée',
+                    'errors' => $errors
+                ], 400);
+            }
+            
             $this->entityManager->persist($lieu);
             $this->entityManager->flush();
 
             return $this->json([
                 'success' => true,
-                'message' => 'Location created successfully',
+                'message' => 'Lieu créé avec succès',
                 'lieuId' => $lieu->getId()
             ]);
             
         } catch (\Exception $e) {
             return $this->json([
                 'success' => false,
-                'message' => 'Error creating location: ' . $e->getMessage(),
+                'message' => 'Erreur lors de la création du lieu: ' . $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ], 500);
         }
     }
 
     #[Route('/{id}/show', name: 'show', methods: ['GET'])]
-public function show(Lieu $lieu): Response
-{
-    return $this->render('admin/lieu/show.html.twig', [
-        'lieu' => $lieu
-    ]);
-}
+    public function show(Lieu $lieu): Response
+    {
+        return $this->render('admin/lieu/show.html.twig', [
+            'lieu' => $lieu
+        ]);
+    }
 
     #[Route('/{id}/edit', name: 'edit', methods: ['GET'])]
     public function edit(Lieu $lieu): JsonResponse
@@ -124,9 +185,10 @@ public function show(Lieu $lieu): Response
         try {
             $data = $request->request->all();
             $file = $request->files->get('lieuImage');
+            $selectedServerImage = $request->request->get('selectedServerImage');
             
             // Validation
-            $errors = $this->validateLieuData($data);
+            $errors = $this->validateLieuData($data, $file, $selectedServerImage, true);
             if (!empty($errors)) {
                 return $this->json([
                     'success' => false,
@@ -144,23 +206,34 @@ public function show(Lieu $lieu): Response
             $lieu->setVille($data['ville'] ?? null);
             $lieu->setCategory($data['category'] ?? null);
             
-            // Handle image upload if a new file was provided
-            if ($file) {
-                $newFilename = $this->uploadFile($file);
-                $lieu->setImageUrl($newFilename);
+            // Handle image
+            $this->handleLieuImage($lieu, $file, $selectedServerImage);
+            
+            // Validation de l'entité
+            $validationErrors = $this->validator->validate($lieu);
+            if (count($validationErrors) > 0) {
+                $errors = [];
+                foreach ($validationErrors as $error) {
+                    $errors[] = $error->getMessage();
+                }
+                return $this->json([
+                    'success' => false,
+                    'message' => 'Validation de l\'entité échouée',
+                    'errors' => $errors
+                ], 400);
             }
             
             $this->entityManager->flush();
     
             return $this->json([
                 'success' => true,
-                'message' => 'Location updated successfully'
+                'message' => 'Lieu mis à jour avec succès'
             ]);
             
         } catch (\Exception $e) {
             return $this->json([
                 'success' => false,
-                'message' => 'Error updating location: ' . $e->getMessage()
+                'message' => 'Erreur lors de la mise à jour du lieu: ' . $e->getMessage()
             ], 500);
         }
     }
@@ -180,7 +253,7 @@ public function show(Lieu $lieu): Response
                 $newFilename
             );
         } catch (FileException $e) {
-            throw new \Exception('Failed to upload file: '.$e->getMessage());
+            throw new \Exception('Échec du téléchargement du fichier: '.$e->getMessage());
         }
         
         return $newFilename;
@@ -203,12 +276,12 @@ public function show(Lieu $lieu): Response
 
             return $this->json([
                 'success' => true,
-                'message' => 'Location deleted successfully',
+                'message' => 'Lieu supprimé avec succès',
             ]);
         } catch (\Exception $e) {
             return $this->json([
                 'success' => false,
-                'message' => 'Error deleting location: ' . $e->getMessage(),
+                'message' => 'Erreur lors de la suppression du lieu: ' . $e->getMessage(),
             ], 500);
         }
     }
@@ -247,83 +320,117 @@ public function show(Lieu $lieu): Response
             
             return $this->json([
                 'success' => false,
-                'message' => 'Directory does not exist: ' . $path
+                'message' => 'Le répertoire n\'existe pas: ' . $path
             ], 404);
             
         } catch (\Exception $e) {
             return $this->json([
                 'success' => false,
-                'message' => 'Error reading directory: ' . $e->getMessage()
+                'message' => 'Erreur lors de la lecture du répertoire: ' . $e->getMessage()
             ], 500);
         }
     }
 
-    private function validateLieuData(array $data): array
+    private function validateLieuData(array $data, $file = null, ?string $selectedServerImage = null, bool $isUpdate = false): array
     {
         $errors = [];
         
+        // Validation du nom
         if (empty($data['name'])) {
-            $errors[] = 'The Name field is required.';
+            $errors['name'] = 'Le champ Nom est requis.';
+        } elseif (strlen($data['name']) > 255) {
+            $errors['name'] = 'Le nom ne doit pas dépasser 255 caractères.';
         }
         
+        // Validation du prix
         if (empty($data['price'])) {
-            $errors[] = 'The Price field is required.';
+            $errors['price'] = 'Le champ Prix est requis.';
         } elseif (!is_numeric($data['price']) || (float)$data['price'] < 0) {
-            $errors[] = 'Price must be a positive number.';
+            $errors['price'] = 'Le prix doit être un nombre positif.';
         }
         
+        // Validation de la capacité
         if (empty($data['capacity'])) {
-            $errors[] = 'The Capacity field is required.';
+            $errors['capacity'] = 'Le champ Capacité est requis.';
         } elseif (!is_numeric($data['capacity']) || (int)$data['capacity'] <= 0) {
-            $errors[] = 'Capacity must be a positive integer.';
+            $errors['capacity'] = 'La capacité doit être un nombre entier positif.';
         }
         
+        // Validation de l'adresse
         if (empty($data['location'])) {
-            $errors[] = 'The Address field is required.';
+            $errors['location'] = 'Le champ Adresse est requis.';
+        } elseif (strlen($data['location']) > 255) {
+            $errors['location'] = 'L\'adresse ne doit pas dépasser 255 caractères.';
         }
         
+        // Validation de la description
         if (empty($data['description'])) {
-            $errors[] = 'The Description field is required.';
+            $errors['description'] = 'Le champ Description est requis.';
         }
         
+        // Validation de la catégorie
         if (empty($data['category'])) {
-            $errors[] = 'The Category field is required.';
+            $errors['category'] = 'Le champ Catégorie est requis.';
+        }
+        
+        // Validation de l'image
+        if (!$isUpdate && !$file && !$selectedServerImage) {
+            $errors['image'] = 'Une image est requise (upload ou sélection depuis le serveur).';
+        }
+        
+        // Validation du fichier uploadé si présent
+        if ($file && $file instanceof UploadedFile) {
+            if (!$file->isValid()) {
+                $errors['image'] = 'Le fichier uploadé n\'est pas valide.';
+            } else {
+                $mimeTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+                $maxSize = 5 * 1024 * 1024; // 5MB
+                
+                if (!in_array($file->getMimeType(), $mimeTypes)) {
+                    $errors['image'] = 'Le fichier doit être une image (JPEG, PNG, GIF ou WebP).';
+                }
+                
+                if ($file->getSize() > $maxSize) {
+                    $errors['image'] = 'L\'image ne doit pas dépasser 5MB.';
+                }
+            }
         }
         
         return $errors;
     }
 
     private function handleLieuImage(Lieu $lieu, $file = null, ?string $selectedServerImage = null): void
-    {
-        $uploadsDir = $this->getParameter('kernel.project_dir') . '/public/uploads/locations/Images';
-        
-        // Si une nouvelle image est uploadée
-        if ($file && $file->isValid()) {
-            // Supprimer l'ancienne image si elle existe
-            if ($lieu->getImageUrl()) {
-                $oldImage = $this->getParameter('kernel.project_dir') . '/public' . $lieu->getImageUrl();
-                if (file_exists($oldImage)) {
-                    unlink($oldImage);
-                }
+{
+    $projectDir = $this->getParameter('kernel.project_dir');
+    $fullUploadPath = $projectDir . '/public/uploads/lieux/Images';
+    $webPath = '/uploads/lieux/Images';
+
+    if ($file && $file instanceof UploadedFile && $file->isValid()) {
+        if ($lieu->getImageUrl()) {
+            $oldImagePath = $projectDir . '/public' . $lieu->getImageUrl();
+            if (file_exists($oldImagePath)) {
+                unlink($oldImagePath);
             }
-            
-            // Créer le répertoire s'il n'existe pas
-            if (!file_exists($uploadsDir)) {
-                mkdir($uploadsDir, 0777, true);
-            }
-            
-            // Générer un nom de fichier sécurisé
-            $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
-            $safeFilename = preg_replace('/[^A-Za-z0-9_]/', '', $originalFilename);
-            $newFilename = $safeFilename . '-' . uniqid() . '.' . $file->guessExtension();
-            
-            // Déplacer le fichier
-            $file->move($uploadsDir, $newFilename);
-            $lieu->setImageUrl('/uploads/locations/Images/' . $newFilename);
-        } 
-        // Si une image du serveur est sélectionnée
-        elseif ($selectedServerImage) {
-            $lieu->setImageUrl('/uploads/locations/Images/' . $selectedServerImage);
+        }
+
+        if (!file_exists($fullUploadPath)) {
+            mkdir($fullUploadPath, 0777, true);
+        }
+
+        $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+        $safeFilename = preg_replace('/[^A-Za-z0-9_-]/', '', $originalFilename);
+        $newFilename = $safeFilename . '-' . uniqid() . '.' . $file->guessExtension();
+
+        $file->move($fullUploadPath, $newFilename);
+        $lieu->setImageUrl($webPath . '/' . $newFilename); // Saves as "/uploads/lieux/Images/filename.jpg"
+    }
+    elseif ($selectedServerImage) {
+        $filename = basename($selectedServerImage);
+        $fullServerPath = $fullUploadPath . '/' . $filename;
+
+        if (file_exists($fullServerPath)) {
+            $lieu->setImageUrl($webPath . '/' . $filename);
         }
     }
+}
 }

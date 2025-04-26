@@ -49,12 +49,14 @@ class PersonnelType extends AbstractType
             ])
             ->add('serviceP', ChoiceType::class, [
                 'choices' => [
-                    'Photographie' => 'Photographie',
-                    'Vidéographie' => 'Vidéographie',
-                    'Animation' => 'Animation',
+                    'Sécurité' => 'Sécurité',
                     'Décorateur' => 'Décorateur',
-                    'Catering' => 'Catering',
-                    'Logistique' => 'Logistique',
+                    'Serveur' => 'Serveur',
+                    'Organisateur' => 'Organisateur',
+                    'Fleuriste' => 'Fleuriste',
+                    'Vidéaste' => 'Vidéaste',
+                    'Chef' => 'Chef',
+                    'Animateur' => 'Animateur',
                 ],
                 'label' => 'Service',
                 'placeholder' => 'Sélectionnez un service',
