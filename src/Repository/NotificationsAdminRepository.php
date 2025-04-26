@@ -159,4 +159,20 @@ class NotificationsAdminRepository extends ServiceEntityRepository
             ->getSingleScalarResult()
         ;
     }
+
+    /**
+     * Find the latest notifications
+     * 
+     * @param int $limit The maximum number of notifications to return
+     * @return NotificationsAdmin[] Returns an array of the latest NotificationsAdmin objects
+     */
+    public function findLatest(int $limit): array
+    {
+        return $this->createQueryBuilder('n')
+            ->orderBy('n.date_creation', 'DESC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 }

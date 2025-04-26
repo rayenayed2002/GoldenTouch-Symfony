@@ -1,0 +1,26 @@
+{% for demande in demandes %}
+    <tr>
+        <td>{{ demande.id }}</td>
+        <td>{{ demande.utilisateur ? demande.utilisateur.nom : '-' }}</td>
+        <td>{{ demande.pack ? demande.pack.nom : '-' }}</td>
+        <td>{{ demande.event ? demande.event.nom : '-' }}</td>
+        <td>
+            <span class="badge bg-{{ demande.statut == 'approved' ? 'success' : (demande.statut == 'rejected' ? 'danger' : 'warning') }}">
+                {{ demande.statut == 'approved' ? 'Approuvé' : (demande.statut == 'rejected' ? 'Rejeté' : 'En attente') }}
+            </span>
+        </td>
+        <td>{{ demande.dateDemande ? demande.dateDemande|date('d/m/Y H:i') : '-' }}</td>
+        <td>{{ demande.prix }} €</td>
+        <td>
+            <div class="d-flex gap-2">
+                <a href="{{ path('admin_customize_pack_show', {'id': demande.id}) }}" class="btn btn-sm btn-primary">
+                    <i class="ti ti-eye me-1"></i> Voir
+                </a>
+            </div>
+        </td>
+    </tr>
+{% else %}
+    <tr>
+        <td colspan="8" class="text-center">Aucune demande trouvée</td>
+    </tr>
+{% endfor %}

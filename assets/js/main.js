@@ -4,6 +4,9 @@
 
 'use strict';
 
+// Import flatpickr for date picker functionality
+import flatpickr from 'flatpickr';
+
 let isRtl = window.Helpers.isRtl(),
   isDarkStyle = window.Helpers.isDarkStyle(),
   menu,
@@ -583,3 +586,45 @@ if (typeof $ !== 'undefined') {
     }
   });
 }
+
+// Modified navbar dropdown handling with event delegation
+document.addEventListener('click', function(event) {
+  if (event.target.closest('.dropdown-toggle')) {
+    const dropdown = event.target.closest('.dropdown');
+    const menu = dropdown.querySelector('.dropdown-menu');
+    menu.classList.toggle('show');
+  }
+});
+
+// Updated search initialization with proper toggle handling
+function initSearchTypeahead() {
+  if (searchInput.length) {
+    searchInput
+      .typeahead('destroy')
+      .typeahead({
+        hint: true,
+        highlight: true,
+        minLength: 1
+      }, [/* typeahead configurations */]);
+  }
+}
+
+searchToggler.off('click').on('click', function() {
+  searchInputWrapper.toggleClass('d-none');
+  if (!searchInputWrapper.hasClass('d-none')) {
+    initSearchTypeahead();
+    searchInput.focus();
+  }
+});
+
+// Initialize flatpickr date pickers
+const dateInputs = document.querySelectorAll('.flatpickr-input');
+dateInputs.forEach(input => {
+  flatpickr(input, {
+    dateFormat: 'Y-m-d',
+    allowInput: true
+  });
+});
+import 'datatables.net';
+import 'datatables.net-responsive-bs5';
+import 'datatables.net-buttons-bs5';

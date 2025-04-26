@@ -29,6 +29,38 @@
     <link rel="stylesheet" href="{{ asset('vendor/libs/swiper/swiper.css') }}" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" />
     <style>
+        /* Creative DataTables export buttons */
+        .dt-export-btn {
+            background: linear-gradient(90deg, #7367F0 0%, #9E8CFB 100%);
+            color: #fff !important;
+            border: none;
+            border-radius: 2rem;
+            box-shadow: 0 4px 12px rgba(115,103,240,0.15);
+            padding: 0.5em 1.4em;
+            margin-right: 0.5em;
+            font-weight: 600;
+            font-size: 1.05em;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6em;
+            transition: background 0.3s, transform 0.2s, box-shadow 0.2s;
+        }
+        .dt-export-btn:last-child { margin-right: 0; }
+        .dt-export-btn:hover, .dt-export-btn:focus {
+            background: linear-gradient(90deg, #9E8CFB 0%, #7367F0 100%);
+            color: #fff !important;
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 8px 24px rgba(115,103,240,0.22);
+        }
+        .dt-export-btn i {
+            font-size: 1.2em;
+            vertical-align: middle;
+        }
+    
+        /* Custom icon size for bigger notification bell and shortcut icon */
+        .notification-bell-big { font-size: 1.5rem !important; }
+        .shortcut-big { font-size: 1.5rem !important; }
+
         :root {
             --primary-color: #7367F0;
             --secondary-color: #82868b;
@@ -51,6 +83,10 @@
             border-radius: 1rem;
             overflow: hidden;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin: 2rem auto;
+            display: block;
+            width: 98%;
+            max-width: 1200px;
         }
         .btn {
             border-radius: 0.5rem;
@@ -107,46 +143,456 @@
             <!-- / Menu -->
             <!-- Layout container -->
             <div class="layout-page">
-                <!-- Navbar -->
-                <nav class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme" id="layout-navbar">
-                    <div class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
-                        <a class="nav-item nav-link px-0 me-xl-4" href="javascript:void(0)">
-                            <i class="ti ti-menu-2 ti-sm"></i>
-                        </a>
+               <!-- Navbar -->
+            <nav class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme"
+              id="layout-navbar">
+              <div class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
+                <a class="nav-item nav-link px-0 me-xl-4" href="javascript:void(0)">
+                  <i class="ti ti-menu-2 ti-sm"></i>
+                </a>
+              </div>
+
+            <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
+              <!-- Search -->
+              <div class="navbar-nav align-items-center">
+                <div class="navbar-nav align-items-center position-relative">
+                  <div class="nav-item navbar-search-wrapper mb-0">
+                    <a class="nav-item nav-link search-toggler d-flex align-items-center px-0" id="admin-notification-search-bar-trigger" href="javascript:void(0);">
+                      <i class="ti ti-search ti-md me-2"></i>
+                      <span class="d-none d-md-inline-block text-muted">Rechercher (Ctrl+/)</span>
+                    </a>
+                    <div id="admin-notification-search-dropdown" style="display:none; position:absolute; top:100%; left:0; z-index:9999; min-width:400px; background:white; box-shadow:0 6px 24px rgba(0,0,0,0.13); border-radius:8px; padding:12px;">
+                      <form id="demande-pack-search-form" method="get" style="margin:0;">
+                        <div class="mb-3">
+                          <input type="text" name="q" id="admin-notification-search-input-navbar" class="form-control" value="{{ app.request.get('q') }}" placeholder="Rechercher par nom du client ou événement..." autocomplete="off" autofocus>
+                        </div>
+                        <div class="mb-3">
+                          <select name="status" class="form-select" id="status-filter">
+                            <option value="">Tous les statuts</option>
+                            <option value="pending">En attente</option>
+                            <option value="approved">Approuvé</option>
+                            <option value="rejected">Rejeté</option>
+                          </select>
+                        </div>
+                        <div class="row mb-3">
+                          <div class="col-6">
+                            <input type="text" name="date_from" class="form-control flatpickr-date" placeholder="Date début">
+                          </div>
+                          <div class="col-6">
+                            <input type="text" name="date_to" class="form-control flatpickr-date" placeholder="Date fin">
+                          </div>
+                        </div>
+                        <div class="row mb-3">
+                          <div class="col-6">
+                            <input type="number" name="price_min" class="form-control" placeholder="Prix min">
+                          </div>
+                          <div class="col-6">
+                            <input type="number" name="price_max" class="form-control" placeholder="Prix max">
+                          </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Appliquer les filtres</button>
+                      </form>
                     </div>
-                    <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
-                        <ul class="navbar-nav flex-row align-items-center ms-auto">
-                            <li class="nav-item navbar-dropdown dropdown-user dropdown">
-                                <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
-                                    <div class="avatar avatar-online">
-                                        <img src="{{ asset('img/avatars/1.png') }}" alt class="h-auto rounded-circle">
+                  </div>
+                </div>
+              </div>
+<script>
+(function() {
+  const trigger = document.getElementById('admin-notification-search-bar-trigger');
+  const dropdown = document.getElementById('admin-notification-search-dropdown');
+  const input = document.getElementById('admin-notification-search-input-navbar');
+  const form = document.getElementById('demande-pack-search-form');
+  let isOpen = false;
+  let debounceTimer = null;
+
+  // Initialize flatpickr for date inputs
+  document.querySelectorAll('.flatpickr-date').forEach(elem => {
+    flatpickr(elem, {
+      dateFormat: "Y-m-d",
+      allowInput: true
+    });
+  });
+
+  function openDropdown() {
+    dropdown.style.display = 'block';
+    setTimeout(() => { input && input.focus(); }, 50);
+    isOpen = true;
+  }
+
+  function closeDropdown() {
+    dropdown.style.display = 'none';
+    isOpen = false;
+  }
+
+  function performSearch() {
+    const formData = new FormData(form);
+    const searchParams = new URLSearchParams();
+
+    formData.forEach((value, key) => {
+      if (value) searchParams.append(key, value);
+    });
+
+    const url = form.action + '?' + searchParams.toString();
+
+    fetch(url, {
+      headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(response => response.text())
+    .then(html => {
+      document.getElementById('demande-pack-table-body').innerHTML = html;
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      Swal.fire({
+        title: 'Erreur',
+        text: 'Une erreur est survenue lors de la recherche',
+        icon: 'error'
+      });
+    });
+  }
+
+  // Event Listeners
+  trigger.addEventListener('click', function(e) {
+    e.preventDefault();
+    if (!isOpen) openDropdown();
+    else closeDropdown();
+  });
+
+  document.addEventListener('keydown', function(e) {
+    if ((e.ctrlKey && e.key === '/') || (e.ctrlKey && e.key === '÷')) {
+      openDropdown();
+      e.preventDefault();
+    }
+    if (e.key === 'Escape' && isOpen) {
+      closeDropdown();
+    }
+    if (e.key === 'Enter' && isOpen) {
+      performSearch();
+    }
+  });
+
+  document.addEventListener('mousedown', function(e) {
+    if (isOpen && !dropdown.contains(e.target) && !trigger.contains(e.target)) {
+      closeDropdown();
+    }
+  });
+
+  // Handle form inputs
+  form.querySelectorAll('input, select').forEach(element => {
+    element.addEventListener('change', () => {
+      if (debounceTimer) clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(performSearch, 400);
+    });
+  });
+
+  input.addEventListener('input', () => {
+    if (debounceTimer) clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(performSearch, 400);
+  });
+
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    performSearch();
+  });
+})();
+</script>
+              <!-- /Search -->
+
+              <ul class="navbar-nav flex-row align-items-center ms-auto">
+                <!-- Language -->
+                <li class="nav-item dropdown-language dropdown me-2 me-xl-0">
+                  <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
+                    <i class="fi fi-us fis rounded-circle me-1 fs-3"></i>
+                  </a>
+                  <ul class="dropdown-menu dropdown-menu-end">
+                    <li>
+                      <a class="dropdown-item" href="javascript:void(0);" data-language="fr">
+                        <i class="fi fi-fr fis rounded-circle me-1 fs-3"></i>
+                        <span class="align-middle">Français</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a class="dropdown-item" href="javascript:void(0);" data-language="en">
+                        <i class="fi fi-us fis rounded-circle me-1 fs-3"></i>
+                        <span class="align-middle">Anglais</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a class="dropdown-item" href="javascript:void(0);" data-language="de">
+                        <i class="fi fi-de fis rounded-circle me-1 fs-3"></i>
+                        <span class="align-middle">Allemand</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a class="dropdown-item" href="javascript:void(0);" data-language="pt">
+                        <i class="fi fi-pt fis rounded-circle me-1 fs-3"></i>
+                        <span class="align-middle">Portugais</span>
+                      </a>
+                    </li>
+                  </ul>
+                </li>
+                <!--/ Language -->
+
+                <!-- Style Switcher -->
+                <li class="nav-item me-2 me-xl-0">
+                  <a class="nav-link style-switcher-toggle hide-arrow" href="javascript:void(0);">
+                    <i class="ti ti-md"></i>
+                  </a>
+                </li>
+                <!--/ Style Switcher -->
+
+                <!-- Quick links  -->
+                <li class="nav-item dropdown-shortcuts navbar-dropdown dropdown me-2 me-xl-0">
+                  <a
+                    class="nav-link dropdown-toggle hide-arrow"
+                    href="javascript:void(0);"
+                    data-bs-toggle="dropdown"
+                    data-bs-auto-close="outside"
+                    aria-expanded="false">
+                    <i class="ti ti-layout-grid-add ti-md"></i>
+                  </a>
+                  <div class="dropdown-menu dropdown-menu-end py-0">
+                    <div class="dropdown-menu-header border-bottom">
+                      <div class="dropdown-header d-flex align-items-center py-3">
+                        <h5 class="text-body mb-0 me-auto">Shortcuts</h5>
+                        <a
+                          href="javascript:void(0)"
+                          class="dropdown-shortcuts-add text-body"
+                          data-bs-toggle="tooltip"
+                          data-bs-placement="top"
+                          title="Add shortcuts"
+                          ><i class="ti ti-sm ti-apps"></i
+                        ></a>
+                      </div>
+                    </div>
+                    <div class="dropdown-shortcuts-list scrollable-container">
+                      <div class="row row-bordered overflow-visible g-0">
+                        <div class="dropdown-shortcuts-item col">
+                          <span class="dropdown-shortcuts-icon rounded-circle mb-2">
+                            <i class="ti ti-shopping-cart fs-4"></i>
+                          </span>
+                          <a  class="stretched-link">Liste Demande Pack</a>
+                          <small class="text-muted mb-0">Liste des demandes de packs</small>
+                        </div>
+                        <div class="dropdown-shortcuts-item col">
+                          <span class="dropdown-shortcuts-icon rounded-circle mb-2">
+                            <i class="ti ti-chart-bar fs-4"></i>
+                          </span>
+                          <a href="{{ path('admin_advanced_statistiques_index') }}" class="stretched-link">Advanced Statistiques</a>
+                          <small class="text-muted mb-0">advanced statistiques</small>
+                        </div>
+                      </div>
+                      <div class="row row-bordered overflow-visible g-0">
+                        <div class="dropdown-shortcuts-item col">
+                          
+                        <div class="dropdown-shortcuts-item col">
+                          <span class="dropdown-shortcuts-icon rounded-circle mb-2">
+                            <i class="ti ti-bell fs-4"></i>
+                          </span>
+                          <a href="{{ path('admin_notifications') }}" class="stretched-link">Notifications</a>
+                          <small class="text-muted mb-0">Notifications</small>
+                        </div>
+                      </div>
+                    
+                        
+                        
+                      </div>
+                    </div>
+                  </div>
+                </li>
+                <!-- Quick links -->
+
+                <!-- Notification -->
+                <li class="nav-item dropdown-notifications navbar-dropdown dropdown me-3 me-xl-1">
+                 <a
+        class="nav-link dropdown-toggle hide-arrow"
+        href="javascript:void(0);"
+        data-bs-toggle="dropdown"
+        data-bs-auto-close="outside"
+        aria-expanded="false">
+        <i class="ti ti-bell ti-md"></i>
+        <span id="unreadCountBadge" class="badge bg-danger rounded-pill badge-notifications">0</span>
+    </a>
+                  <ul class="dropdown-menu dropdown-menu-end py-0">
+                    <li class="dropdown-menu-header border-bottom">
+                      <div class="dropdown-header d-flex align-items-center py-3">
+                        <h5 class="text-body mb-0 me-auto">Notifications</h5>
+                        <a
+                          href="javascript:void(0)"
+                          class="dropdown-notifications-all text-body"
+                          data-bs-toggle="tooltip"
+                          data-bs-placement="top"
+                          title="Marquer tout comme lu"
+                          ><i class="ti ti-mail-opened fs-4"></i
+                        ></a>
+                      </div>
+                    </li>
+                    <li class="dropdown-notifications-list scrollable-container" style="max-height: 320px; overflow-y: auto;">
+                      <ul class="list-group list-group-flush" style="max-height: 320px; overflow-y: auto;">
+                        {% for notification in latestNotifications|slice(0, 4) %}
+                            <li class="list-group-item list-group-item-action dropdown-notifications-item p-0">
+                                <a href="{{ path('admin_customize_pack_show', {'id': notification.demandePack.id}) }}" class="d-flex align-items-stretch text-decoration-none text-dark w-100 p-3" style="cursor:pointer;">
+                                    <div class="flex-shrink-0 me-3">
+                                        <div class="avatar">
+                                            <span class="avatar-initial rounded-circle bg-label-info"><i class="ti ti-bell"></i></span>
+                                        </div>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-1">{{ notification.titre|default('Notification') }}</h6>
+                                        <p class="mb-0" title="{{ notification.message|striptags }}">
+    {{ notification.summary is defined and notification.summary ? notification.summary : notification.message|striptags|length > 80 ? notification.message|striptags|slice(0, 80) ~ '…' : notification.message|striptags }}
+</p>
+                                        <small class="text-muted">{{ notification.dateCreation ? notification.dateCreation|date('d/m/Y H:i') : '' }}</small>
+                                    </div>
+                                    <div class="flex-shrink-0 dropdown-notifications-actions align-self-center">
+                                        <span class="badge badge-dot"></span>
                                     </div>
                                 </a>
-                                <ul class="dropdown-menu dropdown-menu-end">
-                                    <li>
-                                        <a class="dropdown-item" href="#">
-                                            <div class="d-flex">
-                                                <div class="flex-shrink-0 me-3">
-                                                    <div class="avatar avatar-online">
-                                                        <img src="{{ asset('img/avatars/1.png') }}" alt class="h-auto rounded-circle">
-                                                    </div>
-                                                </div>
-                                                <div class="flex-grow-1">
-                                                    <span class="fw-semibold d-block">Admin</span>
-                                                    <small class="text-muted">Administrator</small>
-                                                </div>
-                                            </div>
-                                        </a>
-                                    </li>
-                                    <li><div class="dropdown-divider"></div></li>
-                                    <li><a class="dropdown-item" href="#"><i class="ti ti-user-check me-2 ti-sm"></i> <span class="align-middle">My Profile</span></a></li>
-                                    <li><a class="dropdown-item" href="#"><i class="ti ti-settings me-2 ti-sm"></i> <span class="align-middle">Settings</span></a></li>
-                                </ul>
                             </li>
-                        </ul>
+                        {% else %}
+                            <li class="list-group-item text-center text-muted">No notifications</li>
+                        {% endfor %}
+                            
+                        </li>
+                      </ul>
+                    </li>
+                    <li class="dropdown-menu-footer border-top">
+                      <a
+                        href="javascript:void(0);"
+                        class="dropdown-item d-flex justify-content-center text-primary p-2 h-px-40 mb-1 align-items-center">
+                        View all notifications
+                      </a>
+                    </li>
+                  </ul>
+                </li>
+                <!--/ Notification -->
+
+                <!-- User -->
+                <li class="nav-item navbar-dropdown dropdown-user dropdown">
+                  <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
+                    <div class="avatar avatar-online">
+                      <img src="{{ asset('img/avatars/1.png') }}" alt class="h-auto rounded-circle">
                     </div>
-                </nav>
-                <!-- / Navbar -->
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </nav>
+          <!-- / Navbar -->
+
+
+
+      <!-- Core JS -->
+      <script src="{{ asset('vendor/libs/jquery/jquery.js') }}"></script>
+      <script src="{{ asset('vendor/libs/popper/popper.js') }}"></script>
+      <script src="{{ asset('vendor/js/bootstrap.js') }}"></script>
+      <script src="{{ asset('vendor/libs/perfect-scrollbar/perfect-scrollbar.js') }}"></script>
+      <script src="{{ asset('vendor/libs/node-waves/node-waves.js') }}"></script>
+      <script src="{{ asset('vendor/libs/hammer/hammer.js') }}"></script>
+      <script src="{{ asset('vendor/libs/i18n/i18n.js') }}"></script>
+      <script src="{{ asset('vendor/libs/typeahead-js/typeahead.js') }}"></script>
+      <script src="{{ asset('vendor/js/menu.js') }}"></script>
+
+      <!-- Vendors JS -->
+      <script src="{{ asset('vendor/libs/datatables-bs5/datatables-bootstrap5.js') }}"></script>
+      <script src="{{ asset('vendor/libs/sweetalert2/sweetalert2.js') }}"></script>
+      <script src="{{ asset('vendor/libs/flatpickr/flatpickr.js') }}"></script>
+
+      <!-- Main JS -->
+      <script src="{{ asset('js/main.js') }}"></script>
+    </body>
+</html>ded-circle" />
+                    </div>
+                  </a>
+                  <ul class="dropdown-menu dropdown-menu-end">
+                    <li>
+                      <a class="dropdown-item" href="pages-account-settings-account.html">
+                        <div class="d-flex">
+                          <div class="flex-shrink-0 me-3">
+                            <div class="avatar avatar-online">
+    <img src="{{ asset('img/avatars/1.png') }}" alt class="h-auto rounded-circle" />
+                            </div>
+                          </div>
+                          <div class="flex-grow-1">
+                            <span class="fw-semibold d-block">John Doe</span>
+                            <small class="text-muted">Admin</small>
+                          </div>
+                        </div>
+                      </a>
+                    </li>
+                    <li>
+                      <div class="dropdown-divider"></div>
+                    </li>
+                    <li>
+                      <a class="dropdown-item" href="pages-profile-user.html">
+                        <i class="ti ti-user-check me-2 ti-sm"></i>
+                        <span class="align-middle">My Profile</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a class="dropdown-item" href="pages-account-settings-account.html">
+                        <i class="ti ti-settings me-2 ti-sm"></i>
+                        <span class="align-middle">Settings</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a class="dropdown-item" href="pages-account-settings-billing.html">
+                        <span class="d-flex align-items-center align-middle">
+                          <i class="flex-shrink-0 ti ti-credit-card me-2 ti-sm"></i>
+                          <span class="flex-grow-1 align-middle">Billing</span>
+                          <span class="flex-shrink-0 badge badge-center rounded-pill bg-label-danger w-px-20 h-px-20"
+                            >2</span
+                          >
+                        </span>
+                      </a>
+                    </li>
+                    <li>
+                      <div class="dropdown-divider"></div>
+                    </li>
+                    <li>
+                      <a class="dropdown-item" href="pages-help-center-landing.html">
+                        <i class="ti ti-lifebuoy me-2 ti-sm"></i>
+                        <span class="align-middle">Help</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a class="dropdown-item" href="pages-faq.html">
+                        <i class="ti ti-help me-2 ti-sm"></i>
+                        <span class="align-middle">FAQ</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a class="dropdown-item" href="pages-pricing.html">
+                        <i class="ti ti-currency-dollar me-2 ti-sm"></i>
+                        <span class="align-middle">Pricing</span>
+                      </a>
+                    </li>
+                    <li>
+                      <div class="dropdown-divider"></div>
+                    </li>
+                    <li>
+                      <a class="dropdown-item" href="auth-login-cover.html" target="_blank">
+                        <i class="ti ti-logout me-2 ti-sm"></i>
+                        <span class="align-middle">Log Out</span>
+                      </a>
+                    </li>
+                  </ul>
+                </li>
+                <!--/ User -->
+              </ul>
+            </div>
+
+            <!-- Search Small Screens -->
+            <div class="navbar-search-wrapper search-input-wrapper d-none">
+              <input
+                type="text"
+                class="form-control search-input container-xxl border-0"
+                placeholder="Search..."
+                aria-label="Search..." />
+              <i class="ti ti-x ti-sm search-toggler cursor-pointer"></i>
+            </div>
+          </nav>
+            <!-- / Navbar -->
                 <!-- Content wrapper -->
                 <div class="content-wrapper">
                     <!-- Content -->
@@ -156,8 +602,95 @@
                             Liste des demandes de packs
                         </h4>
                         <div class="dashboard-card p-4">
-                            <div class="table-responsive">
-                                <table id="demandePackTable" class="table table-striped data-table">
+    <style>
+    .dt-export-btn {
+        background: #fff !important;
+        color: #ffb822 !important;
+        border: 2px solid #ffb822 !important;
+        border-radius: 2rem;
+        box-shadow: 0 4px 12px rgba(255,184,34,0.08);
+        padding: 0.5em 1.4em;
+        margin-right: 0.5em;
+        font-weight: 700;
+        font-size: 1.05em;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.6em;
+        transition: background 0.3s, color 0.3s, box-shadow 0.2s;
+    }
+    .dt-export-btn:last-child { margin-right: 0; }
+    .dt-export-btn i { color: #ffb822 !important; font-size: 1.2em; }
+    .dt-export-btn:hover, .dt-export-btn:focus {
+        background: #ffb822 !important;
+        color: #fff !important;
+        box-shadow: 0 8px 24px rgba(255,184,34,0.14);
+    }
+    .dt-export-btn:hover i, .dt-export-btn:focus i { color: #fff !important; }
+</style>
+<div class="d-flex flex-wrap align-items-center mb-3 gap-2">
+    <a href="{{ path('admin_advanced_statistiques_admin_demande_pack_pdf') }}" class="dt-export-btn" target="_blank">
+        <i class="ri-file-pdf-2-line"></i> Exporter PDF Premium
+    </a>
+    <button id="copyExportBtn" class="dt-export-btn" type="button"><i class="ri-file-copy-line"></i> Copier</button>
+    <button id="csvExportBtn" class="dt-export-btn" type="button"><i class="ri-file-list-3-line"></i> CSV</button>
+    <button id="printExportBtn" class="dt-export-btn" type="button"><i class="ri-printer-line"></i> Imprimer</button>
+</div>
+    <script>
+        // Hook up DataTables export triggers to custom buttons
+        document.addEventListener('DOMContentLoaded', function() {
+            let dt;
+            if (!$.fn.DataTable.isDataTable('#demandePackTable')) {
+                dt = $('#demandePackTable').DataTable({
+                    paging: false,
+                    info: false,
+                    dom: 't', // remove DataTables' own buttons
+                    buttons: [
+                        {
+                            extend: 'copy',
+                            text: '<i class="ri-file-copy-line"></i> Copier',
+                            className: 'dt-export-btn'
+                        },
+                        {
+                            extend: 'csv',
+                            text: '<i class="ri-file-list-3-line"></i> CSV',
+                            className: 'dt-export-btn'
+                        },
+                        {
+                            extend: 'excel',
+                            text: '<i class="ri-file-excel-2-line"></i> Excel',
+                            className: 'dt-export-btn'
+                        },
+                        {
+                            extend: 'print',
+                            text: '<i class="ri-printer-line"></i> Imprimer',
+                            className: 'dt-export-btn'
+                        }
+                    ],
+                    order: [[5, 'desc']]
+                });
+            } else {
+                dt = $('#demandePackTable').DataTable();
+            }
+            // Custom triggers for export
+            $('#copyExportBtn').on('click', function() {
+                dt.button('.buttons-copy').trigger();
+            });
+            $('#csvExportBtn').on('click', function() {
+                dt.button('.buttons-csv').trigger();
+            });
+            $('#excelExportBtn').on('click', function() {
+                dt.button('.buttons-excel').trigger();
+            });
+            $('#printExportBtn').on('click', function() {
+                dt.button('.buttons-print').trigger();
+            });
+        });
+    </script>
+   
+    </a>
+                            <div class="d-flex justify-content-center">
+    <div class="table-responsive">
+                                <table id="demandePackTable" class="table table-striped data-table mx-auto">
                                     <thead>
                                         <tr>
                                             <th>ID</th>
@@ -171,7 +704,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {% for demande in demandes %}
+                                        {% for demande in pagination %}
                                             <tr>
                                                 <td>{{ demande.id }}</td>
                                                 <td>
@@ -203,7 +736,7 @@
                                                         {% if demande.statut == 'EN_ATTENTE' %}bg-warning
                                                         {% elseif demande.statut == 'EN_PERSONNALISATION' %}bg-info
                                                         {% elseif demande.statut == 'EN_ATTENTE_PAIEMENT' %}bg-primary
-                                                        {% elseif demande.statut == 'CONFIRME' %}bg-success
+                                                        {% elseif demande.statut in ['CONFIRME', 'CONFIRMÉ'] %}bg-success
                                                         {% elseif demande.statut == 'ANNULE' %}bg-danger
                                                         {% endif %}">
                                                         {{ demande.statut|replace({'EN_ATTENTE':'En attente', 'EN_PERSONNALISATION':'En personnalisation', 'EN_ATTENTE_PAIEMENT':'En attente paiement', 'CONFIRME':'Confirmé', 'ANNULE':'Annulé'}) }}
@@ -220,7 +753,11 @@
                                         {% endfor %}
                                     </tbody>
                                 </table>
-                            </div>
+<div class="pagination-wrapper">
+    {{ knp_pagination_render(pagination) }}
+</div>
+                                </div>
+</div>
                         </div>
                     </div>
                 </div>
@@ -232,6 +769,9 @@
     </div>
     <!-- Core JS -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Popper.js and Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"></script>
     <script src="{{ asset('vendor/libs/datatables/jquery.dataTables.js') }}"></script>
     <script src="{{ asset('vendor/libs/datatables-bs5/datatables-bootstrap5.js') }}"></script>
     <script src="{{ asset('vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.js') }}"></script>
@@ -239,16 +779,49 @@
     <script src="https://cdn.datatables.net/buttons/2.2.3/js/dataTables.buttons.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.2.3/js/buttons.html5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.2.3/js/buttons.print.min.js"></script>
+    <style>
+      .dt-export-btn {
+        background-color: #4CAF50;
+        color: #fff;
+        border: none;
+        padding: 6px 12px;
+        font-size: 16px;
+        cursor: pointer;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+      }
+      .dt-export-btn:hover {
+        background-color: #3e8e41;
+      }
+      .dt-export-btn i {
+        margin-right: 5px;
+      }
+    </style>
+    
+    <!-- Fallback for Bootstrap dropdowns if not working -->
     <script>
-        $(document).ready(function() {
-            $('#demandePackTable').DataTable({
-                dom: 'Bfrtip',
-                buttons: [
-                    'copy', 'csv', 'excel', 'pdf', 'print'
-                ],
-                order: [[5, 'desc']]
+    document.addEventListener('DOMContentLoaded', function() {
+        // Fallback for dropdown toggles if Bootstrap JS is not working
+        document.querySelectorAll('[data-bs-toggle="dropdown"]').forEach(function(triggerEl) {
+            triggerEl.addEventListener('click', function(e) {
+                // Only handle if Bootstrap's Dropdown is not present
+                if (typeof bootstrap === 'undefined' || !bootstrap.Dropdown) {
+                    e.preventDefault();
+                    var dropdownMenu = this.nextElementSibling;
+                    if (dropdownMenu && dropdownMenu.classList.contains('dropdown-menu')) {
+                        dropdownMenu.classList.toggle('show');
+                    }
+                }
             });
         });
+        // Demo: update notification badge if needed
+        var unreadCount = document.querySelectorAll('.dropdown-notifications-item:not(.read)').length;
+        var badge = document.getElementById('unreadCountBadge');
+        if (badge && unreadCount > 0) {
+            badge.textContent = unreadCount;
+            badge.style.display = 'inline-block';
+        }
+    });
     </script>
 </body>
 </html>

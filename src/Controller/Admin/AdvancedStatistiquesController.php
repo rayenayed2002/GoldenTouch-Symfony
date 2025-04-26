@@ -2,6 +2,10 @@
 
 namespace App\Controller\Admin;
 
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use Symfony\Component\HttpFoundation\StreamedResponse; // <-- for Excel download
+
 use App\Entity\Avis;
 use App\Entity\DemandePack;
 use App\Entity\Event;
@@ -14,13 +18,68 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-
+use App\Repository\NotificationsAdminRepository;
+use App\Repository\PackRepository;
 use App\Repository\DemandePackRepository;
 use Doctrine\ORM\Query\Expr\Join;
+use Knp\Component\Pager\PaginatorInterface;
 
 #[Route('/admin/advanced-statistiques', name: 'admin_advanced_statistiques_')]
 class AdvancedStatistiquesController extends AbstractController
 {
+    #[Route('/demande-packs/excel', name: 'admin_advanced_statistiques_admin_demande_pack_excel')]
+    public function exportDemandePackExcel(DemandePackRepository $demandePackRepository): StreamedResponse
+    {
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        // Set headers
+        $sheet->fromArray([
+            ['ID', 'Utilisateur', 'Pack', 'Event', 'Statut', 'Date Demande', 'Prix']
+        ], NULL, 'A1');
+        $demandes = $demandePackRepository->findAll();
+        $row = 2;
+        foreach ($demandes as $demande) {
+            $sheet->fromArray([
+                $demande->getId(),
+                $demande->getUtilisateur() ? $demande->getUtilisateur()->getNom() : '-',
+                $demande->getPack() ? $demande->getPack()->getNom() : '-',
+                $demande->getEvent() ? $demande->getEvent()->getNom() : '-',
+                $demande->getStatut(),
+                $demande->getDateDemande() ? $demande->getDateDemande()->format('d/m/Y H:i') : '-',
+                $demande->getPrix()
+            ], NULL, 'A'.$row++);
+        }
+        $response = new StreamedResponse(function() use ($spreadsheet) {
+            $writer = new Xlsx($spreadsheet);
+            $writer->save('php://output');
+        });
+        $response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        $response->headers->set('Content-Disposition', 'attachment;filename="demandes.xlsx"');
+        $response->headers->set('Cache-Control','max-age=0');
+        return $response;
+    }
+
+    #[Route('/demande-packs/pdf', name: 'admin_demande_pack_pdf')]
+    public function exportDemandePackPdf(\Knp\Snappy\Pdf $knpSnappyPdf, DemandePackRepository $demandePackRepository): Response
+    {
+        $demandes = $demandePackRepository->findAll();
+        $html = $this->renderView('admin/advanced_statistiques/demande_pack_pdf.html.twig', [
+            'demandes' => $demandes,
+        ]);
+        return new Response(
+            $knpSnappyPdf->getOutputFromHtml($html, [
+                'margin-top' => 10,
+                'margin-bottom' => 10,
+                'background' => true,
+            ]),
+            200,
+            [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'attachment; filename="demande-packs-premium.pdf"'
+            ]
+        );
+    }
+
     #[Route('/download-pdf', name: 'admin_advanced_statistiques_download_pdf')]
     public function downloadPdf(\Knp\Snappy\Pdf $knpSnappyPdf): \Symfony\Component\HttpFoundation\Response
     {
@@ -237,24 +296,103 @@ class AdvancedStatistiquesController extends AbstractController
         }
         return $this->json($data);
     }
+    
+    #[Route('/demande-packs', name: 'admin_advanced_statistiques_demande_packs', methods: ['GET'])]
+    public function listDemandePacks(Request $request, \Knp\Component\Pager\PaginatorInterface $paginator, NotificationsAdminRepository $notificationsRepo): Response
+    {
+        $q = $request->query->get('q');
+        $repo = $this->entityManager->getRepository(DemandePack::class);
+        $qb = $repo->createQueryBuilder('d')
+            ->leftJoin('d.utilisateur', 'u')->addSelect('u')
+            ->leftJoin('d.pack', 'p')->addSelect('p')
+            ->leftJoin('d.event', 'e')->addSelect('e');
 
-    #[Route('/demande-packs', name: 'demande_packs')]
-    public function demandePacksList(DemandePackRepository $demandePackRepository): Response
-{
-    // Eager load related entities to avoid N+1 queries
-    $demandes = $this->entityManager->getRepository(DemandePack::class)
-        ->createQueryBuilder('d')
-        ->leftJoin('d.utilisateur', 'u')->addSelect('u')
-        ->leftJoin('d.pack', 'p')->addSelect('p')
-        ->leftJoin('d.event', 'e')->addSelect('e')
-        ->orderBy('d.dateDemande', 'DESC')
-        ->getQuery()
-        ->getResult();
+        if ($q) {
+            $qb->andWhere('u.nom LIKE :q OR e.nom LIKE :q')
+               ->setParameter('q', '%' . $q . '%');
+        }
 
-    return $this->render('admin/advanced_statistiques/demande_pack_list.html.twig', [
-        'demandes' => $demandes,
-    ]);
-}
+        $qb->orderBy('d.dateDemande', 'DESC');
+
+        $pagination = $paginator->paginate(
+            $qb->getQuery(),
+            $request->query->getInt('page', 1),
+            10
+        );
+
+        $notifications = $notificationsRepo->findLatest(5);
+
+        return $this->render('admin/advanced_statistiques/demande_pack_list.html.twig', [
+            'pagination' => $pagination,
+            'demandes' => $pagination->getItems(),
+            'q' => $q,
+            'latestNotifications' => $notifications,
+        ]);
+    }
+
+    #[Route('/demande-packs/search', name: 'admin_advanced_statistiques_demande_packs_search', methods: ['GET'])]
+    public function searchDemandePacks(Request $request, PaginatorInterface $paginator, NotificationsAdminRepository $notificationsRepo): Response
+    {
+        $q = $request->query->get('q');
+        $status = $request->query->get('status');
+        $dateFrom = $request->query->get('date_from');
+        $dateTo = $request->query->get('date_to');
+        $priceMin = $request->query->get('price_min');
+        $priceMax = $request->query->get('price_max');
+
+        $repo = $this->entityManager->getRepository(DemandePack::class);
+        $qb = $repo->createQueryBuilder('d')
+            ->leftJoin('d.utilisateur', 'u')->addSelect('u')
+            ->leftJoin('d.pack', 'p')->addSelect('p')
+            ->leftJoin('d.event', 'e')->addSelect('e');
+
+        if ($q) {
+            $qb->andWhere('u.nom LIKE :q OR e.nom LIKE :q')
+               ->setParameter('q', '%' . $q . '%');
+        }
+
+        if ($status) {
+            $qb->andWhere('d.statut = :status')
+               ->setParameter('status', $status);
+        }
+
+        if ($dateFrom) {
+            $qb->andWhere('d.dateDemande >= :dateFrom')
+               ->setParameter('dateFrom', new \DateTime($dateFrom));
+        }
+
+        if ($dateTo) {
+            $qb->andWhere('d.dateDemande <= :dateTo')
+               ->setParameter('dateTo', new \DateTime($dateTo));
+        }
+
+        if ($priceMin) {
+            $qb->andWhere('d.prix >= :priceMin')
+               ->setParameter('priceMin', $priceMin);
+        }
+
+        if ($priceMax) {
+            $qb->andWhere('d.prix <= :priceMax')
+               ->setParameter('priceMax', $priceMax);
+        }
+
+        $qb->orderBy('d.dateDemande', 'DESC');
+
+        $pagination = $paginator->paginate(
+            $qb->getQuery(),
+            $request->query->getInt('page', 1),
+            10
+        );
+
+        $notifications = $notificationsRepo->findLatest(5);
+
+        return $this->render('admin/advanced_statistiques/demande_pack_list.html.twig', [
+            'pagination' => $pagination,
+            'demandes' => $pagination->getItems(),
+            'q' => $q,
+            'latestNotifications' => $notifications,
+        ]);
+    }
 
     /**
      * Get total number of packs and related statistics
@@ -1270,4 +1408,6 @@ class AdvancedStatistiquesController extends AbstractController
             'total_revenue' => $totalRevenue
         ];
     }
+
+   
 }
