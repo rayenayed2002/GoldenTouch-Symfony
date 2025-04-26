@@ -323,7 +323,7 @@
                 <div class="navbar-nav align-items-center position-relative">
                   <div class="nav-item navbar-search-wrapper mb-0">
                     <a class="nav-item nav-link search-toggler d-flex align-items-center px-0" id="admin-notification-search-bar-trigger" href="javascript:void(0);">
-                      <i class="ti ti-search ti-md me-2"></i>
+                      <i class="ti ti-search fs-4 me-2"></i>
                       <span class="d-none d-md-inline-block text-muted">Rechercher (Ctrl+/)</span>
                     </a>
                     <div id="admin-notification-search-dropdown" style="display:none; position:absolute; top:100%; left:0; z-index:9999; min-width:400px; background:white; box-shadow:0 6px 24px rgba(0,0,0,0.13); border-radius:8px; padding:12px;">
@@ -358,6 +358,97 @@
                         <button type="submit" class="btn btn-primary w-100">Appliquer les filtres</button>
                       </form>
                     </div>
+                  </div>
+                </div>
+              </div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const trigger = document.getElementById('admin-notification-search-bar-trigger');
+  const dropdown = document.getElementById('admin-notification-search-dropdown');
+  const input = document.getElementById('admin-notification-search-input-navbar');
+  const form = document.getElementById('demande-pack-search-form');
+  let isOpen = false;
+  let debounceTimer = null;
+  // Initialize flatpickr for date inputs
+  if (typeof flatpickr !== 'undefined') {
+    document.querySelectorAll('.flatpickr-date').forEach(elem => {
+      flatpickr(elem, {
+        dateFormat: "Y-m-d",
+        allowInput: true
+      });
+    });
+  }
+  function openDropdown() {
+    dropdown.style.display = 'block';
+    setTimeout(() => { input && input.focus(); }, 50);
+    isOpen = true;
+  }
+  function closeDropdown() {
+    dropdown.style.display = 'none';
+    isOpen = false;
+  }
+  function performSearch() {
+    const formData = new FormData(form);
+    const searchParams = new URLSearchParams();
+    formData.forEach((value, key) => {
+      if (value) searchParams.append(key, value);
+    });
+    const url = form.action + '?' + searchParams.toString();
+    fetch(url, {
+      headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(response => response.text())
+    .then(html => {
+      document.getElementById('demande-pack-table-body').innerHTML = html;
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      Swal.fire({
+        title: 'Erreur',
+        text: 'Une erreur est survenue lors de la recherche',
+        icon: 'error'
+      });
+    });
+  }
+  // Event Listeners
+  trigger.addEventListener('click', function(e) {
+    e.preventDefault();
+    if (!isOpen) openDropdown();
+    else closeDropdown();
+  });
+  document.addEventListener('keydown', function(e) {
+    if ((e.ctrlKey && e.key === '/') || (e.ctrlKey && e.key === '÷')) {
+      openDropdown();
+      e.preventDefault();
+    }
+    if (e.key === 'Escape' && isOpen) {
+      closeDropdown();
+    }
+    if (e.key === 'Enter' && isOpen) {
+      performSearch();
+    }
+  });
+  document.addEventListener('mousedown', function(e) {
+    if (isOpen && !dropdown.contains(e.target) && !trigger.contains(e.target)) {
+      closeDropdown();
+    }
+  });
+  form.querySelectorAll('input, select').forEach(element => {
+    element.addEventListener('change', () => {
+      if (debounceTimer) clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(performSearch, 400);
+    });
+  });
+  input.addEventListener('input', () => {
+    if (debounceTimer) clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(performSearch, 400);
+  });
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    performSearch();
+  });
+});
+</script>
                   </div>
                 </div>
               </div>
@@ -727,7 +818,7 @@
               <i class="ti ti-x ti-sm search-toggler cursor-pointer"></i>
             </div>
           </nav>
-            <!-- / Navbar -->
+           
             <!-- / Navbar -->
                 <!-- Content wrapper -->
                 <div class="content-wrapper">

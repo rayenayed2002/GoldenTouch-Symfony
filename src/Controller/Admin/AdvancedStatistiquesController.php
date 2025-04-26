@@ -209,7 +209,7 @@ class AdvancedStatistiquesController extends AbstractController
     }
 
     #[Route('/', name: 'index')]
-    public function index(Request $request): Response
+    public function index(Request $request, NotificationsAdminRepository $notificationsRepo): Response
     {
         // Get all statistics data
         $packStats = $this->getPackStats();
@@ -231,6 +231,8 @@ class AdvancedStatistiquesController extends AbstractController
         $clientRetentionRate = $this->getClientRetentionRate();
         $packCategoryPerformance = $this->getPackCategoryPerformance();
 
+        $latestNotifications = $notificationsRepo->findLatest(5);
+
         return $this->render('admin/advanced_statistiques/index.html.twig', [
             'packStats' => $packStats, 
             'userStats' => $userStats,
@@ -248,6 +250,7 @@ class AdvancedStatistiquesController extends AbstractController
             'conversionRates' => $conversionRates,
             'clientRetentionRate' => $clientRetentionRate,
             'packCategoryPerformance' => $packCategoryPerformance,
+            'latestNotifications' => $latestNotifications,
         ]);
     }
 
