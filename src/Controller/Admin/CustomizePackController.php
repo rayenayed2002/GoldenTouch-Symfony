@@ -110,8 +110,9 @@ class CustomizePackController extends AbstractController
             $eventDate = $demandePack->getEvent()->getDate();
         }
         
-        // Force notifications for admin_id = 1 (fix for bell dropdown)
-        $adminId = 1;
+        // Fetch the currently logged-in admin if available (fallback to 1)
+        $admin = $this->getUser();
+        $adminId = ($admin && method_exists($admin, 'getId')) ? $admin->getId() : 1;
         $latestNotifications = $this->notificationsAdminRepository->createQueryBuilder('n')
             ->andWhere('n.admin = :adminId')
             ->setParameter('adminId', $adminId)
@@ -129,6 +130,7 @@ class CustomizePackController extends AbstractController
             'personnel' => $personnel,
             'locations' => $locations,
             'eventDate' => $eventDate,
+            'notification' => $notification, // Pass the notification entity directly
             'latestNotifications' => $latestNotifications,
             'unreadNotificationsCount' => $unreadNotificationsCount
         ]);

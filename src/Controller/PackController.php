@@ -22,6 +22,8 @@ use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Clock\ClockInterface;
 use App\Service\GrammarCorrectionService;
 
+use App\Repository\NotificationsAdminRepository;
+
 class PackController extends AbstractController
 {
     public function __construct(
@@ -308,7 +310,7 @@ class PackController extends AbstractController
     }
 
     #[Route('/demande-packs', name: 'admin_advanced_statistiques_demande_packs', methods: ['GET'])]
-    public function listDemandePacks(Request $request, \Knp\Component\Pager\PaginatorInterface $paginator, NotificationsAdminRepository $notificationsRepo): Response
+    public function listDemandePacks(Request $request, \Knp\Component\Pager\PaginatorInterface $paginator, \App\Repository\NotificationsAdminRepository $notificationsRepo): Response
     {
         $q = $request->query->get('q');
         $repo = $this->entityManager->getRepository(DemandePack::class);
