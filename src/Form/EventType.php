@@ -1,6 +1,5 @@
 <?php
 
-// src/Form/EventType.php
 namespace App\Form;
 
 use App\Entity\Event;
@@ -13,12 +12,10 @@ use App\Enum\CategorieEvent;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Validator\Constraints\File;
+use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
-use Symfony\Component\Validator\Constraints\Length;
-use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\Validator\Constraints\GreaterThanOrEqual;
+
 class EventType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -26,26 +23,33 @@ class EventType extends AbstractType
         $builder
         ->add('nom', TextType::class, [
             'label' => 'Nom de l\'événement',
+            'required' => false,
             'constraints' => [
-                new NotBlank(['message' => 'Le nom est obligatoire']),
-                new Length([
+                new Assert\NotBlank([
+                    'message' => 'Le nom est obligatoire'
+                ]),
+                new Assert\Length([
                     'min' => 2,
                     'minMessage' => 'Le nom doit contenir au moins {{ limit }} caractères',
+                    'max' => 255,
+                    'maxMessage' => 'Le nom ne peut pas dépasser {{ limit }} caractères'
                 ]),
+                // Removed Regex constraint to allow all characters
             ],
             'attr' => [
                 'class' => 'form-control form-control-lg',
                 'placeholder' => 'Saisissez le nom de l\'événement',
-                'minlength' => 2
+                'formnovalidate' => 'formnovalidate'
             ]
         ])
             
-            // Menu déroulant des catégories
             ->add('categorie', EnumType::class, [
                 'class' => CategorieEvent::class,
                 'label' => 'Catégorie de l\'événement',
                 'constraints' => [
-                    new NotBlank(['message' => 'La catégorie est obligatoire']),
+                    new Assert\NotBlank([
+                        'message' => 'La catégorie est obligatoire'
+                    ])
                 ],
                 'attr' => [
                     'class' => 'form-select form-select-lg'
@@ -53,61 +57,80 @@ class EventType extends AbstractType
                 'placeholder' => 'Sélectionnez une catégorie',
             ])
             
-            // Section de téléchargement de fichier
             ->add('photo', FileType::class, [
                 'label' => 'Photo de l\'événement',
-                'required' => true, // Changé à true
+                'required' => true,
                 'constraints' => [
-                    new NotBlank(['message' => 'La photo est obligatoire']),
-                    new File([
-            'maxSize' => '5M', // Limit file size (e.g., 5MB)
-            'mimeTypes' => [ // Only allow image MIME types
-                'image/jpeg',
-                'image/png',
-                'image/gif',
-                'image/webp',
-            ],
-            'mimeTypesMessage' => 'Veuillez télécharger une image valide (JPEG, PNG, GIF, WebP)',
-        ])
-    ],
-    'attr' => [
-        'class' => 'form-control',
-        'accept' => 'image/*' // HTML attribute to filter file selection
-    ]
+                    new Assert\NotBlank([
+                        'message' => 'La photo est obligatoire'
+                    ]),
+                    new Assert\File([
+                        'maxSize' => '5M',
+                        'maxSizeMessage' => 'Le fichier est trop volumineux ({{ size }} {{ suffix }}). La taille maximale autorisée est {{ limit }} {{ suffix }}',
+                        'mimeTypes' => [
+                            'image/jpeg',
+                            'image/png',
+                            'image/gif',
+                            'image/webp',
+                        ],
+                        'mimeTypesMessage' => 'Veuillez télécharger une image valide (JPEG, PNG, GIF, WebP)',
+                        'uploadIniSizeErrorMessage' => 'Le fichier est trop volumineux',
+                        'uploadFormSizeErrorMessage' => 'Le fichier est trop volumineux',
+                        'uploadErrorMessage' => 'Erreur lors du téléchargement du fichier'
+                    ])
+                ],
+                'attr' => [
+                    'class' => 'form-control',
+                    'accept' => 'image/*'
+                ]
             ])
             
-            // Entrée de date
             ->add('date', DateType::class, [
                 'label' => 'Date de l\'événement',
                 'widget' => 'single_text',
                 'html5' => false,
                 'format' => 'dd/MM/yyyy',
-                'attr' => [
-                    'class' => 'date-picker', // Keep this class
-                    'placeholder' => 'Cliquez pour choisir une date',
-                    'autocomplete' => 'off',
-                    'data-input' => true // Add this for Flatpickr
-                ],
                 'constraints' => [
-                    new NotBlank(['message' => 'La date est obligatoire']),
-                    new GreaterThanOrEqual([
+                    new Assert\NotBlank([
+                        'message' => 'La date est obligatoire'
+                    ]),
+                    new Assert\GreaterThanOrEqual([
                         'value' => 'today',
                         'message' => 'La date doit être ultérieure à aujourd\'hui'
+                    ]),
+                    new Assert\LessThanOrEqual([
+                        'value' => '+2 years',
+                        'message' => 'La date ne peut pas être plus de 2 ans dans le futur'
                     ])
+                ],
+                'attr' => [
+                    'class' => 'date-picker',
+                    'placeholder' => 'Cliquez pour choisir une date',
+                    'autocomplete' => 'off',
+                    'data-input' => true
                 ]
             ])
             
-            // Bouton de soumission
             ->add('save', SubmitType::class, [
                 'label' => 'Créer l\'événement',
                 'attr' => [
-                    'class' => 'btn btn-primary mt-4  btn-gold'
+                    'class' => 'btn btn-primary mt-4 btn-gold'
                 ]
             ])
             
-    ->add('type', HiddenType::class, [
-        'data' => 'EVENT', // Always set to "EVENT"
-        'mapped' => true // Ensures it's saved to the entity
-    ]);
+            ->add('type', HiddenType::class, [
+                'data' => 'EVENT',
+                'mapped' => true
+            ]);
+    }
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults([
+            'data_class' => Event::class,
+            'csrf_protection' => true,
+            'csrf_field_name' => '_token',
+            'csrf_token_id'   => 'event_item',
+        ]);
     }
 }

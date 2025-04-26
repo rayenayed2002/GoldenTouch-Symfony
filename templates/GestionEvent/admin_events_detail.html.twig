@@ -1,4 +1,4 @@
-
+   
 <!DOCTYPE html>
 
 <html
@@ -39,7 +39,14 @@
     
     <link rel="stylesheet" href="{{ asset('assets/vendor/libs/node-waves/node-waves.css') }}" />
     <link rel="stylesheet" href="{{ asset('/vendor/libs/typeahead-js/typeahead.css') }}" />
+    <link rel="stylesheet" href="{{ asset('vendor/libs/apex-charts/apex-charts.css') }}" />
+    <link rel="stylesheet" href="{{ asset('vendor/libs/swiper/swiper.css') }}" />
+    <link rel="stylesheet" href="{{ asset('vendor/libs/datatables-bs5/datatables.bootstrap5.css') }}" />
+    <link rel="stylesheet" href="{{ asset('vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.css') }}" />
+    <link rel="stylesheet" href="{{ asset('vendor/libs/flatpickr/flatpickr.css') }}" />
 
+    <!-- Page CSS -->
+    <link rel="stylesheet" href="{{ asset('vendor/css/pages/cards-advance.css') }}" />
     
     <!-- Helpers -->
     <script src="{{ asset('vendor/js/helpers.js') }}"></script>
@@ -111,10 +118,10 @@
     </a>
     <ul class="menu-sub">
       <li class="menu-item">
-        <a href="ajouter-evenement.html" class="menu-link">
-          <i class="menu-icon tf-icons ti ti-circle"></i>
-          <div data-i18n="Ajouter Événement">Ajouter Événement</div>
-        </a>
+<a href="{{ path('app_add_event') }}" class="menu-link">
+    <i class="menu-icon tf-icons ti ti-circle"></i>
+    <div data-i18n="Ajouter Événement">Ajouter Événement</div>
+</a>
       </li>
       <li class="menu-item">
         <a href="liste-evenements.html" class="menu-link">
@@ -274,19 +281,39 @@
               <!-- /Search -->
 
               <ul class="navbar-nav flex-row align-items-center ms-auto">
- 
-<!-- Cart -->
-<li class="nav-item dropdown-cart navbar-dropdown dropdown me-3 me-xl-1"  id="cartIcon">
-      <a class="nav-link" href="{{ path('app_panier') }}" aria-label="Cart">
-        <i class="fas fa-shopping-cart fa-lg"></i>
-        <span class="badge bg-danger rounded-pill badge-notificationss">
-            {{ render(controller('App\\Controller\\EventController::cartCount')) }}
-        </span>
-    </a>
-    <ul class="dropdown-menu dropdown-menu-end py-0">
-        <!-- Cart dropdown content here -->
-    </ul>
-</li>
+                <!-- Language -->
+                <li class="nav-item dropdown-language dropdown me-2 me-xl-0">
+                  <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
+                    <i class="fi fi-us fis rounded-circle me-1 fs-3"></i>
+                  </a>
+                  <ul class="dropdown-menu dropdown-menu-end">
+                    <li>
+                      <a class="dropdown-item" href="javascript:void(0);" data-language="en">
+                        <i class="fi fi-us fis rounded-circle me-1 fs-3"></i>
+                        <span class="align-middle">English</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a class="dropdown-item" href="javascript:void(0);" data-language="fr">
+                        <i class="fi fi-fr fis rounded-circle me-1 fs-3"></i>
+                        <span class="align-middle">French</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a class="dropdown-item" href="javascript:void(0);" data-language="de">
+                        <i class="fi fi-de fis rounded-circle me-1 fs-3"></i>
+                        <span class="align-middle">German</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a class="dropdown-item" href="javascript:void(0);" data-language="pt">
+                        <i class="fi fi-pt fis rounded-circle me-1 fs-3"></i>
+                        <span class="align-middle">Portuguese</span>
+                      </a>
+                    </li>
+                  </ul>
+                </li>
+                <!--/ Language -->
 
                 <!-- Style Switcher -->
                 <li class="nav-item me-2 me-xl-0">
@@ -744,193 +771,255 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h6 class="pb-1 mb-4 text-muted">Events Grid</h6>
-<div class="container-fluid px-xl-6">
-  <div class="row row-cols-1 row-cols-md-3 g-4 mb-5">
-    {% for event in events %}
-      <div class="col">
-        <div class="card h-100 card-hover position-relative">
-          <a href="{{ path('app_event_show', {'id': event.id}) }}" 
-             class="stretched-link text-decoration-none"
-             aria-label="View {{ event.nom }} details">
-      <div class="card-img-frame p-3 pb-0">
-  {% if event.photo %}
-    <img class="card-img-top rounded" 
-         src="{{ asset('packs/' ~ event.photo) }}" 
-         alt="{{ event.nom }}" 
-         style="object-fit: cover; height: 180px; width: 100%;">
-  {% else %}
-    <div class="bg-secondary text-white d-flex align-items-center justify-content-center rounded"
-         style="height: 180px; width: 100%;">
-      No Image
-    </div>
-  {% endif %}
-</div>
-
-
-            <div class="card-body">
-              <h5 class="card-title text-dark mb-2">{{ event.nom }}</h5>
-
-              <div class="d-flex justify-content-between align-items-center mb-2">
-                <span class="badge bg-primary">
-                  {{ categoryLabels[event.categorie.value ?? ''] ?? 'Non catégorisé' }}
-                </span>
-              </div>
-
-              <div class="d-flex justify-content-between align-items-center">
-                <small class="text-muted">{{ event.date|date('M d, Y') }}</small>
-              </div>
+<section class="space" style="margin:50px;">
+    <div class="container">
+        <div class="row gy-4 gy-xl-5 mb-3 mb-xl-5" > <!-- Added vertical gap control -->
+            <!-- Event Image Column -->
+            <div class="col-xl-6">
+                <div class="h-100"> <!-- Make container full height -->
+                    {% if event.photo %}
+                        <img src="{{ asset('uploads/packs/'~ event.photo) }}" 
+                            class="img-fluid w-100 h-100 rounded-3" 
+                            style="object-fit: cover;"
+                            alt="{{ event.nom }}">
+                    {% else %}
+                        <img src="{{ asset('assets/img/event/default_event.jpg') }}" 
+                            class="img-fluid w-100 h-100 rounded-3"
+                            style="object-fit: cover;"
+                            alt="Image par défaut">
+                    {% endif %}
+                </div>
             </div>
-          </a>
 
-          <div class="position-absolute end-0 bottom-0 m-3 d-flex gap-2 z-1">
-     <a href="#" 
-               class="btn btn-icon text-warning"
-               data-bs-toggle="modal" 
-               data-bs-target="#editEventModal"
-               data-event-id="{{ event.id }}"
-               data-event-name="{{ event.nom }}"
-               data-event-date="{{ event.date|date('Y-m-d') }}"
-               data-event-category="{{ event.categorie.value ?? '' }}"
-               data-event-photo="{{ event.photo ? app.request.schemeAndHttpHost ~ 'packs/' ~ event.photo : '' }}">
-              <i class="fas fa-edit"></i>
-            </a>
-<form action="{{ path('app_event_delete', {'id': event.id}) }}" method="POST" style="display: inline;" class="delete-form">
-  <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ event.id) }}">
-  <button type="submit" class="btn btn-icon text-danger" aria-label="Delete {{ event.nom }}" onclick="confirmDelete(event, this)">
-    <i class="fas fa-trash"></i>
-  </button>
-</form>
-          </div>
+            <!-- Event Details Column -->
+            <div class="col-xl-6 mt-4 mt-xl-0 ps-xl-5"> <!-- Added top margin for mobile -->
+                <div class="team-about">
+                    <!-- Title Section -->
+                    <div class="mb-4"> <!-- Added spacing below title -->
+                        <h1 class="display-5 fw-bold mb-3">{{ event.nom }}</h1>
+
+                    </div>
+
+                    <!-- Event Metadata -->
+                    <div class="bg-light p-4 rounded-3 mb-5"> <!-- Added styled container -->
+                        <ul class="list-unstyled mb-0">
+                            <li class="mb-3">
+                                <span class="fw-bold me-2">Catégorie:</span>
+                                <span class="badge bg-primary">{{ event.categorie.value }}</span>
+                            </li>
+                            <li class="mb-3">
+                                <span class="fw-bold me-2">Date:</span>
+                                <span class="text-dark">{{ event.date|date('j F Y à H:i') }}</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Organizer Section -->
+                    <div class="card border-0 shadow-lg"> <!-- Improved card styling -->
+                        <div class="card-header bg-primary text-white py-3">
+                            <h5 class="mb-0">Détails de l'Organisateur</h5>
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="d-flex align-items-center">
+                                {% if event.utilisateur.imageData %}
+                                    <img src="{{ asset('uploads/packs/' ~ event.utilisateur.imageData) }}" 
+                                        class="rounded-circle me-4" 
+                                        width="100"
+                                        alt="Photo de profil">
+                                {% else %}
+                                    <div class="rounded-circle bg-secondary me-4 d-flex align-items-center justify-content-center" 
+                                         style="width: 100px; height: 100px">
+                                        <i class="fas fa-user fa-2x text-light"></i>
+                                    </div>
+                                {% endif %}
+                                <div class="flex-grow-1">
+                                    <h3 class="mb-2">{{ event.utilisateur.prenom }} {{ event.utilisateur.nom }}</h3>
+                                    <ul class="list-unstyled mb-0">
+                                        <li class="mb-2">
+                                            <i class="fas fa-envelope me-2 text-primary"></i>
+                                            <a href="mailto:{{ event.utilisateur.email }}" class="text-decoration-none">{{ event.utilisateur.email }}</a>
+                                        </li>
+                                        <li class="mb-2">
+                                            <i class="fas fa-phone me-2 text-primary"></i>
+                                            {{ event.utilisateur.num_tel ?? 'Non renseigné' }}
+                                        </li>
+                                        <li>
+                                            <i class="fas fa-map-marker-alt me-2 text-primary"></i>
+                                            {{ event.utilisateur.address ?? 'Adresse non disponible' }}
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-    {% else %}
-      <div class="col-12">
-        <div class="alert alert-info">No events found.</div>
-      </div>
-    {% endfor %}
-  </div>
-</div>
-
-
-
-<div class="modal fade" id="editEventModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-lg modal-simple modal-edit-event">
-    <div class="modal-content p-3 p-md-5">
-      <div class="modal-body">
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        <div class="text-center mb-4">
-          <h3 class="mb-2">Edit Event Information</h3>
-          <p class="text-muted">Modify event details below.</p>
-        </div>
-        <form id="editEventForm" class="row g-3" action="{{ path('app_event_edit', {'id': '__ID__'}) }}" method="POST" enctype="multipart/form-data">
-          <input type="hidden" name="_token" value="{{ csrf_token('edit-event') }}">
-          
-          <!-- Event Name -->
-          <div class="col-12">
-            <label class="form-label" for="eventName">Event Name</label>
-<input type="text" id="eventName" name="nom" class="form-control" required>
-          </div>
-
-          <!-- Date -->
-          <div class="col-12 col-md-6">
-            <label class="form-label" for="eventDate">Date</label>
-<input type="date" id="eventDate" name="date" class="form-control" required>
-          </div>
-
-          <!-- Category -->
-          <div class="col-12 col-md-6">
-            <label class="form-label" for="eventCategory">Category</label>
-<select id="eventCategory" name="categorie" class="form-select" required>
-  {% for value, label in categoryLabels %}
-    <option value="{{ value }}">{{ label }}</option>
-  {% endfor %}
-</select>
-          </div>
-
-          <!-- Photo Upload -->
-          <div class="col-12">
-            <label class="form-label" for="eventPhoto">Event Photo</label>
-            <input type="file" id="eventPhoto" name="photo" class="form-control" accept="image/*">
-            
-            <!-- Current Photo Preview -->
-  <div class="mt-3">
-  <p class="mb-1">Current Photo:</p>
-  <img id="currentPhotoPreview" src="" class="img-thumbnail" style="max-width: 200px; display: none;">
-</div>
-
-          <div class="col-12 text-center">
-            <button type="submit" class="btn btn-primary me-sm-3 me-1">Save Changes</button>
-            <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Cancel</button>
-          </div>
-        </form>
-      </div>
     </div>
-  </div>
+
+        <!-- Section Matériels -->
+        <div class="row gy-4">
+            <div class="col-xl-12">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Matériels Requis</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped align-middle">
+                                <thead>
+                                    <tr>
+                                        <th>Matériel</th>
+                                        <th class="text-center">Quantité</th>
+                                        <th class="text-end">Prix Unitaire</th>
+                                        <th class="text-end">Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for reservation in event.reservationsMaterielles %}
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    {% if reservation.materielle.photoMat %}
+                                                    <img src="{{ asset('uploads/packs/' ~ reservation.materielle.photoMat) }}" 
+                                                         class="rounded me-3" 
+                                                         width="60" 
+                                                         alt="{{ reservation.materielle.nomMat }}">
+                                                    {% endif %}
+                                                    <div>
+                                                        <h6 class="mb-1">{{ reservation.materielle.nomMat }}</h6>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="text-center">{{ reservation.quantite }}</td>
+                                            <td class="text-end">{{ reservation.materielle.prixMat|format_currency('EUR') }}</td>
+                                            <td class="text-end">{{ (reservation.quantite * reservation.materielle.prixMat)|format_currency('EUR') }}</td>
+                                        </tr>
+                                    {% else %}
+                                        <tr>
+                                            <td colspan="4" class="text-center py-4">
+                                                <div class="text-muted">Aucun matériel requis pour cet événement</div>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="3" class="text-end"><strong>Total Matériels :</strong></td>
+                                        <td class="text-end">{{ event.getMaterielTotal|format_currency('EUR') }}</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section Personnel -->
+            <div class="col-xl-12">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Équipe d'Intervention</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Membre</th>
+                         
+                                        <th class="text-end">Taux Horaire</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for personnel in event.personnels %}
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                {% if personnel.imageUrl %}
+                                                <img src="{{ asset('uploads/packs/' ~ personnel.imageUrl) }}" 
+                                                     class="rounded-circle me-3" 
+                                                     width="45" 
+                                                     alt="{{ personnel.nomP }}">
+                                                {% endif %}
+                                                <div>
+                                                    <h6 class="mb-0">{{ personnel.prenomP }} {{ personnel.nomP }}</h6>
+                                                </div>
+                                            </div>
+                                        </td>
+                          
+                                        <td class="text-end">{{ personnel.tarifP|format_currency('EUR') }}/h</td>
+                                    </tr>
+                                    {% else %}
+                                    <tr>
+                                        <td colspan="4" class="text-center py-4">
+                                            <div class="text-muted">Aucun personnel assigné</div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+  <div class="col-xl-12">
+    <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="card-title mb-0">Détails du Lieu</h5>
+        </div>
+        <div class="card-body">
+            {% if event.reservationsLieu|length > 0 %}
+                {% set reservation = event.reservationsLieu[0] %}
+                {% set lieu = reservation.lieu %}
+
+                <div class="row align-items-stretch">
+                    {% if lieu.imageUrl %}
+                        <div class="col-md-4">
+                            <div class="h-100 d-flex justify-content-center align-items-center">
+                                <img src="{{ asset('uploads/lieux/' ~ lieu.imageUrl) }}" 
+                                     alt="Photo de {{ lieu.name }}" 
+                                     class="img-fluid rounded w-100" 
+                                     style="object-fit: cover; height: 100%;">
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <div class="col-md-8 d-flex flex-column justify-content-center">
+                        <div class="location-details h-100">
+                            <h5>{{ lieu.name }}</h5>
+                            <ul class="list-unstyled">
+                                {% set iconClass = 'fas fa-fw me-3 text-secondary' %}
+                                <li class="d-flex align-items-start mb-2">
+                                    <i class="{{ iconClass }} fa-map-marker-alt"></i>
+                                    <span><strong>Localisation :</strong> {{ lieu.location }}, {{ lieu.ville }}</span>
+                                </li>
+                                <li class="d-flex align-items-start mb-2">
+                                    <i class="{{ iconClass }} fa-users"></i>
+                                    <span><strong>Capacité :</strong> {{ lieu.capacity }} personnes</span>
+                                </li>
+                                <li class="d-flex align-items-start mb-2">
+                                    <i class="{{ iconClass }} fa-euro-sign"></i>
+                                    <span><strong>Prix :</strong> {{ lieu.price|format_currency('EUR') }}</span>
+                                </li>
+                                <li class="d-flex align-items-start mb-2">
+                                    <i class="{{ iconClass }} fa-calendar-alt"></i>
+                                    <span><strong>Date Réservation :</strong> {{ reservation.date_reservation|date('d/m/Y H:i') }}</span>
+                                </li>
+                                <li class="d-flex align-items-start mb-2">
+                                    <i class="{{ iconClass }} fa-info-circle"></i>
+                                    <span><strong>Statut :</strong> {{ reservation.status ?? 'Confirmé' }}</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="text-muted">Aucun lieu spécifié pour cet événement.</div>
+            {% endif %}
+        </div>
+    </div>
 </div>
 
 
@@ -938,10 +1027,7 @@
 
 
 
-
-
-
-
+</section>
 
 
 
@@ -998,9 +1084,7 @@
       <!-- Drag Target Area To SlideIn Menu On Small Screens -->
       <div class="drag-target"></div>
     </div>
-    <!-- / Layout wrapper -->
 
-<!-- Core JS -->
 <script src="{{ asset('/vendor/libs/jquery/jquery.js') }}"></script>
 <script src="{{ asset('/vendor/libs/popper/popper.js') }}"></script>
 <script src="{{ asset('/vendor/js/bootstrap.js') }}"></script>
@@ -1012,254 +1096,9 @@
 <script src="{{ asset('/vendor/js/menu.js') }}"></script>
 
 
-<!-- Main JS -->
+
 <script src="{{ asset('/js/main.js') }}"></script>
 <script src="{{ asset('/js/dashboards-analytics.js') }}"></script>
   </body>
 </html>
 
-<style>
-  .btn-icon {
-    padding: 0.5rem;
-    transition: all 0.2s ease;
-    background: transparent;
-    border: none;
-  }
-  
-  .btn-icon:hover {
-    transform: scale(1.1);
-    background: rgba(0, 0, 0, 0.05);
-    border-radius: 50%;
-  }
-  
-  .btn-icon:focus {
-    box-shadow: none;
-  }
-.card.card-hover {
-  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
-  border: 3px solid transparent; /* ensures border transition works */
-}
-
-.card.card-hover:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
-  border-color: gold;
-}
-.stretched-link {
-  z-index: 0;
-}
-
-
-
-.layout-navbar .navbar-dropdown .badge-notificationss {
-  top: 0.2rem;
-  padding: 0.2rem 0.4rem;
-}
-
-  .badge.badge-notificationss {
-  position: absolute;
-  top: auto;
-  display: inline-block;
-  margin: 0;
-  transform: translate(-50%, -30%);
-}
-[dir=rtl] .badge.badge-notificationss {
-  transform: translate(50%, -30%);
-}
-.badge.badge-notificationss:not(.badge-dot) {
-  font-size: 0.75rem;
-  line-height: 0.875rem;
-}
-</style>
-<script>
-function confirmDelete(event, button) {
-  event.preventDefault();
-
-  if (confirm('Are you sure?')) {
-    const form = button.closest('form');
-    const formData = new FormData(form);
-
-    fetch(form.action, {
-      method: 'POST',
-      body: formData,
-      headers: { 'X-Requested-With': 'XMLHttpRequest' }
-    })
-    .then(response => {
-      if (!response.ok) throw new Error('Network error');
-      return response.json();
-    })
-    .then(data => {
-      if (data.success) {
-        // Remove the closest column parent
-        button.closest('.col').remove();
-        alert('Deleted successfully!');
-      } else {
-        alert('Error: Token might be invalid');
-      }
-    })
-    .catch(error => {
-      console.error('Error:', error);
-      alert('Deletion failed. Check console');
-    });
-  }
-}
-
-
-
-document.addEventListener('DOMContentLoaded', function() {
-  const editModalElement = document.getElementById('editEventModal');
-  const editModal = new bootstrap.Modal(editModalElement);
-  const editForm = document.getElementById('editEventForm');
-  let currentEventId = null;
-
-  // Modal show handler
-  editModalElement.addEventListener('show.bs.modal', function(event) {
-    const button = event.relatedTarget;
-    const photoPreview = editModalElement.querySelector('#currentPhotoPreview');
-    
-    currentEventId = button.dataset.eventId;
-    editForm.action = editForm.action.replace('__ID__', currentEventId);
-    
-    // Populate form values
-editForm.eventName.value = button.dataset.eventName;
-editForm.eventDate.value = button.dataset.eventDate;
-editForm.eventCategory.value = button.dataset.eventCategory;
-
-    // Handle photo preview
-    photoPreview.style.display = button.dataset.eventPhoto ? 'block' : 'none';
-    photoPreview.src = button.dataset.eventPhoto || '';
-  });
-
-  // Form submission handler
-  editForm.addEventListener('submit', async function(e) {
-    e.preventDefault();
-    const submitButton = this.querySelector('button[type="submit"]');
-    const originalButtonText = submitButton.innerHTML;
-
-    try {
-      submitButton.innerHTML = `
-        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-        Saving...
-      `;
-      submitButton.disabled = true;
-
-      const response = await fetch(this.action, {
-        method: 'POST',
-        body: new FormData(this),
-        headers: {'X-Requested-With': 'XMLHttpRequest'}
-      });
-
-      const data = await response.json();
-
-      if (!response.ok || !data.success) {
-        throw new Error(data.message || 'Update failed');
-      }
-
-      // Update elements
-      const photoPreview = editModalElement.querySelector('#currentPhotoPreview');
-      const editButton = document.querySelector(
-        `[data-event-id="${currentEventId}"] [data-bs-target="#editEventModal"]`
-      );
-
-      // Update modal preview
-      if (data.photo) {
-        const newSrc = `${data.photo}?t=${Date.now()}`; // Cache bust
-        photoPreview.src = newSrc;
-        photoPreview.style.display = 'block';
-        
-        // Update edit button data attribute
-        if (editButton) {
-          editButton.dataset.eventPhoto = data.photo;
-        }
-      } else {
-        photoPreview.style.display = 'none';
-        if (editButton) {
-          editButton.dataset.eventPhoto = '';
-        }
-      }
-
-      // Close modal after 1 second
-      setTimeout(() => editModal.hide(), 1000);
-
-    } catch (error) {
-      console.error('Error:', error);
-      alert(`Error: ${error.message}`);
-    } finally {
-      submitButton.innerHTML = originalButtonText;
-      submitButton.disabled = false;
-    }
-  });
-});
-
-
-
-
-
-
-
-
-
-
-
-
-document.addEventListener('DOMContentLoaded', function() {
-    const cartIcon = document.getElementById('cartIcon');
-    
-    // Make event cards draggable
-    document.querySelectorAll('.card').forEach(card => {
-        card.draggable = true;
-        
-        card.addEventListener('dragstart', (e) => {
-            const eventId = card.querySelector('[data-event-id]').dataset.eventId;
-            const eventData = {
-                idEvent: eventId,
-                iduser: 1, // Static user ID
-                typeEvent: "event",
-                categorie: card.querySelector('.badge').innerText,
-                date: card.querySelector('small').innerText,
-                price: 100 // Static price
-            };
-            
-            e.dataTransfer.setData('application/json', JSON.stringify(eventData));
-            e.dataTransfer.effectAllowed = 'move';
-        });
-    });
-
-    // Cart drop zone
-    cartIcon.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        cartIcon.style.opacity = '0.7';
-    });
-
-    cartIcon.addEventListener('dragleave', () => {
-        cartIcon.style.opacity = '1';
-    });
-
-    cartIcon.addEventListener('drop', async (e) => {
-        e.preventDefault();
-        cartIcon.style.opacity = '1';
-        
-        try {
-            const eventData = JSON.parse(e.dataTransfer.getData('application/json'));
-            
-            const response = await fetch('{{ path("app_panier_add") }}', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                body: JSON.stringify(eventData)
-            });
-            
-            if (response.ok) {
-                const badge = cartIcon.querySelector('.badge');
-                badge.textContent = parseInt(badge.textContent) + 1;
-                alert('Event added to cart!');
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            alert('Error adding to cart');
-        }
-    });
-});
-</script>

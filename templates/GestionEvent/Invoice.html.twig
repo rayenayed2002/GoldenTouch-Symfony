@@ -53,42 +53,76 @@
     <script src="{{ asset('vendor/js/template-customizer.js') }}"></script>
     <script src="{{ asset('js/config.js') }}"></script>
 
-    <style>
-    @media print {
-        .no-print {
-            display: none !important;
-        }
+<style>
+ @media print {
+    @page {
+        size: auto;
+        margin: 0mm;
     }
+    body {
+        padding: 0 !important;
+        margin: 0 !important;
+        background: white !important;
+    }
+    .content-wrapper {
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+    .container-xxl {
+        max-width: 100% !important;
+        padding: 0 !important;
+    }
+    .invoice-preview-card {
+        border: none !important;
+        box-shadow: none !important;
+        width: 100% !important;
+        margin: 0 !important;
+    }
+    .table {
+        width: 100% !important;
+    }
+    /* Force colors to print */
+    .badge {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+    /* Hide elements that shouldn't print */
+    .no-print, .invoice-actions {
+        display: none !important;
+    }
+}
 </style>
 </head>
 
-  <body class="layout-page">
+ <body class="layout-page">
 
      <div class="content-wrapper">
         <div class="container-xxl flex-grow-1 container-p-y">
             <div class="row invoice-preview">
-                <!-- Invoice -->
+                <!-- Facture -->
                 <div class="col-xl-9 col-md-8 col-12 mb-md-0 mb-4">
                     <div class="card invoice-preview-card">
                         <div class="card-body">
                             <div class="d-flex justify-content-between flex-xl-row flex-md-column flex-sm-row flex-column m-sm-3 m-0">
-                                <div class="mb-xl-0 mb-4">
-                                    <div class="d-flex svg-illustration mb-4 gap-2 align-items-center">
-                                        <!-- Your logo here -->
-                                        <span class="app-brand-text fw-bold fs-4">EventHub</span>
-                                    </div>
-                                    <p class="mb-2">Event Ticketing Platform</p>
-                                    <p class="mb-0">contact@eventhub.com</p>
-                                </div>
+                       <div class="mb-xl-0 mb-4">
+    <div class="d-flex svg-illustration mb-4 gap-2 align-items-center">
+        <img src="{{ asset('uploads/packs/images/logo2.png') }}" 
+             alt="GoldenTouch Logo" 
+             style="width: 100px; height: auto;">
+<span class="app-brand-text fw-bold fs-4" style="color: #FFD700;">GoldenTouch</span>
+    </div>
+    <p class="mb-2">Plateforme de billetterie événementielle</p>
+    <p class="mb-0">GoldenTouch@gmail.com</p>
+</div>
                                 <div>
-                                    <h4 class="fw-semibold mb-2">INVOICE #{{ payment.id }}</h4>
+                                    <h4 class="fw-semibold mb-2">FACTURE #{{ payment.id }}</h4>
                                     <div class="mb-2 pt-1">
-                                        <span>Date Issued:</span>
-                                        <span class="fw-semibold">{{ payment.createdAt|date('F d, Y') }}</span>
+                                        <span>Date d'émission :</span>
+                                        <span class="fw-semibold">{{ payment.createdAt|date('d F Y') }}</span>
                                     </div>
                                     <div class="pt-1">
-                                        <span>Payment Status:</span>
-                                        <span class="badge bg-success">Paid</span>
+                                        <span>Statut du paiement :</span>
+                                        <span class="badge bg-success">Payé</span>
                                     </div>
                                 </div>
                             </div>
@@ -97,7 +131,7 @@
                         <div class="card-body">
                             <div class="row p-sm-3 p-0">
                                 <div class="col-xl-6 col-md-12 col-sm-5 col-12 mb-xl-0 mb-md-4 mb-sm-0 mb-4">
-                                    <h6 class="mb-3">Invoice To:</h6>
+                                    <h6 class="mb-3">Facturé à :</h6>
                                     <p class="mb-1">{{ payment.user.getPrenom() }} {{ payment.user.getNom() }}</p>
                                     <p class="mb-1">{{ payment.user.getEmail() }}</p>
                                     {% if payment.user.getNumTel() %}
@@ -108,23 +142,23 @@
                                     {% endif %}
                                 </div>
                                 <div class="col-xl-6 col-md-12 col-sm-7 col-12">
-                                    <h6 class="mb-4">Payment Details:</h6>
+                                    <h6 class="mb-4">Détails du paiement :</h6>
                                     <table>
                                         <tbody>
                                             <tr>
-                                                <td class="pe-4">Total Amount:</td>
+                                                <td class="pe-4">Montant total :</td>
                                                 <td><strong>{{ payment.amount }} €</strong></td>
                                             </tr>
                                             <tr>
-                                                <td class="pe-4">Payment Method:</td>
+                                                <td class="pe-4">Méthode de paiement :</td>
                                                 <td>{{ payment.paymentMethod|capitalize }}</td>
                                             </tr>
                                             <tr>
-                                                <td class="pe-4">Transaction Date:</td>
-                                                <td>{{ payment.createdAt|date('Y-m-d H:i') }}</td>
+                                                <td class="pe-4">Date de transaction :</td>
+                                                <td>{{ payment.createdAt|date('d/m/Y ') }}</td>
                                             </tr>
                                             <tr>
-                                                <td class="pe-4">Transaction ID:</td>
+                                                <td class="pe-4">ID de transaction :</td>
                                                 <td>#{{ payment.id }}</td>
                                             </tr>
                                         </tbody>
@@ -132,105 +166,94 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="table-responsive border-top">
-                            <table class="table m-0">
-                                <thead>
-                                    <tr>
-                                        <th>Event</th>
-                                        <th>Date</th>
-                                        <th>Category</th>
-                                        <th>Unit Price</th>
-                                        <th>Quantity</th>
-                                        <th>Price</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for detail in payment.details %}
-                                    <tr>
-                                        <td class="text-nowrap">
-                                            <div class="d-flex align-items-center">
-                                                {% if detail.event.getPhoto() %}
-                                                <img src="{{ asset('uploads/' ~ detail.event.getPhoto()) }}" alt="{{ detail.event.getNom() }}" width="40" height="40" class="rounded me-2">
-                                                {% endif %}
-                                                <span>{{ detail.event.getNom() }}</span>
-                                            </div>
-                                        </td>
-                                        <td>{{ detail.event.getDate()|date('Y-m-d') }}</td>
-<td>{{ detail.event.getCategorie().value }}</td>
-                                        <td>{{ detail.getPrice() }} €</td>
-                                        <td>1</td>
-                                        <td>{{ detail.getPrice() }} €</td>
-                                    </tr>
-                                    {% endfor %}
-                                    <tr>
-                                        <td colspan="4" class="align-top px-4 py-4">
-                                            <p class="mb-2 mt-3">
-                                                <span class="ms-3 fw-semibold">Payment Method:</span>
-                                                <span>{{ payment.paymentMethod|capitalize }}</span>
-                                            </p>
-                                            <span class="ms-3">Thank you for your purchase!</span>
-                                        </td>
-                                        <td class="text-end pe-3 py-4">
-                                            <p class="mb-2 pt-3">Subtotal:</p>
-                                            <p class="mb-2">Tax:</p>
-                                            <p class="mb-0 pb-3 fw-semibold">Total:</p>
-                                        </td>
-                                        <td class="ps-2 py-4">
-                                            <p class="fw-semibold mb-2 pt-3">{{ payment.amount }} €</p>
-                                            <p class="fw-semibold mb-2">0.00 €</p>
-                                            <p class="fw-semibold mb-0 pb-3">{{ payment.amount }} €</p>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                     <div class="table-responsive">
+    <table class="table m-0">
+        <thead>
+            <tr>
+                <th>Événement</th>
+                <th>Date</th>
+                <th>Catégorie</th>
+                <th class="text-end">Prix</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for detail in payment.details %}
+            <tr>
+                <td class="text-nowrap">
+                    <div class="d-flex align-items-center">
+                        {% if detail.event.getPhoto() %}
+                        <img src="{{ asset('uploads/packs/' ~ detail.event.getPhoto()) }}" alt="{{ detail.event.getNom() }}" width="40" height="40" class="rounded me-2">
+                        {% endif %}
+                        <span>{{ detail.event.getNom() }}</span>
+                    </div>
+                </td>
+                <td>{{ detail.event.getDate()|date('d/m/Y') }}</td>
+                <td>{{ detail.event.getCategorie().value }}</td>
+                <td class="text-end">{{ detail.getPrice() }} €</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Replace the total section with this: -->
+<div class="total-section border-top">
+    <div class="total-details p-4">
+        <div class="d-flex justify-content-between mb-2">
+            <span class="text-muted">Sous-total :</span>
+            <span>{{ payment.amount }} €</span>
+        </div>
+        <div class="d-flex justify-content-between mb-2">
+            <span class="text-muted">Taxe :</span>
+            <span>0.00 €</span>
+        </div>
+        <div class="d-flex justify-content-between fw-bold">
+            <span>Total :</span>
+            <span>{{ payment.amount }} €</span>
+        </div>
+    </div>
+</div>
 
                         <div class="card-body mx-3">
                             <div class="row">
                                 <div class="col-12">
-                                    <span class="fw-semibold">Note:</span>
+                                    <span class="fw-semibold">Remarque :</span>
                                     <span>
-                                        Your tickets will be available in your account. For any questions, please contact our support team.
+                                        Vos billets seront disponibles dans votre compte. Pour toute question, veuillez contacter notre support.
                                     </span>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <!-- /Invoice -->
+                <!-- /Facture -->
 
-                <!-- Invoice Actions -->
+                <!-- Actions Facture -->
                 <div class="col-xl-3 col-md-4 col-12 invoice-actions no-print">
                     <div class="card">
                         <div class="card-body">
                             <button class="btn btn-primary d-grid w-100 mb-2" onclick="window.print()">
                                 <span class="d-flex align-items-center justify-content-center text-nowrap">
-                                    <i class="ti ti-printer ti-xs me-1"></i>Print Invoice
+                                    <i class="ti ti-printer ti-xs me-1"></i>Imprimer la facture
                                 </span>
                             </button>
                             <button class="btn btn-label-secondary d-grid w-100 mb-2" id="downloadInvoice">
                                 <span class="d-flex align-items-center justify-content-center text-nowrap">
-                                    <i class="ti ti-download ti-xs me-1"></i>Download
+                                    <i class="ti ti-download ti-xs me-1"></i>Télécharger
                                 </span>
                             </button>
                             <a href="{{ path('app_my_Commandes') }}" class="btn btn-label-secondary d-grid w-100 mb-2">
                                 <span class="d-flex align-items-center justify-content-center text-nowrap">
-                                    <i class="ti ti-arrow-left ti-xs me-1"></i>Back to Orders
+                                    <i class="ti ti-arrow-left ti-xs me-1"></i>Retour aux commandes
                                 </span>
                             </a>
                         </div>
                     </div>
                 </div>
-                <!-- /Invoice Actions -->
+                <!-- /Actions Facture -->
             </div>
         </div>
     </div>
-
-
-
-
-
-
 
 
 

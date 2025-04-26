@@ -19,8 +19,15 @@ use Psr\Log\LoggerInterface;
 use App\Entity\Panier;
 use App\Entity\Payment;
 use App\Repository\EventRepository;
-
+use Doctrine\ORM\Tools\Pagination\Paginator;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use App\Entity\DetailPayment;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
+
+use Symfony\Component\Mailer\MailerInterface;
+use App\Service\EmailServiceP; 
+
+
 
 use App\Entity\Utilisateur;
 use Symfony\Component\Security\Core\Security;
@@ -32,33 +39,46 @@ class EventController extends AbstractController
 {
 
     #[Route('/ajouter-evenement', name: 'app_add_event')]
-    public function addEvent(Request $request, EntityManagerInterface $entityManager): Response
+    public function addEvent(Request $request, EntityManagerInterface $entityManager, HttpClientInterface $httpClient): Response
     {
         $event = new Event();
-        $form = $this->createForm(EventType::class, $event); // Pass the entity instance
-        $user = $entityManager->getRepository(Utilisateur::class)->find(20); // Make sure User entity is correctly imported
-
+        $form = $this->createForm(EventType::class, $event);
+        $user = $entityManager->getRepository(Utilisateur::class)->find(20);
+    
+        // Handle AI generation if it's an AJAX request
+        if ($request->isXmlHttpRequest() && $request->isMethod('POST')) {
+            return $this->handleAIGeneration($request, $httpClient);
+        }
+    
         $form->handleRequest($request);
     
         if ($form->isSubmitted() && $form->isValid()) {
             /** @var UploadedFile $photoFile */
             $photoFile = $form->get('photo')->getData();
             
-            // Handle file upload
             if ($photoFile) {
+                $uploadDirectory = $this->getParameter('kernel.project_dir').'/public/uploads/packs/Images';
                 $newFilename = uniqid().'.'.$photoFile->guessExtension();
+                
+                // Create directory if it doesn't exist
+                if (!file_exists($uploadDirectory)) {
+                    mkdir($uploadDirectory, 0777, true);
+                }
+    
                 $photoFile->move(
-                    $this->getParameter('kernel.project_dir').'/public/uploads',
+                    $uploadDirectory,
                     $newFilename
                 );
-                $event->setPhoto($newFilename);
+                // Store relative path in database
+                $event->setPhoto('Images/'.$newFilename);
+            } else {
+                // Set default image if none was uploaded
+                $event->setPhoto('Images/birthday.jpg');
             }
     
-            // Set the current user
             $event->setUtilisateur($user);
-            $event->setType('EVENT'); // Ensures "EVENT" is always set
-
-            // Persist to database
+            $event->setType('EVENT');
+    
             $entityManager->persist($event);
             $entityManager->flush();
     
@@ -70,23 +90,125 @@ class EventController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
+    
+    private function handleAIGeneration(Request $request, HttpClientInterface $httpClient): JsonResponse
+    {
+        $description = json_decode($request->getContent(), true)['description'] ?? '';
+        
+        if (empty($description)) {
+            return new JsonResponse(['error' => 'Veuillez entrer une description.'], 400);
+        }
+        
+        try {
+            $categories = implode(', ', [
+                'MARIAGE', 'ANNIVERSAIRE', 'CONFERENCE', 'CONCERT', 'SEMINAIRE', 
+                'FESTIVAL', 'SPORT', 'ATELIER'
+            ]);
+            
+            $tomorrow = (new \DateTime('tomorrow'))->format('n/j/Y');
+            
+            $response = $httpClient->request('POST', 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AIzaSyAOPsVC8I8i6vbg2eLImRDs_urmJo7MbKY', [
+                'headers' => [
+                    'Content-Type' => 'application/json',
+                ],
+                'json' => [
+                    'contents' => [
+                        [
+                            'parts' => [
+                                [
+                                    'text' => "Generate an event based on this description: '$description'. You can choose from the following categories: $categories. The event date must be in the future, at least from $tomorrow onwards. Provide the name in french, category, and date in MM/dd/yyyy format. Return ONLY in this exact format:\n\nName: [event name]\nCategory: [category]\nDate: [MM/dd/yyyy]"
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ]);
+            
+            $data = $response->toArray();
+            
+            if (isset($data['error'])) {
+                return new JsonResponse(['error' => $data['error']['message']], 400);
+            }
+            
+            $candidates = $data['candidates'] ?? [];
+            if (empty($candidates)) {
+                return new JsonResponse(['error' => 'No candidates found in response.'], 400);
+            }
+            
+            $content = $candidates[0]['content'] ?? [];
+            $parts = $content['parts'] ?? [];
+            if (empty($parts)) {
+                return new JsonResponse(['error' => 'No parts found in response.'], 400);
+            }
+            
+            $eventDetails = $parts[0]['text'] ?? '';
+            $details = explode("\n", $eventDetails);
+            
+            $result = [];
+            foreach ($details as $detail) {
+                $detail = trim($detail);
+                if (empty($detail)) continue;
+                
+                if (str_starts_with($detail, '**Name:**') || str_starts_with($detail, 'Name:')) {
+                    $result['name'] = trim(str_replace(['**Name:**', 'Name:'], '', $detail));
+                } elseif (str_starts_with($detail, '**Category:**') || str_starts_with($detail, 'Category:')) {
+                    $result['category'] = trim(str_replace(['**Category:**', 'Category:'], '', $detail));
+                } elseif (str_starts_with($detail, '**Date:**') || str_starts_with($detail, 'Date:')) {
+                    $result['date'] = trim(str_replace(['**Date:**', 'Date:'], '', $detail));
+                }
+            }
+            
+            return new JsonResponse($result);
+            
+        } catch (\Exception $e) {
+            return new JsonResponse(['error' => 'Impossible de générer l\'événement: ' . $e->getMessage()], 500);
+        }
+    }
 
     #[Route('/events/draft', name: 'app_draft_events')]
-    public function draftEvents(EntityManagerInterface $entityManager): Response
+    public function draftEvents(Request $request, EntityManagerInterface $entityManager): Response
     {
-        $qb = $entityManager->createQueryBuilder();
-    
-        $qb->select('e')
+        $currentPage = $request->query->getInt('page', 1);
+    $orderBy = $request->query->get('orderby', 'date');
+    $sortDirection = $request->query->get('sort', 'DESC');
+    $pageSize = 9;
+
+    // Build the main query with conditions
+    $qb = $entityManager->createQueryBuilder()
+        ->select('e')
         ->from(Event::class, 'e')
         ->leftJoin('e.paniers', 'p')
-        ->leftJoin('e.detailPayments', 'dc') // Corrected association name
+        ->leftJoin('e.detailPayments', 'dc')
         ->where('e.utilisateur = :userId')
         ->andWhere('p.id IS NULL')
         ->andWhere('dc.id IS NULL')
-        ->setParameter('userId', 25);
-        $events = $qb->getQuery()->getResult();
+        ->setParameter('userId', 20);
+
+    // Apply sorting based on the orderby parameter
+    switch ($orderBy) {
+        case 'name':
+            $qb->orderBy('e.nom', $sortDirection);
+            break;
+        case 'date':
+            $qb->orderBy('e.date', $sortDirection);
+            break;
+        case 'category':
+            $qb->orderBy('e.categorie', $sortDirection);
+            break;
+        default:
+            $qb->orderBy('e.date', 'DESC'); // Default sorting
+    }
+        // Clone the query for pagination
+        $paginatorQuery = clone $qb;
+        $paginatorQuery
+            ->setFirstResult($pageSize * ($currentPage - 1))
+            ->setMaxResults($pageSize);
     
-        // Define the category labels for display
+        $paginator = new Paginator($paginatorQuery);
+        $totalItems = count($paginator);
+        $totalPages = ceil($totalItems / $pageSize);
+    
+        // Category labels
         $categoryLabels = [
             CategorieEvent::MARIAGE->value => 'Mariage',
             CategorieEvent::ANNIVERSAIRE->value => 'Anniversaire',
@@ -99,87 +221,105 @@ class EventController extends AbstractController
         ];
     
         return $this->render('GestionEvent/test.html.twig', [
-            'events' => $events,
+            'events' => $paginator,
             'categoryLabels' => $categoryLabels,
-        ]);
+            'currentPage' => $currentPage,
+            'totalPages' => $totalPages,
+            'totalItems' => $totalItems,
+            'pageSize' => $pageSize,
+            'orderby' => $orderBy,
+            'sort' => $sortDirection
+        ]);  
     }
     
 
+
+    #[Route('/admin/events', name: 'app_events_admin')]
+    public function allEvents(Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $searchTerm = $request->query->get('search');
+        $sortBy = $request->query->get('sort', 'date_desc');
+        $eventRepository = $entityManager->getRepository(Event::class);
+        
+        $events = $eventRepository->searchAndSortEvents($searchTerm, $sortBy);
+
+        $categoryLabels = [
+            CategorieEvent::MARIAGE->value => 'Mariage',
+            CategorieEvent::ANNIVERSAIRE->value => 'Anniversaire',
+            CategorieEvent::CONFERENCE->value => 'Conférence',
+            CategorieEvent::CONCERT->value => 'Concert',
+            CategorieEvent::SEMINAIRE->value => 'Séminaire',
+            CategorieEvent::FESTIVAL->value => 'Festival',
+            CategorieEvent::SPORT->value => 'Sport',
+            CategorieEvent::ATELIER->value => 'Atelier',
+        ];
+
+    // Return partial for AJAX requests
+    $template = $request->isXmlHttpRequest() ? '_events.html.twig' : 'admin_events.html.twig';
+
+    return $this->render("GestionEvent/{$template}", [
+        'events' => $events,
+        'categoryLabels' => $categoryLabels,
+        'searchTerm' => $searchTerm,
+        'sortBy' => $sortBy
+    ]);
+}
 #[Route('/event/{id}/edit', name: 'app_event_edit', methods: ['POST'])]
 public function edit(
     Request $request, 
     Event $event, 
     EntityManagerInterface $entityManager,
     #[Autowire('%kernel.project_dir%')] string $projectDir
-): JsonResponse {
-    $requestData = [];
-    $nom = $request->request->get('nom');
-$date = $request->request->get('date');
-$categorie = $request->request->get('categorie');
+): RedirectResponse {
     try {
-        // Capture request data early
-        $requestData = [
-            'nom' => $request->request->get('nom'),
-            'date' => $request->request->get('date'),
-            'categorie' => $request->request->get('categorie'),
-            'photo' => $request->files->get('photo') ? $request->files->get('photo')->getClientOriginalName() : null
-        ];
-
+        // Validate CSRF token first
         if (!$this->isCsrfTokenValid('edit-event', $request->request->get('_token'))) {
-            return $this->jsonError('Invalid CSRF token', 400, $requestData);
+            $this->addFlash('error', 'Invalid CSRF token');
+            return $this->redirectToRoute('event_show', ['id' => $event->getId()]);
         }
 
-        // Validate required fields
-        if (empty($requestData['nom']) || empty($requestData['date']) || empty($requestData['categorie'])) {
-            return $this->jsonError('All fields are required', 400, $requestData);
+        // Get and validate parameters
+        $nom = $request->request->get('nom');
+        $date = $request->request->get('date');
+        $categorie = $request->request->get('categorie');
+
+        if (empty($nom) || empty($date) || empty($categorie)) {
+            $this->addFlash('error', 'All fields are required');
+            return $this->redirectToRoute('event_show', ['id' => $event->getId()]);
         }
 
         // Update basic fields
         $event
-            ->setNom($requestData['nom'])
-            ->setDate(new \DateTime($requestData['date']))
-            ->setCategorie(CategorieEvent::from($requestData['categorie']));
+            ->setNom($nom)
+            ->setDate(new \DateTime($date))
+            ->setCategorie(CategorieEvent::from($categorie));
 
         // Handle file upload
         if ($photoFile = $request->files->get('photo')) {
-            $uploadDir = $projectDir.'/public/uploads/';
+            $uploadDir = $projectDir.'/public/uploads/packs/';
             
-            // Remove old photo
-            if ($event->getPhoto() && file_exists($uploadPath = $uploadDir.$event->getPhoto())) {
-                if (!@unlink($uploadPath)) {
-                    return $this->jsonError('Failed to remove old photo', 500, $requestData);
+            // Remove old photo if exists
+            if ($event->getPhoto()) {
+                $oldPhotoPath = $uploadDir.$event->getPhoto();
+                if (file_exists($oldPhotoPath)) {
+                    @unlink($oldPhotoPath);
                 }
             }
 
-            // Generate unique filename
+            // Generate new filename and move file
             $newFilename = uniqid().'.'.$photoFile->guessExtension();
-
-            try {
-                $photoFile->move($uploadDir, $newFilename);
-                $event->setPhoto($newFilename);
-            } catch (FileException $e) {
-                return $this->jsonError('File upload failed: '.$e->getMessage(), 500, $requestData);
-            }
+            $photoFile->move($uploadDir, $newFilename);
+            $event->setPhoto($newFilename);
         }
 
         $entityManager->flush();
+        $this->addFlash('success', 'Event updated successfully');
 
-        return new JsonResponse([
-            'success' => true,
-            'photo' => $event->getPhoto() 
-                ? $request->getSchemeAndHttpHost().'/uploads/'.$event->getPhoto()
-                : null,
-            'data' => $requestData
-        ]);
-
-    } catch (\Throwable $e) { // Catch all errors and exceptions
-        return $this->jsonError(
-            'Server error: '.$e->getMessage(),
-            $e instanceof HttpExceptionInterface ? $e->getStatusCode() : 500,
-            $requestData,
-            ['trace' => $e->getTraceAsString()]
-        );
+    } catch (\Throwable $e) {
+        $this->addFlash('error', 'Error updating event: '.$e->getMessage());
     }
+
+    return $this->redirectToRoute('event_show', ['id' => $event->getId()]);
 }
 
 private function jsonError(string $message, int $status = 400, array $data = [], array $additional = []): JsonResponse
@@ -197,7 +337,7 @@ public function delete(Request $request, Event $event, EntityManagerInterface $e
     if ($this->isCsrfTokenValid('delete'.$event->getId(), $request->request->get('_token'))) {
         // Remove associated photo
         if ($event->getPhoto()) {
-            $photoPath = $this->getParameter('kernel.project_dir').'/public/uploads/'.$event->getPhoto();
+            $photoPath = $this->getParameter('kernel.project_dir').'/public/uploads/packs/'.$event->getPhoto();
             if (file_exists($photoPath)) {
                 unlink($photoPath);
             }
@@ -324,7 +464,7 @@ public function cartCount(EntityManagerInterface $em, Security $security): Respo
     return new JsonResponse(['count' => $count]);
 }
 #[Route('/process-payment', name: 'app_process_payment', methods: ['POST'])]
-public function processPayment(Request $request, EntityManagerInterface $em, PanierRepository $panierRepository): JsonResponse
+public function processPayment(Request $request, EntityManagerInterface $em, PanierRepository $panierRepository, EmailServiceP $emailServiceP): JsonResponse
 {
     $data = json_decode($request->getContent(), true);
     
@@ -425,7 +565,16 @@ public function processPayment(Request $request, EntityManagerInterface $em, Pan
             // Clear cart and save changes
             $panierRepository->clearCart($user);
             $em->flush();
-
+            try {
+                $emailServiceP->sendPaymentConfirmation(
+                    $user,
+                    $calculatedAmount / 100,
+                    $payment->getId(),
+                    $user->getEmail() // Make sure your User entity has an email field
+                );
+            } catch (\Exception $e) {
+                dd('Mailer error: ' . $e->getMessage());
+            }
             return new JsonResponse([
                 'success' => true,
                 'paymentId' => $payment->getId(),
@@ -454,6 +603,36 @@ public function processPayment(Request $request, EntityManagerInterface $em, Pan
         ], 500);
     }
 }
+
+
+
+
+#[Route('/test-email', name: 'test_email')]
+public function testEmail(EmailServiceP $emailService): JsonResponse
+{
+    try {
+        // Create a mock user
+        $user = new Utilisateur();
+        $user->setPrenom('TestUser');
+        $user->setEmail('ayed.rayen09@gmail.com'); // Use real email here
+
+        $emailService->sendPaymentConfirmation(
+            $user,
+            99.99,
+            9999,
+            $user->getEmail()
+        );
+
+        return new JsonResponse(['status' => 'Email sent successfully']);
+    } catch (\Throwable $e) {
+        return new JsonResponse([
+            'error' => 'Email failed',
+            'message' => $e->getMessage(),
+            'trace' => $e->getTraceAsString()
+        ], 500);
+    }
+}
+
 
 #[Route('/MyCommandes', name: 'app_my_Commandes')]
 public function myOrders(EntityManagerInterface $em): Response
@@ -531,6 +710,7 @@ public function EventShow(
         ->setMaxResults(6)
         ->getQuery()
         ->getResult();
+        
 
     return $this->render('GestionEvent/DetailEvent.html.twig', [
         'event' => $event,
@@ -545,6 +725,47 @@ public function EventShow(
 
 
 
+#[Route('/admin/event/{id}', name: 'admin_event_show')]
+public function AdminEventShow(
+    Event $event,
+    EventRepository $eventRepository,
+    EntityManagerInterface $em
+): Response {
+    $similarEvents = $eventRepository->createQueryBuilder('e')
+        ->where('e.categorie = :category')
+        ->andWhere('e.id != :currentId')
+        ->setParameter('category', $event->getCategorie()->value)
+        ->setParameter('currentId', $event->getId())
+        ->orderBy('e.date', 'ASC')
+        ->setMaxResults(6)
+        ->getQuery()
+        ->getResult();
+        
+
+    return $this->render('GestionEvent/admin_events_detail.html.twig', [
+        'event' => $event,
+        'similarEvents' => $similarEvents,
+        'categorie_options' => CategorieEvent::cases(),
+    ]);
+}
+
+
+
+#[Route('/admin/MyCommandes', name: 'app_my_Commandes_admin')]
+public function myOrdersAdmin(EntityManagerInterface $em, Request $request): Response
+{
+    $query = $em->getRepository(Payment::class)->createQueryBuilder('p')
+        ->orderBy('p.createdAt', 'DESC');
+
+    // Add search filters if needed (for server-side processing)
+    // This example uses client-side processing but can be adapted
+
+    $payments = $query->getQuery()->getResult();
+    
+    return $this->render('GestionEvent/admin_commandes.html.twig', [
+        'payments' => $payments,
+    ]);
+}
 
 
 

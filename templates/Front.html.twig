@@ -151,27 +151,7 @@ body {
 
 
 
-    <div class="preloader">
-        <button class="th-btn style3 preloaderCls">Cancel Preloader </button>
-        <div class="preloader-inner">
-            <div class="loading-window">
-                <div class="car">
-                    <div class="strike"></div>
-                    <div class="strike strike2"></div>
-                    <div class="strike strike3"></div>
-                    <div class="strike strike4"></div>
-                    <div class="strike strike5"></div>
-                    <div class="car-detail spoiler"></div>
-                    <div class="car-detail back"></div>
-                    <div class="car-detail center"></div>
-                    <div class="car-detail center1"></div>
-                    <div class="car-detail front"></div>
-                    <div class="car-detail wheel"></div>
-                    <div class="car-detail wheel wheel2"></div>
-                </div>
-            </div>
-        </div>
-    </div> 
+   
 <input type="hidden" name="_token" value="{{ csrf_token('add_to_cart') }}">
 
 
@@ -432,8 +412,8 @@ body {
                             <li class="menu-item-has-children">
                                 <a href="#">Event Planner</a>
                                 <ul class="sub-menu">
-                                    <li><a href="#">Ajout Event</a></li>
-                                    <li><a href="#">Liste Event</a></li>
+                        <li><a href="{{ path('app_add_event') }}">Ajout Event</a></li>
+                                    <li><a href="{{ path('app_draft_events') }}">Liste Event</a></li>
                                 </ul>
                             </li>
                             <li class="menu-item-has-children">
@@ -460,7 +440,7 @@ body {
                             <li class="menu-item-has-children">
                                 <a href="#">Autre</a>
                                 <ul class="sub-menu">
-                                    <li><a href="#">Commandes</a></li>
+                                       <li><a href="{{ path('app_my_Commandes') }}">Commandes</a></li>
                                     <li><a href="#">Reclamation</a></li>
                                 </ul>
                             </li>
@@ -617,7 +597,7 @@ body {
 <script src="{{ asset('Front/js/jquery.datetimepicker.min.js') }}"></script>
 
 <script src="{{ asset('Front/js/wow.min.js') }}"></script>
-
+<script src="https://js.stripe.com/v3/"></script>
 <script src="{{ asset('Front/js/main.js') }}"></script>
 <script src="https://npmcdn.com/flatpickr/dist/l10n/fr.js"></script>
     {% endblock %}
@@ -628,94 +608,88 @@ body {
 
     {% block inline_scripts %}
 <script>
-
-
 document.addEventListener('DOMContentLoaded', function() {
-    // Function to update cart count from server
     async function updateCartCount() {
         try {
             const response = await fetch('{{ path('app_panier_count') }}');
+            if (!response.ok) throw new Error('Network error');
             const data = await response.json();
             document.querySelector('.badge').textContent = data.count;
         } catch (error) {
-            console.error('Error updating cart count:', error);
+            console.error('Cart count update failed:', error);
         }
     }
 
-    // Initial cart count update
-    updateCartCount();
-
-    // Make event cards draggable
-    document.querySelectorAll('.event-card').forEach(card => {
-        card.draggable = true;
-        
-        card.addEventListener('dragstart', (e) => {
-            const eventData = {
-                idEvent: card.dataset.eventId,
-                categorie: card.dataset.categorie,
-                date: card.dataset.date
-            };
-            e.dataTransfer.setData('application/json', JSON.stringify(eventData));
+    function initDragDrop() {
+        // Cleanup existing listeners
+        document.querySelectorAll('.event-card').forEach(card => {
+            card.ondragstart = null;
         });
-    });
 
-    // Handle drop on shopping bag
-    const shoppingBag = document.querySelector('#cartIcon');
-    
-    shoppingBag.addEventListener('dragover', (e) => {
-        e.preventDefault();
-    });
+        // Initialize draggable cards
+        document.querySelectorAll('.event-card').forEach(card => {
+            card.draggable = true;
+            card.ondragstart = (e) => {
+                e.dataTransfer.setData('application/json', JSON.stringify({
+                    idEvent: card.dataset.eventId,
+                    categorie: card.dataset.categorie,
+                    date: card.dataset.date
+                }));
+            };
+        });
 
-    shoppingBag.addEventListener('drop', async (e) => {
-        e.preventDefault();
-        const eventData = JSON.parse(e.dataTransfer.getData('application/json'));
+        // Cart drop handling
+        const cart = document.getElementById('cartIcon');
+        const cleanupDrag = () => cart.classList.remove('dragover');
         
-        try {
-            const response = await fetch('{{ path('app_panier_add') }}', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value
-                },
-                body: JSON.stringify(eventData)
-            });
+        cart.ondragover = (e) => {
+            e.preventDefault();
+            cart.classList.add('dragover');
+        };
 
-            if (response.ok) {
+        cart.ondragleave = cleanupDrag;
+        cart.ondrop = async (e) => {
+            e.preventDefault();
+            cleanupDrag();
+
+            try {
+                const eventData = JSON.parse(e.dataTransfer.getData('application/json'));
+                const response = await fetch('{{ path('app_panier_add') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value
+                    },
+                    body: JSON.stringify(eventData)
+                });
+
                 const result = await response.json();
-                if (result.success) {
-                    // Update cart count from server after successful add
-                    await updateCartCount();
-
-                    // Find and remove the card's parent column
-                    const cardToRemove = document.querySelector(
-                        `.event-card[data-event-id="${eventData.idEvent}"]`
-                    );
-                    
-                    if (cardToRemove) {
-                        const columnParent = cardToRemove.closest('.col-xl-4');
-                        columnParent.style.transition = 'all 0.3s ease';
-                        columnParent.style.opacity = '0';
-                        columnParent.style.transform = 'translateY(20px)';
-                        
-                        setTimeout(() => {
-                            columnParent.remove();
-                            document.querySelector('.row.gy-40').style.display = 'none';
-                            document.querySelector('.row.gy-40').offsetHeight;
-                            document.querySelector('.row.gy-40').style.display = '';
-                        }, 300);
-                    }
-                } else {
-                    alert('Failed to add to cart: ' + (result.message || 'Unknown error'));
+                
+                if (!response.ok || !result.success) {
+                    throw new Error(result.message || 'Server error');
                 }
+
+                await updateCartCount();
+                const card = document.querySelector(`[data-event-id="${eventData.idEvent}"]`);
+                if (card) card.closest('.col-md-6').remove();
+                
+            } catch (error) {
+                console.error('Cart update failed:', error);
+                alert(`Error: ${error.message}`);
             }
-        } catch (error) {
-            console.error('Error:', error);
-            alert('Failed to add to cart');
-        }
+        };
+    }
+
+    // Initial setup
+    updateCartCount();
+    initDragDrop();
+
+    // Reinitialize after pagination
+    document.addEventListener('ajaxComplete', () => {
+        initDragDrop();
+        updateCartCount();
     });
 });
-
-
-    </script>
+</script>
 
     {% endblock %}

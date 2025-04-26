@@ -5,6 +5,8 @@ namespace App\Repository;
 use App\Entity\Event;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use App\Enum\CategorieEvent;  // Ensure this is the correct path
+
 
 /**
  * @extends ServiceEntityRepository<Event>
@@ -84,5 +86,51 @@ class EventRepository extends ServiceEntityRepository
             error_log('Error in findActiveEvents: ' . $e->getMessage());
             return 0;
         }
+    }
+
+    public function searchAndSortEvents(?string $searchTerm, string $sortBy): array
+    {
+        $qb = $this->createQueryBuilder('e');
+    
+        if ($searchTerm) {
+            $qb->where('e.nom LIKE :searchTerm')
+                ->orWhere('e.categorie IN (:categories)')
+                ->setParameter('searchTerm', '%'.$searchTerm.'%')
+                ->setParameter('categories', $this->getMatchingCategories($searchTerm));
+        }
+    
+        // Add sorting
+        switch ($sortBy) {
+            case 'name_asc':
+                $qb->orderBy('e.nom', 'ASC');
+                break;
+            case 'name_desc':
+                $qb->orderBy('e.nom', 'DESC');
+                break;
+            case 'date_asc':
+                $qb->orderBy('e.date', 'ASC');
+                break;
+            case 'date_desc':
+                $qb->orderBy('e.date', 'DESC');
+                break;
+            case 'category_asc':
+                $qb->orderBy('e.categorie', 'ASC');
+                break;
+            default:
+                $qb->orderBy('e.date', 'DESC');
+        }
+    
+        return $qb->getQuery()->getResult();
+    }
+    
+    private function getMatchingCategories(string $searchTerm): array
+    {
+        $categories = [];
+        foreach (CategorieEvent::cases() as $category) {
+            if (stripos($category->value, $searchTerm) !== false) {
+                $categories[] = $category;
+            }
+        }
+        return $categories;
     }
 }
