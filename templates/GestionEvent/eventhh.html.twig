@@ -11,7 +11,7 @@
                             <div class="card-img-frame p-3 pb-0">
                                 {% if event.photo %}
                                     <img class="card-img-top rounded" 
-                                         src="{{ asset('uploads/' ~ event.photo) }}" 
+                                         src="{{ asset('uploads/packs/' ~ event.photo) }}" 
                                          alt="{{ event.nom }}" 
                                          style="object-fit: cover; height: 180px; width: 100%;">
                                 {% else %}
@@ -44,7 +44,7 @@
                                data-event-name="{{ event.nom }}"
                                data-event-date="{{ event.date|date('Y-m-d') }}"
                                data-event-category="{{ event.categorie.value ?? '' }}"
-                               data-event-photo="{{ event.photo ? app.request.schemeAndHttpHost ~ '/uploads/' ~ event.photo : '' }}">
+                               data-event-photo="{{ event.photo ? app.request.schemeAndHttpHost ~ '/uploads/packs/' ~ event.photo : '' }}">
                                 <i class="fas fa-edit"></i>
                             </a>
                             <form action="{{ path('app_event_delete', {'id': event.id}) }}" method="POST" style="display: inline;" class="delete-form">

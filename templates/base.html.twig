@@ -150,27 +150,7 @@ body {
 
 
 
-    <div class="preloader">
-        <button class="th-btn style3 preloaderCls">Cancel Preloader </button>
-        <div class="preloader-inner">
-            <div class="loading-window">
-                <div class="car">
-                    <div class="strike"></div>
-                    <div class="strike strike2"></div>
-                    <div class="strike strike3"></div>
-                    <div class="strike strike4"></div>
-                    <div class="strike strike5"></div>
-                    <div class="car-detail spoiler"></div>
-                    <div class="car-detail back"></div>
-                    <div class="car-detail center"></div>
-                    <div class="car-detail center1"></div>
-                    <div class="car-detail front"></div>
-                    <div class="car-detail wheel"></div>
-                    <div class="car-detail wheel wheel2"></div>
-                </div>
-            </div>
-        </div>
-    </div> 
+    
 <input type="hidden" name="_token" value="{{ csrf_token('add_to_cart') }}">
 
 
@@ -431,8 +411,8 @@ body {
                             <li class="menu-item-has-children">
                                 <a href="#">Event Planner</a>
                                 <ul class="sub-menu">
-                                    <li><a href="#">Ajout Event</a></li>
-                                    <li><a href="#">Liste Event</a></li>
+                                    <li><a href="{{ path('app_add_event') }}">Ajout Event</a></li>
+                                    <li><a href="{{ path('app_draft_events') }}">Liste Event</a></li>
                                 </ul>
                             </li>
                             <li class="menu-item-has-children">
@@ -459,7 +439,7 @@ body {
                             <li class="menu-item-has-children">
                                 <a href="#">Autre</a>
                                 <ul class="sub-menu">
-                                    <li><a href="#">Commandes</a></li>
+                                       <li><a href="{{ path('app_my_Commandes') }}">Commandes</a></li>
                                     <li><a href="#">Reclamation</a></li>
                                 </ul>
                             </li>

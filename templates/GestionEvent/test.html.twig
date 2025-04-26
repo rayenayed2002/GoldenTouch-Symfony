@@ -1,244 +1,241 @@
+
+
+
+
 {% extends 'front.html.twig' %}
 
-{% block title %}Custom Page Title{% endblock %}
+{% block title %}Draft Events{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        /* Improved Sorting Dropdown Styles */
+        .sorting-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .sort-label {
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 0;
+        }
+        
+        .custom-select-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .custom-select {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            padding: 8px 35px 8px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            background-color: white;
+            font-size: 14px;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 180px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .custom-select:hover {
+            border-color: #FFD700;
+        }
+        
+        .custom-select:focus {
+            outline: none;
+            border-color: #FFD700;
+            box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.2);
+        }
+        
+        .custom-select-wrapper::after {
+            content: "▼";
+            font-size: 10px;
+            color: #777;
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+        }
+        
+        /* Pagination Improvements */
+        .th-pagination ul {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .th-pagination li a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 1px solid #e0e0e0;
+            color: #555;
+            transition: all 0.3s ease;
+        }
+        
+        .th-pagination li a:hover {
+            background-color: #FFD700;
+            color: white;
+            border-color: #FFD700;
+        }
+        
+        .th-pagination li.active a {
+            background-color: #FFD700;
+            color: white;
+            border-color: #FFD700;
+            font-weight: bold;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 767px) {
+            .th-sort-bar .row {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .sorting-container {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .custom-select {
+                min-width: 160px;
+            }
+        }
+    </style>
+{% endblock %}
 
 {% block content %}
 <div class="custom-content">
  <section class="space-top space-extra-bottom">
     <div class="container">
-        <div class="row flex-row-reverse">
-            <!-- 🟦 MAIN CONTENT (EVENTS) -->
-            <div class="col-xl-9 col-lg-8">
-                <div class="th-sort-bar">
+        <div class="row justify-content-center">
+            <input type="hidden" name="_token" value="{{ csrf_token('add_to_cart') }}">
+
+            <!-- Main Content -->
+            <div class="col-lg-10 col-xl-8 mx-auto">
+                <div class="th-sort-bar mb-4">
                     <div class="row justify-content-between align-items-center">
-                        <div class="col-md">
-                            <p class="woocommerce-result-count">
-                                Showing {{ events|length }} results
+                        <div class="col-md-auto mb-3 mb-md-0">
+                            <p class="woocommerce-result-count mb-0">
+                                Résultats {{ ((currentPage - 1) * pageSize + 1 )}} à {{ min(currentPage * pageSize, totalItems) }} sur {{ totalItems }} affichés
                             </p>
                         </div>
-                        <div class="col-md-auto">
-                            <form class="woocommerce-ordering" method="get">
-                                <select name="orderby" class="orderby" aria-label="Shop order">
-                                    <option value="menu_order" selected>Default Sorting</option>
-                                    <option value="date">Sort by latest</option>
-                                    <option value="name">Sort by name</option>
-                                    <option value="category">Sort by category</option>
-                                </select>
-                            </form>
-                        </div>
+                       <div class="col-md-auto">
+    <div class="sorting-container">
+        <span class="sort-label">Trier par:</span>
+        <div class="custom-select-wrapper">
+            <form class="woocommerce-ordering" method="get">
+                <input type="hidden" name="page" value="1">
+                <select name="orderby" class="custom-select" aria-label="Sort order" onchange="this.form.submit()">
+                    <option value="date" data-sort="desc" {{ app.request.query.get('orderby') == 'date' and app.request.query.get('sort') != 'asc' ? 'selected' }}>Date (Plus ancien)</option>
+                    <option value="date" data-sort="asc" {{ app.request.query.get('orderby') == 'date' and app.request.query.get('sort') == 'asc' ? 'selected' }}>Date (Plus récent)</option>
+                    <option value="name" data-sort="asc" {{ app.request.query.get('orderby') == 'name' and app.request.query.get('sort') == 'asc' ? 'selected' }}>Nom (A-Z)</option>
+                    <option value="name" data-sort="desc" {{ app.request.query.get('orderby') == 'name' and app.request.query.get('sort') == 'desc' ? 'selected' }}>Nom (Z-A)</option>
+                    <option value="category" data-sort="asc" {{ app.request.query.get('orderby') == 'category' and app.request.query.get('sort') == 'asc' ? 'selected' }}>Catégorie (Z-A)</option>
+                    <option value="category" data-sort="desc" {{ app.request.query.get('orderby') == 'category' and app.request.query.get('sort') == 'desc' ? 'selected' }}>Catégorie (A-Z)</option>
+                </select>
+                <input type="hidden" name="sort" id="sortDirection" value="{{ app.request.query.get('sort', 'desc') }}">
+                {% for key, value in app.request.query.all %}
+                    {% if key not in ['orderby', 'page', 'sort'] %}
+                        <input type="hidden" name="{{ key }}" value="{{ value }}">
+                    {% endif %}
+                {% endfor %}
+            </form>
+        </div>
+    </div>
+</div>
                     </div>
                 </div>
 
-                <div class="row gy-40">
+                <div class="row gy-40 justify-content-center">
                     {% for event in events %}
-                        <div class="col-xl-4 col-sm-6">
+                        <div class="col-md-6 col-lg-4">
                             <a href="{{ path('event_show', {'id': event.id}) }}" class="text-decoration-none">
-
-                             <div class="th-product event-card" 
-             data-event-id="{{ event.id }}"
-             data-categorie="{{ event.categorie.value }}"
-             data-date="{{ event.date|date('Y-m-d') }}">
-                                <div class="product-img">
-                                    {% if event.photo %}
-                                        <img src="{{ asset('uploads/' ~ event.photo) }}" class="img-fluid" alt="{{ event.nom }}">
-                                    {% else %}
-                                        <img src="assets/img/placeholder.jpg" class="img-fluid" alt="No image">
-                                    {% endif %}
-                                </div>
-                                <div class="product-content">
-                                    <h3 class="product-title">
-                                        {{ event.nom }}
-                                    </h3>
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <span class="price">{{ event.date|date('M d, Y') }}</span>
-                                        <span class="event-category">
-                                            {{ categoryLabels[event.categorie.value] ?? 'General' }}
-                                        </span>
+                                <div class="th-product event-card" 
+     data-event-id="{{ event.id }}"
+     data-categorie="{{ event.categorie.value }}"
+     data-date="{{ event.date|date('Y-m-d') }}">
+                                    <div class="product-img">
+                                        {% if event.photo %}
+                                            <img src="{{ asset('uploads/packs/' ~ event.photo) }}" class="img-fluid" alt="{{ event.nom }}">
+                                        {% else %}
+                                            <img src="{{ asset('assets/img/placeholder.jpg') }}" class="img-fluid" alt="No image">
+                                        {% endif %}
+                                    </div>
+                                    <div class="product-content">
+                                        <h3 class="product-title">{{ event.nom }}</h3>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span class="price">{{ event.date|date('d M Y') }}</span>
+                                            <span class="event-category">
+                                                {{ categoryLabels[event.categorie.value] ?? 'Général' }}
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                                </a>
+                            </a>
                         </div>
                     {% else %}
-                        <div class="col-12">
-                            <div class="alert alert-info">No events found</div>
+                        <div class="col-12 text-center">
+                            <div class="alert alert-info">Aucun événement trouvé</div>
                         </div>
                     {% endfor %}
                 </div>
 
+                {% if totalPages > 1 %}
                 <div class="th-pagination text-center pt-50">
-                    <ul>
-                        <li><a href="blog.html">1</a></li>
-                        <li><a href="blog.html">2</a></li>
-                        <li><a href="blog.html">3</a></li>
-                        <li><a href="blog.html"><i class="far fa-arrow-right"></i></a></li>
+                    <ul class="justify-content-center">
+                        {% if currentPage > 1 %}
+                            <li>
+                                <a href="{{ path('app_draft_events', app.request.query.all|merge({'page': currentPage - 1})) }}">
+                                    <i class="far fa-arrow-left"></i>
+                                </a>
+                            </li>
+                        {% endif %}
+
+                        {% for page in 1..totalPages %}
+                            <li class="{{ currentPage == page ? 'active' }}">
+                                <a href="{{ path('app_draft_events', app.request.query.all|merge({'page': page})) }}">{{ page }}</a>
+                            </li>
+                        {% endfor %}
+
+                        {% if currentPage < totalPages %}
+                            <li>
+                                <a href="{{ path('app_draft_events', app.request.query.all|merge({'page': currentPage + 1})) }}">
+                                    <i class="far fa-arrow-right"></i>
+                                </a>
+                            </li>
+                        {% endif %}
                     </ul>
                 </div>
-            </div>
-
-            <!-- 🟨 SIDEBAR -->
-            <div class="col-xl-3 col-lg-4">
-                <aside class="sidebar-area sidebar-shop">
-                    <div class="widget widget_search">
-                        <form class="search-form">
-                            <input type="text" placeholder="Search...">
-                            <button type="submit"><i class="far fa-search"></i></button>
-                        </form>
-                    </div>
-
-                    <div class="widget widget_categories">
-                        <h3 class="widget_title">Categories</h3>
-                        <ul>
-                            <li><a href="blog.html">Business Taxi</a> <span>(8)</span></li>
-                            <li><a href="blog.html">Corporate Events</a> <span>(6)</span></li>
-                            <li><a href="blog.html">Custom Booking</a> <span>(5)</span></li>
-                            <li><a href="blog.html">Traveling</a> <span>(2)</span></li>
-                            <li><a href="blog.html">Cab Booking Trips</a> <span>(7)</span></li>
-                            <li><a href="blog.html">Hybrid Taxi</a> <span>(9)</span></li>
-                        </ul>
-                    </div>
-
-                    <div class="widget widget_price_filter">
-                        <h4 class="widget_title">Filter By Price</h4>
-                        <div class="price_slider_wrapper">
-                            <div class="price_label">
-                                Price: <span class="from">$0</span> — <span class="to">$70</span>
-                            </div>
-                            <div class="price_slider"></div>
-                            <button type="submit" class="button">Filter</button>
-                        </div>
-                    </div>
-
-                    <div class="widget widget_tag_cloud">
-                        <h3 class="widget_title">Popular Tags</h3>
-                        <div class="tagcloud">
-                            <a href="blog.html">Technology</a>
-                            <a href="blog.html">Advice</a>
-                            <a href="blog.html">Solution</a>
-                            <a href="blog.html">Consultion</a>
-                            <a href="blog.html">Business</a>
-                            <a href="blog.html">IT-Services</a>
-                        </div>
-                    </div>
-                </aside>
+                {% endif %}
             </div>
         </div>
     </div>
 </section>
 </div>
 {% endblock %}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-{% block inline_scripts %}
-{{ parent() }}
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Function to update cart count from server
-    async function updateCartCount() {
-        try {
-            const response = await fetch('{{ path('app_panier_count') }}');
-            const data = await response.json();
-            document.querySelector('.badge').textContent = data.count;
-        } catch (error) {
-            console.error('Error updating cart count:', error);
-        }
-    }
-
-    // Initial cart count update
-    updateCartCount();
-
-    // Make event cards draggable
-    document.querySelectorAll('.event-card').forEach(card => {
-        card.draggable = true;
-        
-        card.addEventListener('dragstart', (e) => {
-            const eventData = {
-                idEvent: card.dataset.eventId,
-                categorie: card.dataset.categorie,
-                date: card.dataset.date
-            };
-            e.dataTransfer.setData('application/json', JSON.stringify(eventData));
-        });
-    });
-
-    // Handle drop on shopping bag
-    const shoppingBag = document.querySelector('#cartIcon');
-    
-    shoppingBag.addEventListener('dragover', (e) => {
-        e.preventDefault();
-    });
-
-    shoppingBag.addEventListener('drop', async (e) => {
-        e.preventDefault();
-        const eventData = JSON.parse(e.dataTransfer.getData('application/json'));
-        
-        try {
-            const response = await fetch('{{ path('app_panier_add') }}', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(eventData)
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sortSelect = document.querySelector('select[name="orderby"]');
+            const sortDirectionInput = document.getElementById('sortDirection');
+            
+            sortSelect.addEventListener('change', function() {
+                const selectedOption = this.options[this.selectedIndex];
+                sortDirectionInput.value = selectedOption.dataset.sort;
+                this.form.submit();
             });
-
-            // Handle non-JSON responses
-            const responseText = await response.text();
-            let result;
-            try {
-                result = JSON.parse(responseText);
-            } catch {
-                throw new Error('Invalid server response');
-            }
-
-            if (result.success) {
-                // Update cart count immediately
-                const countResponse = await fetch('{{ path('app_panier_count') }}');
-                const countData = await countResponse.json();
-                document.querySelector('.badge').textContent = countData.count;
-
-                // Find and remove the card
-                const cardToRemove = document.querySelector(
-                    `.event-card[data-event-id="${eventData.idEvent}"]`
-                );
-                
-                if (cardToRemove) {
-                    const columnParent = cardToRemove.closest('.col-xl-4');
-                    columnParent.style.transition = 'all 0.3s ease';
-                    columnParent.style.opacity = '0';
-                    columnParent.style.transform = 'translateY(20px)';
-                    
-                    setTimeout(() => {
-                        columnParent.remove();
-                        // Update layout after removal
-                        const row = document.querySelector('.row.gy-40');
-                        if (row) {
-                            row.style.display = 'none';
-                            row.offsetHeight; // Trigger reflow
-                            row.style.display = '';
-                        }
-                    }, 300);
-                }
-            } else {
-                alert('Error: ' + (result.message || 'Failed to add to cart'));
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            alert('Failed to add to cart: ' + error.message);
-        }
-    });
-});
-</script>
+        });
+    </script>
 {% endblock %}
