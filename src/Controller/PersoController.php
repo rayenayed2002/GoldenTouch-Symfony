@@ -35,8 +35,14 @@ final class PersoController extends AbstractController
         $sort = $request->query->get('sort');
         $order = $request->query->get('order', 'ASC');
         
-        // Créer la requête
-        $query = $personnelRepository->createQueryByFilters($statut, $service, $sort, $order);
+        // Récupérer les top 3 personnels avec le plus de réservations
+        $topPersonnels = $personnelRepository->findTopReservedPersonnels();
+        $topPersonnelIds = array_map(function($item) {
+            return $item['personnel']->getIdP();
+        }, $topPersonnels);
+        
+        // Récupérer tous les personnels avec les tops en premier
+        $query = $personnelRepository->findAllWithTopFirst($topPersonnelIds, $statut, $service, $sort, $order);
         
         // Pagination avec 6 éléments par page
         $personnels = $paginator->paginate(
@@ -44,15 +50,7 @@ final class PersoController extends AbstractController
             $request->query->getInt('page', 1),
             6
         );
-        
-
-    // Récupérer les top 3 personnels avec le plus de réservations
-    $topPersonnels = $personnelRepository->findTopReservedPersonnels();
-    $topPersonnelIds = array_map(function($item) {
-        return $item['personnel']->getIdP();
-    }, $topPersonnels);
-
-
+    
         return $this->render('perso/index.html.twig', [
             'personnels' => $personnels,
             'topPersonnelIds' => $topPersonnelIds,
