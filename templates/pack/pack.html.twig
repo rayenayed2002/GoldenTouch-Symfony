@@ -109,12 +109,24 @@
                             <div class="col-md-auto">
                                 <form class="woocommerce-ordering" method="get">
                                     <select name="orderby" class="orderby" aria-label="Ordre des packs">
-                                        <option value="menu_order" selected="selected">Tri par défaut</option>
-                                        <option value="popularity">Trier par popularité</option>
-                                        <option value="price">Trier par prix : croissant</option>
-                                        <option value="price-desc">Trier par prix : décroissant</option>
+                                        {% for option in sortOptions %}
+    <option value="{{ option.value }}" {% if option.value == currentSort %}selected="selected"{% endif %}>{{ option.label }}</option>
+{% endfor %}
                                     </select>
                                 </form>
+                                <script>
+                                document.addEventListener('DOMContentLoaded', function() {
+                                    const orderForm = document.querySelector('.woocommerce-ordering');
+                                    if(orderForm) {
+                                        const orderSelect = orderForm.querySelector('.orderby');
+                                        if(orderSelect) {
+                                            orderSelect.addEventListener('change', function() {
+                                                orderForm.submit();
+                                            });
+                                        }
+                                    }
+                                });
+                                </script>
                             </div>
                         </div>
                     </div>
@@ -271,12 +283,14 @@
                 const packsContainer = document.querySelector('#pack-list-container');
                 packsContainer.innerHTML = '<div class="col-12 text-center py-5"><div class="spinner-border text-primary" role="status"></div></div>';
 
+                const orderby = document.querySelector('.orderby')?.value || 'menu_order';
                 const params = new URLSearchParams({
                     page,
                     category,
                     minPrice,
                     maxPrice,
-                    q: searchTerm
+                    q: searchTerm,
+                    orderby
                 });
 
                 fetch(`/pack?${params.toString()}`, {

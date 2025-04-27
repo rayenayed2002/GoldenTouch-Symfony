@@ -73,6 +73,14 @@ class PackController extends AbstractController
         $queryBuilder = $this->packRepository->createQueryBuilder('p')
             ->leftJoin('p.event', 'e');
 
+        // Apply sorting
+        $orderby = $request->query->get('orderby', 'menu_order');
+        if ($orderby === 'price') {
+            $queryBuilder->orderBy('p.prix', 'ASC');
+        } elseif ($orderby === 'price-desc') {
+            $queryBuilder->orderBy('p.prix', 'DESC');
+        }
+
         // Apply filters
         if ($searchTerm) {
             $queryBuilder->andWhere('p.nom LIKE :searchTerm OR p.description LIKE :searchTerm')
@@ -114,13 +122,22 @@ class PackController extends AbstractController
             ]);
         }
 
+        $sortOptions = [
+            ['value' => 'menu_order', 'label' => 'Tri par défaut'],
+            ['value' => 'price', 'label' => 'Trier par prix : croissant'],
+            ['value' => 'price-desc', 'label' => 'Trier par prix : décroissant'],
+        ];
+        $currentSort = $request->query->get('orderby', 'menu_order');
+
         return $this->render('pack/pack.html.twig', [
             'packs' => $packs,
             'categories' => $categories,
             'selectedCategory' => $category,
             'minPrice' => $minPrice,
             'maxPrice' => $maxPrice,
-            'searchTerm' => $searchTerm
+            'searchTerm' => $searchTerm,
+            'sortOptions' => $sortOptions,
+            'currentSort' => $currentSort
         ]);
     }
     
