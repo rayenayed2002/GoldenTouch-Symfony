@@ -44,7 +44,7 @@ class EventController extends AbstractController
     {
         $event = new Event();
         $form = $this->createForm(EventType::class, $event);
-        $user = $entityManager->getRepository(Utilisateur::class)->find(20);
+        $user = $entityManager->getRepository(Utilisateur::class)->find(25);
     
         // Handle AI generation if it's an AJAX request
         if ($request->isXmlHttpRequest() && $request->isMethod('POST')) {
@@ -186,7 +186,7 @@ class EventController extends AbstractController
         ->andWhere('p.id IS NULL')
         ->andWhere('dc.id IS NULL')
         ->andWhere('(pack.id IS NULL OR dp.statut = :statutConfirme)')
-        ->setParameter('userId', 20)
+        ->setParameter('userId', 25)
         ->setParameter('statutConfirme', 'CONFIRMÉ');
 
         
@@ -398,8 +398,8 @@ public function addToCart(Request $request, EntityManagerInterface $entityManage
         }
     }
 
-    // Fetch static user with ID = 20
-    $user = $entityManager->getRepository(Utilisateur::class)->find(20);
+    // Fetch static user with ID = 25
+    $user = $entityManager->getRepository(Utilisateur::class)->find(25);
     if (!$user) {
         return new JsonResponse(['success' => false, 'message' => 'User not found'], 404);
     }
@@ -434,7 +434,7 @@ public function addToCart(Request $request, EntityManagerInterface $entityManage
 #[Route('/panier', name: 'app_panier', methods: ['GET'])]
 public function ShowPanier(EntityManagerInterface $em, Security $security): Response
 {
-    $user = $em->getRepository(Utilisateur::class)->find(20); // or your static user ID
+    $user = $em->getRepository(Utilisateur::class)->find(25); // or your static user ID
     
     $panierItems = $em->getRepository(Panier::class)->findBy(['utilisateur' => $user]);
     
@@ -466,7 +466,7 @@ public function removeFromCart(int $id, EntityManagerInterface $em): JsonRespons
 public function clearCart(EntityManagerInterface $em): JsonResponse
 {
     // Static user for development
-    $user = $em->getRepository(Utilisateur::class)->find(20);
+    $user = $em->getRepository(Utilisateur::class)->find(25);
     
     if (!$user) {
         return $this->json(['success' => false, 'error' => 'User not found']);
@@ -489,7 +489,7 @@ public function clearCart(EntityManagerInterface $em): JsonResponse
 #[Route('/cart/count', name: 'app_panier_count')]
 public function cartCount(EntityManagerInterface $em, Security $security): Response
 {
-    $user = $em->getRepository(Utilisateur::class)->find(20); // or your static user ID
+    $user = $em->getRepository(Utilisateur::class)->find(25); // or your static user ID
     $count = $em->getRepository(Panier::class)->count(['utilisateur' => $user]);
     
     return new JsonResponse(['count' => $count]);
@@ -510,7 +510,7 @@ public function processPayment(Request $request, EntityManagerInterface $em, Pan
         }
 
         // Get user (remove hardcoded ID in production)
-        $user = $em->getRepository(Utilisateur::class)->find(20);
+        $user = $em->getRepository(Utilisateur::class)->find(25);
         if (!$user) {
             return new JsonResponse(['success' => false, 'error' => 'User not found']);
         }
@@ -669,7 +669,7 @@ public function testEmail(EmailServiceP $emailService): JsonResponse
 public function myOrders(EntityManagerInterface $em): Response
 {
     // In production, get the authenticated user instead of hardcoding
-    $user = $em->getRepository(Utilisateur::class)->find(20);
+    $user = $em->getRepository(Utilisateur::class)->find(25);
     
     $payments = $em->getRepository(Payment::class)->findBy(
         ['user' => $user],
