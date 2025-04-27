@@ -63,7 +63,7 @@ public function callback(
                 'date' => $event->getDate(),
                 'description' => sprintf(
                     "Catégorie: %s\nType: %s",
-                    $event->getCategorie(),
+                    $event->getCategorie()->value, // or ->name depending on your enum definition
                     $event->getType()
                 )
             ];

@@ -872,7 +872,16 @@
                   {% for personnel in personnels %}
                   <div class="col-xl-4 col-lg-6 col-md-6 animate__animated animate__fadeIn">
                     <div class="card personnel-card h-100">
-
+{% if personnel.idP in topPersonnelIds %}
+        <div class="top-badge">
+            <div class="star-badge">
+                <svg class="star-icon" viewBox="0 0 24 24">
+                    <path fill="currentColor" d="M12,17.27L18.18,21L16.54,13.97L22,9.24L14.81,8.62L12,2L9.19,8.62L2,9.24L7.45,13.97L5.82,21L12,17.27Z" />
+                </svg>
+                <span class="badge-text">TOP</span>
+            </div>
+        </div>
+        {% endif %}
             {% if personnel.idP in topPersonnelIds %}
             <div class="top-badge">
               <div class="star-badge">

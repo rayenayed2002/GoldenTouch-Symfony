@@ -203,8 +203,166 @@
         {% endif %}
     </a>
 </li>
+    <div class="container my-3" style="text-align:right;">
+        {% if currentFilter != 'statistics' %}
+            <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({'filter':'statistics'})) }}" class="btn btn-warning"><i class="fas fa-chart-bar"></i> Statistique</a>
+        {% else %}
+            <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({'filter':null})) }}" class="btn btn-secondary"><i class="fas fa-list"></i> Retour à la liste</a>
+        {% endif %}
+    </div>
     
-    {% if currentFilter == 'reservations' %}
+    {% if currentFilter == 'statistics' %}
+<div class="container my-5">
+    <h2 class="mb-4">Statistiques des Lieux</h2>
+    <div class="row">
+        <!-- Statistiques générales -->
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Vue d'ensemble</h5>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div>
+                            <h6 class="mb-0">Total des lieux</h6>
+                            <h2 class="mb-0">{{ lieux.total }}</h2>
+                        </div>
+                        <i class="fas fa-building fa-2x text-primary"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Réservations -->
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Réservations</h5>
+                    <canvas id="reservationsChart"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Revenus -->
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Revenus mensuels</h5>
+                    <canvas id="revenueChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mt-4">
+        <!-- Top des lieux -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Top 5 des lieux les plus réservés</h5>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Lieu</th>
+                                    <th>Réservations</th>
+                                    <th>Taux d'occupation</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for lieu in topLieux|default([]) %}
+                                <tr>
+                                    <td>{{ lieu.name }}</td>
+                                    <td>{{ lieu.reservations }}</td>
+                                    <td>{{ lieu.occupancy }}%</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Graphique par catégorie -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Répartition par catégorie</h5>
+                    <canvas id="categoryChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Données pour les graphiques (à remplacer par des données dynamiques)
+    const reservationsData = {
+        labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin'],
+        datasets: [{
+            label: 'Réservations',
+            data: [12, 19, 3, 5, 2, 3],
+            borderColor: '#FFC107',
+            tension: 0.1
+        }]
+    };
+    
+    const revenueData = {
+        labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin'],
+        datasets: [{
+            label: 'Revenus (€)',
+            data: [1200, 1900, 300, 500, 200, 300],
+            backgroundColor: '#FFC107',
+        }]
+    };
+    
+    const categoryData = {
+        labels: ['Salle de fête', 'Espace extérieur', 'Salle de conférence', 'Restaurant', 'Autre'],
+        datasets: [{
+            data: [30, 20, 25, 15, 10],
+            backgroundColor: ['#FFC107', '#FF9800', '#F57C00', '#FFB74D', '#FFE082']
+        }]
+    };
+    
+    // Configuration des graphiques
+    new Chart('reservationsChart', {
+        type: 'line',
+        data: reservationsData,
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: false }
+            }
+        }
+    });
+    
+    new Chart('revenueChart', {
+        type: 'bar',
+        data: revenueData,
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: false }
+            }
+        }
+    });
+    
+    new Chart('categoryChart', {
+        type: 'doughnut',
+        data: categoryData,
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+</script>
+
+{% elseif currentFilter == 'reservations' %}
 <div class="container my-5">
     <h1 class="mb-4">Mes Réservations</h1>
     
@@ -259,8 +417,9 @@
         </div>
         <div class="actions">
     <a href="{{ path('app_lieu_details', {'id': lieu.id}) }}" class="icon-btn" title="Voir les détails"><i class="far fa-eye"></i></a>
+    <a href="{{ path('app_lieu_calendar', {'id': lieu.id}) }}" class="icon-btn" title="Voir le calendrier"><i class="far fa-calendar-alt"></i></a>
     <a href="#" class="icon-btn toggle-favori" title="Ajouter aux favoris" data-lieu-id="{{ lieu.id }}"><i class="far fa-heart{% if lieu.id in app.session.get('favoris', []) %} fas text-danger{% endif %}"></i></a>
-    </a>
+    <a href="https://calendar.google.com/calendar/render?action=TEMPLATE&text={{ lieu.name|url_encode }}&dates={{ lieu.dateReservation|date('Ymd\THis') }}/{{ lieu.dateReservation|date_modify('+1 hour')|date('Ymd\THis') }}&details=Réservation du lieu: {{ lieu.name|url_encode }}" target="_blank" class="icon-btn" title="Ajouter à Google Calendar"><i class="fab fa-google"></i></a>
 </div>
         
         
@@ -362,6 +521,7 @@
                                         {% endif %}
                                         <div class="actions">
                                             <a href="{{ path('app_lieu_details', {'id': lieu.id}) }}" class="icon-btn" title="Voir les détails"><i class="far fa-eye"></i></a>
+                                            <a href="{{ path('app_lieu_calendar', {'id': lieu.id}) }}" class="icon-btn" title="Voir le calendrier"><i class="far fa-calendar-alt"></i></a>
                                             <a href="#" class="icon-btn" title="Ajouter aux favoris"><i class="far fa-heart"></i></a>
                                         </div>
                                     <div class="lieu-content">

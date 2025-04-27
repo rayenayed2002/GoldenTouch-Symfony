@@ -9,6 +9,10 @@ parameters:
     # Configuration du dossier d'upload des images du personnel
     personnel_images_directory: '%kernel.project_dir%/public/uploads/personnel'
     
+    # Configuration Google Calendar API
+    google_api_key: '%env(GOOGLE_API_KEY)%'
+    google_client_id: '%env(GOOGLE_CLIENT_ID)%'
+    
     
     # Paramètre pour la taille max des fichiers (optionnel)
     app.max_file_size: '2M'
