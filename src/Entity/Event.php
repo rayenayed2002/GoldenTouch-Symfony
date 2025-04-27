@@ -155,17 +155,28 @@ class Event
         return $this;
     }
 
-    #[ORM\OneToMany(targetEntity: Pack::class, mappedBy: 'event')]
-    private Collection $packs;
+   // src/Entity/Event.php
+#[ORM\OneToOne(targetEntity: Pack::class, mappedBy: 'event')]
+private ?Pack $pack = null;
 
-    /**
-     * @return Collection<int, Pack>
-     */
-    public function getPacks(): Collection
-    {
-        return $this->packs;
+public function getPack(): ?Pack
+{
+    return $this->pack;
+}
+
+public function setPack(?Pack $pack): self
+{
+    if ($pack === null && $this->pack !== null) {
+        $this->pack->setEvent(null);
     }
 
+    if ($pack !== null && $pack->getEvent() !== $this) {
+        $pack->setEvent($this);
+    }
+
+    $this->pack = $pack;
+    return $this;
+}
     public function addPack(Pack $pack): static
     {
         if (!$this->packs->contains($pack)) {
