@@ -156,48 +156,36 @@ class Event
     }
 
    // src/Entity/Event.php
-#[ORM\OneToOne(targetEntity: Pack::class, mappedBy: 'event')]
-private ?Pack $pack = null;
+#[ORM\OneToMany(targetEntity: Pack::class, mappedBy: 'event')]
+private Collection $packs;
 
-public function getPack(): ?Pack
+/**
+ * @return Collection<int, Pack>
+ */
+public function getPacks(): Collection
 {
-    return $this->pack;
+    return $this->packs;
 }
 
-public function setPack(?Pack $pack): self
+public function addPack(Pack $pack): static
 {
-    if ($pack === null && $this->pack !== null) {
-        $this->pack->setEvent(null);
-    }
-
-    if ($pack !== null && $pack->getEvent() !== $this) {
+    if (!$this->packs->contains($pack)) {
+        $this->packs->add($pack);
         $pack->setEvent($this);
     }
-
-    $this->pack = $pack;
     return $this;
 }
-    public function addPack(Pack $pack): static
-    {
-        if (!$this->packs->contains($pack)) {
-            $this->packs->add($pack);
-            $pack->setEvent($this);
+
+public function removePack(Pack $pack): static
+{
+    if ($this->packs->removeElement($pack)) {
+        if ($pack->getEvent() === $this) {
+            $pack->setEvent(null);
         }
-
-        return $this;
     }
+    return $this;
+}
 
-    public function removePack(Pack $pack): static
-    {
-        if ($this->packs->removeElement($pack)) {
-            // set the owning side to null (unless already changed)
-            if ($pack->getEvent() === $this) {
-                $pack->setEvent(null);
-            }
-        }
-
-        return $this;
-    }
 
     #[ORM\OneToMany(targetEntity: Pack2::class, mappedBy: 'event')]
     private Collection $pack2s;

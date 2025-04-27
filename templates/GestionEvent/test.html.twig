@@ -187,8 +187,9 @@
                 {% for event in events %}
     <div class="col-md-6 col-lg-4">
      <a href="
-    {% if event.type == 'PACK' and event.pack is not null %}
-        {{ path('app_pack_details', {'id': event.pack.id}) }}
+    {% set firstPack = event.packs|first %}
+    {% if event.type == 'PACK' and firstPack is not null %}
+        {{ path('app_pack_shop_details', {'id': firstPack.id}) }}
     {% else %}
         {{ path('event_show', {'id': event.id}) }}
     {% endif %}" 
