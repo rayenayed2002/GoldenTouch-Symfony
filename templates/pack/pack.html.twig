@@ -99,193 +99,112 @@
     <!-- Pack List Section -->
     <section class="space-top space-extra-bottom">
         <div class="container">
-            
-
-            <!-- Pack Grid -->
-           <!--==============================
-Breadcrumb Area  
-==============================-->
-<!--==============================
-    Breadcumb
-============================== -->
-<div class="breadcumb-wrapper" data-bg-src="assets/img/breadcumb/breadcumb-bg.jpg">
-    <div class="container z-index-common">
-        <h1 class="breadcumb-title">Nos Packs</h1>
-        <ul class="breadcumb-menu">
-            <li><a href="index.html">Accueil</a></li>
-            <li>Packs</li>
-        </ul>
-    </div>
-</div>
-
-<!--==============================
-Espace Packs  
-==============================-->
-<section class="space-top space-extra-bottom">
-    <div class="container">
-        <div class="row flex-row-reverse">
-            <div class="col-xl-9 col-lg-8">
-                <div class="th-sort-bar">
-                    <div class="row justify-content-between align-items-center">
-                        <div class="col-md">
-                            <p class="woocommerce-result-count">Affichage de {{ packs.results|length }} packs</p>
-                        </div>
-                        <div class="col-md-auto">
-                            <form class="woocommerce-ordering" method="get">
-                                <select name="orderby" class="orderby" aria-label="Ordre des packs">
-                                    <option value="menu_order" selected="selected">Tri par défaut</option>
-                                    <option value="popularity">Trier par popularité</option>
-                                    <option value="price">Trier par prix : croissant</option>
-                                    <option value="price-desc">Trier par prix : décroissant</option>
-                                </select>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="row gy-40">
-    {% if packs.results is empty %}
-        <div class="col-12">
-            <div class="alert alert-warning">Aucun pack trouvé pour votre recherche.</div>
-        </div>
-    {% else %}
-        {% for pack in packs.results %}
-        <div class="col-xl-4 col-sm-6">
-            <div class="th-product">
-                <div class="product-img">
-                    {% if pack.getPhoto() %}
-                        <img src="{{ asset('uploads/packs/' ~ pack.getPhoto()) }}" alt="{{ pack.getNom() }}">
-                    {% else %}
-                        <img src="{{ asset('Front/img/placeholder.jpg') }}" alt="Image du pack">
-                    {% endif %}
-                    <div class="actions">
-                        <a href="{{ path('app_pack_shop_details', {'id': pack.id}) }}" class="icon-btn"><i class="far fa-eye"></i></a>
-                        <a href="{{ path('app_pack_booking', {'id': pack.id}) }}" class="icon-btn"><i class="far fa-cart-plus"></i></a>
-                        <a href="#" class="icon-btn"><i class="far fa-heart"></i></a>
-                    </div>
-                </div>
-                <div class="product-content">
-                    <div class="star-rating" role="img" aria-label="Noté 5.00 sur 5">
-                        <span>Note : <strong class="rating">5.00</strong>/5</span>
-                    </div>
-                    <h3 class="product-title"><a href="{{ path('app_pack_shop_details', {'id': pack.id}) }}">{{ pack.nom }}</a></h3>
-                    <div class="pack-meta">
-                        <span class="price">{{ pack.getPrix()|number_format(2, '.', '') }}&nbsp;€</span>
-                        <span class="pack-capacity"><i class="fas fa-users"></i> {{ pack.capacite }} personnes</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        {% endfor %}
-    {% endif %}
-
-                </div>
-                
-                <div class="th-pagination text-center pt-50">
-                    <ul>
-                        <li><a href="blog.html">1</a></li>
-                        <li><a href="blog.html">2</a></li>
-                        <li><a href="blog.html">3</a></li>
-                        <li><a href="blog.html"><i class="far fa-arrow-right"></i></a></li>
-                    </ul>
-                </div>
-            </div>
-            
-            <div class="col-xl-3 col-lg-4">
-                <aside class="sidebar-area sidebar-shop">
-                    {# --- Pack Search Filter --- #}
-<div class="widget widget_search" style="border: 2px solid #ffd700; border-radius: 10px; box-shadow: 0 2px 12px rgba(255,215,0,0.06); margin-bottom: 32px;">
-    <h4 style="color: #bfa100; margin-bottom: 12px; text-align: center;">🔎 Rechercher un pack</h4>
-    <form class="search-form" id="pack-search-form" method="get" action="{{ path('app_pack_index') }}" style="display: flex; gap: 8px; align-items: center;">
-        <input type="text" name="q" id="pack-search-input" value="{{ app.request.get('q') }}" placeholder="Rechercher des packs..." autocomplete="off" style="flex: 1; padding: 8px 12px; border-radius: 6px; border: 1px solid #ccc; font-size: 1rem;">
-        <button type="submit" style="background: #ffd700; color: #222; border: none; border-radius: 6px; padding: 8px 14px; font-weight: bold;">
-            <i class="far fa-search"></i>
-        </button>
-    </form>
-    <script>
-(function() {
-    var input = document.getElementById('pack-search-input');
-    var form = document.getElementById('pack-search-form');
-    var debounce;
-    // Restore scroll and focus after reload
-    window.addEventListener('DOMContentLoaded', function() {
-        if (window.sessionStorage.getItem('packSearchScroll')) {
-            window.scrollTo(0, parseInt(window.sessionStorage.getItem('packSearchScroll'), 10));
-            window.sessionStorage.removeItem('packSearchScroll');
-        }
-        if (input) {
-            input.focus();
-            // Move cursor to end
-            var val = input.value;
-            input.value = '';
-            input.value = val;
-        }
-    });
-    if (input && form) {
-        input.addEventListener('input', function() {
-            clearTimeout(debounce);
-            debounce = setTimeout(function() {
-                window.sessionStorage.setItem('packSearchScroll', window.scrollY);
-                form.submit();
-            }, 300);
-        });
-    }
-})();
-</script>
-                    </div>
-                    
-                    <div class="widget widget_categories">
-    <h3 class="widget_title">Catégories</h3>
-    <ul>
-        {% for cat in categories %}
-            {% set count = 0 %}
-            {% for pack in packs.results %}
-                {% if pack.categorie == cat.categorie %}
-                    {% set count = count + 1 %}
-                {% endif %}
-            {% endfor %}
-            <li>
-                <a href="#" class="category-filter" data-category="{{ cat.categorie }}">{{ cat.categorie }}</a>
-                <span>({{ count }})</span>
-            </li>
-        {% else %}
-            <li><span>Aucune catégorie trouvée</span></li>
-        {% endfor %}
-    </ul>
-</div>
-                    
-                    <div class="widget widget_price_filter">
-                        <h4 class="widget_title">Filtrer par prix</h4>
-                        <div class="price_slider_wrapper">
-                            <div class="price_label">
-                                Prix : <span class="from">0&nbsp;€</span> — <span class="to">10000&nbsp;€</span>
+            <div class="row flex-row-reverse">
+                <div class="col-xl-9 col-lg-8">
+                    <div class="th-sort-bar">
+                        <div class="row justify-content-between align-items-center">
+                            <div class="col-md">
+                                <p class="woocommerce-result-count">Affichage de {{ packs.getTotalItemCount ? packs.getTotalItemCount : packs|length }} packs</p>
                             </div>
-                            <div class="price_slider"></div>
-                            <button type="submit" class="button">Filtrer</button>
+                            <div class="col-md-auto">
+                                <form class="woocommerce-ordering" method="get">
+                                    <select name="orderby" class="orderby" aria-label="Ordre des packs">
+                                        <option value="menu_order" selected="selected">Tri par défaut</option>
+                                        <option value="popularity">Trier par popularité</option>
+                                        <option value="price">Trier par prix : croissant</option>
+                                        <option value="price-desc">Trier par prix : décroissant</option>
+                                    </select>
+                                </form>
+                            </div>
                         </div>
                     </div>
                     
-
-                </aside>
-            </div>
-        </div>
-    </div>
-</section>
-            <!-- Pagination -->
-            <div class="th-pagination text-center">
-                <ul>
-                    {% if packs.hasPreviousPage %}
-                        <li><a href="{{ path('app_pack_index', {'page': packs.currentPage - 1}) }}"><i class="fas fa-arrow-left"></i></a></li>
-                    {% endif %}
-                    
-                    {% for i in 1..packs.lastPage %}
-                        <li><a href="{{ path('app_pack_index', {'page': i}) }}" {% if i == packs.currentPage %}class="active"{% endif %}>{{ i }}</a></li>
-                    {% endfor %}
-                    
-                    {% if packs.hasNextPage %}
-                        <li><a href="{{ path('app_pack_index', {'page': packs.currentPage + 1}) }}"><i class="fas fa-arrow-right"></i></a></li>
-                    {% endif %}
-                </ul>
+                    <!-- Pack list container for AJAX -->
+                    <div id="pack-list-container">
+                        {% include 'pack/_pack_list.html.twig' with {
+                            packs: packs,
+                            selectedCategory: selectedCategory,
+                            minPrice: minPrice,
+                            maxPrice: maxPrice
+                        } %}
+                    </div>
+                </div>
+                
+                <div class="col-xl-3 col-lg-4">
+                    <aside class="sidebar-area sidebar-shop">
+                        {# --- Pack Search Filter --- #}
+                        <div class="widget widget_search" style="border: 2px solid #ffd700; border-radius: 10px; box-shadow: 0 2px 12px rgba(255,215,0,0.06); margin-bottom: 32px;">
+                            <h4 style="color: #bfa100; margin-bottom: 12px; text-align: center;"> Rechercher un pack</h4>
+                            <form class="search-form" id="pack-search-form" method="get" action="{{ path('app_pack_index') }}" style="display: flex; gap: 8px; align-items: center;">
+                                <input type="text" name="q" id="pack-search-input" value="{{ app.request.get('q') }}" placeholder="Rechercher des packs..." autocomplete="off" style="flex: 1; padding: 8px 12px; border-radius: 6px; border: 1px solid #ccc; font-size: 1rem;">
+                                <button type="submit" style="background: #ffd700; color: #222; border: none; border-radius: 6px; padding: 8px 14px; font-weight: bold;">
+                                    <i class="far fa-search"></i>
+                                </button>
+                            </form>
+                            <script>
+                            (function() {
+                                var input = document.getElementById('pack-search-input');
+                                var form = document.getElementById('pack-search-form');
+                                var debounce;
+                                // Restore scroll and focus after reload
+                                window.addEventListener('DOMContentLoaded', function() {
+                                    if (window.sessionStorage.getItem('packSearchScroll')) {
+                                        window.scrollTo(0, parseInt(window.sessionStorage.getItem('packSearchScroll'), 10));
+                                        window.sessionStorage.removeItem('packSearchScroll');
+                                    }
+                                    if (input) {
+                                        input.focus();
+                                        // Move cursor to end
+                                        var val = input.value;
+                                        input.value = '';
+                                        input.value = val;
+                                    }
+                                });
+                                if (input && form) {
+                                    input.addEventListener('input', function() {
+                                        clearTimeout(debounce);
+                                        debounce = setTimeout(function() {
+                                            window.sessionStorage.setItem('packSearchScroll', window.scrollY);
+                                            form.submit();
+                                        }, 300);
+                                    });
+                                }
+                            })();
+                            </script>
+                        </div>
+                        
+                        <div class="widget widget_categories">
+                            <h3 class="widget_title">Catégories</h3>
+                            <ul>
+                                {% for cat in categories %}
+                                    {% set count = 0 %}
+                                    {% for pack in packs %}
+                                        {% if pack.categorie == cat.categorie %}
+                                            {% set count = count + 1 %}
+                                        {% endif %}
+                                    {% endfor %}
+                                    <li>
+                                        <a href="#" class="category-filter" data-category="{{ cat.categorie }}">{{ cat.categorie }}</a>
+                                        <span>({{ count }})</span>
+                                    </li>
+                                {% else %}
+                                    <li><span>Aucune catégorie trouvée</span></li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        
+                        <div class="widget widget_price_filter">
+                            <h4 class="widget_title">Filtrer par prix</h4>
+                            <div class="price_slider_wrapper">
+                                <div class="price_label">
+                                    Prix : <span class="from">0 €</span> — <span class="to">10000 €</span>
+                                </div>
+                                <div class="price_slider"></div>
+                                <button type="submit" class="button">Filtrer</button>
+                            </div>
+                        </div>
+                    </aside>
+                </div>
             </div>
         </div>
     </section>
@@ -307,135 +226,126 @@ Espace Packs
     <script src="{{ asset('Front/js/main.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/nouislider@14.6.3/distribute/nouislider.min.js"></script>
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Initialiser le slider de prix
-        const priceSlider = document.querySelector('.price_slider');
-        if (priceSlider) {
-            noUiSlider.create(priceSlider, {
-                start: [0, 10000],
-                connect: true,
-                range: {
-                    'min': 0,
-                    'max': 10000
-                },
-                format: {
-                    to: function(value) {
-                        return Math.round(value) + '€';
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize price slider
+            const priceSlider = document.querySelector('.price_slider');
+            if (priceSlider) {
+                noUiSlider.create(priceSlider, {
+                    start: [0, 10000],
+                    connect: true,
+                    range: {
+                        'min': 0,
+                        'max': 10000
                     },
-                    from: function(value) {
-                        return Number(value.replace('€', ''));
-                    }
-                }
-            });
-
-            const fromSpan = document.querySelector('.price_label .from');
-            const toSpan = document.querySelector('.price_label .to');
-
-            priceSlider.noUiSlider.on('update', function(values, handle) {
-                if (handle === 0) {
-                    fromSpan.textContent = values[handle];
-                } else {
-                    toSpan.textContent = values[handle];
-                }
-                // Mettre à jour dynamiquement le label max si besoin
-                if (toSpan) {
-                    toSpan.textContent = values[1];
-                }
-            });
-        }
-
-        // Fonction pour charger les packs filtrés
-        function loadFilteredPacks(selectedCategory = null) {
-            let category = selectedCategory !== null ? selectedCategory : document.querySelector('.orderby').value;
-            if (category === 'menu_order') {
-                category = 'all';
-            }
-            const priceValues = priceSlider ? priceSlider.noUiSlider.get() : [0, 10000];
-            const minPrice = parseFloat(priceValues[0]);
-            const maxPrice = parseFloat(priceValues[1]);
-            fetch(`/api/packs/filter?category=${encodeURIComponent(category)}&minPrice=${minPrice}&maxPrice=${maxPrice}`)
-                .then(response => response.json())
-                .then(data => {
-                    // Mettre à jour la grille des packs
-                    const packsGrid = document.querySelector('.row.gy-40');
-                    if (!data.packs || data.packs.length === 0) {
-                        packsGrid.innerHTML = `<div class="col-12"><div class="alert alert-warning">Aucun pack trouvé pour votre recherche.</div></div>`;
-                    } else {
-                        packsGrid.innerHTML = data.packs.map(pack => `
-                            <div class="col-xl-4 col-sm-6">
-                                <div class="th-product">
-                                    <div class="product-img">
-                                        <img src="${pack.photo ? '/uploads/packs/' + pack.photo : '/Front/img/placeholder.jpg'}" alt="${pack.nom}">
-                                        <div class="actions">
-                                            <a href="/pack/shop/${pack.id}" class="icon-btn"><i class="far fa-eye"></i></a>
-                                            <a href="/pack/book/${pack.id}" class="icon-btn"><i class="far fa-cart-plus"></i></a>
-                                            <a href="#" class="icon-btn"><i class="far fa-heart"></i></a>
-                                        </div>
-                                    </div>
-                                    <div class="product-content">
-                                        <div class="star-rating" role="img" aria-label="Noté 5.00 sur 5">
-                                            <span>Note : <strong class="rating">5.00</strong>/5</span>
-                                        </div>
-                                        <h3 class="product-title"><a href="/pack/shop/${pack.id}">${pack.nom}</a></h3>
-                                        <div class="pack-meta">
-                                            <span class="price">${pack.prix}&nbsp;€</span>
-                                            <span class="pack-capacity"><i class="fas fa-users"></i> ${pack.capacite} personnes</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        `).join('');
-                    }
-
-                    // Mettre à jour la liste des catégories dans la sidebar
-                    const categoriesList = document.querySelector('.widget_categories ul');
-                    if (categoriesList) {
-                        categoriesList.innerHTML = '';
-                        if (data.categories && data.categories.length > 0) {
-                            data.categories.forEach(cat => {
-                                const count = data.packs.filter(pack => pack.categorie === cat.categorie).length;
-                                const li = document.createElement('li');
-                                li.innerHTML = `<a href="#" class="category-filter" data-category="${cat.categorie}">${cat.categorie}</a> <span>(${count})</span>`;
-                                categoriesList.appendChild(li);
-                            });
-                        } else {
-                            categoriesList.innerHTML = '<li><span>Aucune catégorie trouvée</span></li>';
+                    format: {
+                        to: function(value) {
+                            return Math.round(value);
+                        },
+                        from: function(value) {
+                            return Number(value);
                         }
                     }
                 });
-        }
 
-        // Événements pour les filtres
-        document.querySelector('.orderby').addEventListener('change', () => loadFilteredPacks());
-        if (priceSlider) {
-            priceSlider.noUiSlider.on('change', () => loadFilteredPacks());
-        }
-        document.querySelector('.widget_price_filter .button').addEventListener('click', function(e) {
-            e.preventDefault();
-            loadFilteredPacks();
-        });
-        // Gestion du clic sur une catégorie dans la sidebar
-        document.addEventListener('click', function(e) {
-            if (e.target.classList.contains('category-filter')) {
-                e.preventDefault();
-                const selectedCategory = e.target.getAttribute('data-category');
-                loadFilteredPacks(selectedCategory);
-                // Met à jour l'état visuel des catégories sélectionnées
-                document.querySelectorAll('.category-filter').forEach(link => link.classList.remove('active'));
-                e.target.classList.add('active');
+                const fromSpan = document.querySelector('.price_label .from');
+                const toSpan = document.querySelector('.price_label .to');
+
+                priceSlider.noUiSlider.on('update', function(values, handle) {
+                    const [min, max] = values.map(val => Math.round(val));
+                    if (handle === 0) {
+                        fromSpan.textContent = min + '€';
+                    } else {
+                        toSpan.textContent = max + '€';
+                    }
+                });
             }
-        });
-        document.querySelectorAll('.tagcloud a').forEach(tag => {
-            tag.addEventListener('click', function(e) {
+
+            // Function to load filtered packs
+            function loadFilteredPacks(page = 1) {
+                const category = document.querySelector('.category-filter.active')?.dataset.category || 'all';
+                const priceValues = priceSlider ? priceSlider.noUiSlider.get() : [0, 10000];
+                const minPrice = parseFloat(priceValues[0]);
+                const maxPrice = parseFloat(priceValues[1]);
+                const searchTerm = document.getElementById('pack-search-input')?.value || '';
+                // Show loading indicator
+                const packsContainer = document.querySelector('#pack-list-container');
+                packsContainer.innerHTML = '<div class="col-12 text-center py-5"><div class="spinner-border text-primary" role="status"></div></div>';
+
+                const params = new URLSearchParams({
+                    page,
+                    category,
+                    minPrice,
+                    maxPrice,
+                    q: searchTerm
+                });
+
+                fetch(`/pack?${params.toString()}`, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                    .then(response => response.text())
+                    .then(html => {
+                        packsContainer.innerHTML = html;
+                        // Update URL without reloading
+                        const newUrl = new URL(window.location);
+                        newUrl.searchParams.set('category', category);
+                        newUrl.searchParams.set('minPrice', minPrice);
+                        newUrl.searchParams.set('maxPrice', maxPrice);
+                        newUrl.searchParams.set('page', page);
+                        newUrl.searchParams.set('q', searchTerm);
+                        window.history.pushState({}, '', newUrl);
+                    })
+                    .catch(error => {
+                        packsContainer.innerHTML = `<div class="col-12"><div class="alert alert-danger">Erreur lors du chargement des packs: ${error.message}</div></div>`;
+                    });
+            }
+
+            // Event listeners for filters
+            document.querySelector('.orderby')?.addEventListener('change', () => loadFilteredPacks());
+            
+            if (priceSlider) {
+                priceSlider.noUiSlider.on('change', () => loadFilteredPacks());
+            }
+            
+            document.querySelector('.widget_price_filter .button')?.addEventListener('click', function(e) {
                 e.preventDefault();
-                this.classList.toggle('active');
                 loadFilteredPacks();
             });
-        });
 
-        // Charger les filtres initiaux
-        loadFilteredPacks();
-    });
+            // Category filter click handler
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('category-filter')) {
+                    e.preventDefault();
+                    document.querySelectorAll('.category-filter').forEach(link => link.classList.remove('active'));
+                    e.target.classList.add('active');
+                    loadFilteredPacks();
+                }
+            });
+
+            // Handle pagination clicks (delegated event)
+            document.addEventListener('click', function(e) {
+                if (e.target.closest('.th-pagination a')) {
+                    e.preventDefault();
+                    const url = new URL(e.target.closest('a').href);
+                    const page = url.searchParams.get('page');
+                    loadFilteredPacks(page);
+                }
+            });
+
+            // Search input instant filter
+            const searchInput = document.getElementById('pack-search-input');
+            if (searchInput) {
+                let debounce;
+                searchInput.addEventListener('input', function() {
+                    clearTimeout(debounce);
+                    debounce = setTimeout(() => {
+                        loadFilteredPacks();
+                    }, 400);
+                });
+            }
+
+            // Initialize with first page
+            loadFilteredPacks();
+        });
     </script>
 </body>
 </html>

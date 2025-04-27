@@ -26,32 +26,6 @@ use App\Repository\NotificationsAdminRepository;
 
 class PackController extends AbstractController
 {
-    #[Route('/api/packs/filter', name: 'api_packs_filter', methods: ['GET'])]
-    public function filterPacks(Request $request): JsonResponse
-    {
-        $category = $request->query->get('category');
-        $minPrice = $request->query->get('minPrice');
-        $maxPrice = $request->query->get('maxPrice');
-
-        $packs = $this->packRepository->findByFilters($category, $minPrice, $maxPrice);
-        $categories = $this->packRepository->findAllCategories();
-
-        $packsData = array_map(function($pack) {
-            return [
-                'id' => $pack->getId(),
-                'nom' => $pack->getNom(),
-                'prix' => $pack->getPrix(),
-                'photo' => $pack->getPhoto(),
-                'capacite' => $pack->getCapacite(),
-                'categorie' => $pack->getCategorie(),
-            ];
-        }, $packs);
-
-        return new JsonResponse([
-            'packs' => $packsData,
-            'categories' => $categories
-        ]);
-    }
 
     public function __construct(
         private PackRepository $packRepository,
@@ -86,51 +60,70 @@ class PackController extends AbstractController
     }
 
     #[Route('/pack', name: 'app_pack_index')]
-    public function indexpack(Request $request): Response
+    public function indexpack(Request $request, \Knp\Component\Pager\PaginatorInterface $paginator): Response
     {
-        $filter = $request->query->get('filter', 'all');
         $page = $request->query->getInt('page', 1);
-        $limit = 10;
+        $limit = 6;
         $searchTerm = $request->query->get('q');
+        $category = $request->query->get('category', 'all');
+        $minPrice = $request->query->get('minPrice');
+        $maxPrice = $request->query->get('maxPrice');
 
+        // Create base query
+        $queryBuilder = $this->packRepository->createQueryBuilder('p')
+            ->leftJoin('p.event', 'e');
+
+        // Apply filters
         if ($searchTerm) {
-            $searchResults = $this->packRepository->search($searchTerm);
-            // Simple manual pagination for search results
-            $totalItems = count($searchResults);
-            $pagesCount = max(1, ceil($totalItems / $limit));
-            $offset = ($page - 1) * $limit;
-            $paginatedResults = array_slice($searchResults, $offset, $limit);
-            $packs = [
-                'results' => $paginatedResults,
-                'currentPage' => $page,
-                'lastPage' => $pagesCount,
-                'hasPreviousPage' => $page > 1,
-                'hasNextPage' => $page < $pagesCount
-            ];
-        } else {
-            $allPacks = $this->packRepository->findAllPaginated($page, $limit);
-            $packs = [
-                'results' => $allPacks['results'],
-                'currentPage' => $allPacks['currentPage'],
-                'lastPage' => $allPacks['lastPage'],
-                'hasPreviousPage' => $allPacks['hasPreviousPage'],
-                'hasNextPage' => $allPacks['hasNextPage']
-            ];
+            $queryBuilder->andWhere('p.nom LIKE :searchTerm OR p.description LIKE :searchTerm')
+                        ->setParameter('searchTerm', '%'.$searchTerm.'%');
         }
 
-        $trendingPacks = $this->packRepository->findBy([], ['prix' => 'DESC'], 3);
-        $newPacks = $this->packRepository->findBy([], ['id' => 'DESC'], 3);
+        if ($category && $category !== 'all') {
+            $queryBuilder->andWhere('e.categorie = :category')
+                        ->setParameter('category', $category);
+        }
+
+        if ($minPrice !== null && $minPrice !== '') {
+            $queryBuilder->andWhere('p.prix >= :minPrice')
+                        ->setParameter('minPrice', $minPrice);
+        }
+
+        if ($maxPrice !== null && $maxPrice !== '') {
+            $queryBuilder->andWhere('p.prix <= :maxPrice')
+                        ->setParameter('maxPrice', $maxPrice);
+        }
+
+        $query = $queryBuilder->getQuery();
+
+        // Paginate results
+        $packs = $paginator->paginate(
+            $query,
+            $page,
+            $limit
+        );
+
         $categories = $this->packRepository->findAllCategories();
+
+        if ($request->isXmlHttpRequest()) {
+            return $this->render('pack/_pack_list.html.twig', [
+                'packs' => $packs,
+                'selectedCategory' => $category,
+                'minPrice' => $minPrice,
+                'maxPrice' => $maxPrice
+            ]);
+        }
 
         return $this->render('pack/pack.html.twig', [
             'packs' => $packs,
-            'trendingPacks' => ['results' => $trendingPacks, 'currentPage' => 1, 'lastPage' => 1, 'hasPreviousPage' => false, 'hasNextPage' => false],
-            'currentFilter' => $filter,
-            'searchTerm' => $searchTerm,
-            'categories' => $categories
+            'categories' => $categories,
+            'selectedCategory' => $category,
+            'minPrice' => $minPrice,
+            'maxPrice' => $maxPrice,
+            'searchTerm' => $searchTerm
         ]);
     }
-
+    
     #[Route('/pack/{id}', name: 'app_pack_details')]
     public function details(Pack $pack): Response
     {
