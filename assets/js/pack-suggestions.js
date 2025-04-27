@@ -1,29 +1,17 @@
 // Pack Suggestions Generator
 class PackSuggestionGenerator {
     constructor() {
+        this.huggingFaceGenerator = new HuggingFacePackGenerator();
         this.categories = ['Festival', 'Soirée', 'Brunch', 'Workshop', 'Team Building', 'Concert'];
         this.themes = ['Gastronomie', 'Culture', 'Sport', 'Bien-être', 'Business', 'Art'];
         this.locations = ['Intérieur', 'Extérieur', 'Urbain', 'Nature', 'Plage', 'Montagne'];
     }
 
-    generateSuggestions() {
-        const suggestions = [];
-        const usedCombinations = new Set();
-
-        while (suggestions.length < 3) {
-            const category = this.categories[Math.floor(Math.random() * this.categories.length)];
-            const theme = this.themes[Math.floor(Math.random() * this.themes.length)];
-            const location = this.locations[Math.floor(Math.random() * this.locations.length)];
-
-            const combination = `${category}-${theme}-${location}`;
-            if (usedCombinations.has(combination)) continue;
-
-            usedCombinations.add(combination);
-            const suggestion = this.createPackSuggestion(category, theme, location);
-            suggestions.push(suggestion);
-        }
-
-        return suggestions;
+    async generateSuggestions() {
+        const prompt = `Générer des suggestions de packs événementiels innovants avec les thèmes suivants :\n\n${this.categories.join(', ')}\n${this.themes.join(', ')}\n\nFormat pour chaque pack :\nTitre créatif\nDescription détaillée\nMots-clés pertinents`;
+        
+        const aiSuggestions = await this.huggingFaceGenerator.generatePackIdeas(prompt);
+        return aiSuggestions.length > 0 ? aiSuggestions : this.generateFallbackSuggestions();
     }
 
     createPackSuggestion(category, theme, location) {
