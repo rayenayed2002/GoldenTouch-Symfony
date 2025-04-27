@@ -49,6 +49,7 @@
     <link rel="stylesheet" href="{{ asset('Front/css/jquery.datetimepicker.min.css') }}">
     <link rel="stylesheet" href="{{ asset('Front/css/style.css') }}">
     <link rel="stylesheet" href="{{ asset('Front/css/review-validation.css') }}">
+    <link rel="stylesheet" href="{{ asset('Front/css/avatar-cool.css') }}">
 
 </head>
 
@@ -349,12 +350,21 @@
                                 <div class="comment-avater">
                                     {% if avis.utilisateur is not null %}
                                         {% if avis.utilisateur.avatar is defined and avis.utilisateur.avatar %}
+                                        <div class="avatar-cool position-relative">
                                             <img src="{{ asset('uploads/users/' ~ avis.utilisateur.avatar) }}" alt="{{ avis.utilisateur.nom }}">
-                                        {% else %}
-                                            <img src="{{ asset('Front/img/blog/comment-author-1.jpg') }}" alt="Default Avatar">
-                                        {% endif %}
+                                            <span class="status-dot"></span>
+                                        </div>
                                     {% else %}
-                                        <img src="{{ asset('Front/img/blog/comment-author-1.jpg') }}" alt="Utilisateur Supprimé">
+                                        <div class="avatar-cool position-relative">
+                                            <img src="https://ui-avatars.com/api/?name={{ (avis.utilisateur.nom ~ ' ' ~ avis.utilisateur.prenom)|url_encode }}&background=4e73df&color=fff&size=64&rounded=true&bold=true" alt="{{ avis.utilisateur.nom }} {{ avis.utilisateur.prenom }}">
+                                            <span class="status-dot"></span>
+                                        </div>
+                                    {% endif %}
+                                    {% else %}
+                                        <div class="avatar-cool position-relative">
+                                            <img src="{{ asset('Front/img/blog/comment-author-1.jpg') }}" alt="Utilisateur Supprimé">
+                                            <span class="status-dot status-dot-offline"></span>
+                                        </div>
                                     {% endif %}
                                 </div>
                                 <div class="comment-content">
