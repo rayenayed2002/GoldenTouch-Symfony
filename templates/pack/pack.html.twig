@@ -120,8 +120,9 @@
                                     if(orderForm) {
                                         const orderSelect = orderForm.querySelector('.orderby');
                                         if(orderSelect) {
-                                            orderSelect.addEventListener('change', function() {
-                                                orderForm.submit();
+                                            orderSelect.addEventListener('change', function(e) {
+                                                e.preventDefault();
+                                                loadFilteredPacks();
                                             });
                                         }
                                     }
@@ -147,7 +148,7 @@
                         {# --- Pack Search Filter --- #}
                         <div class="widget widget_search" style="border: 2px solid #ffd700; border-radius: 10px; box-shadow: 0 2px 12px rgba(255,215,0,0.06); margin-bottom: 32px;">
                             <h4 style="color: #bfa100; margin-bottom: 12px; text-align: center;"> Rechercher un pack</h4>
-                            <form class="search-form" id="pack-search-form" method="get" action="{{ path('app_pack_index') }}" style="display: flex; gap: 8px; align-items: center;">
+                            <form class="search-form" id="pack-search-form" onsubmit="return false;" style="display: flex; gap: 8px; align-items: center;">
                                 <input type="text" name="q" id="pack-search-input" value="{{ app.request.get('q') }}" placeholder="Rechercher des packs..." autocomplete="off" style="flex: 1; padding: 8px 12px; border-radius: 6px; border: 1px solid #ccc; font-size: 1rem;">
                                 <button type="submit" style="background: #ffd700; color: #222; border: none; border-radius: 6px; padding: 8px 14px; font-weight: bold;">
                                     <i class="far fa-search"></i>
@@ -177,7 +178,7 @@
                                         clearTimeout(debounce);
                                         debounce = setTimeout(function() {
                                             window.sessionStorage.setItem('packSearchScroll', window.scrollY);
-                                            form.submit();
+                                            loadFilteredPacks();
                                         }, 300);
                                     });
                                 }
