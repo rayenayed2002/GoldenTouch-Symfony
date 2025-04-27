@@ -23,7 +23,8 @@ use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use App\Entity\DetailPayment;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
-
+use App\Entity\Pack;
+use App\Entity\DemandePack;
 use Symfony\Component\Mailer\MailerInterface;
 use App\Service\EmailServiceP; 
 
@@ -179,10 +180,16 @@ class EventController extends AbstractController
         ->from(Event::class, 'e')
         ->leftJoin('e.paniers', 'p')
         ->leftJoin('e.detailPayments', 'dc')
+        ->leftJoin('App\Entity\Pack', 'pack', 'WITH', 'pack.event = e.id')
+        ->leftJoin('App\Entity\DemandePack', 'dp', 'WITH', 'dp.pack = pack.id')
         ->where('e.utilisateur = :userId')
         ->andWhere('p.id IS NULL')
         ->andWhere('dc.id IS NULL')
-        ->setParameter('userId', 20);
+        ->andWhere('(pack.id IS NULL OR dp.statut = :statutConfirme)')
+        ->setParameter('userId', 20)
+        ->setParameter('statutConfirme', 'CONFIRMÉ');
+
+        
 
     // Apply sorting based on the orderby parameter
     switch ($orderBy) {
@@ -375,8 +382,24 @@ public function addToCart(Request $request, EntityManagerInterface $entityManage
         return new JsonResponse(['success' => false, 'message' => 'Event not found'], 404);
     }
 
-    // Fetch static user with ID = 1
-    $user = $entityManager->getRepository(Utilisateur::class)->find(20  );
+    // Check if this is a pack event
+    $pack = $entityManager->getRepository(Pack::class)->findOneBy(['event' => $event]);
+    
+    // Validate pack requirements
+    if ($pack) {
+        // Check if there's a confirmed demande for this pack
+        $demande = $entityManager->getRepository(DemandePack::class)->findOneBy([
+            'pack' => $pack,
+            'statut' => 'CONFIRMÉ'
+        ]);
+        
+        if (!$demande) {
+            return new JsonResponse(['success' => false, 'message' => 'Pack not confirmed'], 400);
+        }
+    }
+
+    // Fetch static user with ID = 20
+    $user = $entityManager->getRepository(Utilisateur::class)->find(20);
     if (!$user) {
         return new JsonResponse(['success' => false, 'message' => 'User not found'], 404);
     }
@@ -385,10 +408,17 @@ public function addToCart(Request $request, EntityManagerInterface $entityManage
     $panier = new Panier();
     $panier->setEvent($event);
     $panier->setUtilisateur($user);
-    $panier->setTypeEvent('event'); // static
     $panier->setCategorie($data['categorie']);
     $panier->setDate(new \DateTime($data['date']));
-    $panier->setPrice($event->getTotalPrice());
+
+    // Set price and type based on pack existence
+    if ($pack) {
+        $panier->setTypeEvent('pack');
+        $panier->setPrice($pack->getPrix());
+    } else {
+        $panier->setTypeEvent('event');
+        $panier->setPrice($event->getTotalPrice());
+    }
 
     try {
         $entityManager->persist($panier);
@@ -398,7 +428,8 @@ public function addToCart(Request $request, EntityManagerInterface $entityManage
     } catch (\Exception $e) {
         $logger->error('Error saving panier', ['exception' => $e]);
         return new JsonResponse(['success' => false, 'message' => 'Failed to save panier'], 500);
-    }}
+    }
+}
     
 #[Route('/panier', name: 'app_panier', methods: ['GET'])]
 public function ShowPanier(EntityManagerInterface $em, Security $security): Response
