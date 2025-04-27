@@ -22,8 +22,11 @@ use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Clock\ClockInterface;
 use App\Service\GrammarCorrectionService;
 
+use App\Repository\NotificationsAdminRepository;
+
 class PackController extends AbstractController
 {
+
     public function __construct(
         private PackRepository $packRepository,
         private AvisRepository $avisRepository,
@@ -57,49 +60,87 @@ class PackController extends AbstractController
     }
 
     #[Route('/pack', name: 'app_pack_index')]
-    public function indexpack(Request $request): Response
+    public function indexpack(Request $request, \Knp\Component\Pager\PaginatorInterface $paginator): Response
     {
-        $filter = $request->query->get('filter', 'all');
         $page = $request->query->getInt('page', 1);
-        $limit = 10;
+        $limit = 6;
         $searchTerm = $request->query->get('q');
+        $category = $request->query->get('category', 'all');
+        $minPrice = $request->query->get('minPrice');
+        $maxPrice = $request->query->get('maxPrice');
 
-        if ($searchTerm) {
-            $searchResults = $this->packRepository->search($searchTerm);
-            // Simple manual pagination for search results
-            $totalItems = count($searchResults);
-            $pagesCount = max(1, ceil($totalItems / $limit));
-            $offset = ($page - 1) * $limit;
-            $paginatedResults = array_slice($searchResults, $offset, $limit);
-            $packs = [
-                'results' => $paginatedResults,
-                'currentPage' => $page,
-                'lastPage' => $pagesCount,
-                'hasPreviousPage' => $page > 1,
-                'hasNextPage' => $page < $pagesCount
-            ];
-        } else {
-            $allPacks = $this->packRepository->findAllPaginated($page, $limit);
-            $packs = [
-                'results' => $allPacks['results'],
-                'currentPage' => $allPacks['currentPage'],
-                'lastPage' => $allPacks['lastPage'],
-                'hasPreviousPage' => $allPacks['hasPreviousPage'],
-                'hasNextPage' => $allPacks['hasNextPage']
-            ];
+        // Create base query
+        $queryBuilder = $this->packRepository->createQueryBuilder('p')
+            ->leftJoin('p.event', 'e');
+
+        // Apply sorting
+        $orderby = $request->query->get('orderby', 'menu_order');
+        if ($orderby === 'price') {
+            $queryBuilder->orderBy('p.prix', 'ASC');
+        } elseif ($orderby === 'price-desc') {
+            $queryBuilder->orderBy('p.prix', 'DESC');
         }
 
-        $trendingPacks = $this->packRepository->findBy([], ['prix' => 'DESC'], 3);
-        $newPacks = $this->packRepository->findBy([], ['id' => 'DESC'], 3);
+        // Apply filters
+        if ($searchTerm) {
+            $queryBuilder->andWhere('e.nom LIKE :searchTerm OR p.description LIKE :searchTerm')
+                        ->setParameter('searchTerm', '%'.$searchTerm.'%');
+        }
+
+        if ($category && $category !== 'all') {
+            $queryBuilder->andWhere('e.categorie = :category')
+                        ->setParameter('category', $category);
+        }
+
+        if ($minPrice !== null && $minPrice !== '') {
+            $queryBuilder->andWhere('p.prix >= :minPrice')
+                        ->setParameter('minPrice', $minPrice);
+        }
+
+        if ($maxPrice !== null && $maxPrice !== '') {
+            $queryBuilder->andWhere('p.prix <= :maxPrice')
+                        ->setParameter('maxPrice', $maxPrice);
+        }
+
+        $query = $queryBuilder->getQuery();
+
+        // Paginate results
+        $packs = $paginator->paginate(
+            $query,
+            $page,
+            $limit
+        );
+
+        $categories = $this->packRepository->findAllCategories();
+
+        if ($request->isXmlHttpRequest()) {
+            return $this->render('pack/_pack_list.html.twig', [
+                'packs' => $packs,
+                'selectedCategory' => $category,
+                'minPrice' => $minPrice,
+                'maxPrice' => $maxPrice
+            ]);
+        }
+
+        $sortOptions = [
+            ['value' => 'menu_order', 'label' => 'Tri par défaut'],
+            ['value' => 'price', 'label' => 'Trier par prix : croissant'],
+            ['value' => 'price-desc', 'label' => 'Trier par prix : décroissant'],
+        ];
+        $currentSort = $request->query->get('orderby', 'menu_order');
 
         return $this->render('pack/pack.html.twig', [
             'packs' => $packs,
-            'trendingPacks' => ['results' => $trendingPacks, 'currentPage' => 1, 'lastPage' => 1, 'hasPreviousPage' => false, 'hasNextPage' => false],
-            'currentFilter' => $filter,
-            'searchTerm' => $searchTerm
+            'categories' => $categories,
+            'selectedCategory' => $category,
+            'minPrice' => $minPrice,
+            'maxPrice' => $maxPrice,
+            'searchTerm' => $searchTerm,
+            'sortOptions' => $sortOptions,
+            'currentSort' => $currentSort
         ]);
     }
-
+    
     #[Route('/pack/{id}', name: 'app_pack_details')]
     public function details(Pack $pack): Response
     {
@@ -122,24 +163,25 @@ class PackController extends AbstractController
     #[Route('/pack/shop/{id}', name: 'app_pack_shop_details')]
     public function shopDetails(Pack $pack): Response
     {
-        $similarPacks = $this->packRepository->findBy(
-            ['event' => $pack->getEvent()],
-            ['prix' => 'ASC'],
-            3
-        );
+        // Get the category from the pack's event
+        $category = $pack->getCategorie();
+        $relatedPacks = [];
+        if ($category) {
+            $relatedPacks = $this->packRepository->findRelatedByCategory($category, $pack->getId(), 4);
+        }
 
         $demandePacks = $this->entityManager->getRepository(DemandePack::class)
-        ->createQueryBuilder('dp')
-        ->leftJoin('dp.utilisateur', 'u')
-        ->addSelect('u')
-        ->getQuery()
-        ->getResult();
+            ->createQueryBuilder('dp')
+            ->leftJoin('dp.utilisateur', 'u')
+            ->addSelect('u')
+            ->getQuery()
+            ->getResult();
 
         $avis = $this->entityManager->getRepository(Avis::class)->findAvisWithUserInfo($pack->getId());
 
         return $this->render('pack/shop-details.html.twig', [
             'pack' => $pack,
-            'similarPacks' => $similarPacks,
+            'relatedPacks' => $relatedPacks,
             'demandePacks' => $demandePacks,
             'avis' => $avis
         ]);
@@ -308,7 +350,7 @@ class PackController extends AbstractController
     }
 
     #[Route('/demande-packs', name: 'admin_advanced_statistiques_demande_packs', methods: ['GET'])]
-    public function listDemandePacks(Request $request, \Knp\Component\Pager\PaginatorInterface $paginator, NotificationsAdminRepository $notificationsRepo): Response
+    public function listDemandePacks(Request $request, \Knp\Component\Pager\PaginatorInterface $paginator, \App\Repository\NotificationsAdminRepository $notificationsRepo): Response
     {
         $q = $request->query->get('q');
         $repo = $this->entityManager->getRepository(DemandePack::class);

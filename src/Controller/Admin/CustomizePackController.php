@@ -29,6 +29,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use App\Service\NotificationService;
 use App\Entity\NotificationAdmin;
 use Symfony\Bundle\SecurityBundle\Security;
+use App\Service\EmailServicePackReady;
 
 #[Route('/admin/customize-pack', name: 'admin_customize_pack_')]
 class CustomizePackController extends AbstractController
@@ -42,6 +43,7 @@ class CustomizePackController extends AbstractController
     private LieuRepository $lieuRepository;
     private UtilisateurRepository $utilisateurRepository;
     private NotificationsAdminRepository $notificationsAdminRepository;
+    private EmailServicePackReady $emailServicePackReady;
 
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -52,7 +54,8 @@ class CustomizePackController extends AbstractController
         PersonnelRepository $personnelRepository,
         LieuRepository $lieuRepository,
         UtilisateurRepository $utilisateurRepository,
-        NotificationsAdminRepository $notificationsAdminRepository
+        NotificationsAdminRepository $notificationsAdminRepository,
+        EmailServicePackReady $emailServicePackReady
     ) {
         $this->entityManager = $entityManager;
         $this->packRepository = $packRepository;
@@ -63,6 +66,7 @@ class CustomizePackController extends AbstractController
         $this->lieuRepository = $lieuRepository;
         $this->utilisateurRepository = $utilisateurRepository;
         $this->notificationsAdminRepository = $notificationsAdminRepository;
+        $this->emailServicePackReady = $emailServicePackReady;
     }
 
     #[Route('/{id}', name: 'show', methods: ['GET'])]
@@ -106,8 +110,9 @@ class CustomizePackController extends AbstractController
             $eventDate = $demandePack->getEvent()->getDate();
         }
         
-        // Force notifications for admin_id = 1 (fix for bell dropdown)
-        $adminId = 1;
+        // Fetch the currently logged-in admin if available (fallback to 1)
+        $admin = $this->getUser();
+        $adminId = ($admin && method_exists($admin, 'getId')) ? $admin->getId() : 1;
         $latestNotifications = $this->notificationsAdminRepository->createQueryBuilder('n')
             ->andWhere('n.admin = :adminId')
             ->setParameter('adminId', $adminId)
@@ -125,6 +130,7 @@ class CustomizePackController extends AbstractController
             'personnel' => $personnel,
             'locations' => $locations,
             'eventDate' => $eventDate,
+            'notification' => $notification, // Pass the notification entity directly
             'latestNotifications' => $latestNotifications,
             'unreadNotificationsCount' => $unreadNotificationsCount
         ]);
@@ -236,6 +242,14 @@ class CustomizePackController extends AbstractController
         $demandePack->setPrix($totalPrice);
 
         $this->entityManager->flush();
+
+        // Send notification email to client
+        $client = $this->utilisateurRepository->find($demandePack->getUtilisateurId());
+        $packName = $demandePack->getPack() ? $demandePack->getPack()->getNom() : 'Votre pack';
+        $recipientEmail = $client ? $client->getEmail() : null;
+        if ($client && $recipientEmail) {
+            $this->emailServicePackReady->sendPackReadyNotification($client, $packName, $recipientEmail);
+        }
 
         return $this->json([
             'success' => true,

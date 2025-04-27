@@ -190,4 +190,37 @@ public function findTopReservedPersonnels(int $limit = 3): array
         ->getQuery()
         ->getResult();
 }
+
+
+
+public function findAllWithTopFirst(array $topPersonnelIds, ?string $statut, ?string $service, ?string $sort, ?string $order)
+{
+    $qb = $this->createQueryBuilder('p');
+    
+    // Ajouter un champ de tri personnalisé pour mettre les top personnels en premier
+    $qb->addSelect('CASE WHEN p.idP IN (:topIds) THEN 0 ELSE 1 END AS HIDDEN sortTop')
+       ->setParameter('topIds', $topPersonnelIds)
+       ->addOrderBy('sortTop', 'ASC'); // Les tops (0) viennent en premier
+    
+    // Appliquer les filtres
+    if ($statut) {
+        $qb->andWhere('p.statutP = :statut')
+           ->setParameter('statut', $statut);
+    }
+    
+    if ($service) {
+        $qb->andWhere('p.serviceP = :service')
+           ->setParameter('service', $service);
+    }
+    
+    // Appliquer le tri
+    if ($sort) {
+        $qb->addOrderBy('p.' . $sort, $order);
+    } else {
+        // Tri par défaut par nom si aucun tri spécifié
+        $qb->addOrderBy('p.nomP', 'ASC');
+    }
+    
+    return $qb->getQuery();
+}
 }

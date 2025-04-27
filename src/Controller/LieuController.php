@@ -75,6 +75,21 @@ class LieuController extends AbstractController
             $newLieux = $this->lieuRepository->findNewLieux();
             $total = count($allLieux);
             $lastPage = ceil($total / $limit);
+
+            // Statistiques
+            if ($filter === 'statistics') {
+                $stats = [
+                    'total' => $total,
+                    'reservations' => $this->lieuRepository->getMonthlyReservations(),
+                    'revenue' => $this->lieuRepository->getMonthlyRevenue(),
+                    'topLieux' => $this->lieuRepository->getTopLieux(),
+                    'categoryDistribution' => $this->lieuRepository->getCategoryDistribution()
+                ];
+                return $this->render('lieu/index.html.twig', [
+                    'lieux' => array_merge(['total' => $total], $stats),
+                    'currentFilter' => 'statistics'
+                ]);
+            }
         
             $lieux = match ($filter) {
                 'popular' => ['results' => $popularLieux, 'currentPage' => 1, 'lastPage' => 1, 'hasPreviousPage' => false, 'hasNextPage' => false],
@@ -107,6 +122,7 @@ class LieuController extends AbstractController
                 'ajax_request' => false
             ]);
         }
+        
 
     // Dans LieuController.php
     // Dans LieuController.php
@@ -141,56 +157,94 @@ public function searchAutocomplete(Request $request): JsonResponse
     return $this->json($results);
 }
 
-        #[Route('/lieu', name: 'app_lieu_index')]
-        public function indexLieu(Request $request): Response
-        {
-            $filter = $request->query->get('filter', 'all');
-            $page = $request->query->getInt('page', 1);
-            $limit = 10;
+#[Route('/lieu', name: 'app_lieu_index')]
+public function indexLieu(Request $request): Response
+{
+    $filter = $request->query->get('filter', 'all');
+    $page = $request->query->getInt('page', 1);
+    $limit = 10;
 
-            $results = $this->lieuRepository->findAllPaginated($page, $limit);
-            $total = count($this->lieuRepository->findAll());
-            $lastPage = ceil($total / $limit);
+    $results = $this->lieuRepository->findAllPaginated($page, $limit);
+    $total = count($this->lieuRepository->findAll());
+    $lastPage = ceil($total / $limit);
 
-            $popularLieux = $this->lieuRepository->findPopularLieux();
-            $newLieux = $this->lieuRepository->findNewLieux();
+    $popularLieux = $this->lieuRepository->findPopularLieux();
+    $newLieux = $this->lieuRepository->findNewLieux();
 
-            $lieux = match ($filter) {
-                'popular' => [
-                    'results' => $popularLieux,
-                    'currentPage' => 1,
-                    'lastPage' => 1,
-                    'hasPreviousPage' => false,
-                    'hasNextPage' => false
-                ],
-                'new' => [
-                    'results' => $newLieux,
-                    'currentPage' => 1,
-                    'lastPage' => 1,
-                    'hasPreviousPage' => false,
-                    'hasNextPage' => false
-                ],
-                default => [
-                    'results' => $results,
-                    'currentPage' => $page,
-                    'lastPage' => $lastPage,
-                    'hasPreviousPage' => $page > 1,
-                    'hasNextPage' => $page < $lastPage
-                ],
-            };
+    $lieux = match ($filter) {
+        'popular' => [
+            'results' => $popularLieux,
+            'currentPage' => 1,
+            'lastPage' => 1,
+            'hasPreviousPage' => false,
+            'hasNextPage' => false,
+            'total' => count($popularLieux)
+        ],
+        'new' => [
+            'results' => $newLieux,
+            'currentPage' => 1,
+            'lastPage' => 1,
+            'hasPreviousPage' => false,
+            'hasNextPage' => false,
+            'total' => count($newLieux)
+        ],
+        default => [
+            'results' => $results,
+            'currentPage' => $page,
+            'lastPage' => $lastPage,
+            'hasPreviousPage' => $page > 1,
+            'hasNextPage' => $page < $lastPage,
+            'total' => $total
+        ],
+    };
 
-            return $this->render('lieu/lieu.html.twig', [
-                'lieux' => $lieux,
-                'popularLieux' => [
-                    'results' => $popularLieux,
-                    'currentPage' => 1,
-                    'lastPage' => 1,
-                    'hasPreviousPage' => false,
-                    'hasNextPage' => false
-                ],
-                'currentFilter' => $filter
-            ]);
-        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // Modifier cette ligne pour utiliser 'index.html.twig' au lieu de 'lieu/lieu.html.twig'
+    return $this->render('lieu/index.html.twig', [
+        'lieux' => $lieux,
+        'popularLieux' => [
+            'results' => $popularLieux,
+            'currentPage' => 1,
+            'lastPage' => 1,
+            'hasPreviousPage' => false,
+            'hasNextPage' => false
+        ],
+        'currentFilter' => $filter
+    ]);
+}
 
         #[Route('/lieu/category/{category}', name: 'app_lieu_category')]
         public function byCategory(string $category, Request $request): Response

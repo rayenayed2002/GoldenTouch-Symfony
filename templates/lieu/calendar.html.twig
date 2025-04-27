@@ -1,0 +1,193 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Calendrier des réservations - {{ lieu.name }}{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css">
+    <style>
+        .calendar-container {
+            background: white;
+            border-radius: 0.75rem;
+            padding: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+        }
+        
+        #calendar {
+            margin-top: 1.5rem;
+        }
+        
+        .fc-event {
+            cursor: pointer;
+        }
+        
+        .fc-toolbar-title {
+            font-weight: 600;
+            color: #7367F0;
+        }
+        
+        .fc-button-primary {
+            background-color: #7367F0;
+            border-color: #7367F0;
+        }
+        
+        .fc-button-primary:hover {
+            background-color: #5d52d1;
+            border-color: #5d52d1;
+        }
+
+        .google-calendar-btn {
+            background-color: #4285f4;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: background-color 0.3s;
+        }
+
+        .google-calendar-btn:hover {
+            background-color: #357abd;
+            color: white;
+        }
+
+        .google-calendar-btn i {
+            font-size: 1.2em;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="container-xxl flex-grow-1 container-p-y">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4 class="fw-bold mb-0">
+                    <i class="ti ti-calendar me-2"></i>
+                    Calendrier des réservations - {{ lieu.name }}
+                </h4>
+                <div>
+                    <a href="#" class="google-calendar-btn me-2" onclick="syncWithGoogleCalendar()">
+                        <i class="fab fa-google"></i>
+                        Synchroniser avec Google Calendar
+                    </a>
+                    <a href="{{ path('app_lieu_details', {'id': lieu.id}) }}" class="btn btn-outline-secondary">
+                        <i class="ti ti-arrow-left me-1"></i> Retour au lieu
+                    </a>
+                </div>
+            </div>
+            
+            <div class="calendar-container">
+                <div id="calendar"></div>
+            </div>
+            
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Légende</h5>
+                    <div class="d-flex align-items-center mb-2">
+                        <span class="badge bg-primary me-2" style="width: 20px; height: 20px;"></span>
+                        <span>Événements réservés</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales/fr.min.js"></script>
+    <script src="https://apis.google.com/js/api.js"></script>
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const calendarEl = document.getElementById('calendar');
+        const events = {{ events|json_encode|raw }};
+        
+        const calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            locale: 'fr',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+            },
+            events: events,
+            eventClick: function(info) {
+                const event = info.event;
+                const eventType = event.extendedProps.type || 'Non spécifié';
+                
+                Swal.fire({
+                    title: event.title,
+                    html: `
+                        <div class="text-start">
+                            <p><strong>Date:</strong> ${event.startStr}</p>
+                            <p><strong>Type:</strong> ${eventType}</p>
+                            ${event.extendedProps.description ? `<p><strong>Description:</strong> ${event.extendedProps.description}</p>` : ''}
+                        </div>
+                    `,
+                    icon: 'info',
+                    confirmButtonColor: '#7367F0',
+                    confirmButtonText: 'Fermer'
+                });
+            }
+        });
+        
+        calendar.render();
+    });
+
+    function syncWithGoogleCalendar() {
+        gapi.load('client:auth2', initClient);
+    }
+
+    function initClient() {
+        gapi.client.init({
+            apiKey: '{{ google_api_key }}',
+            clientId: '{{ google_client_id }}',
+            discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest'],
+            scope: 'https://www.googleapis.com/auth/calendar.events'
+        }).then(function() {
+            gapi.auth2.getAuthInstance().signIn().then(function() {
+                const events = {{ events|json_encode|raw }};
+                addEventsToGoogleCalendar(events);
+            });
+        });
+    }
+
+    function addEventsToGoogleCalendar(events) {
+        events.forEach(function(event) {
+            const googleEvent = {
+                'summary': event.title,
+                'location': '{{ lieu.location }}',
+                'description': event.extendedProps.description || '',
+                'start': {
+                    'dateTime': event.start,
+                    'timeZone': 'Europe/Paris'
+                },
+                'end': {
+                    'dateTime': event.end || event.start,
+                    'timeZone': 'Europe/Paris'
+                }
+            };
+
+            gapi.client.calendar.events.insert({
+                'calendarId': 'primary',
+                'resource': googleEvent
+            }).then(function(response) {
+                if (response.status === 200) {
+                    Swal.fire({
+                        title: 'Succès!',
+                        text: 'L\'événement a été ajouté à votre Google Calendar',
+                        icon: 'success',
+                        confirmButtonColor: '#7367F0'
+                    });
+                }
+            });
+        });
+    }
+    </script>
+{% endblock %}
