@@ -40,12 +40,22 @@ class PackRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function findByCategory(string $category): array
+    /**
+     * Find packs whose event belongs to the same category, excluding the current pack
+     * @param string $category
+     * @param int $excludePackId
+     * @param int $limit
+     * @return Pack[]
+     */
+    public function findRelatedByCategory(string $category, int $excludePackId, int $limit = 4): array
     {
         return $this->createQueryBuilder('p')
             ->join('p.event', 'e')
             ->andWhere('e.categorie = :category')
+            ->andWhere('p.id != :excludeId')
             ->setParameter('category', $category)
+            ->setParameter('excludeId', $excludePackId)
+            ->setMaxResults($limit)
             ->getQuery()
             ->getResult();
     }

@@ -83,7 +83,7 @@ class PackController extends AbstractController
 
         // Apply filters
         if ($searchTerm) {
-            $queryBuilder->andWhere('p.nom LIKE :searchTerm OR p.description LIKE :searchTerm')
+            $queryBuilder->andWhere('e.nom LIKE :searchTerm OR p.description LIKE :searchTerm')
                         ->setParameter('searchTerm', '%'.$searchTerm.'%');
         }
 
@@ -163,24 +163,25 @@ class PackController extends AbstractController
     #[Route('/pack/shop/{id}', name: 'app_pack_shop_details')]
     public function shopDetails(Pack $pack): Response
     {
-        $similarPacks = $this->packRepository->findBy(
-            ['event' => $pack->getEvent()],
-            ['prix' => 'ASC'],
-            3
-        );
+        // Get the category from the pack's event
+        $category = $pack->getCategorie();
+        $relatedPacks = [];
+        if ($category) {
+            $relatedPacks = $this->packRepository->findRelatedByCategory($category, $pack->getId(), 4);
+        }
 
         $demandePacks = $this->entityManager->getRepository(DemandePack::class)
-        ->createQueryBuilder('dp')
-        ->leftJoin('dp.utilisateur', 'u')
-        ->addSelect('u')
-        ->getQuery()
-        ->getResult();
+            ->createQueryBuilder('dp')
+            ->leftJoin('dp.utilisateur', 'u')
+            ->addSelect('u')
+            ->getQuery()
+            ->getResult();
 
         $avis = $this->entityManager->getRepository(Avis::class)->findAvisWithUserInfo($pack->getId());
 
         return $this->render('pack/shop-details.html.twig', [
             'pack' => $pack,
-            'similarPacks' => $similarPacks,
+            'relatedPacks' => $relatedPacks,
             'demandePacks' => $demandePacks,
             'avis' => $avis
         ]);

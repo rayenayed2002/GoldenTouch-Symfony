@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>Taxiar - Online Taxi Service HTML Template - Shop Details</title>
+    <title>GoldenTouch - {{ pack.nom }}</title>
     <meta name="author" content="Taxiar">
     <meta name="description" content="Taxiar - Online Taxi Service HTML Template">
     <meta name="keywords" content="Taxiar - Online Taxi Service HTML Template">
@@ -359,7 +359,7 @@
                         <a href="#" class="icon-btn sideMenuToggler2"><i class="fa-regular fa-bag-shopping"></i>
                             <span class="badge">5</span></a>
                         <a href="#" class="icon-btn sideMenuToggler"><i class="far fa-bars"></i></a>
-                        <a href="booking.html" class="th-btn">BOOK A TAXI<i class="fa-regular fa-arrow-right ms-2"></i></a>
+                        <a href="{{ path('app_pack_booking', {'id': pack.id}) }}" class="th-btn">Réserver<i class="fa-regular fa-arrow-right ms-2"></i></a>
                     </div>
                 </div>
             </div>
@@ -375,8 +375,9 @@
         <div class="container z-index-common">
             <h1 class="breadcumb-title">{{pack.nom}}</h1>
             <ul class="breadcumb-menu">
-                <li><a href="index.html">Home</a></li>
-                <li>Pack</li>
+                <li><a href="{{ path('app_packs') }}">Accueil</a></li>
+                <li><a href="{{ path('app_pack_index') }}">Packs</a></li>
+                <li>{{ pack.nom }}</li>
             </ul>
         </div>
     </div>
@@ -401,7 +402,7 @@
                         <h2 class="product-title">{{pack.nom}}</h2>
                         <div class="product-rating">
                             <div class="star-rating" role="img" aria-label="Rated 5.00 out of 5"><span style="width:100%">Rated <strong class="rating">5.00</strong> out of 5 based on <span class="rating">1</span> customer rating</span></div>
-                            <a href="shop-details.html" class="woocommerce-review-link">(<span class="count">3</span> customer reviews)</a>
+                            <a href="#reviews" class="woocommerce-review-link">(<span class="count">3</span> customer reviews)</a>
                         </div>
                         <p class="text">{{pack.description}}</p>
                         <div class="product-meta">
@@ -585,29 +586,68 @@
 </script>
 </div>
             <!--==============================
-		Related Product  
-		==============================-->
+        Related Product  
+        ==============================-->
             <div class="space-extra-top mb-30">
                 <div class="title-area text-center">
                    <h2 class="sec-title">Packs similaires</h2>
+                   <p class="sec-text">Découvrez d'autres packs de la même catégorie</p>
                 </div>
                 <div class="row th-carousel" data-slide-show="4" data-lg-slide-show="3" data-md-slide-show="2" data-sm-slide-show="2" data-xs-slide-show="1" data-arrows="true">
-                    {% for pack in similarPacks %}
-                    <div class="col-xl-3 col-lg-4 col-sm-6">
-                        <div class="th-product">
-                            <div class="product-img">
-                                <img src="{{ asset('uploads/packs/' ~ pack.photo) }}" alt="{{ pack.nom }}">
-                                <div class="actions">
-                                    <a href="{{ path('app_pack_shop_details', {'id': pack.id}) }}" class="icon-btn"><i class="far fa-eye"></i></a>
-                                    <a href="{{ path('app_pack_shop_details', {'id': pack.id}) }}" class="icon-btn"><i class="far fa-cart-plus"></i></a>
+                    {% if relatedPacks is not empty %}
+                        {% for relatedPack in relatedPacks %}
+                            <div class="col-xl-3 col-lg-4 col-sm-6">
+                                <div class="th-product">
+                                    <div class="product-img">
+                                        <img src="{{ asset('uploads/packs/' ~ relatedPack.photo|default('default.jpg')) }}" alt="{{ relatedPack.nom }}">
+                                        <div class="actions">
+                                            <a href="{{ path('app_pack_shop_details', {'id': relatedPack.id}) }}" class="icon-btn"><i class="far fa-eye"></i></a>
+                                            <a href="{{ path('app_pack_booking', {'id': relatedPack.id}) }}" class="icon-btn"><i class="far fa-cart-plus"></i></a>
+                                            <a href="#" class="icon-btn"><i class="far fa-heart"></i></a>
+                                        </div>
+                                    </div>
+                                    <div class="product-content">
+                                        <h3 class="product-title"><a href="{{ path('app_pack_shop_details', {'id': relatedPack.id}) }}">{{ relatedPack.nom }}</a></h3>
+                                        <div class="product-meta">
+                                            <span class="price">{{ relatedPack.prix }} TND</span>
+                                            <span class="category">{{ relatedPack.categorie }}</span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="product-content">
-                                <h3 class="product-title"><a href="{{ path('app_pack_shop_details', {'id': pack.id}) }}">{{ pack.nom }}</a></h3>
-                                <span class="price">{{ pack.prix }} TND</span>
-                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="col-12 text-center">
+                            <p>Aucun autre pack dans cette catégorie.</p>
                         </div>
-                    </div>
+                    {% endif %}
+                </div>
+                <div class="row th-carousel" data-slide-show="4" data-lg-slide-show="3" data-md-slide-show="2" data-sm-slide-show="2" data-xs-slide-show="1" data-arrows="true">
+                    {% for similarPack in similarPacks|default([]) %}
+                        {% if similarPack.id != pack.id and similarPack.categorie == pack.categorie %}
+                            <div class="col-xl-3 col-lg-4 col-sm-6">
+                                <div class="th-product">
+                                    <div class="product-img">
+                                        <img src="{{ asset('uploads/packs/' ~ similarPack.photo|default('default.jpg')) }}" alt="{{ similarPack.nom }}">
+                                        <div class="actions">
+                                            <a href="{{ path('app_pack_details', {'id': similarPack.id}) }}" class="icon-btn"><i class="far fa-eye"></i></a>
+                                            <a href="{{ path('app_pack_booking', {'id': similarPack.id}) }}" class="icon-btn"><i class="far fa-calendar-plus"></i></a>
+                                        </div>
+                                    </div>
+                                    <div class="product-content">
+                                        <h3 class="product-title"><a href="{{ path('app_pack_details', {'id': similarPack.id}) }}">{{ similarPack.nom }}</a></h3>
+                                        <div class="product-meta">
+                                            <span class="price">{{ similarPack.prix }} TND</span>
+                                            <span class="category">{{ similarPack.categorie }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <div class="col-12 text-center">
+                            <p>Aucun pack similaire disponible pour le moment.</p>
+                        </div>
                     {% endfor %}
 
                    
