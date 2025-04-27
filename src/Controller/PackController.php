@@ -26,6 +26,33 @@ use App\Repository\NotificationsAdminRepository;
 
 class PackController extends AbstractController
 {
+    #[Route('/api/packs/filter', name: 'api_packs_filter', methods: ['GET'])]
+    public function filterPacks(Request $request): JsonResponse
+    {
+        $category = $request->query->get('category');
+        $minPrice = $request->query->get('minPrice');
+        $maxPrice = $request->query->get('maxPrice');
+
+        $packs = $this->packRepository->findByFilters($category, $minPrice, $maxPrice);
+        $categories = $this->packRepository->findAllCategories();
+
+        $packsData = array_map(function($pack) {
+            return [
+                'id' => $pack->getId(),
+                'nom' => $pack->getNom(),
+                'prix' => $pack->getPrix(),
+                'photo' => $pack->getPhoto(),
+                'capacite' => $pack->getCapacite(),
+                'categorie' => $pack->getCategorie(),
+            ];
+        }, $packs);
+
+        return new JsonResponse([
+            'packs' => $packsData,
+            'categories' => $categories
+        ]);
+    }
+
     public function __construct(
         private PackRepository $packRepository,
         private AvisRepository $avisRepository,
@@ -93,12 +120,14 @@ class PackController extends AbstractController
 
         $trendingPacks = $this->packRepository->findBy([], ['prix' => 'DESC'], 3);
         $newPacks = $this->packRepository->findBy([], ['id' => 'DESC'], 3);
+        $categories = $this->packRepository->findAllCategories();
 
         return $this->render('pack/pack.html.twig', [
             'packs' => $packs,
             'trendingPacks' => ['results' => $trendingPacks, 'currentPage' => 1, 'lastPage' => 1, 'hasPreviousPage' => false, 'hasNextPage' => false],
             'currentFilter' => $filter,
-            'searchTerm' => $searchTerm
+            'searchTerm' => $searchTerm,
+            'categories' => $categories
         ]);
     }
 

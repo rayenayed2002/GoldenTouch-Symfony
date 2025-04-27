@@ -87,4 +87,35 @@ class PackRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function findByFilters(?string $category = null, ?float $minPrice = null, ?float $maxPrice = null): array
+{
+    $qb = $this->createQueryBuilder('p')
+        ->join('p.event', 'e');
+
+    if ($category && $category !== 'all') {
+        $qb->andWhere('e.categorie = :category')
+           ->setParameter('category', $category);
+    }
+
+    if ($minPrice !== null) {
+        $qb->andWhere('p.prix >= :minPrice')
+           ->setParameter('minPrice', $minPrice);
+    }
+
+    if ($maxPrice !== null) {
+        $qb->andWhere('p.prix <= :maxPrice')
+           ->setParameter('maxPrice', $maxPrice);
+    }
+
+    return $qb->getQuery()->getResult();
+}
+    public function findAllCategories(): array
+    {
+        return $this->createQueryBuilder('p')
+            ->join('p.event', 'e')
+            ->select('DISTINCT e.categorie')
+            ->getQuery()
+            ->getResult();
+    }
 }
