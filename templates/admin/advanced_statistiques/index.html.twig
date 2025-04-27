@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en" class="light-style layout-navbar-fixed layout-menu-fixed" dir="ltr" data-theme="theme-default">
+<html lang="fr" class="light-style layout-navbar-fixed layout-menu-fixed" dir="ltr" data-theme="theme-default">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
     <title>Statistiques Avancées - Admin</title>
-    <meta name="description" content="Admin advanced statistics" />
+    <meta name="description" content="Statistiques avancées administrateur" />
     
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="{{ asset('img/favicon/favicon.ico') }}" />
@@ -338,58 +338,201 @@
 </head>
 
 <body>
-    <!-- Layout wrapper -->
+    <!-- Enveloppe de la mise en page -->
     <div class="layout-wrapper layout-content-navbar">
         <div class="layout-container">
             <!-- Menu -->
             <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
-                <div class="app-brand demo">
-                    <a href="index.html" class="app-brand-link">
-                        <span class="app-brand-logo demo">
-                            <svg width="32" height="22" viewBox="0 0 32 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path fill-rule="evenodd" clip-rule="evenodd" d="M0.00172773 0V6.85398C0.00172773 6.85398 -0.133178 9.01207 1.98092 10.8388L13.6912 21.9964L19.7809 21.9181L18.8042 9.88248L16.4951 7.17289L9.23799 0H0.00172773Z" fill="#7367F0" />
-                            </svg>
-                        </span>
-                        <span class="app-brand-text demo menu-text fw-bold">Golden Touch</span>
-                    </a>
-                </div>
+          <div class="app-brand demo">
+            <a href="index.html" class="app-brand-link">
+              <span class="app-brand-logo demo">
+                <svg width="32" height="22" viewBox="0 0 32 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    fill-rule="evenodd"
+                    clip-rule="evenodd"
+                    d="M0.00172773 0V6.85398C0.00172773 6.85398 -0.133178 9.01207 1.98092 10.8388L13.6912 21.9964L19.7809 21.9181L18.8042 9.88248L16.4951 7.17289L9.23799 0H0.00172773Z"
+                    fill="#7367F0" />
+                  <path
+                    opacity="0.06"
+                    fill-rule="evenodd"
+                    clip-rule="evenodd"
+                    d="M7.69824 16.4364L12.5199 3.23696L16.5541 7.25596L7.69824 16.4364Z"
+                    fill="#161616" />
+                  <path
+                    opacity="0.06"
+                    fill-rule="evenodd"
+                    clip-rule="evenodd"
+                    d="M8.07751 15.9175L13.9419 4.63989L16.5849 7.28475L8.07751 15.9175Z"
+                    fill="#161616" />
+                  <path
+                    fill-rule="evenodd"
+                    clip-rule="evenodd"
+                    d="M7.77295 16.3566L23.6563 0H32V6.88383C32 6.88383 31.8262 9.17836 30.6591 10.4057L19.7824 22H13.6938L7.77295 16.3566Z"
+                    fill="#7367F0" />
+                </svg>
+              </span>
+              <span class="app-brand-text demo menu-text fw-bold">Vuexy</span>
+            </a>
 
-                <div class="menu-inner-shadow"></div>
+            <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto">
+              <i class="ti menu-toggle-icon d-none d-xl-block ti-sm align-middle"></i>
+              <i class="ti ti-x d-block d-xl-none ti-sm align-middle"></i>
+            </a>
+          </div>
 
-                <ul class="menu-inner py-1">
-                    <li class="menu-item">
-                        <a href="{{ path('admin_advanced_statistiques_index') }}" class="menu-link">
-                            <i class="menu-icon tf-icons ti ti-dashboard"></i>
-                            <div>Dashboard</div>
-                        </a>
-                    </li>
-                    
-                    <!-- Statistiques -->
-                    <li class="menu-item active">
-                        <a href="{{ path('admin_advanced_statistiques_index') }}" class="menu-link">
-                            <i class="menu-icon tf-icons ti ti-chart-bar"></i>
-                            <div>Statistiques</div>
-                        </a>
-                    </li>
+          <div class="menu-inner-shadow"></div>
+<div class="menu-inner-shadow"></div>
 
-                    <!-- Packs -->
-                    <li class="menu-item">
-                        <a href="{{ path('admin_pack_index') }}" class="menu-link">
-                            <i class="menu-icon tf-icons ti ti-package"></i>
-                            <div>Packs</div>
-                        </a>
-                    </li>
+<ul class="menu-inner py-1">
+  <!-- Packs -->
+  <li class="menu-item active">
+    <a href="packs.html" class="menu-link">
+      <i class="menu-icon tf-icons ti ti-package"></i>
+      <div data-i18n="Packs">Packs</div>
+    </a>
+  </li>
 
-                    <!-- Events -->
-                    <li class="menu-item">
-                       <a href="{{ path('admin_notifications') }}" class="menu-link">
-    <i class="menu-icon tf-icons ti ti-calendar-event"></i>
-    <div>Notifications</div>
+  <!-- Gestion Événements -->
+  <li class="menu-item">
+    <a href="javascript:void(0);" class="menu-link menu-toggle">
+      <i class="menu-icon tf-icons ti ti-calendar-event"></i>
+      <div data-i18n="Gestion Événements">Gestion Événements</div>
+    </a>
+    <ul class="menu-sub">
+      <li class="menu-item">
+<a href="{{ path('app_add_event') }}" class="menu-link">
+    <i class="menu-icon tf-icons ti ti-circle"></i>
+    <div data-i18n="Ajouter Événement">Ajouter Événement</div>
 </a>
-                        </a>
-                    </li>
-                </ul>
-            </aside>
+      </li>
+      <li class="menu-item">
+        <a href="liste-evenements.html" class="menu-link">
+          <i class="menu-icon tf-icons ti ti-circle"></i>
+          <div data-i18n="Liste Événements">Liste Événements</div>
+        </a>
+      </li>
+    </ul>
+  </li>
+
+  <!-- Gestion Matérielle -->
+  <li class="menu-item">
+    <a href="javascript:void(0);" class="menu-link menu-toggle">
+      <i class="menu-icon tf-icons ti ti-tools"></i>
+      <div data-i18n="Gestion Matérielle">Gestion Matérielle</div>
+    </a>
+    <ul class="menu-sub">
+      <li class="menu-item">
+        <a href="ajouter-materiel.html" class="menu-link">
+          <i class="menu-icon tf-icons ti ti-circle"></i>
+          <div data-i18n="Ajouter Matériel">Ajouter Matériel</div>
+        </a>
+      </li>
+      <li class="menu-item">
+        <a href="liste-materiel.html" class="menu-link">
+          <i class="menu-icon tf-icons ti ti-circle"></i>
+          <div data-i18n="Liste Matériel">Liste Matériel</div>
+        </a>
+      </li>
+    </ul>
+  </li>
+
+  <!-- Gestion Lieu -->
+  <li class="menu-item">
+    <a href="javascript:void(0);" class="menu-link menu-toggle">
+      <i class="menu-icon tf-icons ti ti-map-pin"></i>
+      <div data-i18n="Gestion Lieu">Gestion Lieu</div>
+    </a>
+    <ul class="menu-sub">
+      <li class="menu-item">
+        <a href="ajouter-lieu.html" class="menu-link">
+          <i class="menu-icon tf-icons ti ti-circle"></i>
+          <div data-i18n="Ajouter Lieu">Ajouter Lieu</div>
+        </a>
+      </li>
+      <li class="menu-item">
+        <a href="liste-lieux.html" class="menu-link">
+          <i class="menu-icon tf-icons ti ti-circle"></i>
+          <div data-i18n="Liste Lieux">Liste Lieux</div>
+        </a>
+      </li>
+    </ul>
+  </li>
+
+  <!-- Gestion Personnels -->
+  <li class="menu-item">
+    <a href="javascript:void(0);" class="menu-link menu-toggle">
+      <i class="menu-icon tf-icons ti ti-users"></i>
+      <div data-i18n="Gestion Personnels">Gestion Personnels</div>
+    </a>
+    <ul class="menu-sub">
+      <li class="menu-item">
+        <a href="ajouter-personnel.html" class="menu-link">
+          <i class="menu-icon tf-icons ti ti-circle"></i>
+          <div data-i18n="Ajouter Personnel">Ajouter Personnel</div>
+        </a>
+      </li>
+      <li class="menu-item">
+        <a href="liste-personnels.html" class="menu-link">
+          <i class="menu-icon tf-icons ti ti-circle"></i>
+          <div data-i18n="Liste Personnels">Liste Personnels</div>
+        </a>
+      </li>
+    </ul>
+  </li>
+
+  <!-- Gestion Commandes -->
+  <li class="menu-item">
+    <a href="javascript:void(0);" class="menu-link menu-toggle">
+      <i class="menu-icon tf-icons ti ti-shopping-cart"></i>
+      <div data-i18n="Gestion Commandes">Gestion Commandes</div>
+    </a>
+    <ul class="menu-sub">
+      <li class="menu-item">
+        <a href="panier.html" class="menu-link">
+          <i class="menu-icon tf-icons ti ti-circle"></i>
+          <div data-i18n="Panier">Panier</div>
+          <div class="badge bg-label-primary rounded-pill ms-auto">3</div>
+        </a>
+      </li>
+      <li class="menu-item">
+        <a href="liste-commandes.html" class="menu-link">
+          <i class="menu-icon tf-icons ti ti-circle"></i>
+          <div data-i18n="Liste Commandes">Liste Commandes</div>
+        </a>
+      </li>
+      <li class="menu-item">
+        <a href="liste-reclamations.html" class="menu-link">
+          <i class="menu-icon tf-icons ti ti-circle"></i>
+          <div data-i18n="Liste Réclamations">Liste Réclamations</div>
+          <div class="badge bg-label-warning rounded-pill ms-auto">2</div>
+        </a>
+      </li>
+    </ul>
+  </li>
+
+  <!-- Divider -->
+  <li class="menu-header small text-uppercase">
+    <span class="menu-header-text">Compte</span>
+  </li>
+
+  <!-- Compte -->
+  <li class="menu-item">
+    <a href="compte.html" class="menu-link">
+      <i class="menu-icon tf-icons ti ti-user"></i>
+      <div data-i18n="Mon Compte">Mon Compte</div>
+    </a>
+  </li>
+
+  <!-- Déconnexion -->
+  <li class="menu-item">
+    <a href="deconnexion.html" class="menu-link">
+      <i class="menu-icon tf-icons ti ti-logout"></i>
+      <div data-i18n="Déconnexion">Déconnexion</div>
+    </a>
+  </li>
+</ul>
+         
+        </aside>
             <!-- / Menu -->
 
             <!-- Layout container -->
@@ -404,14 +547,128 @@
 
                     <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
                         <!-- Search -->
-                        <div class="navbar-nav align-items-center">
+                        <div class="navbar-nav align-items-center position-relative">
                             <div class="nav-item navbar-search-wrapper mb-0">
-                                <a class="nav-item nav-link search-toggler d-flex align-items-center px-0" href="javascript:void(0);">
+                                <a class="nav-item nav-link search-toggler d-flex align-items-center px-0" id="openSearchBar" href="javascript:void(0);">
                                     <i class="ti ti-search ti-md me-2"></i>
-                                    <span class="d-none d-md-inline-block text-muted">Search</span>
+                                    <span class="d-none d-md-inline-block text-muted">Recherche</span>
                                 </a>
+                                <input type="text" id="chartSearchInput" class="form-control ms-2 d-none" placeholder="Rechercher un graphique... (Ctrl+/)" autocomplete="off" style="width: 260px; position: absolute; top: 40px; left: 0; z-index: 1050;" />
+                                <div id="chartSearchResults" class="dropdown-menu show d-none" style="position: absolute; top: 70px; left: 0; width: 260px; z-index: 1060; max-height: 250px; overflow-y: auto;"></div>
                             </div>
                         </div>
+                        <style>
+                            #chartSearchResults {
+                                border: 1px solid #d1d5db;
+                                background: #fff;
+                                box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+                                font-size: 1rem;
+                            }
+                            #chartSearchResults .dropdown-item {
+                                padding: 0.5rem 1rem;
+                                cursor: pointer;
+                                color: #333;
+                            }
+                            #chartSearchResults .dropdown-item:hover {
+                                background: #f4f4f4;
+                                color: #7367F0;
+                            }
+                        </style>
+                        <script>
+                            (function() {
+    // Add highlight style for charts
+    const style = document.createElement('style');
+    style.innerHTML = `.chart-highlight { box-shadow: 0 0 0 4px #7367F0AA; transition: box-shadow 0.3s; z-index: 10; position: relative; }`;
+    document.head.appendChild(style);
+                                const searchToggler = document.getElementById('openSearchBar');
+                                const searchInput = document.getElementById('chartSearchInput');
+                                const resultsBox = document.getElementById('chartSearchResults');
+                                let lastQuery = '';
+
+                                function openSearch() {
+                                    searchInput.classList.remove('d-none');
+                                    searchInput.focus();
+                                    resultsBox.classList.remove('d-none');
+                                    triggerChartSearch();
+                                }
+                                function closeSearch() {
+                                    searchInput.value = '';
+                                    searchInput.classList.add('d-none');
+                                    resultsBox.classList.add('d-none');
+                                    resultsBox.innerHTML = '';
+                                }
+                                function triggerChartSearch() {
+                                    const q = searchInput.value.trim();
+                                    fetch(`/admin/advanced-statistiques/search_charts.php?q=` + encodeURIComponent(q))
+                                        .then(r => r.json())
+                                        .then(data => {
+                                            if (Array.isArray(data.results) && data.results.length > 0) {
+                                                resultsBox.innerHTML = data.results.map(item => {
+    // If it's a dashboard card, attach stat-key for dynamic panel
+    let statKey = '';
+    if (item.id === 'dashboardCardTotalPacks') statKey = 'packs';
+    if (item.id === 'dashboardCardTotalUtilisateurs') statKey = 'users';
+    if (item.id === 'dashboardCardMostSoldPack') statKey = 'mostSoldPack';
+    if (item.id === 'dashboardCardAvgPrice') statKey = 'avgPrice';
+    return `<div class='dropdown-item' data-chart-id='${item.id}'${statKey ? ` data-stat-key='${statKey}'` : ''}>${item.name}</div>`;
+}).join('');
+                                            } else {
+                                                resultsBox.innerHTML = "<div class='dropdown-item text-muted'>Aucun graphique trouvé</div>";
+                                            }
+                                        });
+                                }
+                                searchToggler.addEventListener('click', function(e) {
+                                    e.preventDefault();
+                                    openSearch();
+                                });
+                                document.addEventListener('keydown', function(e) {
+                                    if ((e.ctrlKey || e.metaKey) && e.key === '/') {
+                                        openSearch();
+                                        e.preventDefault();
+                                    } else if (e.key === 'Escape') {
+                                        closeSearch();
+                                    }
+                                });
+                                searchInput.addEventListener('input', function() {
+                                    lastQuery = searchInput.value.trim();
+                                    triggerChartSearch();
+                                });
+                                resultsBox.addEventListener('mousedown', function(e) {
+    if (e.target.classList.contains('dropdown-item')) {
+        searchInput.value = e.target.textContent;
+        resultsBox.innerHTML = '';
+        resultsBox.classList.add('d-none');
+        // Scroll to chart and highlight
+        const chartId = e.target.getAttribute('data-chart-id');
+        const statKey = e.target.getAttribute('data-stat-key');
+        if (statKey) {
+            // For dynamic stat panels (cards)
+            renderStatPanel(statKey);
+            setTimeout(() => {
+                const panelElem = document.getElementById('dynamicStatPanel');
+                if (panelElem) {
+                    panelElem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    panelElem.classList.add('chart-highlight');
+                    setTimeout(() => panelElem.classList.remove('chart-highlight'), 1500);
+                }
+            }, 350); // allow panel to render
+        } else if (chartId) {
+            const chartElem = document.getElementById(chartId);
+            if (chartElem) {
+                chartElem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                chartElem.classList.add('chart-highlight');
+                setTimeout(() => chartElem.classList.remove('chart-highlight'), 1500);
+            }
+        }
+    }
+});
+                                document.addEventListener('mousedown', function(e) {
+                                    if (!searchInput.contains(e.target) && !searchToggler.contains(e.target) && !resultsBox.contains(e.target)) {
+                                        closeSearch();
+                                    }
+                                });
+                            })();
+                        </script>
                         <!-- /Search -->
 
                         <ul class="navbar-nav flex-row align-items-center ms-auto">
@@ -433,7 +690,7 @@
                                                 </div>
                                                 <div class="flex-grow-1">
                                                     <span class="fw-semibold d-block">Admin</span>
-                                                    <small class="text-muted">Administrator</small>
+                                                    <small class="text-muted">Administrateur</small>
                                                 </div>
                                             </div>
                                         </a>
@@ -444,13 +701,13 @@
                                     <li>
                                         <a class="dropdown-item" href="#">
                                             <i class="ti ti-user-check me-2 ti-sm"></i>
-                                            <span class="align-middle">My Profile</span>
+                                            <span class="align-middle">Mon profil</span>
                                         </a>
                                     </li>
                                     <li>
                                         <a class="dropdown-item" href="#">
                                             <i class="ti ti-settings me-2 ti-sm"></i>
-                                            <span class="align-middle">Settings</span>
+                                            <span class="align-middle">Paramètres</span>
                                         </a>
                                     </li>
                                 </ul>
@@ -477,9 +734,9 @@
                                         <div class="d-flex gap-3 mt-6" style="margin-top: 10rem !important;">
     <!-- Spacer to prevent overlap -->
 
-                                            <button class="btn btn-primary d-flex align-items-center gap-2">
-                                                <i class="ri-download-cloud-2-line"></i> Télécharger Rapport
-                                            </button>
+                                            <a href="{{ path('admin_advanced_statistiques_admin_advanced_statistiques_download_pdf') }}" class="btn btn-primary d-flex align-items-center gap-2" target="_blank">
+    <i class="ri-download-cloud-2-line"></i> Télécharger Rapport
+</a>
                                             <button class="btn btn-light" id="refreshStats">
                                                 <i class="ri-refresh-line"></i>
                                             </button>
@@ -496,7 +753,7 @@
                         <div class="row mb-4">
                             <!-- Total Packs -->
                             <div class="col-sm-6 col-lg-3" data-aos="fade-up" data-aos-delay="100">
-                                <div class="dashboard-card stat-card bg-primary bg-opacity-10 cursor-pointer" onclick="showAdvancedStatDetails('packs')">
+                                <div class="dashboard-card stat-card bg-primary bg-opacity-10 cursor-pointer" id="dashboardCardTotalPacks" onclick="showAdvancedStatDetails('packs')">
                                     <div class="d-flex justify-content-between">
                                         <div>
                                             <h6 class="text-muted mb-2">Total Packs</h6>
@@ -514,8 +771,10 @@
                                     </div>
                                 </div>
                                 <!-- Dynamic Stat Panel (in-page, not modal) -->
-<div id="dynamicStatPanel" class="my-4">
+<div style="width:80vw;position:relative">
+  <div id="dynamicStatPanel" class="my-4 w-100" style="width:100vw;">
     <!-- Stat panel content will be injected here dynamically -->
+  </div>
 </div>
 <script>
     // Fetch stat data via AJAX and update the panel
@@ -558,7 +817,7 @@
                 let growthHtml = growth ? `<span class="badge bg-success ms-2">${growth}</span>` : '';
                 let descHtml = desc ? `<small class='text-muted d-block mt-2'>${desc}</small>` : '';
                 document.getElementById('dynamicStatPanel').innerHTML = `
-                    <div class='dashboard-card p-4 mb-4'>
+                    <div class='dashboard-card p-4 mb-4 w-100' style="width:100%;">
                         <div class='d-flex align-items-center mb-3'>
                             <i class='${icon} fs-2 me-2'></i>
                             <h4 class='mb-0'>${title}</h4>
@@ -626,7 +885,7 @@
 
                             <!-- Total Users -->
                             <div class="col-sm-6 col-lg-3" data-aos="fade-up" data-aos-delay="200">
-                                <div class="dashboard-card stat-card bg-success bg-opacity-10 cursor-pointer" onclick="showAdvancedStatDetails('users')">
+                                <div class="dashboard-card stat-card bg-success bg-opacity-10 cursor-pointer" id="dashboardCardTotalUtilisateurs" onclick="showAdvancedStatDetails('users')">
                                     <div class="d-flex justify-content-between">
                                         <div>
                                             <h6 class="text-muted mb-2">Total Utilisateurs</h6>
@@ -647,7 +906,7 @@
 
                             <!-- Most Sold Pack -->
                             <div class="col-sm-6 col-lg-3" data-aos="fade-up" data-aos-delay="300">
-                                <div class="dashboard-card stat-card bg-warning bg-opacity-10 cursor-pointer" onclick="showAdvancedStatDetails('mostSoldPack')">
+                                <div class="dashboard-card stat-card bg-warning bg-opacity-10 cursor-pointer" id="dashboardCardMostSoldPack" onclick="showAdvancedStatDetails('mostSoldPack')">
                                     <div class="d-flex justify-content-between">
                                         <div>
                                             <h6 class="text-muted mb-2">Pack le Plus Vendu</h6>
@@ -668,7 +927,7 @@
 
                             <!-- Average Pack Price -->
                             <div class="col-sm-6 col-lg-3" data-aos="fade-up" data-aos-delay="400">
-                                <div class="dashboard-card stat-card bg-info bg-opacity-10 cursor-pointer" onclick="showAdvancedStatDetails('avgPrice')">
+                                <div class="dashboard-card stat-card bg-info bg-opacity-10 cursor-pointer" id="dashboardCardAvgPrice" onclick="showAdvancedStatDetails('avgPrice')">
                                     <div class="d-flex justify-content-between">
                                         <div>
                                             <h6 class="text-muted mb-2">Prix Moyen des Packs</h6>
@@ -2187,7 +2446,7 @@ window.addEventListener('DOMContentLoaded', function() {
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-                    <button type="button" class="btn btn-primary">Télécharger Rapport</button>
+                    <button type="button" class="btn btn-primary">Télécharger le rapport</button>
                 </div>
             </div>
         </div>

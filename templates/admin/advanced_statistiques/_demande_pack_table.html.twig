@@ -1,0 +1,23 @@
+{% for demandePack in demandePacks %}
+<tr>
+    <td>{{ demandePack.id }}</td>
+    <td>{{ demandePack.clientName }}</td>
+    <td>{{ demandePack.eventType }}</td>
+    <td>{{ demandePack.createdAt|date('d/m/Y H:i') }}</td>
+    <td>
+        <span class="badge bg-{{ demandePack.status == 'approved' ? 'success' : (demandePack.status == 'rejected' ? 'danger' : 'warning') }}">
+            {{ demandePack.status|capitalize }}
+        </span>
+    </td>
+    <td>€{{ demandePack.totalPrice|number_format(2, ',', '.') }}</td>
+    <td>
+        <a href="{{ path('admin_customize_pack_show', {'id': demandePack.id}) }}" class="btn btn-sm btn-primary">
+            <i class="ti ti-eye me-1"></i> View
+        </a>
+    </td>
+</tr>
+{% else %}
+<tr>
+    <td colspan="7" class="text-center text-muted py-4">No demande packs found</td>
+</tr>
+{% endfor %}

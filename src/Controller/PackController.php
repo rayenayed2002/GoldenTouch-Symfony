@@ -22,6 +22,8 @@ use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Clock\ClockInterface;
 use App\Service\GrammarCorrectionService;
 
+use App\Repository\NotificationsAdminRepository;
+
 class PackController extends AbstractController
 {
     public function __construct(
@@ -305,5 +307,38 @@ class PackController extends AbstractController
         }
 
         return $this->redirectToRoute('app_packs');
+    }
+
+    #[Route('/demande-packs', name: 'admin_advanced_statistiques_demande_packs', methods: ['GET'])]
+    public function listDemandePacks(Request $request, \Knp\Component\Pager\PaginatorInterface $paginator, \App\Repository\NotificationsAdminRepository $notificationsRepo): Response
+    {
+        $q = $request->query->get('q');
+        $repo = $this->entityManager->getRepository(DemandePack::class);
+        $qb = $repo->createQueryBuilder('d')
+            ->leftJoin('d.utilisateur', 'u')->addSelect('u')
+            ->leftJoin('d.pack', 'p')->addSelect('p')
+            ->leftJoin('d.event', 'e')->addSelect('e');
+
+        if ($q) {
+            $qb->andWhere('u.nom LIKE :q OR e.nom LIKE :q')
+               ->setParameter('q', '%' . $q . '%');
+        }
+
+        $qb->orderBy('d.dateDemande', 'DESC');
+
+        $pagination = $paginator->paginate(
+            $qb->getQuery(),
+            $request->query->getInt('page', 1),
+            10
+        );
+
+        $notifications = $notificationsRepo->findLatest(5);
+
+        return $this->render('admin/advanced_statistiques/demande_pack_list.html.twig', [
+            'pagination' => $pagination,
+            'demandes' => $pagination->getItems(),
+            'q' => $q,
+            'latestNotifications' => $notifications,
+        ]);
     }
 }

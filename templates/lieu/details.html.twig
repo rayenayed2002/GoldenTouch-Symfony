@@ -177,24 +177,7 @@
             transform: translateY(-5px);
             box-shadow: 0 10px 25px rgba(0,0,0,0.1);
         }
-        /* QR Code Styles */
-        .qr-code-card {
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-            margin-bottom: 30px;
-        }
-        .qr-code-card .card-header {
-            font-weight: 600;
-            font-size: 1.1rem;
-            background-color: var(--theme-color);
-            color: white;
-        }
-        .qr-code-img {
-            max-width: 100%;
-            height: auto;
-            padding: 15px;
-        }
+
     </style>
 </head>
 
@@ -575,16 +558,7 @@
                     <!-- QR Code Card -->
                     <div class="card mb-30">
                         <div class="card-header bg-primary text-white">
-                            <h5 class="mb-0"><i class="fas fa-qrcode me-2"></i> QR Code</h5>
-                        </div>
-                        <div class="card-body text-center">
-                            <img src="{{ path('app_lieu_qr_code', {'id': lieu.id}) }}" 
-                                 alt="QR Code pour {{ lieu.name }}" 
-                                 class="img-fluid mb-3 qr-code-img">
-                            <p class="text-muted mb-3">Scannez ce code pour accéder à cette page</p>
-                            <a href="{{ path('app_lieu_qr_code', {'id': lieu.id}) }}" 
-                               class="btn btn-sm btn-primary">
-                                <i class="fas fa-download me-1"></i> Télécharger
+                            </div>
                             </a>
                         </div>
                     </div>

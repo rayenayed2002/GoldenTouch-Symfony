@@ -2,6 +2,10 @@
 
 namespace App\Controller\Admin;
 
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use Symfony\Component\HttpFoundation\StreamedResponse; // <-- for Excel download
+
 use App\Entity\Avis;
 use App\Entity\DemandePack;
 use App\Entity\Event;
@@ -14,13 +18,189 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-
+use App\Repository\NotificationsAdminRepository;
+use App\Repository\PackRepository;
 use App\Repository\DemandePackRepository;
 use Doctrine\ORM\Query\Expr\Join;
+use Knp\Component\Pager\PaginatorInterface;
 
 #[Route('/admin/advanced-statistiques', name: 'admin_advanced_statistiques_')]
 class AdvancedStatistiquesController extends AbstractController
 {
+    #[Route('/demande-packs/excel', name: 'admin_advanced_statistiques_admin_demande_pack_excel')]
+    public function exportDemandePackExcel(DemandePackRepository $demandePackRepository): StreamedResponse
+    {
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        // Set headers
+        $sheet->fromArray([
+            ['ID', 'Utilisateur', 'Pack', 'Event', 'Statut', 'Date Demande', 'Prix']
+        ], NULL, 'A1');
+        $demandes = $demandePackRepository->findAll();
+        $row = 2;
+        foreach ($demandes as $demande) {
+            $sheet->fromArray([
+                $demande->getId(),
+                $demande->getUtilisateur() ? $demande->getUtilisateur()->getNom() : '-',
+                $demande->getPack() ? $demande->getPack()->getNom() : '-',
+                $demande->getEvent() ? $demande->getEvent()->getNom() : '-',
+                $demande->getStatut(),
+                $demande->getDateDemande() ? $demande->getDateDemande()->format('d/m/Y H:i') : '-',
+                $demande->getPrix()
+            ], NULL, 'A'.$row++);
+        }
+        $response = new StreamedResponse(function() use ($spreadsheet) {
+            $writer = new Xlsx($spreadsheet);
+            $writer->save('php://output');
+        });
+        $response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        $response->headers->set('Content-Disposition', 'attachment;filename="demandes.xlsx"');
+        $response->headers->set('Cache-Control','max-age=0');
+        return $response;
+    }
+
+    #[Route('/demande-packs/pdf', name: 'admin_demande_pack_pdf')]
+    public function exportDemandePackPdf(\Knp\Snappy\Pdf $knpSnappyPdf, DemandePackRepository $demandePackRepository): Response
+    {
+        $demandes = $demandePackRepository->findAll();
+        $html = $this->renderView('admin/advanced_statistiques/demande_pack_pdf.html.twig', [
+            'demandes' => $demandes,
+        ]);
+        return new Response(
+            $knpSnappyPdf->getOutputFromHtml($html, [
+                'margin-top' => 10,
+                'margin-bottom' => 10,
+                'background' => true,
+            ]),
+            200,
+            [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'attachment; filename="demande-packs-premium.pdf"'
+            ]
+        );
+    }
+
+    #[Route('/download-pdf', name: 'admin_advanced_statistiques_download_pdf')]
+    public function downloadPdf(\Knp\Snappy\Pdf $knpSnappyPdf): \Symfony\Component\HttpFoundation\Response
+    {
+        // Gather the same stats as in index
+        $packStats = $this->getPackStats();
+        $userStats = $this->getUserStats();
+        $mostSoldPack = $this->getMostSoldPack();
+        $averagePackPrice = $this->getAveragePackPrice();
+
+        // Chart 1: Évolution des réservations (Line)
+        // Transform reservation trends to ['labels'=>[], 'data'=>[]] for chart
+        $reservationTrendsRaw = $this->getReservationTrends(); // array of ['week'=>..., 'reservation_count'=>...]
+        $reservationTrends = [
+            'labels' => [],
+            'data' => []
+        ];
+        foreach ($reservationTrendsRaw as $row) {
+            $reservationTrends['labels'][] = $row['week'];
+            $reservationTrends['data'][] = $row['reservation_count'];
+        }
+        $reservationTrendsConfig = [
+            'type' => 'line',
+            'data' => [
+                'labels' => $reservationTrends['labels'],
+                'datasets' => [[
+                    'label' => 'Réservations',
+                    'data' => $reservationTrends['data'],
+                    'borderColor' => 'rgba(115,103,240,1)',
+                    'backgroundColor' => 'rgba(115,103,240,0.1)',
+                    'fill' => true
+                ]]
+            ],
+            'options' => [
+                'plugins' => [
+                    'legend' => ['display' => false]
+                ]
+            ]
+        ];
+        $reservationTrendsChartBase64 = $this->getChartBase64($reservationTrendsConfig);
+
+        // Chart 2: Répartition des ventes des packs (Pie)
+        // Transform pack type distribution to ['labels'=>[], 'data'=>[]] for chart
+        $packTypeDistributionRaw = $this->getPackTypeDistribution(); // array of ['event_type'=>..., 'pack_count'=>...]
+        $packTypeDistribution = [
+            'labels' => [],
+            'data' => []
+        ];
+        foreach ($packTypeDistributionRaw as $row) {
+            $packTypeDistribution['labels'][] = $row['event_type'];
+            $packTypeDistribution['data'][] = $row['pack_count'];
+        }
+        $packsSalesConfig = [
+            'type' => 'pie',
+            'data' => [
+                'labels' => $packTypeDistribution['labels'],
+                'datasets' => [[
+                    'data' => $packTypeDistribution['data'],
+                    'backgroundColor' => [
+                        'rgba(115,103,240,0.8)',
+                        'rgba(40,199,111,0.8)',
+                        'rgba(255,159,67,0.8)',
+                        'rgba(0,207,232,0.8)',
+                        'rgba(234,84,85,0.8)'
+                    ]
+                ]]
+            ]
+        ];
+        $packsSalesChartBase64 = $this->getChartBase64($packsSalesConfig);
+
+        // Chart 3: Utilisateurs actifs par période (Bar)
+        $usersActive = $this->getUsersActiveTrends(); // ['labels'=>[], 'data'=>[]]
+        $usersActiveConfig = [
+            'type' => 'bar',
+            'data' => [
+                'labels' => $usersActive['labels'],
+                'datasets' => [[
+                    'label' => 'Utilisateurs actifs',
+                    'data' => $usersActive['data'],
+                    'backgroundColor' => 'rgba(0,207,232,0.8)'
+                ]]
+            ]
+        ];
+        $usersActiveChartBase64 = $this->getChartBase64($usersActiveConfig);
+
+        // Render the PDF HTML with charts
+        $html = $this->renderView('admin/advanced_statistiques/report_pdf.html.twig', [
+            'packStats' => $packStats,
+            'userStats' => $userStats,
+            'mostSoldPack' => $mostSoldPack,
+            'averagePackPrice' => $averagePackPrice,
+            'reservationTrendsChartBase64' => $reservationTrendsChartBase64,
+            'packsSalesChartBase64' => $packsSalesChartBase64,
+            'usersActiveChartBase64' => $usersActiveChartBase64,
+        ]);
+        // Generate PDF
+        $pdfContent = $knpSnappyPdf->getOutputFromHtml($html);
+        return new \Symfony\Component\HttpFoundation\Response($pdfContent, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="rapport-statistiques.pdf"'
+        ]);
+    }
+
+    // Util: Générer un graphique Chart.js via QuickChart.io et retourner du base64
+    private function getChartBase64(array $chartConfig): string
+    {
+        $url = 'https://quickchart.io/chart?c=' . urlencode(json_encode($chartConfig));
+        $image = @file_get_contents($url);
+        if ($image === false) {
+            return '';
+        }
+        return base64_encode($image);
+    }
+
+    // Dummy pour la démo: à remplacer par vos vraies données
+    private function getUsersActiveTrends(): array
+    {
+        return [
+            'labels' => ['Semaine 1', 'Semaine 2', 'Semaine 3'],
+            'data' => [5, 15, 8]
+        ];
+    }
     private $entityManager;
 
     public function __construct(EntityManagerInterface $entityManager)
@@ -71,25 +251,148 @@ class AdvancedStatistiquesController extends AbstractController
         ]);
     }
 
-
+    #[Route('/stat-data/{type}', name: 'admin_advanced_statistiques_stat_data', methods: ['GET'])]
+    public function statData(string $type): \Symfony\Component\HttpFoundation\JsonResponse
+    {
+        switch ($type) {
+            case 'packs':
+                $data = $this->getPackStats();
+                $data['chart_data'] = [
+                    ['label' => 'Jan', 'value' => 10],
+                    ['label' => 'Feb', 'value' => 15],
+                    ['label' => 'Mar', 'value' => 8],
+                    ['label' => 'Apr', 'value' => 20],
+                ];
+                break;
+            case 'users':
+                $data = $this->getUserStats();
+                $data['chart_data'] = [
+                    ['label' => 'Jan', 'value' => 5],
+                    ['label' => 'Feb', 'value' => 9],
+                    ['label' => 'Mar', 'value' => 7],
+                    ['label' => 'Apr', 'value' => 12],
+                ];
+                break;
+            case 'mostSoldPack':
+                $data = $this->getMostSoldPack();
+                $data['chart_data'] = [
+                    ['label' => 'Jan', 'value' => 30],
+                    ['label' => 'Feb', 'value' => 35],
+                    ['label' => 'Mar', 'value' => 28],
+                    ['label' => 'Apr', 'value' => 40],
+                ];
+                break;
+            case 'avgPrice':
+                $data = ['averagePackPrice' => $this->getAveragePackPrice()];
+                $data['chart_data'] = [
+                    ['label' => 'Jan', 'value' => 120],
+                    ['label' => 'Feb', 'value' => 130],
+                    ['label' => 'Mar', 'value' => 110],
+                    ['label' => 'Apr', 'value' => 140],
+                ];
+                break;
+            default:
+                return $this->json(['error' => 'Invalid type'], 400);
+        }
+        return $this->json($data);
+    }
     
-#[Route('/demande-packs', name: 'demande_packs')]
-public function demandePacksList(DemandePackRepository $demandePackRepository): Response
-{
-    // Eager load related entities to avoid N+1 queries
-    $demandes = $this->entityManager->getRepository(DemandePack::class)
-        ->createQueryBuilder('d')
-        ->leftJoin('d.utilisateur', 'u')->addSelect('u')
-        ->leftJoin('d.pack', 'p')->addSelect('p')
-        ->leftJoin('d.event', 'e')->addSelect('e')
-        ->orderBy('d.dateDemande', 'DESC')
-        ->getQuery()
-        ->getResult();
+    #[Route('/demande-packs', name: 'admin_advanced_statistiques_demande_packs', methods: ['GET'])]
+    public function listDemandePacks(Request $request, \Knp\Component\Pager\PaginatorInterface $paginator, NotificationsAdminRepository $notificationsRepo): Response
+    {
+        $q = $request->query->get('q');
+        $repo = $this->entityManager->getRepository(DemandePack::class);
+        $qb = $repo->createQueryBuilder('d')
+            ->leftJoin('d.utilisateur', 'u')->addSelect('u')
+            ->leftJoin('d.pack', 'p')->addSelect('p')
+            ->leftJoin('d.event', 'e')->addSelect('e');
 
-    return $this->render('admin/advanced_statistiques/demande_pack_list.html.twig', [
-        'demandes' => $demandes,
-    ]);
-}
+        if ($q) {
+            $qb->andWhere('u.nom LIKE :q OR e.nom LIKE :q')
+               ->setParameter('q', '%' . $q . '%');
+        }
+
+        $qb->orderBy('d.dateDemande', 'DESC');
+
+        $pagination = $paginator->paginate(
+            $qb->getQuery(),
+            $request->query->getInt('page', 1),
+            10
+        );
+
+        $notifications = $notificationsRepo->findLatest(5);
+
+        return $this->render('admin/advanced_statistiques/demande_pack_list.html.twig', [
+            'pagination' => $pagination,
+            'demandes' => $pagination->getItems(),
+            'q' => $q,
+            'latestNotifications' => $notifications,
+        ]);
+    }
+
+    #[Route('/demande-packs/search', name: 'admin_advanced_statistiques_demande_packs_search', methods: ['GET'])]
+    public function searchDemandePacks(Request $request, PaginatorInterface $paginator, NotificationsAdminRepository $notificationsRepo): Response
+    {
+        $q = $request->query->get('q');
+        $status = $request->query->get('status');
+        $dateFrom = $request->query->get('date_from');
+        $dateTo = $request->query->get('date_to');
+        $priceMin = $request->query->get('price_min');
+        $priceMax = $request->query->get('price_max');
+
+        $repo = $this->entityManager->getRepository(DemandePack::class);
+        $qb = $repo->createQueryBuilder('d')
+            ->leftJoin('d.utilisateur', 'u')->addSelect('u')
+            ->leftJoin('d.pack', 'p')->addSelect('p')
+            ->leftJoin('d.event', 'e')->addSelect('e');
+
+        if ($q) {
+            $qb->andWhere('u.nom LIKE :q OR e.nom LIKE :q')
+               ->setParameter('q', '%' . $q . '%');
+        }
+
+        if ($status) {
+            $qb->andWhere('d.statut = :status')
+               ->setParameter('status', $status);
+        }
+
+        if ($dateFrom) {
+            $qb->andWhere('d.dateDemande >= :dateFrom')
+               ->setParameter('dateFrom', new \DateTime($dateFrom));
+        }
+
+        if ($dateTo) {
+            $qb->andWhere('d.dateDemande <= :dateTo')
+               ->setParameter('dateTo', new \DateTime($dateTo));
+        }
+
+        if ($priceMin) {
+            $qb->andWhere('d.prix >= :priceMin')
+               ->setParameter('priceMin', $priceMin);
+        }
+
+        if ($priceMax) {
+            $qb->andWhere('d.prix <= :priceMax')
+               ->setParameter('priceMax', $priceMax);
+        }
+
+        $qb->orderBy('d.dateDemande', 'DESC');
+
+        $pagination = $paginator->paginate(
+            $qb->getQuery(),
+            $request->query->getInt('page', 1),
+            10
+        );
+
+        $notifications = $notificationsRepo->findLatest(5);
+
+        return $this->render('admin/advanced_statistiques/demande_pack_list.html.twig', [
+            'pagination' => $pagination,
+            'demandes' => $pagination->getItems(),
+            'q' => $q,
+            'latestNotifications' => $notifications,
+        ]);
+    }
 
     /**
      * Get total number of packs and related statistics
@@ -1105,4 +1408,6 @@ public function demandePacksList(DemandePackRepository $demandePackRepository): 
             'total_revenue' => $totalRevenue
         ];
     }
+
+   
 }

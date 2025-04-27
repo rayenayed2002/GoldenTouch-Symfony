@@ -1,0 +1,359 @@
+{# Rapport Statistiques Avancées avec Graphiques #}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Rapport Statistiques Avancées</title>
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;900&display=swap');
+    body {
+        font-family: 'Inter', Arial, sans-serif;
+        color: #22223b;
+        background: #f8fafc;
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+    }
+    .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: #fff;
+        border-bottom: 3px solid #7367F0;
+        padding: 28px 48px 18px 48px;
+        box-shadow: 0 2px 12px rgba(115,103,240,0.07);
+    }
+    .header-left {
+        display: flex;
+        align-items: center;
+    }
+    .logo {
+        width: 54px;
+        height: 54px;
+        border-radius: 14px;
+        background: #fff;
+        box-shadow: 0 1px 8px #ecebfa;
+        margin-right: 18px;
+    }
+    .brand-title {
+        font-size: 2.1em;
+        font-weight: 900;
+        color: #232946;
+        letter-spacing: 2px;
+    }
+    .subtitle {
+        font-size: 1.09em;
+        color: #7367F0;
+        font-weight: 600;
+        letter-spacing: 1.2px;
+        margin-top: 4px;
+    }
+    .report-date {
+        font-size: 1em;
+        color: #b8b6f3;
+        font-weight: 600;
+    }
+    .main {
+        max-width: 980px;
+        margin: 36px auto 0 auto;
+        background: #fff;
+        border-radius: 22px;
+        box-shadow: 0 4px 24px rgba(115,103,240,0.08);
+        padding: 44px 54px 32px 54px;
+        position: relative;
+    }
+    .card-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 32px;
+        margin-bottom: 44px;
+    }
+    .stat-card {
+        flex: 1 1 180px;
+        min-width: 180px;
+        background: linear-gradient(90deg, #f8fafc 60%, #ecebfa 100%);
+        border-radius: 14px;
+        box-shadow: 0 2px 8px #ecebfa;
+        padding: 22px 20px 18px 24px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        border: 1.5px solid #ecebfa;
+    }
+    .stat-label {
+        font-size: 1em;
+        color: #82868b;
+        font-weight: 600;
+        margin-bottom: 6px;
+    }
+    .stat-value {
+        font-size: 2.1em;
+        font-weight: 900;
+        color: #232946;
+        letter-spacing: 1px;
+    }
+    .stat-note {
+        font-size: 0.93em;
+        color: #b8b6f3;
+        margin-top: 4px;
+    }
+    .section-title {
+        font-size: 1.3em;
+        color: #232946;
+        font-weight: 700;
+        letter-spacing: 1.2px;
+        margin: 32px 0 18px 0;
+        border-left: 6px solid #7367F0;
+        padding-left: 14px;
+    }
+    .charts-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 38px;
+        margin-bottom: 34px;
+    }
+    .chart-block {
+        flex: 1 1 280px;
+        min-width: 280px;
+        background: #f4f5fb;
+        border-radius: 12px;
+        box-shadow: 0 1px 4px #ecebfa;
+        padding: 18px 18px 12px 18px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        border: 1.5px solid #ecebfa;
+    }
+    .chart-block h3 {
+        font-size: 1.05em;
+        color: #7367F0;
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+    .chart-img {
+        display: block;
+        margin: 0 auto 18px auto;
+        max-width: 520px;
+        max-height: 340px;
+        min-width: 340px;
+        min-height: 180px;
+        border-radius: 14px;
+        background: #fff;
+        box-shadow: 0 2px 12px #ecebfa;
+        border: 2px solid #ecebfa;
+    }
+    .footer {
+        width: 100%;
+        background: #fff;
+        border-top: 2px solid #ecebfa;
+        color: #b8b6f3;
+        font-size: 1em;
+        text-align: center;
+        padding: 16px 0 8px 0;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+    }
+    .page-number {
+        color: #7367F0;
+        font-weight: 600;
+        margin-left: 4px;
+    }
+    .copyright {
+        color: #b8b6f3;
+        font-size: 0.95em;
+        margin-top: 4px;
+    }
+</style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-left">
+            <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Logo" class="logo">
+            <div>
+                <div class="brand-title">Golden Touch</div>
+                <div class="subtitle">Rapport Statistiques Avancées</div>
+            </div>
+        </div>
+        <div class="report-date">Généré le {{ "now"|date('d/m/Y') }}</div>
+    </div>
+    <div class="main">
+        <div class="card-row">
+            <div class="stat-card">
+                <div class="stat-label">Total Packs</div>
+                <div class="stat-value">{{ packStats.total_packs }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Croissance Packs</div>
+                <div class="stat-value">{{ packStats.growth_rate }}%</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Total Utilisateurs</div>
+                <div class="stat-value">{{ userStats.total_users }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Croissance Utilisateurs</div>
+                <div class="stat-value">{{ userStats.growth_rate }}%</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Pack le Plus Vendu</div>
+                <div class="stat-value">{{ mostSoldPack.description }}</div>
+                <div class="stat-note">{{ mostSoldPack.total_sales }} ventes</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Prix Moyen des Packs</div>
+                <div class="stat-value">€{{ averagePackPrice }}</div>
+            </div>
+        </div>
+        <div class="section-title">Graphiques & Visualisations</div>
+        <div class="charts-row">
+            <div class="chart-block">
+                <h3>Évolution des réservations</h3>
+                {% if reservationTrendsChartBase64 is defined %}
+                    <img class="chart-img" src="data:image/png;base64,{{ reservationTrendsChartBase64 }}" alt="Évolution des réservations">
+                {% else %}
+                    <div style="color: #bbb;">[Graphique à insérer ici]</div>
+                {% endif %}
+            </div>
+            <div class="chart-block">
+                <h3>Répartition des ventes des packs</h3>
+                {% if packsSalesChartBase64 is defined %}
+                    <img class="chart-img" src="data:image/png;base64,{{ packsSalesChartBase64 }}" alt="Répartition des ventes des packs">
+                {% else %}
+                    <div style="color: #bbb;">[Diagramme circulaire à insérer ici]</div>
+                {% endif %}
+            </div>
+            <div class="chart-block">
+                <h3>Utilisateurs actifs par période</h3>
+                {% if usersActiveChartBase64 is defined %}
+                    <img class="chart-img" src="data:image/png;base64,{{ usersActiveChartBase64 }}" alt="Utilisateurs actifs par période">
+                {% else %}
+                    <div style="color: #bbb;">[Graphique d'utilisateurs à insérer ici]</div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="copyright">
+            © {{ "now"|date('Y') }} Golden Touch. Tous droits réservés.
+        </div>
+    </div>
+    <div class="footer">
+        Page <span class="page-number"> <span class="pageNumber"></span> / <span class="totalPages"></span> </span>
+    </div>
+</body>
+    <div class="watermark">Golden Touch</div>
+    <div class="accent-bar"></div>
+    <div class="pdf-header">
+        <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Logo" class="logo">
+        <div class="header-content">
+            <span class="brand">Golden Touch</span>
+            <span class="subtitle">Rapport Premium — Statistiques Avancées</span>
+        </div>
+    </div>
+    <div class="main-section">
+        <div class="summary-card">
+            <div>
+                <span class="summary-label">Total Packs :</span>
+                <span class="summary-value">{{ packStats.total_packs }}</span>
+            </div>
+            <div>
+                <span class="summary-label">Croissance Packs :</span>
+                <span class="summary-value">{{ packStats.growth_rate }}%</span>
+            </div>
+            <div>
+                <span class="summary-label">Total Utilisateurs :</span>
+                <span class="summary-value">{{ userStats.total_users }}</span>
+            </div>
+            <div>
+                <span class="summary-label">Croissance Utilisateurs :</span>
+                <span class="summary-value">{{ userStats.growth_rate }}%</span>
+            </div>
+            <div>
+                <span class="summary-label">Pack le Plus Vendu :</span>
+                <span class="summary-value">{{ mostSoldPack.description }} ({{ mostSoldPack.total_sales }})</span>
+            </div>
+            <div>
+                <span class="summary-label">Prix Moyen des Packs :</span>
+                <span class="summary-value">€{{ averagePackPrice }}</span>
+            </div>
+        </div>
+        <h2>Graphiques & Visualisations</h2>
+        <div class="divider-gradient"></div>
+        <div style="margin-bottom: 32px;">
+            <h3>Évolution des réservations</h3>
+            {% if reservationTrendsChartBase64 is defined %}
+                <img class="chart-img" src="data:image/png;base64,{{ reservationTrendsChartBase64 }}" alt="Évolution des réservations">
+            {% else %}
+                <div style="color: #999;">[Graphique à insérer ici]</div>
+            {% endif %}
+        </div>
+        <div style="margin-bottom: 32px;">
+            <h3>Répartition des ventes des packs</h3>
+            {% if packsSalesChartBase64 is defined %}
+                <img class="chart-img" src="data:image/png;base64,{{ packsSalesChartBase64 }}" alt="Répartition des ventes des packs">
+            {% else %}
+                <div style="color: #999;">[Diagramme circulaire à insérer ici]</div>
+            {% endif %}
+        </div>
+        <div style="margin-bottom: 32px;">
+            <h3>Utilisateurs actifs par période</h3>
+            {% if usersActiveChartBase64 is defined %}
+                <img class="chart-img" src="data:image/png;base64,{{ usersActiveChartBase64 }}" alt="Utilisateurs actifs par période">
+            {% else %}
+                <div style="color: #999;">[Graphique d'utilisateurs à insérer ici]</div>
+            {% endif %}
+        </div>
+        <!-- Ajoutez d'autres graphiques selon vos besoins -->
+        <div class="divider-gradient"></div>
+        <div class="stats-section">
+            <p>Ce rapport PDF est personnalisé pour votre entreprise. Pour chaque graphique affiché sur le dashboard web, générez une image côté serveur et passez-la à ce template sous forme de variable base64.</p>
+        </div>
+    </div>
+    <div class="pdf-footer">
+        Page <span class="pageNumber"></span> / <span class="totalPages"></span>
+    </div>
+    <h1>Rapport Statistiques Avancées</h1>
+    <div class="stats-section">
+        <div><span class="stat-label">Total Packs:</span><span class="stat-value">{{ packStats.total_packs }}</span></div>
+        <div><span class="stat-label">Croissance Packs:</span><span class="stat-value">{{ packStats.growth_rate }}%</span></div>
+        <div><span class="stat-label">Total Utilisateurs:</span><span class="stat-value">{{ userStats.total_users }}</span></div>
+        <div><span class="stat-label">Croissance Utilisateurs:</span><span class="stat-value">{{ userStats.growth_rate }}%</span></div>
+        <div><span class="stat-label">Pack le Plus Vendu:</span><span class="stat-value">{{ mostSoldPack.description }} ({{ mostSoldPack.total_sales }})</span></div>
+        <div><span class="stat-label">Prix Moyen des Packs:</span><span class="stat-value">€{{ averagePackPrice }}</span></div>
+    </div>
+    <div class="divider"></div>
+    <div class="stats-section">
+        <h2>Graphiques & Visualisations</h2>
+        <p>Les graphiques suivants représentent visuellement les statistiques clés. (Pour PDF, chaque graphique doit être généré côté serveur et injecté en tant qu'image base64)</p>
+        <!-- Exemple de graphique (remplacer src par une variable Twig contenant l'image base64) -->
+        <div style="margin-bottom: 32px;">
+            <h3>Évolution des réservations</h3>
+            {% if reservationTrendsChartBase64 is defined %}
+                <img class="chart-img" src="data:image/png;base64,{{ reservationTrendsChartBase64 }}" alt="Évolution des réservations">
+            {% else %}
+                <div style="color: #999;">[Graphique à insérer ici]</div>
+            {% endif %}
+        </div>
+        <div style="margin-bottom: 32px;">
+            <h3>Répartition des ventes des packs</h3>
+            {% if packsSalesChartBase64 is defined %}
+                <img class="chart-img" src="data:image/png;base64,{{ packsSalesChartBase64 }}" alt="Répartition des ventes des packs">
+            {% else %}
+                <div style="color: #999;">[Diagramme circulaire à insérer ici]</div>
+            {% endif %}
+        </div>
+        <div style="margin-bottom: 32px;">
+            <h3>Utilisateurs actifs par période</h3>
+            {% if usersActiveChartBase64 is defined %}
+                <img class="chart-img" src="data:image/png;base64,{{ usersActiveChartBase64 }}" alt="Utilisateurs actifs par période">
+            {% else %}
+                <div style="color: #999;">[Graphique d'utilisateurs à insérer ici]</div>
+            {% endif %}
+        </div>
+        <!-- Ajoutez d'autres graphiques selon vos besoins -->
+    </div>
+    <div class="divider"></div>
+    <div class="stats-section">
+        <p>Ce rapport PDF est personnalisé pour votre entreprise. Pour chaque graphique affiché sur le dashboard web, générez une image côté serveur et passez-la à ce template sous forme de variable base64.</p>
+    </div>
+</body>
+</html>
