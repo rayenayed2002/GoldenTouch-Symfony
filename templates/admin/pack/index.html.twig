@@ -775,7 +775,14 @@
                 <div class="card-body d-flex align-items-center">
                     <i class="ti ti-sparkles me-2 fs-4 text-primary"></i>
                     <span class="fw-semibold">Voici 3 idées basées sur les tendances actuelles :</span>
-                    <div class="ms-auto">
+                    <div class="ms-auto d-flex align-items-center gap-3">
+                        <button id="refresh-inspiration-btn" class="btn btn-primary d-flex align-items-center gap-2">
+                            <i class="ti ti-bulb"></i>
+                            Suggestions de packs
+                        </button>
+                        <div id="pack-suggestions" class="position-absolute top-100 start-50 translate-middle-x mt-3 w-75" style="z-index: 1000; display: none;">
+                            <!-- Les suggestions seront injectées ici par JavaScript -->
+                        </div>
                         <button class="btn btn-sm btn-outline-secondary" id="refresh-inspiration-btn" type="button">
                             <i class="ti ti-refresh me-1"></i> Actualiser les idées
                         </button>
