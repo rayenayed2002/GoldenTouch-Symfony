@@ -1,10 +1,10 @@
 <!doctype html>
-<html class="no-js" lang="zxx">
+<html class="no-js" lang="{{ app.request.locale }}">
 
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>Taxiar - Online Taxi Service HTML Template - Home 1</title>
+    <title>{% block title %}{{ 'welcome'|trans }}{% endblock %}</title>
     <meta name="author" content="Taxiar">
     <meta name="description" content="Taxiar - Online Taxi Service HTML Template">
     <meta name="keywords" content="Taxiar - Online Taxi Service HTML Template">
@@ -44,6 +44,7 @@
 <link rel="stylesheet" href="{{ asset('Front/css/slick.min.css') }}">
 <link rel="stylesheet" href="{{ asset('Front/css/jquery.datetimepicker.min.css') }}">
 <link rel="stylesheet" href="{{ asset('Front/css/style.css') }}">
+<link rel="stylesheet" href="{{ asset('Front/css/search.css') }}">
 
 </head>
 
@@ -272,9 +273,10 @@
     </div>
     <div class="popup-search-box d-none d-lg-block">
         <button class="searchClose"><i class="fal fa-times"></i></button>
-        <form action="#">
-            <input type="text" placeholder="What are you looking for">
-            <button type="submit"><i class="fal fa-search"></i></button>
+        <form action="#" id="search-form">
+            <input type="text" id="search-input" placeholder="What are you looking for">
+            <button type="submit" class="search-btn"><i class="fal fa-search"></i></button>
+            <div id="search-results"></div>
         </form>
     </div>
 
@@ -380,6 +382,13 @@
                 </div>
                 <div class="col-auto d-none d-xl-block">
                     <div class="header-button">
+                        <div class="search-container d-inline-block me-2">
+                            <form id="search-form" class="d-flex">
+                                <input type="text" id="search-input" placeholder="Search...">
+                                <button type="submit" class="search-btn"><i class="far fa-search"></i></button>
+                                <div id="search-results"></div>
+                            </form>
+                        </div>
                         <button type="button" class="icon-btn searchBoxToggler"><i class="far fa-search"></i></button>
                         <a href="#" class="icon-btn sideMenuToggler2"><i class="fa-regular fa-bag-shopping"></i>
                             <span class="badge">5</span></a>
@@ -527,6 +536,7 @@
 <script src="{{ asset('Front/js/wow.min.js') }}"></script>
 
 <script src="{{ asset('Front/js/main.js') }}"></script>
+<script src="{{ asset('Front/js/search.js') }}"></script>
 
 </body>
 

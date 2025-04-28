@@ -55,7 +55,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(name:'verifier', type: 'boolean')]
     private $isVerified = false;
 
-
+    #[ORM\Column(name: 'googleId', type: 'string', length: 255, nullable: true)]
+    private $googleId;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -253,6 +254,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             $this->photo = 'temp'; // This triggers Doctrine to consider the entity dirty
         }
         
+        return $this;
+    }
+
+    public function getGoogleId(): ?string
+    {
+        return $this->googleId;
+    }
+
+    public function setGoogleId(?string $googleId): self
+    {
+        $this->googleId = $googleId;
+
         return $this;
     }
 }

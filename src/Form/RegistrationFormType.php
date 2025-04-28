@@ -32,7 +32,7 @@ class RegistrationFormType extends AbstractType
                     'class' => "form-control-user"
                 ]
             ])
-            ->add('email', EmailType::class, [
+            ->add('email', TextType::class, [
                 'attr' => [
                     'placeholder' => "Adresse email",
                     'class' => "form-control-user"

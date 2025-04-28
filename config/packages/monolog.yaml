@@ -2,6 +2,29 @@ monolog:
     channels:
         - deprecation # Deprecations are logged in the dedicated "deprecation" channel when it exists
 
+    handlers:
+        main:
+            type: stream
+            path: "%kernel.logs_dir%/%kernel.environment%.log"
+            level: debug
+            channels: ["!event"]
+        console:
+            type: console
+            process_psr_3_messages: false
+            channels: ["!event", "!doctrine", "!console"]
+
+        # Uncomment to log deprecations
+        deprecation:
+            type: stream
+            path: "%kernel.logs_dir%/%kernel.environment%.deprecations.log"
+
+        # Info and higher logs for email
+        email:
+            type: stream
+            path: "%kernel.logs_dir%/email.log"
+            level: debug
+            channels: ["mailer"]
+
 when@dev:
     monolog:
         handlers:

@@ -5,12 +5,101 @@
 {% block title_h1 "Modifier mon profil" %}
 
 {% block body %}
-
-    <div class="form-center mt-4">
-        <div class="content">
-               {{ form_start(form, { attr: { novalidate: 'novalidate' } }) }}
-                    {{ form_widget(form) }}
-                {{ form_end(form) }}
-            </div>
+<div class="card shadow mb-4" style="max-width: 600px; margin: 50px auto;">
+    <div class="card-header py-4 text-center bg-gradient-primary text-white">
+        <div class="user-avatar mx-auto mb-3">
+            {% if app.user.photo %}
+                <img src="{{ asset('uploads/photos/' ~ app.user.photo) }}" 
+                     class="rounded-circle border-white"
+                     style="width: 80px; height: 80px; object-fit: cover; border: 3px solid white;">
+            {% else %}
+                <img src="{{ asset('uploads/photos/default.png') }}"
+                     class="rounded-circle border-white"
+                     style="width: 80px; height: 80px; object-fit: cover; border: 3px solid white;">
+            {% endif %}
+        </div>
+        <h3 class="font-weight-bold mb-1">{{ app.user.fullName }}</h3>
+        <div class="text-white-50 small">Modifier vos informations personnelles</div>
     </div>
+
+    <div class="card-body">
+        {{ form_start(form, { attr: { novalidate: 'novalidate', class: 'user-edit-form' } }) }}
+            {{ form_errors(form) }}
+
+            <!-- Email Field -->
+            <div class="form-group">
+                <label class="small mb-1 text-muted">Email</label>
+                <div class="form-control-plaintext">{{ app.user.email }}</div>
+            </div>
+
+            <!-- Username Field -->
+            <div class="form-group">
+                {{ form_label(form.username, null, {'label_attr': {'class': 'small mb-1 text-muted'}}) }}
+                {{ form_widget(form.username, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(form.username) }}
+            </div>
+
+            <!-- Profile Photo Field -->
+            <div class="form-group">
+                {{ form_label(form.photoFile, null, {'label_attr': {'class': 'small mb-1 text-muted'}}) }}
+                <div class="custom-file">
+                    {{ form_widget(form.photoFile, {'attr': {'class': 'custom-file-input'}}) }}
+                    <label class="custom-file-label" for="{{ form.photoFile.vars.id }}">Choisir une photo...</label>
+                </div>
+                {{ form_errors(form.photoFile) }}
+                {% if app.user.photo %}
+                    <small class="form-text text-muted">Photo actuelle : {{ app.user.photo }}</small>
+                {% endif %}
+            </div>
+
+            <!-- Roles Field -->
+            <div class="form-group">
+                <label class="small mb-1 text-muted">Rôles</label>
+                <div class="form-control-plaintext">
+                    {% for role in app.user.roles %}
+                        <span class="badge badge-primary">{{ role }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="form-group text-center mt-4">
+               
+            </div>
+        {{ form_end(form) }}
+    </div>
+</div>
+
+<style>
+    .user-avatar {
+        width: 80px;
+        height: 80px;
+        margin-top: -40px;
+        background: white;
+        border-radius: 50%;
+        box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+    }
+    .custom-file-label::after {
+        content: "Parcourir";
+    }
+    .badge {
+        font-size: 0.9em;
+        padding: 5px 10px;
+        margin-right: 5px;
+    }
+    .form-control-plaintext {
+        padding: 0.375rem 0;
+        margin-bottom: 0;
+        line-height: 1.5;
+        background-color: transparent;
+        border: none;
+    }
+</style>
+
+<script>
+    document.querySelector('.custom-file-input')?.addEventListener('change', function(e) {
+        var fileName = e.target.files[0] ? e.target.files[0].name : "Choisir une photo...";
+        e.target.nextElementSibling.innerText = fileName;
+    });
+</script>
 {% endblock %}

@@ -1,50 +1,110 @@
 {% extends "base.html.twig" %}
 
-{% block title "Profil" %}
-
-{% block title_h1 "Mon profil" %}
+{% block title %}Profil{% endblock %}
+{% block title_h1 %}Mon profil{% endblock %}
 
 {% block body %}
+<div class="card shadow mb-4" style="max-width: 500px; margin: 100px auto;">
+    <div class="card-header py-4 text-center bg-gradient-primary text-white">
+        <div class="user-avatar mx-auto mb-3">
+            {% if user.photo %}
+                <img src="{{ asset('uploads/photos/' ~ user.photo) }}"
+                     class="rounded-circle border-white"
+                     style="width: 80px; height: 80px; object-fit: cover; border: 3px solid white;">
+            {% else %}
+                <img src="{{ asset('uploads/photos/default.png') }}"
+                     class="rounded-circle border-white"
+                     style="width: 80px; height: 80px; object-fit: cover; border: 3px solid white;">
+            {% endif %}
+        </div>
+        <h3 class="font-weight-bold mb-1">{{ user.fullName }}</h3>
+    </div>
 
-    <div class="card border-left-info shadow h-100 py-2 my-4">
-        <div class="card-body">
-            <div class="d-flex align-items-center">
-                <h2 class="card-title text-uppercase text-info mb-0"><i class="fas fa-user fa-x2 text-gray-500 mr-3"></i>{{ user.fullName }}</h2>
-                <a href="{{ path("user_account_edit") }}" class="btn btn-primary btn-icon-split ml-auto">
-                    <span class="icon text-white-50">
-                        <i class="far fa-edit"></i>
-                    </span>
-                    <span class="text">Modifier</span>
-                </a>
-            </div>
-            <div class="row no-gutters align-items-center">
-                <div class="text-gray-400 mb-2">
-                    <small>Utilisateur inscrit depuis le {{ user.createdAt | date('d-m-Y') }}</small>
+    <div class="card-body">
+        <div class="text-center text-muted mb-4">
+            <i class="fas fa-calendar-alt mr-1"></i> Membre depuis {{ user.createdAt|date('d/m/Y') }}
+        </div>
+        
+        <div class="user-details">
+            <div class="detail-row">
+                <div class="detail-icon"><i class="fas fa-envelope text-primary"></i></div>
+                <div class="detail-content">
+                    <div class="detail-label">Email</div>
+                    <div class="detail-value">{{ user.email }}</div>
                 </div>
             </div>
-            <hr class="sidebar-divider my-1">
-            <div class="py-3">
-                <div class="row no-gutters">
-                    <div class="d-flex flex-row align-items-center">
-                        <h5 class="text-secondary">Email :</h5>
-                        <p class="text-gray-500 mb-1 ml-3">{{ user.email }}</p>
-                    </div>
+            
+            <div class="detail-row">
+                <div class="detail-icon"><i class="fas fa-user-tag text-primary"></i></div>
+                <div class="detail-content">
+                    <div class="detail-label">Nom d'utilisateur</div>
+                    <div class="detail-value">{{ user.username }}</div>
                 </div>
-                <div class="row no-gutters">
-                    <div class="d-flex flex-row align-items-center">
-                        <h5 class="text-secondary">Nom d'utilisateur :</h5>
-                        <p class="text-gray-500 mb-1 ml-3">{{ user.username }}</p>
-                    </div>
-                </div>
-                <div class="row no-gutters">
-                    <div class="d-flex flex-row align-items-center">
-                        <h5 class="text-secondary">Rôle : </h5>
-                        <p class="text-gray-500 mb-1 ml-3">{{ user.roleTitle }}</p>
+            </div>
+            
+            <div class="detail-row">
+                <div class="detail-icon"><i class="fas fa-shield-alt text-primary"></i></div>
+                <div class="detail-content">
+                    <div class="detail-label">Rôle</div>
+                    <div class="detail-value">
+                        <span class="role-text role-{{ user.roleTitle == 'Administrateur' ? 'admin' : 'user' }}">
+                            {{ user.roleTitle }}
+                        </span>
                     </div>
                 </div>
             </div>
-            <hr class="sidebar-divider my-1">
         </div>
     </div>
 
+    <div class="card-footer bg-white text-center">
+        <a href="{{ path('user_account_edit') }}" class="btn btn-primary btn-sm">
+            <i class="fas fa-edit mr-1"></i> Modifier
+        </a>
+    </div>
+</div>
+
+<style>
+    .user-avatar {
+        width: 80px;
+        height: 80px;
+        margin-top: -40px;
+        background: white;
+        border-radius: 50%;
+        box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+    }
+    .user-details {
+        background-color: #f8f9fc;
+        border-radius: 0.35rem;
+        padding: 1rem;
+    }
+    .detail-row {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #e3e6f0;
+    }
+    .detail-row:last-child {
+        border-bottom: none;
+    }
+    .detail-icon {
+        width: 40px;
+        text-align: center;
+        font-size: 1.1rem;
+    }
+    .detail-label {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        color: #858796;
+    }
+    .detail-value {
+        font-weight: 600;
+        color: #3a3b45;
+    }
+    .role-text.role-admin {
+        color: #e74a3b;
+    }
+    .role-text.role-user {
+        color: #36b9cc;
+    }
+</style>
 {% endblock %}

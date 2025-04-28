@@ -47,6 +47,27 @@
       justify-content: space-between;
       gap: 5px;
     }
+    .btn-elegant {
+      background-color: #6c757d;
+      color: white;
+      border: none;
+      background-image: linear-gradient(to bottom, #6c757d, #5a6268);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+    .btn-elegant:hover {
+      background-image: linear-gradient(to bottom, #5a6268, #4a5056);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+    .btn-elegant:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .card-header h6,
+    .card-body p {
+      color: black !important;
+    }
     @media (max-width: 576px) {
       .action-buttons {
         flex-direction: column;
@@ -55,19 +76,43 @@
         width: 100%;
       }
     }
+    /* Pagination styles */
+    .pagination {
+        justify-content: center;
+        margin-top: 20px;
+        display: flex;
+        gap: 10px;
+    }
+    .page-item.active .page-link {
+        background-color: #4e73df;
+        border-color: #4e73df;
+    }
+    .page-link {
+        color: #4e73df;
+        padding: 8px 16px;
+        border: 1px solid #dee2e6;
+        text-decoration: none;
+        border-radius: 4px;
+    }
+    .page-link:hover {
+        color: #2a56c6;
+        background-color: #f8f9fa;
+    }
   </style>
 {% endblock %}
 
 {% block body %}
 <div class="card shadow my-4">
     <div class="card-header py-2 d-flex align-items-center">
-        <h6 class="m-0 font-weight-bold text-primary">Utilisateurs</h6>
-        <a href="{{ path("admin_user_add") }}" class="btn btn-success btn-icon-split ml-auto">
-            <span class="icon text-white-50">
-                <i class="fas fa-plus"></i>
-            </span>
-            <span class="text">Ajouter un utilisateur</span>
-        </a>
+        <h6 class="m-0 font-weight-bold text-primary" style="color: black !important;">Liste des Utilisateurs</h6>
+        <div class="ml-auto" style="margin-left: 20px !important;">
+            <a href="{{ path("admin_user_add") }}" class="btn btn-success btn-icon-split">
+                <span class="icon text-white-50">
+                    <i class="fas fa-plus"></i>
+                </span>
+                <span class="text">Ajouter un utilisateur</span>
+            </a>
+        </div>
     </div>
     <div class="d-flex">
         <button id="btPrintUsers" class="export-pdf-btn">
@@ -81,13 +126,13 @@
                 <div class="col-xl-3 col-lg-4 col-md-6 mb-4">
                     <div class="card user-card h-100 border-left-primary">
                         <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                            <h6 class="m-0 font-weight-bold text-primary">{{ user.firstName }} {{ user.lastName }}</h6>
+                            <h6 class="m-0 font-weight-bold text-primary" style="color: black !important;">{{ user.firstName }} {{ user.lastName }}</h6>
                         </div>
                         <img class="user-photo" src="{{ asset('uploads/photos/' ~ user.photo) }}" alt="Profile photo">
                         <div class="card-body">
-                            <p><strong>Email:</strong> {{ user.email }}</p>
-                            <p><strong>Nom d'utilisateur:</strong> {{ user.username }}</p>
-                            <p><strong>Type:</strong> {{ user.roleTitle }}</p>
+                            <p style="color: black !important;"><strong>Email:</strong> {{ user.email }}</p>
+                            <p style="color: black !important;"><strong>Nom d'utilisateur:</strong> {{ user.username }}</p>
+                            <p style="color: black !important;"><strong>Type:</strong> {{ user.roleTitle }}</p>
                         </div>
                         <div class="card-footer">
                             <div class="d-flex flex-column">
@@ -98,7 +143,7 @@
                                     <a href="{{ path("admin_user_show", {"id": user.id}) }}" class="btn btn-info btn-sm mb-1">
                                         <i class="fas fa-eye fa-sm"></i> Voir
                                     </a>
-                                    <a href="{{ path("admin_user_edit", {"id": user.id}) }}" class="btn btn-primary btn-sm mb-1">
+                                    <a href="{{ path("admin_user_edit", {"id": user.id}) }}" class="btn btn-elegant btn-sm mb-1">
                                         <i class="fas fa-edit fa-sm"></i> Modifier
                                     </a>
                                     <form action="{{ path('admin_user_toggle_verify', {'id': user.id}) }}" method="post" class="d-inline mb-1">
@@ -107,25 +152,50 @@
                                         </button>
                                     </form>
                                     {% if user.roleTitle != 'Administrateur' %}
-                                        <a href="{{ path("admin_user_delete", {"id": user.id}) }}" class="btn btn-danger btn-sm mb-1">
-                                            <i class="fas fa-trash fa-sm"></i> Supprimer
-                                        </a>
+                                        <form action="{{ path("admin_user_delete", {"id": user.id}) }}" method="post" class="d-inline mb-1">
+                                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?')">
+                                                <i class="fas fa-trash fa-sm"></i> Supprimer
+                                            </button>
+                                        </form>
                                     {% endif %}
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+            {% else %}
+                <div class="col-12">
+                    <div class="alert alert-info">Aucun utilisateur trouvé</div>
+                </div>
             {% endfor %}
+        </div>
+        
+        {# Centered Pagination #}
+        <div class="navigation d-flex justify-content-center">
+            <ul class="pagination">
+                {% if users.getCurrentPageNumber() > 1 %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({'page': users.getCurrentPageNumber() - 1})) }}" rel="prev">
+                            Page précédente
+                        </a>
+                    </li>
+                {% endif %}
+                
+                {% if users.getCurrentPageNumber() < users.getPageCount() %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({'page': users.getCurrentPageNumber() + 1})) }}" rel="next">
+                            Page suivante
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
         </div>
     </div>
 </div>
 
-<!-- Direct script tag before the end of body to ensure global availability -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
-// Define global functions
 window.myFunction = function() {
   var input, filter, cards, cardContainer, title, i, email, username;
   input = document.getElementById("myInput");
@@ -134,9 +204,7 @@ window.myFunction = function() {
   cards = cardContainer.getElementsByClassName("col-xl-3");
   
   for (i = 0; i < cards.length; i++) {
-    // Search by name
     title = cards[i].querySelector(".card-header h6");
-    // Search by email and username
     var cardBody = cards[i].querySelector(".card-body");
     if (cardBody) {
       email = cardBody.querySelector("p:nth-child(1)");
@@ -157,41 +225,30 @@ window.myFunction = function() {
   }
 };
 
-// Set up PDF export function
 document.addEventListener('DOMContentLoaded', function() {
   var pdfButton = document.getElementById('btPrintUsers');
   if (pdfButton) {
     pdfButton.addEventListener('click', function() {
       try {
-        // Check if jsPDF is available
         if (!window.jspdf || !window.jspdf.jsPDF) {
           alert('Erreur: La bibliothèque jsPDF n\'est pas chargée correctement.');
           return;
         }
         
-        // Check if html2canvas is available
         if (!window.html2canvas) {
           alert('Erreur: La bibliothèque html2canvas n\'est pas chargée correctement.');
           return;
         }
         
-        // Set up the PDF document
         window.jsPDF = window.jspdf.jsPDF;
         var doc = new jsPDF('p', 'mm', 'a4');
         
-        // Get the container with all user cards
         var cardsContainer = document.getElementById('userCards');
         if (!cardsContainer) {
           alert('Erreur: Conteneur de cartes utilisateur non trouvé.');
           return;
         }
         
-        // Title
-        doc.setFontSize(22);
-        doc.setTextColor(40, 40, 40);
-        doc.text('Liste des Utilisateurs', 20, 20);
-        
-        // Display only visible cards (in case search is active)
         var visibleCards = [];
         var cardElements = cardsContainer.querySelectorAll('.col-xl-3');
         
@@ -211,35 +268,29 @@ document.addEventListener('DOMContentLoaded', function() {
           return;
         }
         
-        // Create a temporary container for the visible cards
         var tempContainer = document.createElement('div');
         tempContainer.classList.add('temp-container');
         tempContainer.style.position = 'absolute';
         tempContainer.style.top = '-9999px';
-        tempContainer.style.width = '210mm'; // A4 width
+        tempContainer.style.width = '210mm';
         tempContainer.style.backgroundColor = 'white';
         tempContainer.style.padding = '10mm';
         
-        // Create grid layout for cards
         var gridContainer = document.createElement('div');
         gridContainer.style.display = 'grid';
-        gridContainer.style.gridTemplateColumns = 'repeat(2, 1fr)'; // 2 cards per row
+        gridContainer.style.gridTemplateColumns = 'repeat(2, 1fr)';
         gridContainer.style.gap = '10mm';
         tempContainer.appendChild(gridContainer);
         
         document.body.appendChild(tempContainer);
         
-        // Add each visible card to the temp container with optimized layout for PDF
         visibleCards.forEach(function(card, index) {
           try {
-            // Create a new wrapper for each card
             var cardWrapper = document.createElement('div');
             cardWrapper.style.pageBreakInside = 'avoid';
             
-            // Get the user-card element from the cloned card
             var userCard = card.querySelector('.user-card');
             if (userCard) {
-              // Create a smaller version of the card
               var smallCard = userCard.cloneNode(true);
               smallCard.style.border = '1px solid #ddd';
               smallCard.style.borderRadius = '5px';
@@ -247,14 +298,12 @@ document.addEventListener('DOMContentLoaded', function() {
               smallCard.style.overflow = 'hidden';
               smallCard.style.height = 'auto';
               
-              // Make the card header smaller
               var cardHeader = smallCard.querySelector('.card-header');
               if (cardHeader) {
                 cardHeader.style.padding = '5mm 3mm';
                 cardHeader.style.fontSize = '12px';
               }
               
-              // Make the image smaller
               var cardImage = smallCard.querySelector('.user-photo');
               if (cardImage) {
                 cardImage.style.height = '25mm';
@@ -262,14 +311,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 cardImage.style.objectFit = 'cover';
               }
               
-              // Simplify card body content
               var cardBody = smallCard.querySelector('.card-body');
               if (cardBody) {
                 cardBody.style.padding = '3mm';
                 cardBody.style.fontSize = '10px';
               }
               
-              // Handle the card footer
               var cardFooter = smallCard.querySelector('.card-footer');
               if (cardFooter) {
                 var qrCodeContainer = cardFooter.querySelector('.mb-2');
@@ -283,7 +330,6 @@ document.addEventListener('DOMContentLoaded', function() {
                   }
                 }
                 
-                // Remove action buttons for the PDF to save space
                 var actionButtons = cardFooter.querySelector('.action-buttons');
                 if (actionButtons) {
                   actionButtons.remove();
@@ -293,9 +339,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 cardFooter.style.fontSize = '10px';
               }
               
-              // Add the modified card to the wrapper
               cardWrapper.appendChild(smallCard);
-              // Add the wrapper to the grid
               gridContainer.appendChild(cardWrapper);
             }
           } catch (cardError) {
@@ -303,27 +347,20 @@ document.addEventListener('DOMContentLoaded', function() {
           }
         });
         
-        // Use html2canvas to capture the temp container
         html2canvas(tempContainer, {
-          scale: 2, // Higher quality
+          scale: 2,
           backgroundColor: 'white',
-          onclone: function(clonedDoc) {
-            // Apply any additional styles needed for PDF rendering
-          }
         }).then(function(canvas) {
-          // Calculate the number of pages needed
           var imgData = canvas.toDataURL('image/png');
-          var imgWidth = 190; // mm
-          var pageHeight = 297; // mm (A4)
+          var imgWidth = 190;
+          var pageHeight = 297;
           var imgHeight = canvas.height * imgWidth / canvas.width;
           var heightLeft = imgHeight;
-          var position = 30; // starting at 30mm from top
+          var position = 30;
           
-          // Add the first page image
           doc.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
           heightLeft -= (pageHeight - position);
           
-          // Add new pages if needed
           var pageCount = 1;
           while (heightLeft >= 0) {
             position = 0;
@@ -333,14 +370,10 @@ document.addEventListener('DOMContentLoaded', function() {
             heightLeft -= pageHeight;
           }
           
-          // Save the PDF
           doc.save('liste-utilisateurs.pdf');
-          
-          // Remove the temporary container
           document.body.removeChild(tempContainer);
         }).catch(function(canvasError) {
           alert('Erreur lors de la création du PDF: ' + canvasError.message);
-          // Clean up
           if (document.body.contains(tempContainer)) {
             document.body.removeChild(tempContainer);
           }

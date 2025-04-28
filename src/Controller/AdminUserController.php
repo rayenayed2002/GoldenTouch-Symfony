@@ -17,11 +17,13 @@ use Endroid\QrCode\Writer\Result\PngResult;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\String\Slugger\SluggerInterface;
+use Knp\Component\Pager\PaginatorInterface;
 
 #[IsGranted('ROLE_ADMIN')]
 #[Route('/admin/utilisateur')]
 class AdminUserController extends AbstractController
-{   private $qrCodeBuilder;
+{
+    private $qrCodeBuilder;
 
     public function __construct(BuilderInterface $qrCodeBuilder)
     {
@@ -29,33 +31,38 @@ class AdminUserController extends AbstractController
     }
 
     #[Route('/', name: 'admin_user_index', methods: ['GET'])]
-    public function index(UserRepository $userRepository): Response
+    public function index(UserRepository $userRepository, Request $request, PaginatorInterface $paginator): Response
     {
-        $users = $userRepository->findAll();
-    
+        $query = $userRepository->createQueryBuilder('u')
+            ->orderBy('u.id', 'DESC')  // Changed from createdAt to id
+            ->getQuery();
+
+        $users = $paginator->paginate(
+            $query,
+            $request->query->getInt('page', 1),
+            8
+        );
+
         foreach ($users as $user) {
             if ($this->qrCodeBuilder !== null) {
-                // Create an array with all the user data you want to include
                 $userData = [
                     'id' => $user->getId(),
                     'fullName' => $user->getFullName(),
                     'email' => $user->getEmail(),
-                    'role' => $user->getRoleTitle(), // Using your existing getRoleTitle method
+                    'role' => $user->getRoleTitle(),
                     'isVerified' => $user->isVerified(),
-                    'createdAt' => $user->getCreatedAt() ? $user->getCreatedAt()->format('Y-m-d H:i:s') : null
+                    'createdAt' => method_exists($user, 'getCreatedAt') && $user->getCreatedAt() ? 
+                        $user->getCreatedAt()->format('Y-m-d H:i:s') : 'N/A'
                 ];
-    
-                // Convert the array to JSON for the QR code
+
                 $qrCodeData = json_encode($userData);
-    
                 $qrCodeResult = $this->qrCodeBuilder
                     ->data($qrCodeData)
                     ->build();
-    
+
                 $qrCodeString = $this->convertQrCodeResultToString($qrCodeResult);
                 $user->setQrCode($qrCodeString);
                 
-                // Optionally also store the raw data if you added that property
                 if (method_exists($user, 'setQrCodeContent')) {
                     $user->setQrCodeContent($qrCodeData);
                 }
@@ -65,15 +72,14 @@ class AdminUserController extends AbstractController
                 }
             }
         }
-    
+
         return $this->render('admin/user/index.html.twig', [
             'users' => $users,
         ]);
     }
+
     private function convertQrCodeResultToString(PngResult $qrCodeResult): string
     {
-        // Convert the result to a string (e.g., base64 encode the image)
-        // Adjust this logic based on how you want to represent the QR code data
         return 'data:image/png;base64,' . base64_encode($qrCodeResult->getString());
     }
 
@@ -137,7 +143,6 @@ class AdminUserController extends AbstractController
     
         if ($form->isSubmitted()) {
             if ($form->isValid()) {
-                // Handle photo upload
                 /** @var UploadedFile $photoFile */
                 $photoFile = $form->get('photoFile')->getData();
                 
@@ -168,7 +173,6 @@ class AdminUserController extends AbstractController
                 $userRepository->save($user, true);
                 return $this->redirectToRoute('admin_user_index', [], Response::HTTP_SEE_OTHER);
             } else {
-                // Form is submitted but not valid
                 $this->addFlash('error', 'Please correct the errors in the form');
             }
         }
@@ -193,33 +197,43 @@ class AdminUserController extends AbstractController
         return $this->redirectToRoute('admin_user_index');
     }
 
-    /**
-     * Delete user
-     *
-     * @Route("{id}/suppression", name="admin_user_delete")
-     * 
-     * @param User $user
-     * @return Response
-     */
-    public function delete(User $user,EntityManagerInterface $entityManager)
+    #[Route('/{id}/suppression', name: 'admin_user_delete', methods: ['POST'])]
+    public function delete(Request $request, User $user, EntityManagerInterface $entityManager): Response
     {
-        // Check user role and redirect if is admin
-        if($user->getRoleTitle() == "Administrateur"){
+        if (!$this->isCsrfTokenValid('delete'.$user->getId(), $request->request->get('_token'))) {
             $this->addFlash(
                 'danger',
-                "Vous ne pouvez pas supprimer l'utilisateur <strong>{$user->getFullName()}</strong>."
+                'Token de sécurité invalide. Veuillez réessayer.'
             );
-
             return $this->redirectToRoute('admin_user_index');
         }
 
-       $entityManager->remove($user);
-       $entityManager->flush();
+        if ($user->getRoleTitle() === "Administrateur") {
+            $this->addFlash(
+                'danger',
+                sprintf('Vous ne pouvez pas supprimer l\'utilisateur %s car il est administrateur.', 
+                    htmlspecialchars($user->getFullName(), ENT_QUOTES, 'UTF-8')
+                )
+            );
+            return $this->redirectToRoute('admin_user_index');
+        }
 
-        $this->addFlash(
-            'success',
-            "L'utilisateur <strong>{$user->getFullName()}</strong> a bien était supprimé !"
-        );
+        try {
+            $entityManager->remove($user);
+            $entityManager->flush();
+
+            $this->addFlash(
+                'success',
+                sprintf('L\'utilisateur %s a bien été supprimé !', 
+                    htmlspecialchars($user->getFullName(), ENT_QUOTES, 'UTF-8')
+                )
+            );
+        } catch (\Exception $e) {
+            $this->addFlash(
+                'danger',
+                'Une erreur est survenue lors de la suppression de l\'utilisateur.'
+            );
+        }
 
         return $this->redirectToRoute('admin_user_index');
     }

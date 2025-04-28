@@ -1,0 +1,147 @@
+/* Search container styling */
+.search-container {
+    position: relative;
+    margin-right: 15px;
+}
+
+/* Search form styling */
+#search-form {
+    display: flex;
+    align-items: center;
+}
+
+/* Search input styling */
+#search-input {
+    padding: 8px 15px;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    width: 200px;
+    transition: all 0.3s ease;
+    background-color: #fff;
+    color: #333;
+}
+
+#search-input:focus {
+    border-color: #555;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    outline: none;
+    width: 250px;
+}
+
+/* Search button styling */
+.search-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.search-btn i {
+    color: #555;
+    font-size: 16px;
+}
+
+/* Search results container */
+#search-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    min-width: 250px;
+    background: #fff;
+    border-radius: 4px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    z-index: 1050; /* Higher z-index to ensure it appears above other elements */
+    display: none;
+    margin-top: 5px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+/* Results list */
+.search-results-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* Individual result item */
+.search-result-item {
+    padding: 10px 15px;
+    border-bottom: 1px solid #f0f0f0;
+    transition: background 0.2s ease;
+}
+
+.search-result-item:last-child {
+    border-bottom: none;
+}
+
+.search-result-item:hover {
+    background: #f9f9f9;
+}
+
+.search-result-item a {
+    text-decoration: none;
+    color: #333;
+    display: block;
+    font-size: 14px;
+}
+
+/* No results and error messages */
+.search-no-results,
+.search-error {
+    padding: 15px;
+    text-align: center;
+    color: #666;
+    font-size: 14px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    #search-input {
+        width: 150px;
+    }
+    
+    #search-input:focus {
+        width: 200px;
+    }
+}
+
+/* Search result content */
+.search-result-content {
+    display: flex;
+    align-items: center;
+    padding: 2px 0;
+}
+
+.search-result-content i {
+    margin-right: 8px;
+    color: #666;
+}
+
+.search-result-text {
+    flex: 1;
+}
+
+/* Highlight matching text - can be implemented with JavaScript */
+.search-highlight {
+    background-color: rgba(255, 255, 0, 0.3);
+    font-weight: bold;
+}
+
+/* Add icons for different result types */
+.result-type-user i { 
+    color: #3498db; 
+}
+
+.result-type-product i { 
+    color: #e74c3c; 
+}
+
+.result-type-post i { 
+    color: #2ecc71; 
+} 

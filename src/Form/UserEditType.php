@@ -50,7 +50,7 @@ class UserEditType extends AbstractType
                     ]),
                 ],
             ])
-            ->add('email', EmailType::class, [
+            ->add('email', TextType::class, [
                 'label' => "Adresse email *",
                 'required' => true,
                 'empty_data' => '',

@@ -46,7 +46,7 @@ class UserEditProfileType extends AbstractType
                     ]),
                 ],
             ])
-            ->add('email', EmailType::class, [
+            ->add('email', TextType::class, [
                 'label' => "Adresse email *",
                 'attr' => [
                     'placeholder' => "exemple@domaine.com",
