@@ -68,7 +68,10 @@ class PackController extends AbstractController
         $category = $request->query->get('category', 'all');
         $minPrice = $request->query->get('minPrice');
         $maxPrice = $request->query->get('maxPrice');
-
+        $user = $this->getUser();
+        if (!$user) {
+            throw $this->createAccessDeniedException('You must be logged in to add an event.');
+        }
         // Create base query
         $queryBuilder = $this->packRepository->createQueryBuilder('p')
             ->leftJoin('p.event', 'e');

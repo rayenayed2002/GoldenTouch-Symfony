@@ -14,16 +14,16 @@ class DetailPayment
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(targetEntity: Payment::class, inversedBy: 'details')]
+    #[ORM\ManyToOne(targetEntity: Payment::class)]
     #[ORM\JoinColumn(name: 'idPaiment', referencedColumnName: 'id', nullable: false)]
-    private Payment $payment ;
+    private Payment $payment;
 
     #[ORM\ManyToOne(targetEntity: Event::class)]
     #[ORM\JoinColumn(name: 'idEvent', referencedColumnName: 'id', nullable: false)]
-    private ?Event $event ;
+    private Event $event;
 
-    #[ORM\Column(type: 'float')]
-    private float $price ;
+    #[ORM\Column(type: 'float', name: 'price')]
+    private float $price;
 
     public function getId(): ?int
     {

@@ -56,15 +56,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getPrenom(): ?string
     {
-        return $this->prenom;
+        return $this->firstName;
     }
     
-    public function setPrenom(string $prenom): self
+    public function setNom(string $lastName): self
     {
-        $this->prenom = $prenom;
+        $this->lastName = $lastName;
         return $this;
     }
-
+    public function getNom(): ?string
+    {
+        return $this->lastName;
+    }
+    
+    public function setPrenom(string $firstName): self
+    {
+        $this->firstName = $firstName;
+        return $this;
+    }
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
@@ -265,11 +274,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
 
-
-public function getNom(): ?string
-{
-    return $this->nom;
-}
 
 
 }

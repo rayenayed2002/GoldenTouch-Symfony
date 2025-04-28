@@ -28,7 +28,7 @@ use App\Entity\DemandePack;
 use Symfony\Component\Mailer\MailerInterface;
 use App\Service\EmailServiceP; 
 
-
+use Doctrine\DBAL\Exception;
 
 use App\Entity\User;
 use Symfony\Component\Security\Core\Security;
@@ -624,52 +624,56 @@ LoggerInterface $logger ): JsonResponse
 
         if ($paymentIntent->status === 'succeeded') {
             // Create and save payment
-            $payment = new Payment();
-            $payment->setUser($user)
-            ->setAmount($calculatedAmount / 100)  // CORRECT METHOD
-            ->setPaymentMethod($paymentIntent->payment_method_types[0] ?? 'card')  // CORRECT METHOD
-            ->setCreatedAt(new \DateTime());  // Correct method name
-
-            $em->persist($payment);
-            $em->flush();
-
-            // Create and save payment details
-            foreach ($cartItems as $panier) {
-                $event = $panier->getEvent();
-                if ($event) {
-                    $detail = new DetailPayment();
-                    $detail->setPayment($payment)
-                        ->setEvent($event)
-                        ->setPrice((float)$panier->getPrice());
-                    $em->persist($detail);
-                    
-                    // Add debug output
-                    $logger->info('Creating detail payment', [
-                        'event_id' => $event->getId(),
-                        'price' => $panier->getPrice()
-                    ]);
-                } else {
-                    $logger->warning('Panier item has no event', [
-                        'panier_id' => $panier->getId()
-                    ]);
+            $em->getConnection()->beginTransaction(); 
+            try {
+                // Create and save payment
+                $payment = new Payment();
+                $payment->setUser($user)
+                    ->setAmount($calculatedAmount / 100)
+                    ->setPaymentMethod($paymentIntent->payment_method_types[0] ?? 'card')
+                    ->setCreatedAt(new \DateTime());
+                
+                $em->persist($payment);
+                $em->flush(); // Get payment ID
+            
+                // Create details
+                foreach ($cartItems as $panier) {
+                    $event = $panier->getEvent();
+                    if ($event) {
+                        $detail = new DetailPayment();
+                        $detail->setPayment($payment)
+                            ->setEvent($event)
+                            ->setPrice((float)$panier->getPrice());
+                        
+                        $em->persist($detail);
+                        $logger->info('Persisted detail payment', [
+                            'detail_id' => $detail->getId()
+                        ]);
+                    }
                 }
+            
+                // Clear cart
+                $panierRepository->clearCart($user);
+            
+                // Commit all changes together
+                $em->flush();
+                $em->getConnection()->commit();
+            } catch (\Exception $e) { // Add transaction catch
+                $em->getConnection()->rollBack();
+                $logger->error('Transaction failed: '.$e->getMessage());
+                return new JsonResponse(['success' => false, 'error' => 'Payment processing failed'], 500);
             }
- 
-  
-            // Clear cart and save changes
-            $panierRepository->clearCart($user);
-            $em->flush();
-        //     try {
-           //      $emailServiceP->sendPaymentConfirmation(
-             //        $user,
-             //        $calculatedAmount / 100,
-            //         $payment->getId(),
-           //          $user->getEmail()
-           //      );
-         //    } catch (\Exception $e) {
-           //      $logger->error('Mailer error: ' . $e->getMessage());
-           //     return new JsonResponse(['success' => false, 'error' => 'Email sending failed'], 500);
-        //    }
+          try {
+            $emailServiceP->sendPaymentConfirmation(
+         $user,
+               $calculatedAmount / 100,
+                 $payment->getId(),
+                   $user->getEmail()
+              );
+         } catch (\Exception $e) {
+            $logger->error('Mailer error: ' . $e->getMessage());
+             return new JsonResponse(['success' => false, 'error' => 'Email sending failed'], 500);
+       }
             return new JsonResponse([
                 'success' => true,
                 'paymentId' => $payment->getId(),

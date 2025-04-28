@@ -30,8 +30,11 @@ class Payment
     #[ORM\Column(type: "datetime", name: 'date')]
     private ?\DateTimeInterface $createdAt = null;
 
-    #[ORM\OneToMany(mappedBy: 'payment', targetEntity: DetailPayment::class)]
-    private Collection $details;
+    #[ORM\OneToMany(
+        mappedBy: 'payment',
+        targetEntity: DetailPayment::class,
+        cascade: ['persist'] // Add cascade persist
+    )]    private Collection $details;
 
     public function __construct()
     {
@@ -114,4 +117,5 @@ class Payment
         }
         return $this;
     }
+    
 }
