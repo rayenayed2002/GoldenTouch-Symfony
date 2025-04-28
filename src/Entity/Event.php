@@ -44,18 +44,18 @@ class Event
         return $this;
     }
 
-    #[ORM\ManyToOne(targetEntity: Utilisateur::class, inversedBy: 'events')]
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'events')]
     #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id')]
-    private ?Utilisateur $utilisateur = null;
+    private ?User $user = null;
 
-    public function getUtilisateur(): ?Utilisateur
+    public function getUser(): ?User
     {
-        return $this->utilisateur;
+        return $this->user;
     }
 
-    public function setUtilisateur(?Utilisateur $utilisateur): static
+    public function setUser(?User $user): static
     {
-        $this->utilisateur = $utilisateur;
+        $this->user = $user;
 
         return $this;
     }
@@ -325,7 +325,7 @@ public function removePack(Pack $pack): static
         return $this;
     }
 
-    #[ORM\ManyToMany(targetEntity: Utilisateur::class, inversedBy: 'events')]
+    #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'events')]
     #[ORM\JoinTable(
         name: 'reserve_mat',
         joinColumns: [
@@ -335,7 +335,7 @@ public function removePack(Pack $pack): static
             new ORM\JoinColumn(name: 'IdUser', referencedColumnName: 'id')
         ]
     )]
-    private Collection $utilisateurs;
+    private Collection $users;
     #[ORM\OneToMany(targetEntity: ReservMat::class, mappedBy: 'event')]
 private Collection $reservationsMaterielles;
 
@@ -348,7 +348,7 @@ private Collection $reservationsMaterielles;
         $this->paniers = new ArrayCollection();
         $this->payments = new ArrayCollection();
         $this->personnels = new ArrayCollection();
-        $this->utilisateurs = new ArrayCollection();
+        $this->users = new ArrayCollection();
         $this->reservationsMaterielles = new ArrayCollection();
         $this->reservationsLieu = new ArrayCollection();
         $this->detailPayments = new ArrayCollection();
@@ -357,25 +357,25 @@ private Collection $reservationsMaterielles;
     }
 
     /**
-     * @return Collection<int, Utilisateur>
+     * @return Collection<int, User>
      */
-    public function getUtilisateurs(): Collection
+    public function getUsers(): Collection
     {
-        return $this->utilisateurs;
+        return $this->users;
     }
 
-    public function addUtilisateur(Utilisateur $utilisateur): static
+    public function addUser(User $user): static
     {
-        if (!$this->utilisateurs->contains($utilisateur)) {
-            $this->utilisateurs->add($utilisateur);
+        if (!$this->users->contains($user)) {
+            $this->users->add($user);
         }
 
         return $this;
     }
 
-    public function removeUtilisateur(Utilisateur $utilisateur): static
+    public function removeUser(User $user): static
     {
-        $this->utilisateurs->removeElement($utilisateur);
+        $this->users->removeElement($user);
 
         return $this;
     }

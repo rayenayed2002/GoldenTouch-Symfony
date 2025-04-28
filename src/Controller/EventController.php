@@ -28,9 +28,9 @@ use App\Entity\DemandePack;
 use Symfony\Component\Mailer\MailerInterface;
 use App\Service\EmailServiceP; 
 
+use Doctrine\DBAL\Exception;
 
-
-use App\Entity\Utilisateur;
+use App\Entity\User;
 use Symfony\Component\Security\Core\Security;
 use Stripe\Stripe;
 use Stripe\PaymentIntent;
@@ -44,7 +44,11 @@ class EventController extends AbstractController
     {
         $event = new Event();
         $form = $this->createForm(EventType::class, $event);
-        $user = $entityManager->getRepository(Utilisateur::class)->find(25);
+        $user = $this->getUser();
+    
+        if (!$user) {
+            throw $this->createAccessDeniedException('You must be logged in to add an event.');
+        }
     
         // Handle AI generation if it's an AJAX request
         if ($request->isXmlHttpRequest() && $request->isMethod('POST')) {
@@ -77,7 +81,7 @@ class EventController extends AbstractController
                 $event->setPhoto('Images/birthday.jpg');
             }
     
-            $event->setUtilisateur($user);
+            $event->setUser($user);
             $event->setType('EVENT');
     
             $entityManager->persist($event);
@@ -173,17 +177,21 @@ class EventController extends AbstractController
     $orderBy = $request->query->get('orderby', 'date');
     $sortDirection = $request->query->get('sort', 'DESC');
     $pageSize = 9;
-
+    $user = $this->getUser();
+    
+    if (!$user) {
+        throw $this->createAccessDeniedException('You must be logged in to add an event.');
+    }
     // Query 1: Events where the user is the owner
-    $qbOwner = $entityManager->createQueryBuilder()
+    $qbOwner = $entityManager->createQueryBuilder() 
         ->select('e')
         ->from(Event::class, 'e')
         ->leftJoin('e.paniers', 'p')
         ->leftJoin('e.detailPayments', 'dc')
-        ->where('e.utilisateur = :userId')
+        ->where('e.user = :userId')
         ->andWhere('p.id IS NULL')
         ->andWhere('dc.id IS NULL')
-        ->setParameter('userId', 25);
+        ->setParameter('userId', $user->getId());
 
     $eventsOwner = $qbOwner->getQuery()->getResult();
 
@@ -195,17 +203,19 @@ class EventController extends AbstractController
         ->innerJoin('App\Entity\DemandePack', 'dp', 'WITH', 'dp.pack = pack.id')
         ->leftJoin('e.paniers', 'p')
         ->leftJoin('e.detailPayments', 'dc')
-        ->where('dp.utilisateur = :userId')
+        ->where('dp.user = :userId')
         ->andWhere('dp.statut = :statutConfirme')
         ->andWhere('p.id IS NULL')
         ->andWhere('dc.id IS NULL')
-        ->setParameter('userId', 25)
+        ->setParameter('userId', $user->getId())
         ->setParameter('statutConfirme', 'CONFIRMÉ');
 
     $eventsDemande = $qbDemande->getQuery()->getResult();
 
     // Merge and deduplicate events
-    $events = array_merge($eventsOwner, $eventsDemande);
+    $events = array_filter(array_merge($eventsOwner, $eventsDemande), function($item) {
+        return $item instanceof \App\Entity\Event;
+    });
     $events = array_unique($events, SORT_REGULAR);
 
     // Use ArrayPaginator for manual pagination
@@ -257,11 +267,10 @@ class EventController extends AbstractController
             CategorieEvent::ATELIER->value => 'Atelier',
         ];
     
-        // Fetch all DemandePack for the current user (replace 25 with actual user id if needed)
-        $userId = 25;
+        $userId = $user->getId();
         $demandePackRepo = $entityManager->getRepository(\App\Entity\DemandePack::class);
         $userDemandePacks = $demandePackRepo->findBy([
-            'utilisateur' => $userId,
+            'user' => $userId,
             'statut' => 'CONFIRMÉ'
         ]);
         $demandePackByEvent = [];
@@ -316,6 +325,8 @@ class EventController extends AbstractController
         'sortBy' => $sortBy
     ]);
 }
+
+
 #[Route('/event/{id}/edit', name: 'app_event_edit', methods: ['POST'])]
 public function edit(
     Request $request, 
@@ -443,16 +454,15 @@ public function addToCart(Request $request, EntityManagerInterface $entityManage
         }
     }
 
-    // Fetch static user with ID = 25
-    $user = $entityManager->getRepository(Utilisateur::class)->find(25);
-    if (!$user) {
+    $user = $this->getUser();
+        if (!$user) {
         return new JsonResponse(['success' => false, 'message' => 'User not found'], 404);
     }
 
     // Create Panier object
     $panier = new Panier();
     $panier->setEvent($event);
-    $panier->setUtilisateur($user);
+    $panier->setUser($user);
     $panier->setCategorie($data['categorie']);
     $panier->setDate(new \DateTime($data['date']));
 
@@ -479,9 +489,8 @@ public function addToCart(Request $request, EntityManagerInterface $entityManage
 #[Route('/panier', name: 'app_panier', methods: ['GET'])]
 public function ShowPanier(EntityManagerInterface $em, Security $security): Response
 {
-    $user = $em->getRepository(Utilisateur::class)->find(25); // or your static user ID
-    
-    $panierItems = $em->getRepository(Panier::class)->findBy(['utilisateur' => $user]);
+    $user = $this->getUser();    
+    $panierItems = $em->getRepository(Panier::class)->findBy(['user' => $user]);
     
     $total = array_reduce($panierItems, function($sum, $item) {
         return $sum + $item->getPrice();
@@ -511,14 +520,13 @@ public function removeFromCart(int $id, EntityManagerInterface $em): JsonRespons
 public function clearCart(EntityManagerInterface $em): JsonResponse
 {
     // Static user for development
-    $user = $em->getRepository(Utilisateur::class)->find(25);
-    
+    $user = $this->getUser();    
     if (!$user) {
         return $this->json(['success' => false, 'error' => 'User not found']);
     }
 
     // Get all cart items using standard repository method
-    $items = $em->getRepository(Panier::class)->findBy(['utilisateur' => $user]);
+    $items = $em->getRepository(Panier::class)->findBy(['user' => $user]);
     
     // Remove each item
     foreach ($items as $item) {
@@ -534,13 +542,14 @@ public function clearCart(EntityManagerInterface $em): JsonResponse
 #[Route('/cart/count', name: 'app_panier_count')]
 public function cartCount(EntityManagerInterface $em, Security $security): Response
 {
-    $user = $em->getRepository(Utilisateur::class)->find(25); // or your static user ID
-    $count = $em->getRepository(Panier::class)->count(['utilisateur' => $user]);
+    $user = $this->getUser();
+        $count = $em->getRepository(Panier::class)->count(['user' => $user]);
     
     return new JsonResponse(['count' => $count]);
 }
 #[Route('/process-payment', name: 'app_process_payment', methods: ['POST'])]
-public function processPayment(Request $request, EntityManagerInterface $em, PanierRepository $panierRepository, EmailServiceP $emailServiceP): JsonResponse
+public function processPayment(Request $request, EntityManagerInterface $em, PanierRepository $panierRepository, EmailServiceP $emailServiceP,
+LoggerInterface $logger ): JsonResponse
 {
     $data = json_decode($request->getContent(), true);
     
@@ -555,13 +564,13 @@ public function processPayment(Request $request, EntityManagerInterface $em, Pan
         }
 
         // Get user (remove hardcoded ID in production)
-        $user = $em->getRepository(Utilisateur::class)->find(25);
-        if (!$user) {
+        $user = $this->getUser();
+                if (!$user) {
             return new JsonResponse(['success' => false, 'error' => 'User not found']);
         }
 
         // Get cart items
-        $cartItems = $panierRepository->findBy(['utilisateur' => $user]);
+        $cartItems = $panierRepository->findBy(['user' => $user]);
         if (empty($cartItems)) {
             return new JsonResponse(['success' => false, 'error' => 'Cart is empty']);
         }
@@ -601,7 +610,7 @@ public function processPayment(Request $request, EntityManagerInterface $em, Pan
                 ]
             ]);
         }
-
+ 
         // Process Stripe payment
         \Stripe\Stripe::setApiKey('sk_test_51QvjqJKNitkaIcyAQVqN2T63JJ0vrUFwdbqfVQMNPWu4UzkqjcH2HmIABFxLOg34aZkGTNco7Bs41837SUtIN4o3006H4eMRxF');        
         $paymentIntent = \Stripe\PaymentIntent::create([
@@ -617,40 +626,56 @@ public function processPayment(Request $request, EntityManagerInterface $em, Pan
 
         if ($paymentIntent->status === 'succeeded') {
             // Create and save payment
-            $payment = new Payment();
-            $payment->setUser($user)
-            ->setAmount($calculatedAmount / 100)  // CORRECT METHOD
-            ->setPaymentMethod($paymentIntent->payment_method_types[0] ?? 'card')  // CORRECT METHOD
-            ->setCreatedAt(new \DateTime());  // Correct method name
-
-            $em->persist($payment);
-            $em->flush();
-
-            // Create and save payment details
-            foreach ($cartItems as $panier) {
-                $event = $panier->getEvent();
-                if ($event) {
-                    $detail = new DetailPayment();
-                    $detail->setPayment($payment)
-                        ->setEvent($event)
-                        ->setPrice((float)$panier->getPrice());
-                    $em->persist($detail);
-                }
-            }
-
-            // Clear cart and save changes
-            $panierRepository->clearCart($user);
-            $em->flush();
+            $em->getConnection()->beginTransaction(); 
             try {
-                $emailServiceP->sendPaymentConfirmation(
-                    $user,
-                    $calculatedAmount / 100,
-                    $payment->getId(),
-                    $user->getEmail() // Make sure your User entity has an email field
-                );
-            } catch (\Exception $e) {
-                dd('Mailer error: ' . $e->getMessage());
+                // Create and save payment
+                $payment = new Payment();
+                $payment->setUser($user)
+                    ->setAmount($calculatedAmount / 100)
+                    ->setPaymentMethod($paymentIntent->payment_method_types[0] ?? 'card')
+                    ->setCreatedAt(new \DateTime());
+                
+                $em->persist($payment);
+                $em->flush(); // Get payment ID
+            
+                // Create details
+                foreach ($cartItems as $panier) {
+                    $event = $panier->getEvent();
+                    if ($event) {
+                        $detail = new DetailPayment();
+                        $detail->setPayment($payment)
+                            ->setEvent($event)
+                            ->setPrice((float)$panier->getPrice());
+                        
+                        $em->persist($detail);
+                        $logger->info('Persisted detail payment', [
+                            'detail_id' => $detail->getId()
+                        ]);
+                    }
+                }
+            
+                // Clear cart
+                $panierRepository->clearCart($user);
+            
+                // Commit all changes together
+                $em->flush();
+                $em->getConnection()->commit();
+            } catch (\Exception $e) { // Add transaction catch
+                $em->getConnection()->rollBack();
+                $logger->error('Transaction failed: '.$e->getMessage());
+                return new JsonResponse(['success' => false, 'error' => 'Payment processing failed'], 500);
             }
+          try {
+            $emailServiceP->sendPaymentConfirmation(
+         $user,
+               $calculatedAmount / 100,
+                 $payment->getId(),
+                   $user->getEmail()
+              );
+         } catch (\Exception $e) {
+            $logger->error('Mailer error: ' . $e->getMessage());
+             return new JsonResponse(['success' => false, 'error' => 'Email sending failed'], 500);
+       }
             return new JsonResponse([
                 'success' => true,
                 'paymentId' => $payment->getId(),
@@ -674,8 +699,9 @@ public function processPayment(Request $request, EntityManagerInterface $em, Pan
     } catch (\Exception $e) {
         return new JsonResponse([
             'success' => false, 
-            'error' => 'Payment processing error',
-            'system_error' => $e->getMessage()
+            'error' => 'DEBUG: Full Error',
+            'message' => $e->getMessage(),
+            'trace' => $e->getTraceAsString() // Full stack trace
         ], 500);
     }
 }
@@ -688,7 +714,7 @@ public function testEmail(EmailServiceP $emailService): JsonResponse
 {
     try {
         // Create a mock user
-        $user = new Utilisateur();
+        $user = new User();
         $user->setPrenom('TestUser');
         $user->setEmail('ayed.rayen09@gmail.com'); // Use real email here
 
@@ -714,8 +740,7 @@ public function testEmail(EmailServiceP $emailService): JsonResponse
 public function myOrders(EntityManagerInterface $em): Response
 {
     // In production, get the authenticated user instead of hardcoding
-    $user = $em->getRepository(Utilisateur::class)->find(25);
-    
+    $user = $this->getUser();    
     $payments = $em->getRepository(Payment::class)->findBy(
         ['user' => $user],
         ['createdAt' => 'DESC']

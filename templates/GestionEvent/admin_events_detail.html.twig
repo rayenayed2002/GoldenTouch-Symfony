@@ -821,8 +821,8 @@
                         </div>
                         <div class="card-body p-4">
                             <div class="d-flex align-items-center">
-                                {% if event.utilisateur.imageData %}
-                                    <img src="{{ asset('uploads/packs/' ~ event.utilisateur.imageData) }}" 
+                                {% if event.user.photo %}
+                                    <img src="{{ asset('uploads/packs/' ~ event.user.photo) }}" 
                                         class="rounded-circle me-4" 
                                         width="100"
                                         alt="Photo de profil">
@@ -833,19 +833,19 @@
                                     </div>
                                 {% endif %}
                                 <div class="flex-grow-1">
-                                    <h3 class="mb-2">{{ event.utilisateur.prenom }} {{ event.utilisateur.nom }}</h3>
+                                    <h3 class="mb-2">{{ event.user.prenom }} {{ event.user.nom }}</h3>
                                     <ul class="list-unstyled mb-0">
                                         <li class="mb-2">
                                             <i class="fas fa-envelope me-2 text-primary"></i>
-                                            <a href="mailto:{{ event.utilisateur.email }}" class="text-decoration-none">{{ event.utilisateur.email }}</a>
+                                            <a href="mailto:{{ event.user.email }}" class="text-decoration-none">{{ event.user.email }}</a>
                                         </li>
                                         <li class="mb-2">
                                             <i class="fas fa-phone me-2 text-primary"></i>
-                                            {{ event.utilisateur.num_tel ?? 'Non renseigné' }}
+                                            {{ event.user.num_tel ?? 'Non renseigné' }}
                                         </li>
                                         <li>
                                             <i class="fas fa-map-marker-alt me-2 text-primary"></i>
-                                            {{ event.utilisateur.address ?? 'Adresse non disponible' }}
+                                            {{ event.user.address ?? 'Adresse non disponible' }}
                                         </li>
                                     </ul>
                                 </div>

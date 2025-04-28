@@ -28,12 +28,12 @@ class DemandePack
     #[ORM\JoinColumn(name: "pack_id", referencedColumnName: "id", nullable: false)]
     private Pack $pack;
 
-    #[ORM\ManyToOne(targetEntity: Utilisateur::class)]
+    #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(name: "utilisateur_id", referencedColumnName: "id", nullable: false)]
-    private ?Utilisateur $utilisateur = null;
+    private ?User $user = null;
 
     #[ORM\Column(name: "utilisateur_id")]
-    private int $utilisateurId;
+    private int $userId;
 
     #[ORM\ManyToOne(targetEntity: Event::class)]
     #[ORM\JoinColumn(name: "event_id", referencedColumnName: "id")]
@@ -73,25 +73,25 @@ class DemandePack
         return $this;
     }
 
-    public function getUtilisateur(): ?Utilisateur
+    public function getUser(): ?User
     {
-        return $this->utilisateur;
+        return $this->user;
     }
 
-    public function setUtilisateur(?Utilisateur $utilisateur): self
+    public function setUser(?User $user): self
     {
-        $this->utilisateur = $utilisateur;
+        $this->user = $user;
         return $this;
     }
 
-    public function getUtilisateurId(): int
+    public function getUserId(): int
     {
-        return $this->utilisateurId;
+        return $this->userId;
     }
 
-    public function setUtilisateurId(int $utilisateurId): self
+    public function setUserId(int $userId): self
     {
-        $this->utilisateurId = $utilisateurId;
+        $this->userId = $userId;
         return $this;
     }
 

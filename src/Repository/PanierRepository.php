@@ -19,7 +19,7 @@ class PanierRepository extends ServiceEntityRepository
 {
     $qb = $this->createQueryBuilder('p')
         ->delete()
-        ->where('p.utilisateur = :user')
+        ->where('p.user = :user')
         ->setParameter('user', $user);
 
     return $qb->getQuery()->execute();
