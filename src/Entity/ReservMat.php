@@ -29,9 +29,9 @@ private ?Event $event = null;
     #[ORM\Column]
     private ?int $quantite = null;
 
-    #[ORM\ManyToOne(targetEntity: Utilisateur::class)]
+    #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(name: "IdUser", referencedColumnName: "id", nullable: false)]
-    private ?Utilisateur $utilisateur = null;
+    private ?User $user = null;
 
     public function getStatut(): string
     {
@@ -86,14 +86,14 @@ private ?Event $event = null;
         return $this;
     }
 
-    public function getUtilisateur(): ?Utilisateur
+    public function getUser(): ?User
 {
-    return $this->utilisateur;
+    return $this->user;
 }
 
-public function setUtilisateur(?Utilisateur $utilisateur): self
+public function setUser(?User $user): self
 {
-    $this->utilisateur = $utilisateur;
+    $this->user = $user;
     return $this;
 }
 

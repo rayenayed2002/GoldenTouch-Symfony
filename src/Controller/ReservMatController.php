@@ -5,9 +5,9 @@ namespace App\Controller;
 use App\Entity\ReservMat;
 use App\Entity\Materielle;
 use App\Entity\Event;
-use App\Entity\Categorie;  // <-- Add this line
+use App\Entity\Categorie;
 use App\Repository\CategorieRepository;
-use App\Entity\Utilisateur;
+use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,10 +19,16 @@ use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
 use Endroid\QrCode\Builder\Builder;
 use Endroid\QrCode\Encoding\Encoding;
-use Endroid\QrCode\ErrorCorrectionLevel; // Seul import nécessaire pour la correction d'erreur
-use Endroid\QrCode\RoundBlockSizeMode;    // Import pour le mode de bloc
+use Endroid\QrCode\ErrorCorrectionLevel\ErrorCorrectionLevelHigh; // For v4.x
+use Endroid\QrCode\RoundBlockSizeMode\RoundBlockSizeModeMargin;   // For v4.x
 use Endroid\QrCode\Writer\PngWriter;
 use Knp\Component\Pager\PaginatorInterface;
+
+
+
+// Remove this line:
+
+// Add these lines instead:
 
 final class ReservMatController extends AbstractController
 {
@@ -34,7 +40,7 @@ final class ReservMatController extends AbstractController
         $query = $reservMatRepository->createQueryBuilder('r')
             ->leftJoin('r.materielle', 'm')
             ->leftJoin('r.event', 'e')
-            ->leftJoin('r.utilisateur', 'u')
+            ->leftJoin('r.user', 'u') // Changé de 'utilisateur' à 'user'
             ->addSelect('m', 'e', 'u');
         
         if ($searchTerm) {
@@ -58,7 +64,12 @@ final class ReservMatController extends AbstractController
     #[Route('/mes-reservations', name: 'app_mes_reservations')]
     public function mesReservations(Request $request, ReservMatRepository $reservMatRepository, CategorieRepository $categorieRepository, PaginatorInterface $paginator): Response
     {
-        $userId = 19; // À remplacer par l'ID de l'utilisateur connecté
+        $user = $this->getUser();
+    
+        if (!$user) {
+            throw $this->createAccessDeniedException('You must be logged in to add an event.');
+        }  
+        $userId = $user->getId(); // À remplacer par l'ID de l'utilisateur connecté
     
         $orderBy = $request->query->get('orderby', 'r.id_reserv');
         $categorieId = $request->query->get('categorie'); // récupère la catégorie sélectionnée
@@ -66,7 +77,7 @@ final class ReservMatController extends AbstractController
         $queryBuilder = $reservMatRepository->createQueryBuilder('r')
             ->leftJoin('r.materielle', 'm')
             ->leftJoin('r.event', 'e')
-            ->where('r.utilisateur = :userId')
+            ->where('r.user = :userId') // Changé de 'utilisateur' à 'user'
             ->setParameter('userId', $userId)
             ->addSelect('m', 'e');
     
@@ -115,8 +126,11 @@ final class ReservMatController extends AbstractController
         $quantite = (int)$request->request->get('quantite');
         
         // ID utilisateur fixe (par défaut)
-        $userId = $params->get('default_user_id');
+        $user = $this->getUser();
     
+        if (!$user) {
+            throw $this->createAccessDeniedException('You must be logged in to add an event.');
+        }    
         if (empty($idMat) || empty($idEvent) || empty($quantite)) {
             $this->addFlash('error', 'Tous les champs sont obligatoires');
             return $this->redirectToRoute('app_materiels_show_Details', ['id' => $idMat]);
@@ -124,7 +138,6 @@ final class ReservMatController extends AbstractController
     
         $materiel = $entityManager->getRepository(Materielle::class)->find($idMat);
         $event = $entityManager->getRepository(Event::class)->find($idEvent);
-        $user = $entityManager->getRepository(Utilisateur::class)->find($userId);
     
         if (!$materiel || !$event || !$user) {
             $this->addFlash('error', 'Données introuvables');
@@ -134,7 +147,7 @@ final class ReservMatController extends AbstractController
         // Vérification si l'utilisateur a déjà réservé ce matériel POUR CET ÉVÉNEMENT
         $existingReservation = $entityManager->getRepository(ReservMat::class)->findOneBy([
             'materielle' => $materiel,
-            'utilisateur' => $user,
+            'user' => $user, // Changé de 'utilisateur' à 'user'
             'event' => $event
         ]);
     
@@ -154,7 +167,7 @@ final class ReservMatController extends AbstractController
         $reservation->setMaterielle($materiel);
         $reservation->setEvent($event);
         $reservation->setQuantite($quantite);
-        $reservation->setUtilisateur($user);
+        $reservation->setUser($user); // Changé de setUtilisateur à setUser
         // Le statut est déjà "non confirmé" par défaut, donc pas besoin de le définir ici
     
         // Mise à jour du stock
@@ -182,15 +195,14 @@ public function show(ReservMat $reservation): Response
     );
 
     $qrCode = Builder::create()
-        ->writer(new PngWriter())
-        ->data($qrContent)
-        ->encoding(new Encoding('UTF-8'))
-        ->errorCorrectionLevel(ErrorCorrectionLevel::High)
-        ->size(300)
-        ->margin(20)
-        ->roundBlockSizeMode(RoundBlockSizeMode::Margin)
-        ->build();
-
+    ->writer(new PngWriter())
+    ->data($qrContent)
+    ->encoding(new Encoding('UTF-8'))
+    ->errorCorrectionLevel(new ErrorCorrectionLevelHigh())  // Note the 'new' keyword
+    ->size(300)
+    ->margin(20)
+    ->roundBlockSizeMode(new RoundBlockSizeModeMargin())  // Note the 'new' keyword
+    ->build();
     // Vérification du statut
     if ($reservation->getStatut() === 'non confirmé') {
         return $this->render('materiels/details_res.html.twig', [
@@ -301,7 +313,7 @@ public function confirmerReservation(
 
     $email = (new Email())
     ->from('service.goldentouch1@gmail.com')
-    ->to($reservation->getUtilisateur()->getEmail())
+    ->to($reservation->getUser()->getEmail()) // Changé de getUtilisateur() à getUser()
     ->subject('Confirmation de votre réservation')
     ->text($message)
     ->html('
@@ -311,7 +323,7 @@ public function confirmerReservation(
             </div>
             <div style="background-color: #f9f9f9; padding: 20px; border-radius: 8px;">
                 <h2 style="color: #FFA500;">Merci pour votre réservation !</h2>
-                <p>Bonjour <strong>' . htmlspecialchars($reservation->getUtilisateur()->getNom()) . '</strong>,</p>
+                <p>Bonjour <strong>' . htmlspecialchars($reservation->getUser()->getNom()) . '</strong>,</p>
                 <p>Votre demande de réservation est maintenant <strong>confirmée</strong>.</p>
                 <p><strong>Détails :</strong></p>
                 <ul>
@@ -363,8 +375,8 @@ public function annulerReservation(
     $email = (new Email())
         ->from('
 service.goldentouch1@gmail.com')
-        ->to($reservation->getUtilisateur()->getEmail())
-        ->subject('Annulation de votre réservation')
+->to($reservation->getUser()->getEmail()) // Changé de getUtilisateur() à getUser()
+->subject('Annulation de votre réservation')
         ->text($message);
     
     $mailer->send($email);

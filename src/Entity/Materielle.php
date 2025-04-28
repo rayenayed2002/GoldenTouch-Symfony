@@ -5,6 +5,7 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use App\Entity\User;  // Au lieu de Utilisateur
 
 use App\Repository\MaterielleRepository;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -145,23 +146,23 @@ class Materielle
     #[ORM\ManyToMany(targetEntity: Event::class, mappedBy: 'materielles')]
 private Collection $events;
     
-    #[ORM\ManyToMany(targetEntity: Utilisateur::class, inversedBy: 'materielles')]
-    #[ORM\JoinTable(
-        name: 'reserve_mat',
-        joinColumns: [
-            new ORM\JoinColumn(name: 'id_mat', referencedColumnName: 'id_mat')
-        ],
-        inverseJoinColumns: [
-            new ORM\JoinColumn(name: 'IdUser', referencedColumnName: 'id')
-        ]
-    )]
-    private Collection $utilisateurs;
+#[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'materielles')]
+#[ORM\JoinTable(
+    name: 'reserve_mat',
+    joinColumns: [
+        new ORM\JoinColumn(name: 'id_mat', referencedColumnName: 'id_mat')
+    ],
+    inverseJoinColumns: [
+        new ORM\JoinColumn(name: 'IdUser', referencedColumnName: 'id')
+    ]
+)]
+private Collection $users;  // Changé de $utilisateurs à $users
     #[ORM\OneToMany(targetEntity: ReservMat::class, mappedBy: 'materielle')]
 private Collection $reservations;
 
     public function __construct()
     {
-        $this->utilisateurs = new ArrayCollection();
+        $this->users = new ArrayCollection();  // Changé de $utilisateurs
         $this->events = new ArrayCollection();
         $this->reservations = new ArrayCollection();
 
@@ -212,28 +213,28 @@ public function removeEvent(Event $event): static
 }
 
     /**
-     * @return Collection<int, Utilisateur>
+     * @return Collection<int, User>
      */
-    public function getUtilisateurs(): Collection
-    {
-        return $this->utilisateurs;
+    public function getUsers(): Collection
+{
+    return $this->users;
+}
+
+public function addUser(User $user): static
+{
+    if (!$this->users->contains($user)) {
+        $this->users->add($user);
     }
 
-    public function addUtilisateur(Utilisateur $utilisateur): static
-    {
-        if (!$this->utilisateurs->contains($utilisateur)) {
-            $this->utilisateurs->add($utilisateur);
-        }
+    return $this;
+}
 
-        return $this;
-    }
+public function removeUser(User $user): static
+{
+    $this->users->removeElement($user);
 
-    public function removeUtilisateur(Utilisateur $utilisateur): static
-    {
-        $this->utilisateurs->removeElement($utilisateur);
-
-        return $this;
-    }
+    return $this;
+}
 
     public function getIdMat(): ?int
     {

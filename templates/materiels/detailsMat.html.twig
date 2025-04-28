@@ -494,7 +494,7 @@ body {
                             {% set alreadyReserved = false %}
                             {% if app.user %}
                                 {% for reservation in app.user.reservMats %}
-                                    {% if reservation.materielle.id == materiel.idMat %}
+                                    {% if reservation.materielle.idMat  == materiel.idMat %}
                                         {% set alreadyReserved = true %}
                                     {% endif %}
                                 {% endfor %}
