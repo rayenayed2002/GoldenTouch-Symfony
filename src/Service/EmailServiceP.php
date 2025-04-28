@@ -4,16 +4,20 @@ namespace App\Service;
 
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
+use Psr\Log\LoggerInterface;
 
 class EmailServiceP
 {
+    private $logger;
+
     private $mailer;
     private $senderEmail;
 
-    public function __construct(MailerInterface $mailer, string $senderEmail)
+    public function __construct(MailerInterface $mailer, string $senderEmail,LoggerInterface $logger)
     {
         $this->mailer = $mailer;
         $this->senderEmail = $senderEmail;
+        $this->logger = $logger;
     }
 
     public function sendPaymentConfirmation($user, $totalPrice, $paymentId, $recipientEmail)
@@ -26,7 +30,10 @@ class EmailServiceP
                 ->to($recipientEmail)
                 ->subject('Confirmation de paiement - GoldenTouch')
                 ->html($emailBody);
-    
+                $this->logger->info('Attempting to send payment email to: ' . $recipientEmail, [
+                    'amount' => $totalPrice,
+                    'paymentId' => $paymentId
+                ]);
             $this->mailer->send($email);
         } catch (TransportExceptionInterface $e) {
             throw new \RuntimeException(sprintf('Email failed: %s', $e->getMessage()));

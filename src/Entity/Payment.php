@@ -17,9 +17,9 @@ class Payment
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(targetEntity: Utilisateur::class)]
+    #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id')]
-    private ?Utilisateur $user = null;
+    private ?User $user = null;
 
     #[ORM\Column(type: "float", name: 'montant')]
     private ?float $amount = null;
@@ -66,12 +66,12 @@ class Payment
         return $this;
     }
 
-    public function getUser(): ?Utilisateur
+    public function getUser(): ?User
     {
         return $this->user;
     }
 
-    public function setUser(?Utilisateur $user): self
+    public function setUser(?User $user): self
     {
         $this->user = $user;
         return $this;

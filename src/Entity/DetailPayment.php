@@ -15,49 +15,51 @@ class DetailPayment
     private ?int $id = null;
 
     #[ORM\ManyToOne(targetEntity: Payment::class, inversedBy: 'details')]
-    #[ORM\JoinColumn(name: 'idPaiment', referencedColumnName: 'id')]
-    private ?Payment $payment = null;
+    #[ORM\JoinColumn(name: 'idPaiment', referencedColumnName: 'id', nullable: false)]
+    private Payment $payment ;
 
     #[ORM\ManyToOne(targetEntity: Event::class)]
-    #[ORM\JoinColumn(name: 'idEvent', referencedColumnName: 'id')]
-    private ?Event $event = null;
+    #[ORM\JoinColumn(name: 'idEvent', referencedColumnName: 'id', nullable: false)]
+    private ?Event $event ;
 
     #[ORM\Column(type: 'float')]
-    private ?float $price = null;
+    private float $price ;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getPayment(): ?Payment
+    public function getPayment(): Payment // Remove "?"
     {
         return $this->payment;
     }
-
-    public function setPayment(?Payment $payment): self
+    
+    public function setPayment(Payment $payment): self // Remove "?"
     {
         $this->payment = $payment;
         return $this;
     }
+    
 
-    public function getEvent(): ?Event
+    public function getEvent(): Event // Remove "?"
     {
         return $this->event;
     }
-
-    public function setEvent(?Event $event): self
+    
+    public function setEvent(Event $event): self // Remove "?"
     {
         $this->event = $event;
         return $this;
     }
+    
 
-    public function getPrice(): ?float
+    public function getPrice(): float // Remove "?"
     {
         return $this->price;
     }
-
-    public function setPrice(float $price): self
+    
+    public function setPrice(float $price): self // Remove "?"
     {
         $this->price = $price;
         return $this;

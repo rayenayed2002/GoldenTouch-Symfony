@@ -1,0 +1,16 @@
+{% extends "base.html.twig" %}
+
+{% block title "Profil" %}
+
+{% block title_h1 "Modifier mon profil" %}
+
+{% block body %}
+
+    <div class="form-center mt-4">
+        <div class="content">
+               {{ form_start(form, { attr: { novalidate: 'novalidate' } }) }}
+                    {{ form_widget(form) }}
+                {{ form_end(form) }}
+            </div>
+    </div>
+{% endblock %}

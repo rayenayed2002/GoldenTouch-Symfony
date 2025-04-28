@@ -29,18 +29,18 @@ class Panier
         return $this;
     }
 
-    #[ORM\ManyToOne(targetEntity: Utilisateur::class, inversedBy: 'paniers')]
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'paniers')]
     #[ORM\JoinColumn(name: 'idUser', referencedColumnName: 'id')]
-    private ?Utilisateur $utilisateur = null;
+    private ?User $user = null;
 
-    public function getUtilisateur(): ?Utilisateur
+    public function getUser(): ?User
     {
-        return $this->utilisateur;
+        return $this->user;
     }
 
-    public function setUtilisateur(?Utilisateur $utilisateur): static
+    public function setUser(?User $user): static
     {
-        $this->utilisateur = $utilisateur;
+        $this->user = $user;
 
         return $this;
     }
