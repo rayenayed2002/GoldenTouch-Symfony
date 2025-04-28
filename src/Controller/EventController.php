@@ -213,7 +213,9 @@ class EventController extends AbstractController
     $eventsDemande = $qbDemande->getQuery()->getResult();
 
     // Merge and deduplicate events
-    $events = array_merge($eventsOwner, $eventsDemande);
+    $events = array_filter(array_merge($eventsOwner, $eventsDemande), function($item) {
+        return $item instanceof \App\Entity\Event;
+    });
     $events = array_unique($events, SORT_REGULAR);
 
     // Use ArrayPaginator for manual pagination
