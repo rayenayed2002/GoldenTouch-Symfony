@@ -39,6 +39,8 @@
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Radio+Canada:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.1/nouislider.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.1/nouislider.min.js"></script>
 
 <link rel="stylesheet" href="{{ asset('Front/css/bootstrap.min.css') }}">
 <link rel="stylesheet" href="{{ asset('Front/css/fontawesome.min.css') }}">
@@ -551,15 +553,12 @@ body {
                 </div>
 
                 <!-- Pagination -->
+               
                 <div class="th-pagination text-center pt-50">
-                    <ul class="pagination justify-content-center">
-                        <li class="page-item"><a class="page-link" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                        <li class="page-item"><a class="page-link" href="#"><i class="far fa-arrow-right"></i></a></li>
-                    </ul>
-                </div>
+    {{ knp_pagination_render(materiels) }}
+</div>
             </div>
+            
 
             <!-- 🟨 SIDEBAR -->
             <div class="col-xl-3 col-lg-4">
@@ -575,18 +574,23 @@ body {
                            
                         </div>
                     </form>
-                </div>
-                    <div class="widget widget_categories">
-                        <h3 class="widget_title">Catégories</h3>
-                        <ul>
-                            <li><a href="#">Electronique</a> <span>(8)</span></li>
-                            <li><a href="#">Outils</a> <span>(6)</span></li>
-                            <li><a href="#">Mobilier</a> <span>(5)</span></li>
-                            <li><a href="#">Véhicules</a> <span>(2)</span></li>
-                            <li><a href="#">Bureau</a> <span>(7)</span></li>
-                            <li><a href="#">Autre</a> <span>(9)</span></li>
-                        </ul>
-                    </div>
+<div class="widget widget_categories">
+    <h3 class="widget_title">Catégories</h3>
+    <ul>
+        <li>
+            <a href="{{ path('app_materiels_index') }}">Toutes les catégories</a> 
+        </li>
+        {% for categorie in categories %}
+            <li>
+                <a href="{{ path('app_materiels_index', { 'categorie': categorie.id_cat }) }}">
+                    {{ categorie.nom_cat }}
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+
+
 
                     <div class="widget widget_price_filter">
                         <h4 class="widget_title">Filtrer par prix</h4>
@@ -599,17 +603,7 @@ body {
                         </div>
                     </div>
 
-                    <div class="widget widget_tag_cloud">
-                        <h3 class="widget_title">Tags populaires</h3>
-                        <div class="tagcloud">
-                            <a href="#">Nouveau</a>
-                            <a href="#">Occasion</a>
-                            <a href="#">Haute qualité</a>
-                            <a href="#">Équipement</a>
-                            <a href="#">Location</a>
-                            <a href="#">Outils</a>
-                        </div>
-                    </div>
+                
                 </aside>
             </div>
         </div>
@@ -834,6 +828,53 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <script src="{{ asset('Front/js/main.js') }}"></script>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.6.1/nouislider.min.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var priceSlider = document.querySelector('.price_slider');
+
+    if (priceSlider) {
+        noUiSlider.create(priceSlider, {
+            start: [0, 500], // Valeur de départ min et max
+            connect: true,
+            step: 10,
+            range: {
+                'min': 0,
+                'max': 500
+            },
+            format: {
+                to: function (value) {
+                    return Math.round(value);
+                },
+                from: function (value) {
+                    return Number(value);
+                }
+            }
+        });
+
+        var from = document.querySelector('.price_label .from');
+        var to = document.querySelector('.price_label .to');
+
+        priceSlider.noUiSlider.on('update', function (values, handle) {
+            from.textContent = values[0] + ' TND';
+            to.textContent = values[1] + ' TND';
+        });
+
+        document.querySelector('.button').addEventListener('click', function () {
+            var minPrice = priceSlider.noUiSlider.get()[0];
+            var maxPrice = priceSlider.noUiSlider.get()[1];
+
+            // Mise à jour de l'URL avec les nouveaux paramètres
+            var url = new URL(window.location.href);
+            url.searchParams.set('minPrice', minPrice);
+            url.searchParams.set('maxPrice', maxPrice);
+            window.location.href = url.toString();  // Redirection avec les filtres appliqués
+        });
+    }
+});
+
+</script>
 </body>
 
 </html>

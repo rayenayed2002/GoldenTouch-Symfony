@@ -550,14 +550,10 @@ body {
                 </div>
 
                 <!-- Pagination -->
-                <div class="th-pagination text-center pt-50">
-                    <ul class="pagination justify-content-center">
-                        <li class="page-item"><a class="page-link text-warning" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link text-warning" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link text-warning" href="#">3</a></li>
-                        <li class="page-item"><a class="page-link text-warning" href="#"><i class="far fa-arrow-right"></i></a></li>
-                    </ul>
-                </div>
+               <div class="th-pagination text-center pt-50">
+    {{ knp_pagination_render(reservations) }}
+</div>
+
             </div>
 
             <!-- SIDEBAR -->
@@ -571,17 +567,20 @@ body {
                         </form>
                     </div>
 
-                    <div class="widget widget_categories mb-4">
-                        <h3 class="widget_title text-warning">Categories</h3>
-                        <ul class="list-unstyled">
-                            <li><a class="text-dark" href="#">Electronics</a> <span class="text-warning">(8)</span></li>
-                            <li><a class="text-dark" href="#">Tools</a> <span class="text-warning">(6)</span></li>
-                            <li><a class="text-dark" href="#">Furniture</a> <span class="text-warning">(5)</span></li>
-                            <li><a class="text-dark" href="#">Vehicles</a> <span class="text-warning">(2)</span></li>
-                            <li><a class="text-dark" href="#">Office Equipment</a> <span class="text-warning">(7)</span></li>
-                            <li><a class="text-dark" href="#">Other</a> <span class="text-warning">(9)</span></li>
-                        </ul>
-                    </div>
+                  <div class="widget widget_categories mb-4">
+    <h3 class="widget_title text-warning">Catégories</h3>
+    <ul class="list-unstyled">
+        <li><a class="text-dark" href="{{ path('app_mes_reservations') }}">Toutes les catégories</a></li>
+        {% for categorie in categories %}
+            <li>
+                <a class="text-dark" href="{{ path('app_mes_reservations', { 'categorie': categorie.id_cat }) }}">
+                    {{ categorie.nom_cat }}
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+
 
                     <div class="widget widget_price_filter mb-4">
                         <h4 class="widget_title text-warning">Filter By Price</h4>

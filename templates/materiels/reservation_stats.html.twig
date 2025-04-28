@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 
 <html
@@ -52,7 +53,6 @@
     <script src="{{ asset('vendor/js/helpers.js') }}"></script>
     <script src="{{ asset('vendor/js/template-customizer.js') }}"></script>
     <script src="{{ asset('js/config.js') }}"></script>
-    
 </head>
 
   <body>
@@ -146,16 +146,16 @@
           <div data-i18n="Ajouter Matériel">Ajouter Matériel</div>
         </a>
       </li>
-      <li class="menu-item active">
+      <li class="menu-item ">
 <a href="{{ path('app_materielss') }}" class="menu-link">
           <i class="menu-icon tf-icons ti ti-circle"></i>
           <div data-i18n="Liste Matériel">Liste Matériel</div>
         </a>
       </li>
-      <li class="menu-item ">
+      <li class="menu-item active">
 <a href="{{ path('app_reservations') }}" class="menu-link">
           <i class="menu-icon tf-icons ti ti-circle"></i>
-          <div data-i18n="Liste Reservation">Liste Materiels</div>
+          <div data-i18n="Liste Reservation">Liste Matériel</div>
         </a>
       </li>
     </ul>
@@ -274,7 +274,18 @@
             </div>
 
             <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
-           
+              <!-- Search -->
+            <div class="navbar-nav align-items-center">
+  <div class="nav-item navbar-search-wrapper mb-0">
+    <input
+      type="text"
+      id="searchInput"
+      class="form-control"
+      placeholder="Rechercher un matériel..."
+    />
+  </div>
+</div>
+              <!-- /Search -->
 
               <ul class="navbar-nav flex-row align-items-center ms-auto">
                 <!-- Language -->
@@ -752,90 +763,128 @@
               <i class="ti ti-x ti-sm search-toggler cursor-pointer"></i>
             </div>
           </nav>
-
-          <!-- / Navbar -->
-<!-- Content wrapper -->
-<div class="content-wrapper">
-    <!-- Content -->
+ <div class="content-wrapper">
     <div class="container-xxl flex-grow-1 container-p-y">
-        <h4 class="fw-bold py-3 mb-4">Materiels</h4>
+        <h4 class="fw-bold py-3 mb-4" style="text-align: center; font-size: 28px;">📊 Statistiques des Réservations de Matériels</h4>
 
-        <!-- Barre de recherche -->
-        <div class="row mb-4">
-            <div class="col-md-6">
-                <div class="input-group mb-3">
-                    <input type="text" id="materielSearch" class="form-control" placeholder="Rechercher par ID, nom ou catégorie...">
-                   
+        <div class="statistics-container">
+
+            <!-- Section pour les statistiques par matériel -->
+            <div class="stat-card">
+                <h2>Répartition des réservations par matériel</h2>
+                <div class="chart-container">
+                    <canvas id="materielChart"></canvas>
                 </div>
-                      <select class="form-select" id="sortField">
-                <option value="id_mat">Trier par</option>
-                <option value="nom_mat">Nom</option>
-                <option value="prix_mat">Prix</option>
-                <option value="quantite_mat">Quantité</option>
-                <option value="categorie">Catégorie</option>
-            </select>
-            <select class="form-select" id="sortDirection">
-                <option value="ASC">Croissant</option>
-                <option value="DESC">Décroissant</option>
-            </select>
-            
+            </div>
+
+            <!-- Section pour les statistiques par mois -->
+            <div class="stat-card">
+                <h2>Répartition des réservations par mois</h2>
+                <div class="chart-container">
+                    <canvas id="moisChart"></canvas>
                 </div>
-             
-           
+                <div class="details">
+                    <h3>Détails par mois :</h3>
+                    <ul>
+                        {% for mois, pourcentage in moisPourcentages %}
+                            <li>{{ mois }} : {{ pourcentage }}%</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Section pour les statistiques par état -->
+            <div class="stat-card">
+                <h2>Répartition des réservations par état</h2>
+                <div class="chart-container">
+                    <canvas id="etatChart"></canvas>
+                </div>
+                <div class="details">
+                    <h3>Détails par état :</h3>
+                    <ul>
+                        {% for etat, pourcentage in etatPourcentages %}
+                            <li>{{ etat }} : {{ pourcentage }}%</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+
         </div>
+    </div>
+</div>
 
-        <!-- Conteneur des résultats -->
-        <div id="materielsContainer">
-            <!-- Packs Grid -->
-            <div class="row g-4">
-                {% for materiel in materiels %}
-                    <div class="col-xl-4 col-lg-6 col-md-6">
-                        <a href="{{ path('app_materiels_show', {'id': materiel.idMat}) }}" class="text-decoration-none text-dark">
-                            <div class="card pack-card h-100">
-                                <div class="card-body">
-                                    <div class="pack-image-wrapper mb-3">
-                                        <img src="{{ asset('uploads/materiels/' ~ materiel.photoMat|default('default.jpg')) }}" 
-                                             class="pack-image" 
-                                             alt="{{ materiel.nomMat }}">
-                                    </div>
-                                    <div class="pack-content">
-                                        <h5 class="pack-title mb-1">{{ materiel.nomMat }}</h5>
-                                        <p class="pack-description mb-3">
-                                            {{ materiel.descriptionMat|default('No description available.')|slice(0, 100) }}...
-                                        </p>
-                                        <div class="pack-details">
-                                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                                <h6 class="mb-0">Prix</h6>
-                                                <h6 class="mb-0 text-primary">
-                                                    {{ materiel.prixMat|number_format(2, '.', ',') }} TND
-                                                </h6>
-                                            </div>
-                                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                                <h6 class="mb-0">Quantité</h6>
-                                                <span>{{ materiel.quantiteMat }} unités</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                {% endfor %}
-            </div> <!-- Fin .row -->
-        </div> <!-- Fin #materielsContainer -->
-    </div> <!-- Fin .container-xxl -->
-</div> <!-- Fin .content-wrapper -->
 
-      
+
+<style>
+    .statistics-container {
+        display: flex;
+        flex-direction: column;
+        gap: 50px;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .stat-card {
+        background: #ffffff;
+        border-radius: 15px;
+        box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
+        padding: 30px;
+        transition: transform 0.3s ease;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+    }
+
+    h2 {
+        text-align: center;
+        margin-bottom: 30px;
+        color: #34495e;
+        font-size: 24px;
+    }
+
+    .chart-container {
+        width: 50%;
+        margin: 0 auto;
+    }
+
+    .details {
+        width: 60%;
+        margin: 30px auto 0;
+    }
+
+    .details h3 {
+        font-size: 20px;
+        margin-bottom: 15px;
+        color: #2c3e50;
+        text-align: center;
+    }
+
+    .details ul {
+        list-style: none;
+        padding: 0;
+    }
+
+    .details li {
+        background: #ecf0f1;
+        margin-bottom: 8px;
+        padding: 10px 15px;
+        border-radius: 8px;
+        font-size: 16px;
+        color: #2c3e50;
+    }
+</style>
+
+
+
+
+
 
 
 
                           <!-- Action Buttons -->
-                         <div class="action-buttons mt-4">
-    <button type="button" class="btn btn-primary me-2" onclick="window.location.href='{{ path('statistique_materiels') }}'">
-        <i class="ti ti-eye me-1"></i> Voir les statistiques
-    </button>
-</div>
+                          
                         </div>
                       </div>
                     </div>
@@ -875,102 +924,144 @@
 <!-- Main JS -->
 <script src="{{ asset('/js/main.js') }}"></script>
 <script src="{{ asset('/js/dashboards-analytics.js') }}"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const searchInput = document.getElementById('materielSearch');
-    const materielsContainer = document.getElementById('materielsContainer');
-    
-    let timeout = null; // Pour éviter trop de requêtes à chaque frappe
-
-    function performSearch() {
-        const searchTerm = searchInput.value.trim();
-        
-        fetch(`{{ path('app_materielss') }}?q=${encodeURIComponent(searchTerm)}`, {
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
+    // Chart pour les matériels
+    const materielCtx = document.getElementById('materielChart').getContext('2d');
+    new Chart(materielCtx, {
+        type: 'doughnut',
+        data: {
+            labels: {{ materiels|json_encode|raw }},
+            datasets: [{
+                label: 'Pourcentage des réservations',
+                data: {{ pourcentages|json_encode|raw }},
+                backgroundColor: [
+                    '#3498db', '#2ecc71', '#e74c3c', '#f39c12', '#9b59b6', '#1abc9c', '#34495e'
+                ],
+                borderColor: '#ffffff',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                },
+                datalabels: {
+                    color: '#fff',
+                    formatter: (value) => value + '%',
+                    font: {
+                        weight: 'bold',
+                        size: 14
+                    }
+                }
             }
-        })
-        .then(response => response.text())
-        .then(html => {
-            materielsContainer.innerHTML = html;
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            materielsContainer.innerHTML = `
-                <div class="col-12">
-                    <div class="alert alert-danger">Une erreur s'est produite lors de la recherche.</div>
-                </div>
-            `;
-        });
-    }
-    
-    searchInput.addEventListener('input', function() {
-        clearTimeout(timeout);
-        timeout = setTimeout(performSearch, 300); // attendre 300ms après la dernière frappe
-    });
-});
-</script>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const searchInput = document.getElementById('materielSearch');
-    const sortFieldSelect = document.getElementById('sortField');
-    const sortDirectionSelect = document.getElementById('sortDirection');
-    const materielsContainer = document.getElementById('materielsContainer');
-
-    let timeout = null;
-
-    function loadMateriels() {
-        const searchTerm = searchInput.value.trim();
-        const sortField = sortFieldSelect.value;
-        const sortDirection = sortDirectionSelect.value;
-
-        const url = new URL(window.location.href);
-        const params = new URLSearchParams();
-        
-        if (searchTerm) params.append('q', searchTerm);
-        params.append('sort', sortField);
-        params.append('direction', sortDirection);
-
-        fetch(url.pathname + '?' + params.toString(), {
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            }
-        })
-        .then(response => response.text())
-        .then(html => {
-            materielsContainer.innerHTML = html;
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            materielsContainer.innerHTML = `
-                <div class="col-12">
-                    <div class="alert alert-danger">Une erreur s'est produite lors du chargement.</div>
-                </div>
-            `;
-        });
-    }
-
-    // Recherche dynamique
-    searchInput.addEventListener('input', function() {
-        clearTimeout(timeout);
-        timeout = setTimeout(loadMateriels, 300); // attend 300ms après la dernière frappe
+        },
+        plugins: [ChartDataLabels]
     });
 
-    // Tri dynamique
-    sortFieldSelect.addEventListener('change', loadMateriels);
-    sortDirectionSelect.addEventListener('change', loadMateriels);
+    // Chart pour les mois
+    const moisCtx = document.getElementById('moisChart').getContext('2d');
+    
+    // Prepare data for months chart
+    const moisLabels = {{ moisPourcentages|keys|json_encode|raw }};
+    const moisData = Object.values({{ moisPourcentages|json_encode|raw }});
+    
+    new Chart(moisCtx, {
+        type: 'bar',
+        data: {
+            labels: moisLabels,
+            datasets: [{
+                label: 'Pourcentage des réservations',
+                data: moisData,
+                backgroundColor: '#3498db',
+                borderColor: '#2980b9',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Pourcentage (%)'
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Mois'
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                },
+                datalabels: {
+                    anchor: 'end',
+                    align: 'top',
+                    formatter: (value) => value + '%',
+                    font: {
+                        weight: 'bold'
+                    }
+                }
+            }
+        },
+        plugins: [ChartDataLabels]
+    });
+    // Chart pour les états
+const etatCtx = document.getElementById('etatChart').getContext('2d');
+
+// Prepare data for etat chart
+const etatLabels = {{ etatPourcentages|keys|json_encode|raw }};
+const etatData = Object.values({{ etatPourcentages|json_encode|raw }});
+
+new Chart(etatCtx, {
+    type: 'pie',
+    data: {
+        labels: etatLabels,
+        datasets: [{
+            label: 'Réservations par état',
+            data: etatData,
+            backgroundColor: [
+                'rgb(75, 192, 192)',   // Confirmée
+                'rgb(255, 205, 86)',   // Non Confirmée
+                'rgb(255, 99, 132)'    // Annulée
+            ],
+            borderColor: '#fff',
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'bottom'
+            },
+            datalabels: {
+                color: '#fff',
+                formatter: (value) => value + '%',
+                font: {
+                    weight: 'bold',
+                    size: 14
+                }
+            }
+        }
+    },
+    plugins: [ChartDataLabels]
 });
+
 </script>
 
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    if (typeof Menu !== 'undefined') {
-      Menu.init();
-    }
-  });
-</script>
+
+
+
+
 
   </body>
 </html>

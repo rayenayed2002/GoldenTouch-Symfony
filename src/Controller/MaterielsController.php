@@ -6,6 +6,8 @@ use App\Entity\Materielle;  // <-- Add this line
 use App\Repository\MaterielleRepository;
 use App\Repository\EventRepository;
 use App\Repository\ReservMatRepository;
+use App\Entity\Categorie;  // <-- Add this line
+use App\Repository\CategorieRepository;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,6 +25,7 @@ use Dompdf\Dompdf;
 use Dompdf\Options;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Component\HttpClient\HttpClient;
+use Knp\Component\Pager\PaginatorInterface;
 
 final class MaterielsController extends AbstractController
 {
@@ -259,42 +262,61 @@ public function sort(Request $request, MaterielleRepository $repo): Response
     ]);
 }
 #[Route('/liste/Mat', name: 'app_materiels_index')]
-public function liste(Request $request, MaterielleRepository $materielleRepository): Response
+public function liste(Request $request, MaterielleRepository $materielleRepository, PaginatorInterface $paginator, CategorieRepository $categorieRepository): Response
 {
     $orderBy = $request->query->get('orderby', 'default');
     $searchTerm = $request->query->get('search', '');
-    
-    // Construction de la requête
+    $categorieId = $request->query->get('categorie'); // 🔥 On récupère la catégorie choisie
+
     $qb = $materielleRepository->createQueryBuilder('m');
-    
-    // Ajout de la condition de recherche si terme présent
+
     if (!empty($searchTerm)) {
-        $qb->where('m.nom_mat LIKE :searchTerm OR m.description_mat LIKE :searchTerm')
+        $qb->andWhere('m.nom_mat LIKE :searchTerm OR m.description_mat LIKE :searchTerm')
            ->setParameter('searchTerm', '%'.$searchTerm.'%');
     }
-    
-    // Application du tri
+
+    if ($categorieId) {
+        $qb->andWhere('m.categorie = :categorie')
+           ->setParameter('categorie', $categorieId);
+    }
+
     switch ($orderBy) {
         case 'price_asc': $qb->orderBy('m.prix_mat', 'ASC'); break;
         case 'price_desc': $qb->orderBy('m.prix_mat', 'DESC'); break;
         case 'name': $qb->orderBy('m.nom_mat', 'ASC'); break;
         case 'quantity': $qb->orderBy('m.quantite_mat', 'DESC'); break;
     }
-    
-    $materiels = $qb->getQuery()->getResult();
-    
-    // Réponse pour AJAX
+
+    $minPrice = $request->query->get('minPrice');
+    $maxPrice = $request->query->get('maxPrice');
+
+    if ($minPrice !== null && $maxPrice !== null) {
+        $qb->andWhere('m.prix_mat BETWEEN :minPrice AND :maxPrice')
+           ->setParameter('minPrice', $minPrice)
+           ->setParameter('maxPrice', $maxPrice);
+    }
+
+    $materiels = $paginator->paginate(
+        $qb,
+        $request->query->getInt('page', 1),
+        6
+    );
+
+    $categories = $categorieRepository->findAll();
+
     if ($request->isXmlHttpRequest()) {
         return $this->render('materiels/_materiels_list.html.twig', [
             'materiels' => $materiels
         ]);
     }
-    
-    // Réponse normale
+
     return $this->render('materiels/listeMat.html.twig', [
         'materiels' => $materiels,
+        'categories' => $categories,
     ]);
 }
+
+
 #[Route('/materiels/{id}', name: 'app_materiels_show_Details', methods: ['GET'])]
 public function showDetails(Materielle $materielle, EventRepository $eventRepository, ReservMatRepository $reservMatRepo): Response
 {

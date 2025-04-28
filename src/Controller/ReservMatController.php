@@ -5,6 +5,8 @@ namespace App\Controller;
 use App\Entity\ReservMat;
 use App\Entity\Materielle;
 use App\Entity\Event;
+use App\Entity\Categorie;  // <-- Add this line
+use App\Repository\CategorieRepository;
 use App\Entity\Utilisateur;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -20,6 +22,8 @@ use Endroid\QrCode\Encoding\Encoding;
 use Endroid\QrCode\ErrorCorrectionLevel; // Seul import nécessaire pour la correction d'erreur
 use Endroid\QrCode\RoundBlockSizeMode;    // Import pour le mode de bloc
 use Endroid\QrCode\Writer\PngWriter;
+use Knp\Component\Pager\PaginatorInterface;
+
 final class ReservMatController extends AbstractController
 {
     #[Route('/reservations', name: 'app_reservations')]
@@ -52,18 +56,25 @@ final class ReservMatController extends AbstractController
         ]);
     }
     #[Route('/mes-reservations', name: 'app_mes_reservations')]
-    public function mesReservations(Request $request, ReservMatRepository $reservMatRepository): Response
+    public function mesReservations(Request $request, ReservMatRepository $reservMatRepository, CategorieRepository $categorieRepository, PaginatorInterface $paginator): Response
     {
         $userId = 19; // À remplacer par l'ID de l'utilisateur connecté
-        
+    
         $orderBy = $request->query->get('orderby', 'r.id_reserv');
-        
+        $categorieId = $request->query->get('categorie'); // récupère la catégorie sélectionnée
+    
         $queryBuilder = $reservMatRepository->createQueryBuilder('r')
             ->leftJoin('r.materielle', 'm')
             ->leftJoin('r.event', 'e')
             ->where('r.utilisateur = :userId')
             ->setParameter('userId', $userId)
             ->addSelect('m', 'e');
+    
+        // Appliquer filtre catégorie AVANT la pagination
+        if ($categorieId) {
+            $queryBuilder->andWhere('m.categorie = :categorieId')
+                         ->setParameter('categorieId', $categorieId);
+        }
     
         switch ($orderBy) {
             case 'price_asc':
@@ -82,18 +93,20 @@ final class ReservMatController extends AbstractController
                 $queryBuilder->orderBy('r.id_reserv', 'DESC');
         }
     
-        $reservations = $queryBuilder->getQuery()->getResult();
+        $reservations = $paginator->paginate(
+            $queryBuilder,
+            $request->query->getInt('page', 1),
+            6
+        );
     
-        if ($request->isXmlHttpRequest()) {
-            return $this->render('materiels/_reservations_list.html.twig', [
-                'reservations' => $reservations
-            ]);
-        }
+        $categories = $categorieRepository->findAll();
     
         return $this->render('materiels/mes_reservations.html.twig', [
-            'reservations' => $reservations
+            'reservations' => $reservations,
+            'categories' => $categories,
         ]);
     }
+    
     #[Route('/reserv/mat/new', name: 'app_reserv_mat_new', methods: ['POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager, ParameterBagInterface $params): Response
     {
@@ -359,6 +372,75 @@ service.goldentouch1@gmail.com')
     $this->addFlash('warning', 'La réservation a été annulée et un email a été envoyé.');
     return $this->redirectToRoute('app_mes_reservations');
 }
+#[Route('/statistique/materiels', name: 'statistique_materiels')]
+public function statistiques(ReservMatRepository $reservMatRepository): Response
+{
+    // Statistiques par matériel
+    $reservationsByMateriel = $reservMatRepository->countReservationsByMateriel();
+    
+    $materiels = [];
+    $nombreReservations = [];
+    $totalMateriel = array_sum(array_column($reservationsByMateriel, 'count'));
 
+    foreach ($reservationsByMateriel as $reservation) {
+        $materiels[] = $reservation['nom_mat'];
+        $nombreReservations[] = round(($reservation['count'] / $totalMateriel) * 100, 2);
+    }
 
+    // Statistiques par mois
+    $reservations = $reservMatRepository->findAll();
+    $moisCounts = [];
+
+    foreach ($reservations as $reservation) {
+        $event = $reservation->getEvent();
+        if ($event && $event->getDate()) {
+            $mois = $event->getDate()->format('Y-m');
+            if (!isset($moisCounts[$mois])) {
+                $moisCounts[$mois] = 0;
+            }
+            $moisCounts[$mois]++;
+        }
+    }
+
+    $totalReservations = array_sum($moisCounts);
+    $moisPourcentages = [];
+    
+    foreach ($moisCounts as $mois => $count) {
+        $moisPourcentages[$mois] = round(($count / $totalReservations) * 100, 2);
+    }
+
+    arsort($moisPourcentages);
+    // Ajout pour statistiques des réservations par état
+$etatCounts = [
+    'Confirmée' => 0,
+    'Non Confirmée' => 0,
+    'Annulée' => 0,
+];
+
+foreach ($reservations as $reservation) {
+    $etat = $reservation->getStatut(); // Supposons que getEtat() renvoie un string ou un code
+    if ($etat === 'confirmée') {
+        $etatCounts['Confirmée']++;
+    } elseif ($etat === 'non confirmé') {
+        $etatCounts['Non Confirmée']++;
+    } elseif ($etat === 'annulée') {
+        $etatCounts['Annulée']++;
+    }
+}
+
+// Calcul du total des réservations pourcentage état
+$totalEtat = array_sum($etatCounts);
+$etatPourcentages = [];
+foreach ($etatCounts as $etat => $count) {
+    $etatPourcentages[$etat] = ($totalEtat > 0) ? round(($count / $totalEtat) * 100, 2) : 0;
+}
+
+    return $this->render('materiels/reservation_stats.html.twig', [
+        'materiels' => $materiels,
+        'pourcentages' => $nombreReservations,
+        'moisPourcentages' => $moisPourcentages,
+        'etatPourcentages' => $etatPourcentages, // <-- ajout ici
+
+    ]);
+}
 }
