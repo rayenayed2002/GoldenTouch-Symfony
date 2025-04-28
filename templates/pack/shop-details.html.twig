@@ -177,7 +177,7 @@
                         {% else %}
                             {% for avis in avis %}
                                 <li class="woocommerce-mini-cart-item mini_cart_item">
-                                    <span class="comment-author">{{ avis.utilisateur }}</span>
+                                    <span class="comment-author">{{ avis.user.getFullName() }}</span>
                                     <span class="comment-date">{{ avis.dateCreation|date('d F, Y') }}</span>
                                     <span class="comment-rating">Rated {{ avis.note }} out of 5</span>
                                     <p class="comment-text">{{ avis.commentaire }}</p>
@@ -348,18 +348,18 @@
                         <li class="review th-comment-item">
                             <div class="th-post-comment">
                                 <div class="comment-avater">
-                                    {% if avis.utilisateur is not null %}
-                                        {% if avis.utilisateur.avatar is defined and avis.utilisateur.avatar %}
-                                        <div class="avatar-cool position-relative">
-                                            <img src="{{ asset('uploads/users/' ~ avis.utilisateur.avatar) }}" alt="{{ avis.utilisateur.nom }}">
-                                            <span class="status-dot"></span>
-                                        </div>
-                                    {% else %}
-                                        <div class="avatar-cool position-relative">
-                                            <img src="https://ui-avatars.com/api/?name={{ (avis.utilisateur.nom ~ ' ' ~ avis.utilisateur.prenom)|url_encode }}&background=4e73df&color=fff&size=64&rounded=true&bold=true" alt="{{ avis.utilisateur.nom }} {{ avis.utilisateur.prenom }}">
-                                            <span class="status-dot"></span>
-                                        </div>
-                                    {% endif %}
+                                    {% if avis.user is not null %}
+                                        {% if avis.user.client is defined and avis.user.client == 'CA' %}
+                                            <div class="avatar-cool position-relative">
+                                                <img src="https://ui-avatars.com/api/?name=CA&background=4e73df&color=fff&size=64&rounded=true&bold=true" alt="CA">
+                                                <span class="status-dot"></span>
+                                            </div>
+                                        {% else %}
+                                            <div class="avatar-cool position-relative">
+                                                <img src="https://ui-avatars.com/api/?name={{ (avis.user.getLastName() ~ ' ' ~ avis.user.getFirstName())|url_encode }}&background=4e73df&color=fff&size=64&rounded=true&bold=true" alt="{{ avis.user.getLastName() }} {{ avis.user.getFirstName() }}">
+                                                <span class="status-dot"></span>
+                                            </div>
+                                        {% endif %}
                                     {% else %}
                                         <div class="avatar-cool position-relative">
                                             <img src="{{ asset('Front/img/blog/comment-author-1.jpg') }}" alt="Utilisateur Supprimé">
@@ -369,8 +369,8 @@
                                 </div>
                                 <div class="comment-content">
                                     <h4 class="name">
-                                        {% if avis.utilisateur is not null %}
-                                            {{ avis.utilisateur.nom }} {{ avis.utilisateur.prenom }}
+                                        {% if avis.user is not null %}
+                                            {{ avis.user.getLastName() }} {{ avis.user.getFirstName() }}
                                         {% else %}
                                             Utilisateur Supprimé
                                         {% endif %}

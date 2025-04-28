@@ -29,37 +29,35 @@ class NotificationsAdmin
         return $this;
     }
 
-    #[ORM\ManyToOne(targetEntity: Utilisateur::class, inversedBy: 'notificationsAdmins')]
-    #[ORM\JoinColumn(name: 'admin_id', referencedColumnName: 'id')]
-    private ?Utilisateur $admin = null;
+    #[ORM\ManyToOne(targetEntity: User::class)]
+#[ORM\JoinColumn(name: 'admin_id', referencedColumnName: 'id')]
+private ?User $admin = null;
 
-    public function getAdmin(): ?Utilisateur
-    {
-        return $this->admin;
-    }
+public function getAdmin(): ?User
+{
+    return $this->admin;
+}
 
-    public function setAdmin(?Utilisateur $admin): static
-    {
-        $this->admin = $admin;
+public function setAdmin(?User $admin): static
+{
+    $this->admin = $admin;
+    return $this;
+}
 
-        return $this;
-    }
+#[ORM\ManyToOne(targetEntity: User::class)]
+#[ORM\JoinColumn(name: 'utilisateur_id', referencedColumnName: 'id')]
+private ?User $user = null;
 
-    #[ORM\ManyToOne(targetEntity: Utilisateur::class, inversedBy: 'notificationsAdmins')]
-    #[ORM\JoinColumn(name: 'utilisateur_id', referencedColumnName: 'id')]
-    private ?Utilisateur $utilisateur = null;
+public function getUser(): ?User
+{
+    return $this->user;
+}
 
-    public function getUtilisateur(): ?Utilisateur
-    {
-        return $this->utilisateur;
-    }
-
-    public function setUtilisateur(?Utilisateur $utilisateur): static
-    {
-        $this->utilisateur = $utilisateur;
-
-        return $this;
-    }
+public function setUser(?User $user): static
+{
+    $this->user = $user;
+    return $this;
+}
 
     #[ORM\ManyToOne(targetEntity: DemandePack::class, inversedBy: 'notificationsAdmins')]
     #[ORM\JoinColumn(name: 'demande_pack_id', referencedColumnName: 'id')]

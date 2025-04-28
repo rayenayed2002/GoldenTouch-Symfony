@@ -32,8 +32,6 @@ class DemandePack
     #[ORM\JoinColumn(name: "utilisateur_id", referencedColumnName: "id", nullable: false)]
     private ?User $user = null;
 
-    #[ORM\Column(name: "utilisateur_id")]
-    private int $userId;
 
     #[ORM\ManyToOne(targetEntity: Event::class)]
     #[ORM\JoinColumn(name: "event_id", referencedColumnName: "id")]
@@ -84,16 +82,6 @@ class DemandePack
         return $this;
     }
 
-    public function getUserId(): int
-    {
-        return $this->userId;
-    }
-
-    public function setUserId(int $userId): self
-    {
-        $this->userId = $userId;
-        return $this;
-    }
 
     public function getPack(): Pack
     {

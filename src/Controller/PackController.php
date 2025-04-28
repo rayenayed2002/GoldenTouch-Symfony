@@ -238,18 +238,8 @@ class PackController extends AbstractController
                     }
                     $demande->setUser($user);
 
-                    // Persist demande
-                    $entityManager->persist($demande);
-                    $entityManager->flush();
-
                     // Create admin notification
-                    $notification = new NotificationsAdmin();
-                    $notification->setAdmin($entityManager->getReference('App\Entity\Utilisateur', 1));
-                    $notification->setUtilisateur($user);
-                    $notification->setDemandePack($demande);
-                    // Toxicity detection and masking for admin notification
                     $userMessage = $formData['message'] ?? 'Aucun message';
-                    // Only use English toxicity detection (translation-based) for masking/admin
                     $toxicityResult = $this->toxicityDetectionService->detect($userMessage);
                     $labelsEn = $toxicityResult['en'] ?? [];
                     $isToxic = false;
@@ -265,6 +255,14 @@ class PackController extends AbstractController
                     } else {
                         $adminMessage = $this->grammarCorrectionService->correct($userMessage) ?: $userMessage;
                     }
+                    $notification = new NotificationsAdmin();
+                    $adminId = $pack->getAdminId();
+                    $adminUser = $entityManager->getRepository(\App\Entity\User::class)->find($adminId);
+                    if ($adminUser) {
+                        $notification->setAdmin($adminUser);
+                    }
+                    $notification->setUser($user);
+                    $notification->setDemandePack($demande);
                     $notification->setMessage(sprintf(
                         "Nouvelle demande de réservation pour le pack %s\nNombre de personnes: %d\nMessage: %s",
                         $pack->getNom(),
@@ -274,6 +272,7 @@ class PackController extends AbstractController
                     $notification->setStatut('NON_LU');
                     $notification->setDateCreation(new \DateTime());
                     
+                    $entityManager->persist($demande);
                     $entityManager->persist($notification);
                     $entityManager->flush();
 

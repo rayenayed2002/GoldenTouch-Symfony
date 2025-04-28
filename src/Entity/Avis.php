@@ -17,7 +17,7 @@ class Avis
     private ?int $id = null;
 
     #[ORM\Column(name: 'id_utilisateur', nullable: true)]
-    private ?int $idUtilisateur = null;
+    private ?int $idUser = null;
 
     #[ORM\Column(name: 'id_pack', nullable: true)]
     private ?int $idPack = null;
@@ -51,9 +51,9 @@ class Avis
     #[ORM\JoinColumn(name: 'id_pack', referencedColumnName: 'id')]
     private ?Pack $pack = null;
 
-    #[ORM\ManyToOne(targetEntity: Utilisateur::class)]
+    #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(name: 'id_utilisateur', referencedColumnName: 'id')]
-    private ?Utilisateur $utilisateur = null;
+    private ?User $user = null;
 
     public function __construct()
     {
@@ -68,12 +68,12 @@ class Avis
 
     public function getIdUtilisateur(): ?int
     {
-        return $this->idUtilisateur;
+        return $this->idUser;
     }
 
-    public function setIdUtilisateur(?int $idUtilisateur): static
+    public function setIdUtilisateur(?int $idUser): static
     {
-        $this->idUtilisateur = $idUtilisateur;
+        $this->idUser = $idUser;
         return $this;
     }
 
@@ -144,14 +144,14 @@ class Avis
     }
 
     
-    public function getUtilisateur(): ?Utilisateur
+    public function getUser(): ?User
     {
-        return $this->utilisateur;
+        return $this->user;
     }
 
-    public function setUtilisateur(?Utilisateur $utilisateur): static
+    public function setUser(?User $user): static
     {
-        $this->utilisateur = $utilisateur;
+        $this->user = $user;
         return $this;
     }
 }
