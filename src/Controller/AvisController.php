@@ -16,6 +16,13 @@ use App\Service\ReviewSentimentService;
 
 class AvisController extends AbstractController
 {
+    private $toxicityDetectionService;
+
+    public function __construct(\App\Service\ToxicityDetectionService $toxicityDetectionService)
+    {
+        $this->toxicityDetectionService = $toxicityDetectionService;
+    }
+
     #[Route('/avis/add/{packId}', name: 'app_avis_add', methods: ['POST'])]
     public function add(
         Request $request,
@@ -58,11 +65,23 @@ class AvisController extends AbstractController
         $avis->setCommentaire($request->request->get('comment'));
         $avis->setDateCreation(new \DateTime());
 
-        // AI Sentiment Analysis via Hugging Face
-        $stars = $reviewSentimentService->analyzeSentiment($avis->getCommentaire() ?? '');
-        $sentiment = $reviewSentimentService->ratingToSentiment($stars);
+        // Server-side toxicity detection (same as booking)
+        $toxicityResult = $this->toxicityDetectionService->detect($avis->getCommentaire() ?? '');
+        $labelsEn = $toxicityResult['en'] ?? [];
+        $isToxic = false;
+        foreach ($labelsEn as $label) {
+            if ($label['label'] === 'toxic' && $label['score'] > 0.5) {
+                $isToxic = true;
+                break;
+            }
+        }
+        if ($isToxic) {
+            $this->addFlash('error', 'Votre commentaire contient des propos inappropriés (toxiques). Veuillez le reformuler.');
+            return $this->redirectToRoute('app_pack_shop_details', ['id' => $packId]);
+        }
+        // AI Sentiment Analysis via Hugging Face (directly from comment)
+        $sentiment = $reviewSentimentService->analyze($avis->getCommentaire() ?? '');
         $avis->setSentiment($sentiment);
-        // Optionally store stars in a separate field if you want
         if ($sentiment === 'negative') {
             $this->addFlash('warning', '⚠️ This review was flagged as negative by AI. Please review it.');
             // Optionally: log or notify admin here

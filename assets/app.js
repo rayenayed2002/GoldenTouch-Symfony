@@ -11,6 +11,6 @@ Chart.defaults.responsive = true;
 Chart.defaults.maintainAspectRatio = false;
 
 // Import Stimulus controllers
-import './controllers/dashboard_controller';
+import './controllers/dashboard_controller.js';
 
 console.log('This log comes from assets/app.js - welcome to AssetMapper! ');

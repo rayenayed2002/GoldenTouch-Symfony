@@ -52,7 +52,7 @@ class EventRepository extends ServiceEntityRepository
                          COUNT(DISTINCT dp.id) as total_sales,
                          SUM(p.prix) as total_revenue,
                          AVG(COALESCE(a.note, 0)) as avg_rating,
-                         COUNT(DISTINCT dp.utilisateur) as unique_customers')
+                         COUNT(DISTINCT dp.user) as unique_customers')
                 ->leftJoin('App\Entity\Pack', 'p', 'WITH', 'p.event = e.id')
                 ->leftJoin('p.demandePacks', 'dp')
                 ->leftJoin('App\Entity\Avis', 'a', 'WITH', 'a.idPack = p.id')

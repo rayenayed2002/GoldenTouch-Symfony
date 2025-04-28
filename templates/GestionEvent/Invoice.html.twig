@@ -134,12 +134,8 @@
                                     <h6 class="mb-3">Facturé à :</h6>
                                     <p class="mb-1">{{ payment.user.getPrenom() }} {{ payment.user.getNom() }}</p>
                                     <p class="mb-1">{{ payment.user.getEmail() }}</p>
-                                    {% if payment.user.getNumTel() %}
-                                    <p class="mb-0">{{ payment.user.getNumTel() }}</p>
-                                    {% endif %}
-                                    {% if payment.user.getAddress() %}
-                                    <p class="mb-0">{{ payment.user.getAddress() }}</p>
-                                    {% endif %}
+                           
+                              
                                 </div>
                                 <div class="col-xl-6 col-md-12 col-sm-7 col-12">
                                     <h6 class="mb-4">Détails du paiement :</h6>

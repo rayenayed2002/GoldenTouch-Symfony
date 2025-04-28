@@ -1,4 +1,13 @@
 {
+    "doctrine/annotations": {
+        "version": "2.0",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "1.10",
+            "ref": "64d8583af5ea57b7afa4aba4b159907f3a148b05"
+        }
+    },
     "doctrine/doctrine-bundle": {
         "version": "2.13",
         "recipe": {
@@ -26,6 +35,9 @@
             "./migrations/.gitignore"
         ]
     },
+    "endroid/qr-code-bundle": {
+        "version": "6.0.0"
+    },
     "google/apiclient": {
         "version": "2.18",
         "recipe": {
@@ -34,6 +46,9 @@
             "version": "2.10",
             "ref": "07a97ec434d43b7903c78069a04c92adb6442e52"
         }
+    },
+    "gregwar/captcha-bundle": {
+        "version": "v2.3.0"
     },
     "knplabs/knp-paginator-bundle": {
         "version": "v6.7.0"
@@ -45,6 +60,27 @@
             "branch": "main",
             "version": "1.5",
             "ref": "c81bdcf4a9d4e7b1959071457f9608631865d381"
+        }
+    },
+    "omines/datatables-bundle": {
+        "version": "0.10",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "main",
+            "version": "0.1",
+            "ref": "467488ddc00aa190c37a4357f226457d4dd6b339"
+        },
+        "files": [
+            "./config/packages/datatables.yaml"
+        ]
+    },
+    "omines/datatables-bundle": {
+        "version": "0.10",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "main",
+            "version": "0.1",
+            "ref": "467488ddc00aa190c37a4357f226457d4dd6b339"
         }
     },
     "phpunit/phpunit": {
@@ -327,6 +363,21 @@
             "./config/packages/web_profiler.yaml",
             "./config/routes/web_profiler.yaml"
         ]
+    },
+    "symfonycasts/reset-password-bundle": {
+        "version": "1.23",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "1.0",
+            "ref": "97c1627c0384534997ae1047b93be517ca16de43"
+        },
+        "files": [
+            "./config/packages/reset_password.yaml"
+        ]
+    },
+    "symfonycasts/verify-email-bundle": {
+        "version": "v1.17.3"
     },
     "tattali/calendar-bundle": {
         "version": "1.3",

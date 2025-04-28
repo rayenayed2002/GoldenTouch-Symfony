@@ -32,7 +32,13 @@
     <link rel="stylesheet" href="{{ asset('vendor/libs/sweetalert2/sweetalert2.css') }}" />
     <link rel="stylesheet" href="{{ asset('vendor/libs/flatpickr/flatpickr.css') }}" />
     <link rel="stylesheet" href="{{ asset('vendor/libs/swiper/swiper.css') }}" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" />
+    <link rel="stylesheet" href="{{ asset('vendor/libs/select2/select2.css') }}" />
+    <link rel="stylesheet" href="{{ asset('vendor/css/pages/cards-advance.css') }}" />
+    <link rel="stylesheet" href="{{ asset('css/glassmorphism.css') }}" />
+    <script src="{{ asset('vendor/js/helpers.js') }}"></script>
+    <script src="{{ asset('vendor/js/template-customizer.js') }}"></script>
+    <script src="{{ asset('js/config.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
     <style>
         :root {
@@ -386,7 +392,7 @@
 <ul class="menu-inner py-1">
   <!-- Packs -->
   <li class="menu-item active">
-    <a href="packs.html" class="menu-link">
+    <a href="{{ path('admin_pack_index') }}" class="menu-link">
       <i class="menu-icon tf-icons ti ti-package"></i>
       <div data-i18n="Packs">Packs</div>
     </a>
@@ -545,136 +551,394 @@
                         </a>
                     </div>
 
+                    <!-- BEGIN: Advanced Statistiques Searchbar (unchanged) -->
                     <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
                         <!-- Search -->
-                        <div class="navbar-nav align-items-center position-relative">
-                            <div class="nav-item navbar-search-wrapper mb-0">
-                                <a class="nav-item nav-link search-toggler d-flex align-items-center px-0" id="openSearchBar" href="javascript:void(0);">
-                                    <i class="ti ti-search ti-md me-2"></i>
-                                    <span class="d-none d-md-inline-block text-muted">Recherche</span>
-                                </a>
-                                <input type="text" id="chartSearchInput" class="form-control ms-2 d-none" placeholder="Rechercher un graphique... (Ctrl+/)" autocomplete="off" style="width: 260px; position: absolute; top: 40px; left: 0; z-index: 1050;" />
-                                <div id="chartSearchResults" class="dropdown-menu show d-none" style="position: absolute; top: 70px; left: 0; width: 260px; z-index: 1060; max-height: 250px; overflow-y: auto;"></div>
-                            </div>
-                        </div>
-                        <style>
-                            #chartSearchResults {
-                                border: 1px solid #d1d5db;
-                                background: #fff;
-                                box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-                                font-size: 1rem;
-                            }
-                            #chartSearchResults .dropdown-item {
-                                padding: 0.5rem 1rem;
-                                cursor: pointer;
-                                color: #333;
-                            }
-                            #chartSearchResults .dropdown-item:hover {
-                                background: #f4f4f4;
-                                color: #7367F0;
-                            }
-                        </style>
-                        <script>
-                            (function() {
+                        <div class="navbar-nav align-items-center">
+                            <div class="navbar-nav align-items-center position-relative">
+                                <div class="nav-item navbar-search-wrapper mb-0">
+                                    <a class="nav-item nav-link search-toggler d-flex align-items-center px-0" id="openSearchBar" href="javascript:void(0);">
+    <i class="ti ti-search ti-md me-2"></i>
+    <span class="d-none d-md-inline-block text-muted">Recherche</span>
+</a>
+<input type="text" id="chartSearchInput" class="form-control ms-2 d-none" placeholder="Rechercher un graphique... (Ctrl+/)" autocomplete="off" style="width: 260px; position: absolute; top: 40px; left: 0; z-index: 1050;" />
+<div id="chartSearchResults" class="dropdown-menu show d-none" style="position: absolute; top: 70px; left: 0; width: 260px; z-index: 1060; max-height: 250px; overflow-y: auto;"></div>
+<style>
+#chartSearchResults {
+    border: 1px solid #d1d5db;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    font-size: 1rem;
+}
+#chartSearchResults .dropdown-item {
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    color: #333;
+}
+#chartSearchResults .dropdown-item:hover {
+    background: #f4f4f4;
+    color: #7367F0;
+}
+</style>
+<script>
+(function() {
     // Add highlight style for charts
     const style = document.createElement('style');
     style.innerHTML = `.chart-highlight { box-shadow: 0 0 0 4px #7367F0AA; transition: box-shadow 0.3s; z-index: 10; position: relative; }`;
     document.head.appendChild(style);
-                                const searchToggler = document.getElementById('openSearchBar');
-                                const searchInput = document.getElementById('chartSearchInput');
-                                const resultsBox = document.getElementById('chartSearchResults');
-                                let lastQuery = '';
-
-                                function openSearch() {
-                                    searchInput.classList.remove('d-none');
-                                    searchInput.focus();
-                                    resultsBox.classList.remove('d-none');
-                                    triggerChartSearch();
-                                }
-                                function closeSearch() {
-                                    searchInput.value = '';
-                                    searchInput.classList.add('d-none');
-                                    resultsBox.classList.add('d-none');
-                                    resultsBox.innerHTML = '';
-                                }
-                                function triggerChartSearch() {
-                                    const q = searchInput.value.trim();
-                                    fetch(`/admin/advanced-statistiques/search_charts.php?q=` + encodeURIComponent(q))
-                                        .then(r => r.json())
-                                        .then(data => {
-                                            if (Array.isArray(data.results) && data.results.length > 0) {
-                                                resultsBox.innerHTML = data.results.map(item => {
-    // If it's a dashboard card, attach stat-key for dynamic panel
-    let statKey = '';
-    if (item.id === 'dashboardCardTotalPacks') statKey = 'packs';
-    if (item.id === 'dashboardCardTotalUtilisateurs') statKey = 'users';
-    if (item.id === 'dashboardCardMostSoldPack') statKey = 'mostSoldPack';
-    if (item.id === 'dashboardCardAvgPrice') statKey = 'avgPrice';
-    return `<div class='dropdown-item' data-chart-id='${item.id}'${statKey ? ` data-stat-key='${statKey}'` : ''}>${item.name}</div>`;
-}).join('');
-                                            } else {
-                                                resultsBox.innerHTML = "<div class='dropdown-item text-muted'>Aucun graphique trouvé</div>";
-                                            }
-                                        });
-                                }
-                                searchToggler.addEventListener('click', function(e) {
-                                    e.preventDefault();
-                                    openSearch();
-                                });
-                                document.addEventListener('keydown', function(e) {
-                                    if ((e.ctrlKey || e.metaKey) && e.key === '/') {
-                                        openSearch();
-                                        e.preventDefault();
-                                    } else if (e.key === 'Escape') {
-                                        closeSearch();
-                                    }
-                                });
-                                searchInput.addEventListener('input', function() {
-                                    lastQuery = searchInput.value.trim();
-                                    triggerChartSearch();
-                                });
-                                resultsBox.addEventListener('mousedown', function(e) {
-    if (e.target.classList.contains('dropdown-item')) {
-        searchInput.value = e.target.textContent;
-        resultsBox.innerHTML = '';
+    const searchToggler = document.getElementById('openSearchBar');
+    const searchInput = document.getElementById('chartSearchInput');
+    const resultsBox = document.getElementById('chartSearchResults');
+    let lastQuery = '';
+    function openSearch() {
+        searchInput.classList.remove('d-none');
+        searchInput.focus();
+        resultsBox.classList.remove('d-none');
+        triggerChartSearch();
+    }
+    function closeSearch() {
+        searchInput.value = '';
+        searchInput.classList.add('d-none');
         resultsBox.classList.add('d-none');
-        // Scroll to chart and highlight
-        const chartId = e.target.getAttribute('data-chart-id');
-        const statKey = e.target.getAttribute('data-stat-key');
-        if (statKey) {
-            // For dynamic stat panels (cards)
-            renderStatPanel(statKey);
-            setTimeout(() => {
-                const panelElem = document.getElementById('dynamicStatPanel');
-                if (panelElem) {
-                    panelElem.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    panelElem.classList.add('chart-highlight');
-                    setTimeout(() => panelElem.classList.remove('chart-highlight'), 1500);
+        resultsBox.innerHTML = '';
+    }
+    function triggerChartSearch() {
+        const q = searchInput.value.trim();
+        fetch(`/admin/advanced-statistiques/search_charts.php?q=` + encodeURIComponent(q))
+            .then(r => r.json())
+            .then(data => {
+                if (Array.isArray(data.results) && data.results.length > 0) {
+                    resultsBox.innerHTML = data.results.map(item => {
+                        let statKey = '';
+                        if (item.id === 'dashboardCardTotalPacks') statKey = 'packs';
+                        if (item.id === 'dashboardCardTotalUtilisateurs') statKey = 'users';
+                        if (item.id === 'dashboardCardMostSoldPack') statKey = 'mostSoldPack';
+                        if (item.id === 'dashboardCardAvgPrice') statKey = 'avgPrice';
+                        return `<div class='dropdown-item' data-chart-id='${item.id}'${statKey ? ` data-stat-key='${statKey}'` : ''}>${item.name}</div>`;
+                    }).join('');
+                } else {
+                    resultsBox.innerHTML = "<div class='dropdown-item text-muted'>Aucun graphique trouvé</div>";
                 }
-            }, 350); // allow panel to render
-        } else if (chartId) {
-            const chartElem = document.getElementById(chartId);
-            if (chartElem) {
-                chartElem.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                chartElem.classList.add('chart-highlight');
-                setTimeout(() => chartElem.classList.remove('chart-highlight'), 1500);
+                resultsBox.classList.remove('d-none');
+            });
+    }
+    searchToggler.addEventListener('click', openSearch);
+    document.addEventListener('keydown', function(e) {
+        if ((e.ctrlKey && e.key === '/') || (e.ctrlKey && e.key === '÷')) {
+            openSearch();
+            e.preventDefault();
+        } else if (e.key === 'Escape') {
+            closeSearch();
+        }
+    });
+    searchInput.addEventListener('input', function() {
+        lastQuery = searchInput.value.trim();
+        triggerChartSearch();
+    });
+    resultsBox.addEventListener('mousedown', function(e) {
+        if (e.target.classList.contains('dropdown-item')) {
+            searchInput.value = e.target.textContent;
+            resultsBox.innerHTML = '';
+            resultsBox.classList.add('d-none');
+            // Scroll to chart and highlight
+            const chartId = e.target.getAttribute('data-chart-id');
+            const statKey = e.target.getAttribute('data-stat-key');
+            if (statKey) {
+                // For dynamic stat panels (cards)
+                renderStatPanel(statKey);
+                setTimeout(() => {
+                    const panelElem = document.getElementById('dynamicStatPanel');
+                    if (panelElem) {
+                        panelElem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        panelElem.classList.add('chart-highlight');
+                        setTimeout(() => panelElem.classList.remove('chart-highlight'), 1500);
+                    }
+                }, 350); // allow panel to render
+            } else if (chartId) {
+                const chartElem = document.getElementById(chartId);
+                if (chartElem) {
+                    chartElem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    chartElem.classList.add('chart-highlight');
+                    setTimeout(() => chartElem.classList.remove('chart-highlight'), 1500);
+                }
             }
         }
+    });
+})();
+</script>
+</a>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                        <script>
+document.addEventListener('DOMContentLoaded', function() {
+  const trigger = document.getElementById('admin-notification-search-bar-trigger');
+  const dropdown = document.getElementById('admin-notification-search-dropdown');
+  const input = document.getElementById('admin-notification-search-input-navbar');
+  const form = document.getElementById('demande-pack-search-form');
+  let isOpen = false;
+  let debounceTimer = null;
+  // Initialize flatpickr for date inputs
+  if (typeof flatpickr !== 'undefined') {
+    document.querySelectorAll('.flatpickr-date').forEach(elem => {
+      flatpickr(elem, {
+        dateFormat: "Y-m-d",
+        allowInput: true
+      });
+    });
+  }
+  function openDropdown() {
+    dropdown.style.display = 'block';
+    setTimeout(() => { input && input.focus(); }, 50);
+    isOpen = true;
+  }
+  function closeDropdown() {
+    dropdown.style.display = 'none';
+    isOpen = false;
+  }
+
+  function performSearch() {
+    const formData = new FormData(form);
+    const searchParams = new URLSearchParams();
+
+    formData.forEach((value, key) => {
+      if (value) searchParams.append(key, value);
+    });
+
+    const url = form.action + '?' + searchParams.toString();
+
+    fetch(url, {
+      headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(response => response.text())
+    .then(html => {
+      document.getElementById('demande-pack-table-body').innerHTML = html;
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      Swal.fire({
+        title: 'Erreur',
+        text: 'Une erreur est survenue lors de la recherche',
+        icon: 'error'
+      });
+    });
+  }
+
+  // Event Listeners
+  trigger.addEventListener('click', function(e) {
+    e.preventDefault();
+    if (!isOpen) openDropdown();
+    else closeDropdown();
+  });
+
+  document.addEventListener('keydown', function(e) {
+    if ((e.ctrlKey && e.key === '/') || (e.ctrlKey && e.key === '÷')) {
+      openDropdown();
+      e.preventDefault();
     }
-});
-                                document.addEventListener('mousedown', function(e) {
-                                    if (!searchInput.contains(e.target) && !searchToggler.contains(e.target) && !resultsBox.contains(e.target)) {
-                                        closeSearch();
-                                    }
-                                });
-                            })();
+    if (e.key === 'Escape' && isOpen) {
+      closeDropdown();
+    }
+    if (e.key === 'Enter' && isOpen) {
+      performSearch();
+    }
+  });
+
+  document.addEventListener('mousedown', function(e) {
+    if (isOpen && !dropdown.contains(e.target) && !trigger.contains(e.target)) {
+      closeDropdown();
+    }
+  });
+
+  // Handle form inputs
+  form.querySelectorAll('input, select').forEach(element => {
+    element.addEventListener('change', () => {
+      if (debounceTimer) clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(performSearch, 400);
+    });
+  });
+
+  input.addEventListener('input', () => {
+    if (debounceTimer) clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(performSearch, 400);
+  });
+
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    performSearch();
+  });
+})();
                         </script>
                         <!-- /Search -->
+                    <!-- END: Advanced Statistiques Searchbar -->
 
+                        <!-- BEGIN: Customize Pack Navbar Section -->
                         <ul class="navbar-nav flex-row align-items-center ms-auto">
+                            <!-- Language -->
+                            <li class="nav-item dropdown-language dropdown me-2 me-xl-0">
+                                <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
+                                    <i class="fi fi-us fis rounded-circle me-1 fs-3"></i>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li>
+                                        <a class="dropdown-item" href="javascript:void(0);" data-language="fr">
+                                            <i class="fi fi-fr fis rounded-circle me-1 fs-3"></i>
+                                            <span class="align-middle">Français</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="javascript:void(0);" data-language="en">
+                                            <i class="fi fi-us fis rounded-circle me-1 fs-3"></i>
+                                            <span class="align-middle">Anglais</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="javascript:void(0);" data-language="de">
+                                            <i class="fi fi-de fis rounded-circle me-1 fs-3"></i>
+                                            <span class="align-middle">Allemand</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="javascript:void(0);" data-language="pt">
+                                            <i class="fi fi-pt fis rounded-circle me-1 fs-3"></i>
+                                            <span class="align-middle">Portugais</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <!--/ Language -->
+
+                            <!-- Style Switcher -->
+                            <li class="nav-item me-2 me-xl-0">
+                                <a class="nav-link style-switcher-toggle hide-arrow" href="javascript:void(0);">
+                                    <i class="ti ti-md"></i>
+                                </a>
+                            </li>
+                            <!--/ Style Switcher -->
+
+                            <!-- Quick links  -->
+                            <li class="nav-item dropdown-shortcuts navbar-dropdown dropdown me-2 me-xl-0">
+                                <a
+                                    class="nav-link dropdown-toggle hide-arrow"
+                                    href="javascript:void(0);"
+                                    data-bs-toggle="dropdown"
+                                    data-bs-auto-close="outside"
+                                    aria-expanded="false">
+                                    <i class="ti ti-layout-grid-add fs-4"></i>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-end py-0">
+                                    <div class="dropdown-menu-header border-bottom">
+                                        <div class="dropdown-header d-flex align-items-center py-3">
+                                            <h5 class="text-body mb-0 me-auto">Shortcuts</h5>
+                                            <a
+                                                href="javascript:void(0)"
+                                                class="dropdown-shortcuts-add text-body"
+                                                data-bs-toggle="tooltip"
+                                                data-bs-placement="top"
+                                                title="Add shortcuts"
+                                                ><i class="ti ti-sm ti-apps"></i
+                                            ></a>
+                                        </div>
+                                    </div>
+                                    <div class="dropdown-shortcuts-list scrollable-container">
+                                        <div class="row row-bordered overflow-visible g-0">
+                                            <div class="dropdown-shortcuts-item col">
+                                                <span class="dropdown-shortcuts-icon rounded-circle mb-2">
+                                                    <i class="ti ti-shopping-cart fs-4"></i>
+                                                </span>
+                                                <a href="{{ path('admin_advanced_statistiques_demande_packs') }}" class="stretched-link">Liste Demande Pack</a>
+                                                <small class="text-muted mb-0">Liste des demandes de packs</small>
+                                            </div>
+                                            <div class="dropdown-shortcuts-item col">
+                                                <span class="dropdown-shortcuts-icon rounded-circle mb-2">
+                                                    <i class="ti ti-chart-bar fs-4"></i>
+                                                </span>
+                                                <a href="{{ path('admin_advanced_statistiques_index') }}" class="stretched-link">Advanced Statistiques</a>
+                                                <small class="text-muted mb-0">advanced statistiques</small>
+                                            </div>
+                                        </div>
+                                        <div class="row row-bordered overflow-visible g-0">
+                                            <div class="dropdown-shortcuts-item col"></div>
+                                            <div class="dropdown-shortcuts-item col">
+                                                <span class="dropdown-shortcuts-icon rounded-circle mb-2">
+                                                    <i class="ti ti-bell notification-bell-big fs-4"></i>
+                                                </span>
+                                                <a href="{{ path('admin_notifications') }}" class="stretched-link">Notifications</a>
+                                                <small class="text-muted mb-0">Notifications</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            <!-- Quick links -->
+
+                            <!-- Notification -->
+                            <li class="nav-item dropdown-notifications navbar-dropdown dropdown me-3 me-xl-1">
+                                <a
+                                    class="nav-link dropdown-toggle hide-arrow"
+                                    href="javascript:void(0);"
+                                    data-bs-toggle="dropdown"
+                                    data-bs-auto-close="outside"
+                                    aria-expanded="false">
+                                    <i class="ti ti-bell notification-bell-big fs-4"></i>
+                                    <span id="unreadCountBadge" class="badge bg-danger rounded-pill badge-notifications">0</span>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li class="dropdown-menu-header border-bottom">
+                                        <div class="dropdown-header d-flex align-items-center py-3">
+                                            <h5 class="text-body mb-0 me-auto">Notifications</h5>
+                                            <a
+                                                href="javascript:void(0)"
+                                                class="dropdown-notifications-all text-body"
+                                                data-bs-toggle="tooltip"
+                                                data-bs-placement="top"
+                                                title="Marquer tout comme lu"
+                                                ><i class="ti ti-mail-opened fs-4"></i
+                                            ></a>
+                                        </div>
+                                    </li>
+                                    <li class="dropdown-notifications-list scrollable-container" style="max-height: 320px; overflow-y: auto;">
+                                        <ul class="list-group list-group-flush" style="max-height: 320px; overflow-y: auto;">
+                                            {% for notification in latestNotifications|slice(0, 4) %}
+                                                <li class="list-group-item list-group-item-action dropdown-notifications-item p-0">
+                                                    <a href="{{ path('admin_customize_pack_show', {'id': notification.demandePack.id}) }}" class="d-flex align-items-stretch text-decoration-none text-dark w-100 p-3" style="cursor:pointer;">
+                                                        <div class="flex-shrink-0 me-3">
+                                                            <div class="avatar">
+                                                                <span class="avatar-initial rounded-circle bg-label-info"><i class="ti ti-bell notification-bell-big fs-4"></i></span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="flex-grow-1">
+                                                            <h6 class="mb-1">{{ notification.titre|default('Notification') }}</h6>
+                                                            <p class="mb-0" title="{{ notification.message|striptags }}">
+                                                                {{ notification.summary is defined and notification.summary ? notification.summary : notification.message|striptags|length > 80 ? notification.message|striptags|slice(0, 80) ~ '…' : notification.message|striptags }}
+                                                            </p>
+                                                            <small class="text-muted">{{ notification.dateCreation ? notification.dateCreation|date('d/m/Y H:i') : '' }}</small>
+                                                        </div>
+                                                        <div class="flex-shrink-0 dropdown-notifications-actions align-self-center">
+                                                            <span class="badge badge-dot"></span>
+                                                        </div>
+                                                    </a>
+                                                </li>
+                                            {% else %}
+                                                <li class="list-group-item text-center text-muted">No notifications</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </li>
+                                    <li class="dropdown-menu-footer border-top">
+                                        <a
+                                            href="javascript:void(0);"
+                                            class="dropdown-item d-flex justify-content-center text-primary p-2 h-px-40 mb-1 align-items-center">
+                                            View all notifications
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <!--/ Notification -->
+
                             <!-- User -->
                             <li class="nav-item navbar-dropdown dropdown-user dropdown">
-                                <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
+                                <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);">
                                     <div class="avatar avatar-online">
                                         <img src="{{ asset('img/avatars/1.png') }}" alt class="h-auto rounded-circle">
                                     </div>
@@ -714,6 +978,7 @@
                             </li>
                             <!--/ User -->
                         </ul>
+                        <!-- END: Customize Pack Navbar Section -->
                     </div>
                 </nav>
                 <!-- / Navbar -->
@@ -741,13 +1006,18 @@
                                                 <i class="ri-refresh-line"></i>
                                             </button>
                                             <a href="{{ path('admin_advanced_statistiques_demande_packs') }}" class="btn btn-gradient-primary d-flex align-items-center gap-2" style="background: linear-gradient(90deg, #7367F0 0%, #A9B6FF 100%); color: #fff; border: none; box-shadow: 0 4px 12px rgba(115,103,240,0.15); transition: transform 0.2s;">
-    <i class="ri-rocket-2-line"></i> Demander un Pack
+    <i class="ri-rocket-2-line fs-4"></i> Demander un Pack
 </a>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+
+                        <!-- Floating Chart Search Bar -->
+                        <input type="text" id="chartSearchInput" class="form-control ms-2 d-none" placeholder="Rechercher un graphique... (Ctrl+/)" autocomplete="off" style="width: 260px; position: absolute; top: 40px; left: 0; z-index: 1050;" />
+                        <div id="chartSearchResults" class="dropdown-menu show d-none" style="position: absolute; top: 70px; left: 0; width: 260px; z-index: 1060; max-height: 250px; overflow-y: auto;"></div>
+                        <button id="openSearchBar" class="btn btn-outline-primary position-absolute" style="top:40px; left:270px; z-index:1061;">🔍</button>
 
                         <!-- Key Metrics -->
                         <div class="row mb-4">
@@ -916,7 +1186,7 @@
                                             </small>
                                         </div>
                                         <div class="stat-icon">
-                                            <i class="ri-award-line text-warning"></i>
+                                            <i class="ri-award-line text-warning fs-2"></i>
                                         </div>
                                     </div>
                                     <div class="progress mt-3" style="height: 4px;">
@@ -937,7 +1207,7 @@
                                             </small>
                                         </div>
                                         <div class="stat-icon">
-                                            <i class="ri-money-euro-circle-line text-info"></i>
+                                            <i class="ri-money-euro-circle-line text-info fs-2"></i>
                                         </div>
                                     </div>
                                     <div class="progress mt-3" style="height: 4px;">
@@ -978,7 +1248,7 @@
                                             <p class="text-muted mb-0">Distribution par catégorie</p>
                                         </div>
                                         <button class="btn btn-light btn-sm">
-                                            <i class="ri-more-2-fill"></i>
+                                            <i class="ri-more-2-fill fs-4"></i>
                                         </button>
                                     </div>
                                     <div class="chart-container" style="height: 300px;">
@@ -1430,7 +1700,7 @@
                     <footer class="content-footer footer bg-footer-theme">
                         <div class="container-xxl d-flex flex-wrap justify-content-between py-2 flex-md-row flex-column">
                             <div class="mb-2 mb-md-0">
-                                © 2023 Golden Touch
+                                2023 Golden Touch
                             </div>
                         </div>
                     </footer>
@@ -1457,7 +1727,6 @@
     <script src="{{ asset('vendor/js/bootstrap.js') }}"></script>
     <script src="{{ asset('vendor/libs/perfect-scrollbar/perfect-scrollbar.js') }}"></script>
     <script src="{{ asset('vendor/libs/node-waves/node-waves.js') }}"></script>
-    <script src="{{ asset('vendor/libs/hammer/hammer.js') }}"></script>
     <script src="{{ asset('vendor/libs/i18n/i18n.js') }}"></script>
     <script src="{{ asset('vendor/libs/typeahead-js/typeahead.js') }}"></script>
     <script src="{{ asset('vendor/js/menu.js') }}"></script>
@@ -1466,6 +1735,10 @@
     <script src="{{ asset('vendor/libs/apex-charts/apexcharts.js') }}"></script>
     <script src="{{ asset('vendor/libs/swiper/swiper.js') }}"></script>
     <script src="{{ asset('vendor/libs/datatables-bs5/datatables-bootstrap5.js') }}"></script>
+    <script src="{{ asset('vendor/libs/select2/select2.js') }}"></script>
+    <script src="{{ asset('vendor/libs/flatpickr/flatpickr.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
 
@@ -1479,96 +1752,100 @@ function showAdvancedStatDetails(type) {
     packs: {
       title: 'Détails des Packs',
       icon: 'ri-package-line text-primary',
-      data: [
-        { label: "Aujourd'hui", value: '{{ packStats.today|default(0) }}', change: '+{{ packStats.today_growth|default(0) }}%' },
-        { label: 'Cette Semaine', value: '{{ packStats.this_week|default(0) }}', change: '+{{ packStats.week_growth|default(0) }}%' },
-        { label: 'Ce Mois', value: '{{ packStats.this_month|default(0) }}', change: '+{{ packStats.month_growth|default(0) }}%' },
-        { label: 'Cette Année', value: '{{ packStats.this_year|default(0) }}', change: '+{{ packStats.year_growth|default(0) }}%' }
-      ],
-      total: '{{ packStats.total|default(0) }}',
-      trend: {{ packStats.trend|default([0,0,0,0,0,0])|json_encode|raw }}
+      color: 'primary',
+      today: {
+        value: 25,
+        growth: '+15%'
+      },
+      thisWeek: {
+        value: 142,
+        growth: '+22%'
+      },
+      thisMonth: {
+        value: 587,
+        growth: '+12.5%'
+      },
+      thisYear: {
+        value: 2845,
+        growth: '+18.3%'
+      },
+      totalSales: {{ packStats.total_packs }},
+      growthRate: '+{{ packStats.growth_rate }}%'
     },
     users: {
       title: 'Détails des Utilisateurs',
       icon: 'ri-user-line text-success',
-      data: [
-        { label: "Aujourd'hui", value: '{{ userStats.today|default(0) }}', change: '+{{ userStats.today_growth|default(0) }}%' },
-        { label: 'Cette Semaine', value: '{{ userStats.this_week|default(0) }}', change: '+{{ userStats.week_growth|default(0) }}%' },
-        { label: 'Ce Mois', value: '{{ userStats.this_month|default(0) }}', change: '+{{ userStats.month_growth|default(0) }}%' },
-        { label: 'Cette Année', value: '{{ userStats.this_year|default(0) }}', change: '+{{ userStats.year_growth|default(0) }}%' }
-      ],
-      total: '{{ userStats.total_users|default(0) }}',
-      trend: {{ userStats.trend|default([0,0,0,0,0,0])|json_encode|raw }}
+      color: 'success',
+      today: {
+        value: 18,
+        growth: '+10%'
+      },
+      thisWeek: {
+        value: 98,
+        growth: '+15%'
+      },
+      thisMonth: {
+        value: 412,
+        growth: '+8.5%'
+      },
+      thisYear: {
+        value: 1845,
+        growth: '+14.3%'
+      },
+      totalSales: {{ userStats.total_users }},
+      growthRate: '+{{ userStats.growth_rate }}%'
     },
     mostSoldPack: {
-      title: 'Pack le Plus Vendu',
+      title: 'Détails du Pack le Plus Vendu',
       icon: 'ri-award-line text-warning',
-      data: [
-        { label: 'Total Ventes', value: '{{ mostSoldPack.total_sales|default(0) }}', change: '+{{ mostSoldPack.growth_rate|default(0) }}%' },
-        { label: 'Nom', value: '{{ mostSoldPack.name|default("") }}', change: '' },
-        { label: 'Description', value: '{{ mostSoldPack.description|default("") }}', change: '' },
-        { label: 'Catégorie', value: '{{ mostSoldPack.category|default("") }}', change: '' }
-      ],
-      total: '{{ mostSoldPack.total_sales|default(0) }}',
-      trend: {{ mostSoldPack.trend|default([0,0,0,0,0,0])|json_encode|raw }}
+      color: 'warning',
+      today: {
+        value: 8,
+        growth: '+5%'
+      },
+      thisWeek: {
+        value: 45,
+        growth: '+12%'
+      },
+      thisMonth: {
+        value: 187,
+        growth: '+9.5%'
+      },
+      thisYear: {
+        value: 945,
+        growth: '+11.3%'
+      },
+      totalSales: {{ mostSoldPack.total_sales }},
+      growthRate: '+12.5%'
     }
   };
-  const stat = stats[type] || stats['packs'];
-  // Build the panel HTML
-  let panelHtml = `
-    <div class="dashboard-card p-4 mb-4">
-      <div class="d-flex align-items-center mb-3">
-        <i class="${stat.icon} me-2" style="font-size: 2rem;"></i>
-        <h4 class="mb-0">${stat.title}</h4>
-      </div>
-      <div class="row mb-4">
-        ${stat.data.map(item => `
-          <div class="col-sm-6 col-lg-3 mb-3">
-            <div style="background:#f8fafc; border-radius:8px; padding:1rem;">
-              <div class="d-flex align-items-center mb-2">
-                <span style="background:#4a67f0; color:#fff; border-radius:4px; font-size:0.9rem; padding:2px 8px; font-weight:600; margin-right:0.5rem;">${item.label}</span>
-                ${item.change ? `<span style="background:#e7eaff; color:#4a67f0; border-radius:4px; font-size:0.9rem; padding:2px 8px; margin-left:auto; font-weight:600;">${item.change}</span>` : ''}
-              </div>
-              <div style="font-size:2rem; font-weight:700; color:#4a67f0;">${item.value}</div>
-            </div>
-          </div>
-        `).join('')}
-      </div>
-      <div class="chart-container" style="height: 220px;">
-        <canvas id="dynamicStatTrendChart"></canvas>
-      </div>
-    </div>
-  `;
-  document.getElementById('dynamicStatPanel').innerHTML = panelHtml;
-  // Chart
-  if (window.dynamicStatTrendChart) {
-    window.dynamicStatTrendChart.destroy();
-  }
-  const ctx = document.getElementById('dynamicStatTrendChart').getContext('2d');
-  window.dynamicStatTrendChart = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-      datasets: [{
-        label: stat.title,
-        data: stat.trend,
-        borderColor: '#4a67f0',
-        backgroundColor: 'rgba(74,103,240,0.1)',
-        tension: 0.4,
-        fill: true,
-        pointBackgroundColor: '#4a67f0',
-        pointBorderColor: '#fff',
-        pointBorderWidth: 2,
-        pointRadius: 4
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: { x: { grid: { display: false } }, y: { grid: { borderDash: [5, 5] } } }
-    }
-  });
+  
+  // Get the selected stat data
+  const statData = stats[type];
+  
+  // Update modal content with the selected stat data
+  document.getElementById('statDetailsTitle').textContent = statData.title;
+  document.getElementById('statDetailsIcon').className = `${statData.icon} text-${statData.color}`;
+  
+  // Update the detailed statistics
+  document.getElementById('statToday').textContent = statData.today.value;
+  document.getElementById('statTodayGrowth').textContent = statData.today.growth;
+  
+  document.getElementById('statThisWeek').textContent = statData.thisWeek.value;
+  document.getElementById('statThisWeekGrowth').textContent = statData.thisWeek.growth;
+  
+  document.getElementById('statThisMonth').textContent = statData.thisMonth.value;
+  document.getElementById('statThisMonthGrowth').textContent = statData.thisMonth.growth;
+  
+  document.getElementById('statThisYear').textContent = statData.thisYear.value;
+  document.getElementById('statThisYearGrowth').textContent = statData.thisYear.growth;
+  
+  document.getElementById('statTotalSales').textContent = statData.totalSales;
+  document.getElementById('statTotalGrowth').textContent = statData.growthRate;
+  
+  // Show the modal
+  const statDetailsModal = new bootstrap.Modal(document.getElementById('statDetailsModal'));
+  statDetailsModal.show();
 }
 // Show packs panel by default on page load
 window.addEventListener('DOMContentLoaded', function() {
@@ -2451,5 +2728,100 @@ window.addEventListener('DOMContentLoaded', function() {
             </div>
         </div>
     </div>
+<style>
+.chart-highlight { box-shadow: 0 0 0 4px #7367F0AA; transition: box-shadow 0.3s; z-index: 10; position: relative; }
+</style>
+<script>
+(function() {
+    // Add highlight style for charts
+    const style = document.createElement('style');
+    style.innerHTML = `.chart-highlight { box-shadow: 0 0 0 4px #7367F0AA; transition: box-shadow 0.3s; z-index: 10; position: relative; }`;
+    document.head.appendChild(style);
+    const searchToggler = document.getElementById('openSearchBar');
+    const searchInput = document.getElementById('chartSearchInput');
+    const resultsBox = document.getElementById('chartSearchResults');
+    let lastQuery = '';
+    function openSearch() {
+        searchInput.classList.remove('d-none');
+        searchInput.focus();
+        resultsBox.classList.remove('d-none');
+        triggerChartSearch();
+    }
+    function closeSearch() {
+        searchInput.value = '';
+        searchInput.classList.add('d-none');
+        resultsBox.classList.add('d-none');
+        resultsBox.innerHTML = '';
+    }
+    function triggerChartSearch() {
+        const q = searchInput.value.trim();
+        if (!q) {
+            resultsBox.innerHTML = '';
+            resultsBox.classList.add('d-none');
+            return;
+        }
+        fetch(`/admin/advanced-statistiques/search_charts.php?q=` + encodeURIComponent(q))
+            .then(r => r.json())
+            .then(data => {
+                if (Array.isArray(data.results) && data.results.length > 0) {
+                    resultsBox.innerHTML = data.results.map(item => {
+                        // If it's a dashboard card, attach stat-key for dynamic panel
+                        let statKey = '';
+                        if (item.id === 'dashboardCardTotalPacks') statKey = 'packs';
+                        if (item.id === 'dashboardCardTotalUtilisateurs') statKey = 'users';
+                        if (item.id === 'dashboardCardMostSoldPack') statKey = 'mostSoldPack';
+                        if (item.id === 'dashboardCardAvgPrice') statKey = 'avgPrice';
+                        return `<div class='dropdown-item' data-chart-id='${item.id}'${statKey ? ` data-stat-key='${statKey}'` : ''}>${item.name}</div>`;
+                    }).join('');
+                } else {
+                    resultsBox.innerHTML = "<div class='dropdown-item text-muted'>Aucun graphique trouvé</div>";
+                }
+                resultsBox.classList.remove('d-none');
+            });
+    }
+    searchToggler.addEventListener('click', openSearch);
+    document.addEventListener('keydown', function(e) {
+        if ((e.ctrlKey && e.key === '/') || (e.ctrlKey && e.key === '÷')) {
+            openSearch();
+            e.preventDefault();
+        } else if (e.key === 'Escape') {
+            closeSearch();
+        }
+    });
+    searchInput.addEventListener('input', function() {
+        lastQuery = searchInput.value.trim();
+        triggerChartSearch();
+    });
+    resultsBox.addEventListener('mousedown', function(e) {
+        if (e.target.classList.contains('dropdown-item')) {
+            searchInput.value = e.target.textContent;
+            resultsBox.innerHTML = '';
+            resultsBox.classList.add('d-none');
+            // Scroll to chart and highlight
+            const chartId = e.target.getAttribute('data-chart-id');
+            const statKey = e.target.getAttribute('data-stat-key');
+            if (statKey) {
+                // For dynamic stat panels (cards)
+                renderStatPanel(statKey);
+                setTimeout(() => {
+                    const panelElem = document.getElementById('dynamicStatPanel');
+                    if (panelElem) {
+                        panelElem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        panelElem.classList.add('chart-highlight');
+                        setTimeout(() => panelElem.classList.remove('chart-highlight'), 1500);
+                    }
+                }, 350); // allow panel to render
+            } else if (chartId) {
+                const chartElem = document.getElementById(chartId);
+                if (chartElem) {
+                    chartElem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    chartElem.classList.add('chart-highlight');
+                    setTimeout(() => chartElem.classList.remove('chart-highlight'), 1500);
+                }
+            }
+        }
+    });
+})();
+</script>
 </body>
 </html>

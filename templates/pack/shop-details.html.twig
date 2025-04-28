@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>Taxiar - Online Taxi Service HTML Template - Shop Details</title>
+    <title>GoldenTouch - {{ pack.nom }}</title>
     <meta name="author" content="Taxiar">
     <meta name="description" content="Taxiar - Online Taxi Service HTML Template">
     <meta name="keywords" content="Taxiar - Online Taxi Service HTML Template">
@@ -49,6 +49,7 @@
     <link rel="stylesheet" href="{{ asset('Front/css/jquery.datetimepicker.min.css') }}">
     <link rel="stylesheet" href="{{ asset('Front/css/style.css') }}">
     <link rel="stylesheet" href="{{ asset('Front/css/review-validation.css') }}">
+    <link rel="stylesheet" href="{{ asset('Front/css/avatar-cool.css') }}">
 
 </head>
 
@@ -262,111 +263,7 @@
     <!--==============================
  		Header Area
 ==============================-->
-     <header class="th-header header-layout7">
-        <div class="header-top">
-            <div class="container">
-                <div class="row justify-content-center justify-content-md-between align-items-center gy-2">
-                    <div class="col-auto d-none d-md-block">
-                        <div class="header-links">
-                            <ul>
-                                <li><i class="fa-thin fa-envelope"></i><a
-                                        href="mailto:GoldenTouch@gmail.com">GoldenTouch@gmail.com</a>
-                                </li>
-                                <li><i class="fa-thin fa-phone"></i><a href="tel:+468254762443">(+468) 254 762 443</a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="col-auto">
-                        <div class="header-right">
-                            <div class="langauge">
-                                <select class="form-select nice-select">
-                                    <option selected="">English</option>
-                                    <option>Hindi</option>
-                                </select>
-                            </div>
-                            <div class="header-social">
-                                <span class="social-title">Follow Us On:</span>
-                                <a href="https://www.facebook.com/"><i class="fab fa-facebook-f"></i></a>
-                                <a href="https://www.twitter.com/"><i class="fab fa-twitter"></i></a>
-                                <a href="https://www.linkedin.com/"><i class="fab fa-linkedin-in"></i></a>
-                                <a href="https://www.instagram.com/"><i class="fab fa-instagram"></i></a>
-                                <a href="https://www.youtube.com/"><i class="fa-brands fa-youtube"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-<div class="sticky-wrapper">
-    <div class="menu-area">
-        <div class="container">
-            <div class="row align-items-center justify-content-between">
-                <div class="col-auto">
-                    <div class="header-logo">
-<img src="{{ asset('Front/img/logo44.png') }}" alt="GoldenTouch" style="height: 130px;">
-                    </div>
-                </div>
-                <div class="col-auto me-xl-auto">
-                    <nav class="main-menu d-none d-lg-block">
-                        <ul>
-                            <li>
-                                <a href="index.html">Pack</a>
-                            </li>
-                            <li class="menu-item-has-children">
-                                <a href="#">Event Planner</a>
-                                <ul class="sub-menu">
-                                    <li><a href="#">Ajout Event</a></li>
-                                    <li><a href="#">Liste Event</a></li>
-                                </ul>
-                            </li>
-                            <li class="menu-item-has-children">
-                                <a href="#">Materielles</a>
-                                <ul class="sub-menu">
-                                    <li><a href="#">Ajout Materielles</a></li>
-                                    <li><a href="#">Liste Materielles</a></li>
-                                </ul>
-                            </li>
-                            <li class="menu-item-has-children">
-                                <a href="#">Personnel</a>
-                                <ul class="sub-menu">
-                                    <li><a href="#">Ajout Personnel</a></li>
-                                    <li><a href="#">Liste Personnel</a></li>
-                                </ul>
-                            </li>
-                            <li class="menu-item-has-children">
-                                <a href="#">Lieu</a>
-                                <ul class="sub-menu">
-                                    <li><a href="#">Ajout Lieu</a></li>
-                                    <li><a href="#">Liste Lieu</a></li>
-                                </ul>
-                            </li>
-                            <li class="menu-item-has-children">
-                                <a href="#">Autre</a>
-                                <ul class="sub-menu">
-                                    <li><a href="#">Commandes</a></li>
-                                    <li><a href="#">Reclamation</a></li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </nav>
-                    <button class="th-menu-toggle d-inline-block d-lg-none"><i class="far fa-bars"></i></button>
-                </div>
-                <div class="col-auto d-none d-xl-block">
-                    <div class="header-button">
-                        <button type="button" class="icon-btn searchBoxToggler"><i class="far fa-search"></i></button>
-                        <a href="#" class="icon-btn sideMenuToggler2"><i class="fa-regular fa-bag-shopping"></i>
-                            <span class="badge">5</span></a>
-                        <a href="#" class="icon-btn sideMenuToggler"><i class="far fa-bars"></i></a>
-                        <a href="booking.html" class="th-btn">BOOK A TAXI<i class="fa-regular fa-arrow-right ms-2"></i></a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="logo-shape"><img src="{{ asset('Front/img/logo-shape.svg') }}" alt=""></div>
+     {% include 'Front/partials/header.html.twig' %}
     </header>
     <!--==============================
     Breadcumb
@@ -375,8 +272,9 @@
         <div class="container z-index-common">
             <h1 class="breadcumb-title">{{pack.nom}}</h1>
             <ul class="breadcumb-menu">
-                <li><a href="index.html">Home</a></li>
-                <li>Pack</li>
+                <li><a href="{{ path('app_packs') }}">Accueil</a></li>
+                <li><a href="{{ path('app_pack_index') }}">Packs</a></li>
+                <li>{{ pack.nom }}</li>
             </ul>
         </div>
     </div>
@@ -401,7 +299,7 @@
                         <h2 class="product-title">{{pack.nom}}</h2>
                         <div class="product-rating">
                             <div class="star-rating" role="img" aria-label="Rated 5.00 out of 5"><span style="width:100%">Rated <strong class="rating">5.00</strong> out of 5 based on <span class="rating">1</span> customer rating</span></div>
-                            <a href="shop-details.html" class="woocommerce-review-link">(<span class="count">3</span> customer reviews)</a>
+                            <a href="#reviews" class="woocommerce-review-link">(<span class="count">3</span> customer reviews)</a>
                         </div>
                         <p class="text">{{pack.description}}</p>
                         <div class="product-meta">
@@ -452,12 +350,21 @@
                                 <div class="comment-avater">
                                     {% if avis.utilisateur is not null %}
                                         {% if avis.utilisateur.avatar is defined and avis.utilisateur.avatar %}
+                                        <div class="avatar-cool position-relative">
                                             <img src="{{ asset('uploads/users/' ~ avis.utilisateur.avatar) }}" alt="{{ avis.utilisateur.nom }}">
-                                        {% else %}
-                                            <img src="{{ asset('Front/img/blog/comment-author-1.jpg') }}" alt="Default Avatar">
-                                        {% endif %}
+                                            <span class="status-dot"></span>
+                                        </div>
                                     {% else %}
-                                        <img src="{{ asset('Front/img/blog/comment-author-1.jpg') }}" alt="Utilisateur Supprimé">
+                                        <div class="avatar-cool position-relative">
+                                            <img src="https://ui-avatars.com/api/?name={{ (avis.utilisateur.nom ~ ' ' ~ avis.utilisateur.prenom)|url_encode }}&background=4e73df&color=fff&size=64&rounded=true&bold=true" alt="{{ avis.utilisateur.nom }} {{ avis.utilisateur.prenom }}">
+                                            <span class="status-dot"></span>
+                                        </div>
+                                    {% endif %}
+                                    {% else %}
+                                        <div class="avatar-cool position-relative">
+                                            <img src="{{ asset('Front/img/blog/comment-author-1.jpg') }}" alt="Utilisateur Supprimé">
+                                            <span class="status-dot status-dot-offline"></span>
+                                        </div>
                                     {% endif %}
                                 </div>
                                 <div class="comment-content">
@@ -585,29 +492,68 @@
 </script>
 </div>
             <!--==============================
-		Related Product  
-		==============================-->
+        Related Product  
+        ==============================-->
             <div class="space-extra-top mb-30">
                 <div class="title-area text-center">
                    <h2 class="sec-title">Packs similaires</h2>
+                   <p class="sec-text">Découvrez d'autres packs de la même catégorie</p>
                 </div>
                 <div class="row th-carousel" data-slide-show="4" data-lg-slide-show="3" data-md-slide-show="2" data-sm-slide-show="2" data-xs-slide-show="1" data-arrows="true">
-                    {% for pack in similarPacks %}
-                    <div class="col-xl-3 col-lg-4 col-sm-6">
-                        <div class="th-product">
-                            <div class="product-img">
-                                <img src="{{ asset('uploads/packs/' ~ pack.photo) }}" alt="{{ pack.nom }}">
-                                <div class="actions">
-                                    <a href="{{ path('app_pack_shop_details', {'id': pack.id}) }}" class="icon-btn"><i class="far fa-eye"></i></a>
-                                    <a href="{{ path('app_pack_shop_details', {'id': pack.id}) }}" class="icon-btn"><i class="far fa-cart-plus"></i></a>
+                    {% if relatedPacks is not empty %}
+                        {% for relatedPack in relatedPacks %}
+                            <div class="col-xl-3 col-lg-4 col-sm-6">
+                                <div class="th-product">
+                                    <div class="product-img">
+                                        <img src="{{ asset('uploads/packs/' ~ relatedPack.photo|default('default.jpg')) }}" alt="{{ relatedPack.nom }}">
+                                        <div class="actions">
+                                            <a href="{{ path('app_pack_shop_details', {'id': relatedPack.id}) }}" class="icon-btn"><i class="far fa-eye"></i></a>
+                                            <a href="{{ path('app_pack_booking', {'id': relatedPack.id}) }}" class="icon-btn"><i class="far fa-cart-plus"></i></a>
+                                            <a href="#" class="icon-btn"><i class="far fa-heart"></i></a>
+                                        </div>
+                                    </div>
+                                    <div class="product-content">
+                                        <h3 class="product-title"><a href="{{ path('app_pack_shop_details', {'id': relatedPack.id}) }}">{{ relatedPack.nom }}</a></h3>
+                                        <div class="product-meta">
+                                            <span class="price">{{ relatedPack.prix }} TND</span>
+                                            <span class="category">{{ relatedPack.categorie }}</span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="product-content">
-                                <h3 class="product-title"><a href="{{ path('app_pack_shop_details', {'id': pack.id}) }}">{{ pack.nom }}</a></h3>
-                                <span class="price">{{ pack.prix }} TND</span>
-                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="col-12 text-center">
+                            <p>Aucun autre pack dans cette catégorie.</p>
                         </div>
-                    </div>
+                    {% endif %}
+                </div>
+                <div class="row th-carousel" data-slide-show="4" data-lg-slide-show="3" data-md-slide-show="2" data-sm-slide-show="2" data-xs-slide-show="1" data-arrows="true">
+                    {% for similarPack in similarPacks|default([]) %}
+                        {% if similarPack.id != pack.id and similarPack.categorie == pack.categorie %}
+                            <div class="col-xl-3 col-lg-4 col-sm-6">
+                                <div class="th-product">
+                                    <div class="product-img">
+                                        <img src="{{ asset('uploads/packs/' ~ similarPack.photo|default('default.jpg')) }}" alt="{{ similarPack.nom }}">
+                                        <div class="actions">
+                                            <a href="{{ path('app_pack_details', {'id': similarPack.id}) }}" class="icon-btn"><i class="far fa-eye"></i></a>
+                                            <a href="{{ path('app_pack_booking', {'id': similarPack.id}) }}" class="icon-btn"><i class="far fa-calendar-plus"></i></a>
+                                        </div>
+                                    </div>
+                                    <div class="product-content">
+                                        <h3 class="product-title"><a href="{{ path('app_pack_details', {'id': similarPack.id}) }}">{{ similarPack.nom }}</a></h3>
+                                        <div class="product-meta">
+                                            <span class="price">{{ similarPack.prix }} TND</span>
+                                            <span class="category">{{ similarPack.categorie }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <div class="col-12 text-center">
+                            <p>Aucun pack similaire disponible pour le moment.</p>
+                        </div>
                     {% endfor %}
 
                    

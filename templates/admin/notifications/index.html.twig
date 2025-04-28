@@ -298,10 +298,10 @@
 <ul class="menu-inner py-1">
   <!-- Packs -->
   <li class="menu-item active">
-    <a href="packs.html" class="menu-link">
+    <a href="{{ path('admin_pack_index') }}" class="menu-link">
       <i class="menu-icon tf-icons ti ti-package"></i>
       <div data-i18n="Packs">Packs</div>
-    </a>
+    </a>  
   </li>
 
   <!-- Gestion Événements -->
@@ -659,12 +659,13 @@
                       <div class="dropdown-header d-flex align-items-center py-3">
                         <h5 class="text-body mb-0 me-auto">Notifications</h5>
                         <a
-                          href="javascript:void(0)"
-                          class="dropdown-notifications-all text-body"
-                          data-bs-toggle="tooltip"
-                          data-bs-placement="top"
-                          title="Marquer tout comme lu"
-                          ><i class="ti ti-mail-opened fs-4"></i
+                           href="javascript:void(0)"
+                           id="mark-all-notifications-read"
+                           class="dropdown-notifications-all text-body"
+                           data-bs-toggle="tooltip"
+                           data-bs-placement="top"
+                           title="Marquer tout comme lu"
+                           ><i class="ti ti-mail-opened fs-4"></i
                         ></a>
                       </div>
                     </li>
@@ -1053,7 +1054,7 @@
                         <div class="container-xxl">
                             <div class="footer-container d-flex align-items-center justify-content-between py-2 flex-md-row flex-column">
                                 <div>
-                                    © 2023, made with ❤️ by <a href="https://pixinvent.com" target="_blank" class="fw-semibold">Pixinvent</a>
+                                    2023, made with by <a href="https://pixinvent.com" target="_blank" class="fw-semibold">Pixinvent</a>
                                 </div>
                                 <div>
                                     <a href="https://themeforest.net/licenses/standard" class="footer-link me-4" target="_blank">License</a>
@@ -1116,6 +1117,9 @@
                     text: text,
                     icon: 'warning',
                     showCancelButton: true,
+                    
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
                     confirmButtonText: 'Oui',
                     cancelButtonText: 'Non',
                     customClass: {
@@ -1297,5 +1301,36 @@
     });
 </script>
 
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const markAllBtn = document.getElementById('mark-all-notifications-read');
+    if (markAllBtn) {
+        markAllBtn.addEventListener('click', function() {
+            fetch("{{ path('admin_notifications_mark_all_read') }}", {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token('mark_all_notifications') }}'
+                },
+                body: JSON.stringify({})
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.success) {
+                    // Remove unread badge or visually mark all as read
+                    document.querySelectorAll('.badge-dot').forEach(badge => badge.classList.remove('badge-dot'));
+                    // Optionally update unread count to 0
+                    const badges = document.querySelectorAll('#unreadCountBadge, .badge-notifications');
+                    badges.forEach(badge => {
+                        badge.textContent = 0;
+                        badge.style.display = 'none';
+                    });
+                }
+            });
+        });
+    }
+});
+</script>
 </body>
 </html>

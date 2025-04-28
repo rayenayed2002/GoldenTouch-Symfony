@@ -103,115 +103,72 @@
           <ul class="menu-inner py-1">
             <!-- Packs -->
             <li class="menu-item">
-              <a href="packs.html" class="menu-link">
+              <a href="{{ path('admin_pack_index') }}" class="menu-link">
                 <i class="menu-icon tf-icons ti ti-package"></i>
                 <div data-i18n="Packs">Packs</div>
               </a>
             </li>
 
+
             <!-- Gestion Événements -->
             <li class="menu-item">
-              <a href="javascript:void(0);" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons ti ti-calendar-event"></i>
-                <div data-i18n="Gestion Événements">Gestion Événements</div>
+              <a href="{{ path('app_events_admin') }}" class="menu-link">
+                <i class="menu-icon tf-icons ti ti-package"></i>
+                <div data-i18n=" Événements"> Événements</div>
               </a>
-              <ul class="menu-sub">
-                <li class="menu-item">
-                  <a href="ajouter-evenement.html" class="menu-link">
-                    <i class="menu-icon tf-icons ti ti-circle"></i>
-                    <div data-i18n="Ajouter Événement">Ajouter Événement</div>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a href="liste-evenements.html" class="menu-link">
-                    <i class="menu-icon tf-icons ti ti-circle"></i>
-                    <div data-i18n="Liste Événements">Liste Événements</div>
-                  </a>
-                </li>
-              </ul>
             </li>
 
-            <!-- Gestion Matérielle -->
-            <li class="menu-item">
-              <a href="javascript:void(0);" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons ti ti-tools"></i>
-                <div data-i18n="Gestion Matérielle">Gestion Matérielle</div>
-              </a>
-              <ul class="menu-sub">
-                <li class="menu-item">
-                  <a href="ajouter-materiel.html" class="menu-link">
-                    <i class="menu-icon tf-icons ti ti-circle"></i>
-                    <div data-i18n="Ajouter Matériel">Ajouter Matériel</div>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a href="liste-materiel.html" class="menu-link">
-                    <i class="menu-icon tf-icons ti ti-circle"></i>
-                    <div data-i18n="Liste Matériel">Liste Matériel</div>
-                  </a>
-                </li>
-              </ul>
-            </li>
+<!-- Gestion Matérielle -->
+  <li class="menu-item active ">
+    <a href="javascript:void(0);" class="menu-link menu-toggle">
+      <i class="menu-icon tf-icons ti ti-tools"></i>
+      <div data-i18n=" Matérielle">Matérielle</div>
+    </a>
+    <ul class="menu-sub">
+      <li class="menu-item">
+<a href="{{ path('app_materiels_new') }}" class="menu-link">
+          <i class="menu-icon tf-icons ti ti-circle"></i>
+          <div data-i18n="Ajouter Matériel">Ajouter Matériel</div>
+        </a>
+      </li>
+      <li class="menu-item active">
+<a href="{{ path('app_materielss') }}" class="menu-link">
+          <i class="menu-icon tf-icons ti ti-circle"></i>
+          <div data-i18n="Liste Matériel">Liste Matériel</div>
+        </a>
+      </li>
+      <li class="menu-item ">
+<a href="{{ path('app_reservations') }}" class="menu-link">
+          <i class="menu-icon tf-icons ti ti-circle"></i>
+          <div data-i18n="Liste Reservation">Liste Materiels</div>
+        </a>
+      </li>
+    </ul>
+  </li>
 
             <!-- Gestion Lieu -->
-            <li class="menu-item">
-              <a href="javascript:void(0);" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons ti ti-map-pin"></i>
-                <div data-i18n="Gestion Lieu">Gestion Lieu</div>
-              </a>
-              <ul class="menu-sub">
-                <li class="menu-item">
-                  <a href="ajouter-lieu.html" class="menu-link">
-                    <i class="menu-icon tf-icons ti ti-circle"></i>
-                    <div data-i18n="Ajouter Lieu">Ajouter Lieu</div>
+              <li class="menu-item ">
+                 <a href="{{ path('admin_lieu_index') }}" class="menu-link">
+                <i class="menu-icon tf-icons ti ti-package"></i>
+                <div data-i18n="Lieu">Lieu</div>
                   </a>
-                </li>
-                <li class="menu-item">
-                  <a href="liste-lieux.html" class="menu-link">
-                    <i class="menu-icon tf-icons ti ti-circle"></i>
-                    <div data-i18n="Liste Lieux">Liste Lieux</div>
-                  </a>
-                </li>
-              </ul>
-            </li>
+              </li>
 
             <!-- Gestion Personnels -->
-            <li class="menu-item active">
-              <a href="packs.html" class="menu-link">
+              <li class="menu-item active">
+                 <a href="{{ path('app_perso_index') }}" class="menu-link">
                 <i class="menu-icon tf-icons ti ti-package"></i>
                 <div data-i18n="Personnels">Personnels</div>
-              </a>
-            </li>
+                  </a>
+              </li>
 
             <!-- Gestion Commandes -->
-            <li class="menu-item">
-              <a href="javascript:void(0);" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons ti ti-shopping-cart"></i>
-                <div data-i18n="Gestion Commandes">Gestion Commandes</div>
-              </a>
-              <ul class="menu-sub">
-                <li class="menu-item">
-                  <a href="panier.html" class="menu-link">
-                    <i class="menu-icon tf-icons ti ti-circle"></i>
-                    <div data-i18n="Panier">Panier</div>
-                    <div class="badge bg-label-primary rounded-pill ms-auto">3</div>
+              <li class="menu-item ">
+                 <a href="{{ path('app_my_Commandes_admin') }}" class="menu-link">
+                <i class="menu-icon tf-icons ti ti-package"></i>
+                <div data-i18n=" Commandes"> Commandes</div>
                   </a>
-                </li>
-                <li class="menu-item">
-                  <a href="liste-commandes.html" class="menu-link">
-                    <i class="menu-icon tf-icons ti ti-circle"></i>
-                    <div data-i18n="Liste Commandes">Liste Commandes</div>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a href="liste-reclamations.html" class="menu-link">
-                    <i class="menu-icon tf-icons ti ti-circle"></i>
-                    <div data-i18n="Liste Réclamations">Liste Réclamations</div>
-                    <div class="badge bg-label-warning rounded-pill ms-auto">2</div>
-                  </a>
-                </li>
-              </ul>
-            </li>
+              </li>
 
             <!-- Divider -->
             <li class="menu-header small text-uppercase">
@@ -872,7 +829,16 @@
                   {% for personnel in personnels %}
                   <div class="col-xl-4 col-lg-6 col-md-6 animate__animated animate__fadeIn">
                     <div class="card personnel-card h-100">
-
+{% if personnel.idP in topPersonnelIds %}
+        <div class="top-badge">
+            <div class="star-badge">
+                <svg class="star-icon" viewBox="0 0 24 24">
+                    <path fill="currentColor" d="M12,17.27L18.18,21L16.54,13.97L22,9.24L14.81,8.62L12,2L9.19,8.62L2,9.24L7.45,13.97L5.82,21L12,17.27Z" />
+                </svg>
+                <span class="badge-text">TOP</span>
+            </div>
+        </div>
+        {% endif %}
             {% if personnel.idP in topPersonnelIds %}
             <div class="top-badge">
               <div class="star-badge">

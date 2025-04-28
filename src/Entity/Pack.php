@@ -41,8 +41,8 @@ class Pack
     #[Assert\Date(message: 'La date de fin n\'est pas valide')]
     private ?\DateTime $endDate = null;
 
-    #[ORM\ManyToOne(inversedBy: 'packs')]
-    #[ORM\JoinColumn(name: 'event_id', nullable: false)]
+    #[ORM\ManyToOne(targetEntity: Event::class, inversedBy: 'packs')]
+    #[ORM\JoinColumn(name: 'event_id', referencedColumnName: 'id', nullable: false)]
     #[Assert\NotNull(message: 'L\'événement ne peut pas être vide')]
     private ?Event $event = null;
 

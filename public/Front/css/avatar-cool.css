@@ -1,0 +1,45 @@
+.avatar-cool {
+    display: inline-block;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid #4e73df;
+    box-shadow: 0 2px 8px rgba(78,115,223,0.18);
+    width: 64px;
+    height: 64px;
+    position: relative;
+    background: #fff;
+    animation: avatarFadeIn 0.5s;
+}
+.avatar-cool img {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    display: block;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: none;
+    opacity: 0;
+    animation: avatarFadeIn 0.5s forwards;
+}
+.avatar-cool img:hover {
+    transform: scale(1.07) rotate(-2deg);
+    box-shadow: 0 4px 16px rgba(78,115,223,0.23);
+}
+@keyframes avatarFadeIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+}
+.status-dot {
+    position: absolute;
+    bottom: 3px;
+    right: 3px;
+    width: 13px;
+    height: 13px;
+    background: #28a745;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    box-shadow: 0 0 4px rgba(40,167,69,0.3);
+}
+.status-dot-offline {
+    background: #dc3545;
+    box-shadow: 0 0 4px rgba(220,53,69,0.3);
+}

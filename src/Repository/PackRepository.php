@@ -40,11 +40,22 @@ class PackRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function findByCategory(string $category): array
+    /**
+     * Find packs whose event belongs to the same category, excluding the current pack
+     * @param string $category
+     * @param int $excludePackId
+     * @param int $limit
+     * @return Pack[]
+     */
+    public function findRelatedByCategory(string $category, int $excludePackId, int $limit = 4): array
     {
         return $this->createQueryBuilder('p')
-            ->andWhere('p.categorie = :category')
+            ->join('p.event', 'e')
+            ->andWhere('e.categorie = :category')
+            ->andWhere('p.id != :excludeId')
             ->setParameter('category', $category)
+            ->setParameter('excludeId', $excludePackId)
+            ->setMaxResults($limit)
             ->getQuery()
             ->getResult();
     }
@@ -84,6 +95,37 @@ class PackRepository extends ServiceEntityRepository
     public function findAll(): array
     {
         return $this->createQueryBuilder('p')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findByFilters(?string $category = null, ?float $minPrice = null, ?float $maxPrice = null): array
+    {
+        $qb = $this->createQueryBuilder('p')
+            ->join('p.event', 'e');
+
+        if ($category && $category !== 'all') {
+            $qb->andWhere('e.categorie = :category')
+                ->setParameter('category', $category);
+        }
+
+        if ($minPrice !== null) {
+            $qb->andWhere('p.prix >= :minPrice')
+                ->setParameter('minPrice', $minPrice);
+        }
+
+        if ($maxPrice !== null) {
+            $qb->andWhere('p.prix <= :maxPrice')
+                ->setParameter('maxPrice', $maxPrice);
+        }
+
+        return $qb->getQuery()->getResult();
+    }
+    public function findAllCategories(): array
+    {
+        return $this->createQueryBuilder('p')
+            ->join('p.event', 'e')
+            ->select('DISTINCT e.categorie')
             ->getQuery()
             ->getResult();
     }
