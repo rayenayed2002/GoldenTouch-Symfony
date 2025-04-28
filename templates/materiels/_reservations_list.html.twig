@@ -1,0 +1,54 @@
+<div class="row gy-4">
+    {% for reservation in reservations %}
+    <div class="col-md-6 col-lg-4">
+        <div class="card h-100 border border-warning shadow-sm rounded-3 position-relative">
+            <!-- Badge statut sur l'image -->
+            <div class="position-absolute top-0 start-0 m-2">
+                <span class="badge bg-{{ reservation.statut == 'confirmée' ? 'success' : (reservation.statut == 'annulée' ? 'danger' : 'warning') }}">
+                    {{ reservation.statut|capitalize }}
+                </span>
+            </div>
+
+            <!-- Image du matériel -->
+            {% if reservation.materielle.photoMat %}
+                <img src="{{ asset('uploads/materiels/' ~ reservation.materielle.photoMat) }}" 
+                     class="card-img-top rounded-top-3" 
+                     alt="{{ reservation.materielle.nomMat }}"
+                     style="height: 200px; object-fit: cover;">
+            {% else %}
+                <img src="{{ asset('path/to/default/image.jpg') }}" 
+                     class="card-img-top rounded-top-3" 
+                     alt="Image par défaut"
+                     style="height: 200px; object-fit: cover;">
+            {% endif %}
+
+            <div class="card-body">
+                <h5 class="card-title text-warning">{{ reservation.materielle.nomMat }}</h5>
+                <h6 class="card-subtitle mb-2 text-muted">
+                    Pour l'événement: {{ reservation.event.nom }}
+                </h6>
+
+                <div class="card-text mb-3">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Quantité réservée:</span>
+                        <span class="fw-bold text-warning">{{ reservation.quantite }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Prix unitaire:</span>
+                        <span class="fw-bold text-warning">{{ reservation.materielle.prixMat }} €</span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span class="text-muted">Total:</span>
+                        <span class="fw-bold text-dark">{{ reservation.quantite * reservation.materielle.prixMat }} €</span>
+                    </div>
+                </div>
+
+                <a href="{{ path('app_reservation_show', {'id': reservation.idReserv}) }}" 
+                   class="btn btn-warning w-100">
+                    Voir le matériel
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
