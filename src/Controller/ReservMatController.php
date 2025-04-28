@@ -23,18 +23,32 @@ use Endroid\QrCode\Writer\PngWriter;
 final class ReservMatController extends AbstractController
 {
     #[Route('/reservations', name: 'app_reservations')]
-    public function index(ReservMatRepository $reservMatRepository): Response
+    public function index(Request $request, ReservMatRepository $reservMatRepository): Response
     {
-        $reservations = $reservMatRepository->createQueryBuilder('r')
+        $searchTerm = $request->query->get('q', '');
+        
+        $query = $reservMatRepository->createQueryBuilder('r')
             ->leftJoin('r.materielle', 'm')
             ->leftJoin('r.event', 'e')
             ->leftJoin('r.utilisateur', 'u')
-            ->addSelect('m', 'e', 'u')
-            ->getQuery()
-            ->getResult();
-
+            ->addSelect('m', 'e', 'u');
+        
+        if ($searchTerm) {
+            $query->where('m.nom_mat LIKE :term OR e.nom LIKE :term OR u.email LIKE :term')
+                ->setParameter('term', '%'.$searchTerm.'%');
+        }
+        
+        $reservations = $query->getQuery()->getResult();
+        
+        if ($request->isXmlHttpRequest()) {
+            return $this->render('materiels/_reservations_grid.html.twig', [
+                'reservations' => $reservations
+            ]);
+        }
+        
         return $this->render('materiels/reservationMat.html.twig', [
             'reservations' => $reservations,
+            'searchTerm' => $searchTerm
         ]);
     }
     #[Route('/mes-reservations', name: 'app_mes_reservations')]
@@ -345,5 +359,6 @@ service.goldentouch1@gmail.com')
     $this->addFlash('warning', 'La réservation a été annulée et un email a été envoyé.');
     return $this->redirectToRoute('app_mes_reservations');
 }
+
 
 }

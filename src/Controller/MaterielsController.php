@@ -27,16 +27,30 @@ use Symfony\Component\HttpClient\HttpClient;
 final class MaterielsController extends AbstractController
 {
     #[Route('/materielss', name: 'app_materielss')]
-    public function index(MaterielleRepository $materielleRepository, EntityManagerInterface $entityManager): Response
-    {
-        $entityManager->clear(); // ✅ Use the passed entityManager, not $this->entityManager
+public function index(Request $request, MaterielleRepository $materielleRepository, EntityManagerInterface $entityManager): Response
+{
+    $entityManager->clear();
     
-        $materiels = $materielleRepository->findAll();
+    $searchTerm = $request->query->get('q', '');
+    $sortBy = $request->query->get('sort', 'id_mat'); // Par défaut tri par ID
+    $direction = $request->query->get('direction', 'ASC'); // Par défaut ordre ascendant
     
-        return $this->render('materiels/index.html.twig', [
-            'materiels' => $materiels,
+    if ($searchTerm) {
+        $materiels = $materielleRepository->search($searchTerm, $sortBy, $direction);
+    } else {
+        $materiels = $materielleRepository->findBy([], [$sortBy => $direction]);
+    }
+    
+    if ($request->isXmlHttpRequest()) {
+        return $this->render('materiels/_materiels_grid.html.twig', [
+            'materiels' => $materiels
         ]);
     }
+    
+    return $this->render('materiels/index.html.twig', [
+        'materiels' => $materiels,
+    ]);
+}
  
 
     

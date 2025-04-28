@@ -784,13 +784,12 @@
                 <div class="row">
                     <div class="col-md-6">
                         {% if reservation.materielle %}
+                            <h3>{{ reservation.materielle.nomMat }}</h3>
                             <div class="mb-4">
                                 <img src="{{ asset('uploads/materiels/' ~ reservation.materielle.photoMat|default('default.jpg')) }}" 
                                      class="img-fluid rounded" 
                                      alt="{{ reservation.materielle.nomMat }}">
                             </div>
-                            <h3>{{ reservation.materielle.nomMat }}</h3>
-                            <p class="text-muted">{{ reservation.materielle.descriptionMat }}</p>
                         {% endif %}
                     </div>
                     
@@ -816,6 +815,10 @@
                             <div class="mb-2">
                                 <strong>Événement:</strong> {{ reservation.event.nom }}
                             </div>
+                            <div class="mb-2">
+    <strong>Date de l'événement:</strong> 
+    {{ reservation.event.date ? reservation.event.date|date('d/m/Y') : 'Non spécifiée' }}
+</div>
                             
                             <div class="mb-2">
                                 <strong>Utilisateur:</strong> 
@@ -826,17 +829,72 @@
                                 {% endif %}
                             </div>
                             
-                            <div class="mt-4">
-                                <a href="{{ path('app_reservation_edit', {'id': reservation.idReserv}) }}" class="btn btn-primary me-2">
-                                    Modifier
-                                </a>
-                                <form method="post" action="{{ path('app_reservation_delete', {'id': reservation.idReserv}) }}" class="d-inline">
-                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ reservation.idReserv) }}">
-                                    <button class="btn btn-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette réservation?')">
-                                        Supprimer
-                                    </button>
-                                </form>
+                            <div class="mb-2">
+                                <strong>Statut:</strong> 
+                                <span class="badge bg-{{ reservation.statut == 'confirmée' ? 'success' : (reservation.statut == 'annulée' ? 'danger' : 'warning') }}">
+                                    {{ reservation.statut }}
+                                </span>
                             </div>
+                            
+                         <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmationModalLabel">Confirmer la réservation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{ path('app_reservation_confirmer', {'id': reservation.idReserv}) }}" method="POST">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="confirmationMessage" class="form-label">Message de confirmation :</label>
+                        <textarea class="form-control" id="confirmationMessage" name="message" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                    <button type="submit" class="btn btn-success">Confirmer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal d'Annulation -->
+<div class="modal fade" id="annulationModal" tabindex="-1" aria-labelledby="annulationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="annulationModalLabel">Annuler la réservation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{ path('app_reservation_annuler', {'id': reservation.idReserv}) }}" method="POST">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="annulationMessage" class="form-label">Message d'annulation :</label>
+                        <textarea class="form-control" id="annulationMessage" name="message" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                    <button type="submit" class="btn btn-danger">Annuler</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="mt-4 d-flex gap-2">
+    {% if reservation.statut != 'confirmée' %}
+        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#confirmationModal">
+            Confirmer la réservation
+        </button>
+    {% endif %}
+    
+    {% if reservation.statut != 'annulée' %}
+        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#annulationModal">
+            Annuler la réservation
+        </button>
+    {% endif %}
+</div>
                         </div>
                     </div>
                 </div>

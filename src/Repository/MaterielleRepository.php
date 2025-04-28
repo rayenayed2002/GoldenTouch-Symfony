@@ -24,8 +24,21 @@ class MaterielleRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
-
-
+    public function search(string $term, string $sortBy = 'id_mat', string $direction = 'ASC'): array
+    {
+        return $this->createQueryBuilder('m')
+            ->leftJoin('m.categorie', 'c')
+            ->where('m.nom_mat LIKE :term 
+                    OR m.description_mat LIKE :term 
+                    OR c.nom_cat LIKE :term
+                    OR m.id_mat = :id')
+            ->setParameter('term', '%'.$term.'%')
+            ->setParameter('id', is_numeric($term) ? (int)$term : 0)
+            ->orderBy('m.'.$sortBy, $direction)
+            ->getQuery()
+            ->getResult();
+    }
+    
 
 
     /**

@@ -765,93 +765,40 @@
 
           <!-- / Navbar -->
  <div class="content-wrapper">
-    <!-- Content -->
     <div class="container-xxl flex-grow-1 container-p-y">
         <h4 class="fw-bold py-3 mb-4">Réservations</h4>
 
-        {% if reservations|length > 0 %}
-            <!-- Reservations Grid -->
-            <div class="row g-4">
-                {% for reservation in reservations %}
-                    <div class="col-xl-4 col-lg-6 col-md-6">
-                        <a href="{{ path('app_reservation_details', {'id': reservation.idReserv}) }}" 
-                           class="card-link" 
-                           style="text-decoration: none; color: inherit;">
-                            <div class="card pack-card h-100">
-                                <div class="card-body">
-                                    {% if reservation.materielle %}
-                                        <div class="pack-image-wrapper mb-3">
-                                            <img src="{{ asset('uploads/materiels/' ~ reservation.materielle.photoMat|default('default.jpg')) }}" 
-                                                 class="pack-image" 
-                                                 alt="{{ reservation.materielle.photoMat }}">
-                                        </div>
-                                    {% endif %}
-                                    
-                                    <div class="pack-content">
-                                        <h5 class="pack-title mb-3">
-                                            {% if reservation.materielle %}
-                                                {{ reservation.materielle.nomMat }}
-                                            {% else %}
-                                                Matériel non défini
-                                            {% endif %}
-                                        </h5>
-
-                                        <div class="pack-details">
-                                            {% if reservation.materielle %}
-                                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                                    <h6 class="mb-0">Prix</h6>
-                                                    <h6 class="mb-0 text-primary">
-                                                        {{ reservation.materielle.prixMat|number_format(2, '.', ',') }} TND
-                                                    </h6>
-                                                </div>
-                                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                                    <h6 class="mb-0">Quantité disponible</h6>
-                                                    <span>{{ reservation.materielle.quantiteMat }} unités</span>
-                                                </div>
-                                            {% endif %}
-
-                                            <hr class="my-3">
-
-                                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                                <h6 class="mb-0">Quantité réservée</h6>
-                                                <span>{{ reservation.quantite }} unités</span>
-                                            </div>
-                                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                                <h6 class="mb-0">Événement</h6>
-                                                <span>{{ reservation.event.nom }}</span>
-                                            </div>
-                                            <!-- Ajout de la date de l'événement -->
-                                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                                <h6 class="mb-0">Date de l'événement</h6>
-                                                <span>
-                                                    {% if reservation.event.date %}
-                                                        {{ reservation.event.date|date('d/m/Y') }}
-                                                    {% else %}
-                                                        Non spécifiée
-                                                    {% endif %}
-                                                </span>
-                                            </div>
-                                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                                <h6 class="mb-0">Utilisateur</h6>
-                                                <span>
-                                                    {% if reservation.utilisateur %}
-                                                        {{ reservation.utilisateur.email }}
-                                                    {% else %}
-                                                        Non défini
-                                                    {% endif %}
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                {% endfor %}
+        <!-- Barre de recherche -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="input-group mb-3">
+                    <input type="text" id="reservationSearch" class="form-control" 
+                           placeholder="Rechercher par matériel, événement ou email..." 
+                           value="{{ searchTerm|default('') }}">
+                   
+                </div>
             </div>
-        {% else %}
-            <div class="alert alert-info">Aucune réservation trouvée.</div>
-        {% endif %}
+               <div class="col-md-3">
+        <select id="sortField" class="form-select">
+            <option value="date">Date</option>
+            <option value="nomMat">Nom du matériel</option>
+            <option value="email">Email utilisateur</option>
+            <!-- Ajoute d'autres champs si besoin -->
+        </select>
+    </div>
+    
+    <div class="col-md-3">
+        <select id="sortDirection" class="form-select">
+            <option value="ASC">Ascendant</option>
+            <option value="DESC">Descendant</option>
+        </select>
+    </div>
+        </div>
+
+        <!-- Conteneur dynamique des réservations -->
+        <div id="reservationsContainer">
+            {% include 'materiels/_reservations_grid.html.twig' with { reservations: reservations } %}
+        </div>
     </div>
 </div>
 
@@ -908,6 +855,53 @@ function sortMateriels(order) {
         .catch(error => console.error('Erreur AJAX:', error));
 }
 </script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('reservationSearch');
+    const sortField = document.getElementById('sortField');
+    const sortDirection = document.getElementById('sortDirection');
+    const reservationsContainer = document.getElementById('reservationsContainer');
+    let timer = null;
+
+    function performSearchAndSort() {
+        const searchTerm = searchInput.value.trim();
+        const sort = sortField.value;
+        const direction = sortDirection.value;
+
+        fetch(`{{ path('app_reservations') }}?q=${encodeURIComponent(searchTerm)}&sort=${sort}&direction=${direction}`, {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.text())
+        .then(html => {
+            reservationsContainer.innerHTML = html;
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            reservationsContainer.innerHTML = `
+                <div class="alert alert-danger">
+                    Une erreur s'est produite lors de la recherche.
+                </div>
+            `;
+        });
+    }
+
+    // Recherche dynamique pendant la frappe
+    searchInput.addEventListener('input', function() {
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+            performSearchAndSort();
+        }, 300);
+    });
+
+    // Tri dynamique
+    sortField.addEventListener('change', performSearchAndSort);
+    sortDirection.addEventListener('change', performSearchAndSort);
+});
+</script>
+
+
 
 
   </body>
