@@ -1,0 +1,3283 @@
+<?php
+
+use Twig\Environment;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Extension\CoreExtension;
+use Twig\Extension\SandboxExtension;
+use Twig\Markup;
+use Twig\Sandbox\SecurityError;
+use Twig\Sandbox\SecurityNotAllowedTagError;
+use Twig\Sandbox\SecurityNotAllowedFilterError;
+use Twig\Sandbox\SecurityNotAllowedFunctionError;
+use Twig\Source;
+use Twig\Template;
+use Twig\TemplateWrapper;
+
+/* admin/pack/create_pack.html.twig */
+class __TwigTemplate_766440d7d1b894088bd09022f81e0777 extends Template
+{
+    private Source $source;
+    /**
+     * @var array<string, Template>
+     */
+    private array $macros = [];
+
+    public function __construct(Environment $env)
+    {
+        parent::__construct($env);
+
+        $this->source = $this->getSourceContext();
+
+        $this->parent = false;
+
+        $this->blocks = [
+        ];
+    }
+
+    protected function doDisplay(array $context, array $blocks = []): iterable
+    {
+        $macros = $this->macros;
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2 = $this->extensions["Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension"];
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->enter($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "template", "admin/pack/create_pack.html.twig"));
+
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f = $this->extensions["Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension"];
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->enter($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "template", "admin/pack/create_pack.html.twig"));
+
+        // line 1
+        yield "<!DOCTYPE html>
+<html
+  lang=\"en\"
+  class=\"light-style layout-navbar-fixed layout-menu-fixed\"
+  dir=\"ltr\"
+  data-theme=\"theme-default\"
+  data-assets-path=\"";
+        // line 7
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl(""), "html", null, true);
+        yield "\"
+  data-template=\"vertical-menu-template\">
+<head>
+    <meta charset=\"utf-8\" />
+    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0\" />
+    <title>Create New Pack - Admin Dashboard</title>
+    <meta name=\"description\" content=\"Create a new event pack with advanced features\" />
+
+    <!-- Favicon -->
+    <link rel=\"icon\" type=\"image/x-icon\" href=\"";
+        // line 16
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("img/favicon/favicon.ico"), "html", null, true);
+        yield "\" />
+
+    <!-- Fonts -->
+    <link rel=\"preconnect\" href=\"https://fonts.googleapis.com\" />
+    <link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin />
+    <link href=\"https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap\" rel=\"stylesheet\" />
+
+    <!-- Icons -->
+    <link rel=\"stylesheet\" href=\"";
+        // line 24
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("vendor/fonts/fontawesome.css"), "html", null, true);
+        yield "\" />
+    <link rel=\"stylesheet\" href=\"";
+        // line 25
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("vendor/fonts/tabler-icons.css"), "html", null, true);
+        yield "\" />
+    <link rel=\"stylesheet\" href=\"";
+        // line 26
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("vendor/fonts/flag-icons.css"), "html", null, true);
+        yield "\" />
+
+    <!-- Core CSS -->
+    <link rel=\"stylesheet\" href=\"";
+        // line 29
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("vendor/css/rtl/core.css"), "html", null, true);
+        yield "\" class=\"template-customizer-core-css\" />
+    <link rel=\"stylesheet\" href=\"";
+        // line 30
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("vendor/css/rtl/theme-default.css"), "html", null, true);
+        yield "\" class=\"template-customizer-theme-css\" />
+    <link rel=\"stylesheet\" href=\"";
+        // line 31
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("css/demo.css"), "html", null, true);
+        yield "\" />
+
+    <!-- Vendors CSS -->
+    <link rel=\"stylesheet\" href=\"";
+        // line 34
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("vendor/libs/perfect-scrollbar/perfect-scrollbar.css"), "html", null, true);
+        yield "\" />
+    <link rel=\"stylesheet\" href=\"";
+        // line 35
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("vendor/libs/node-waves/node-waves.css"), "html", null, true);
+        yield "\" />
+    <link rel=\"stylesheet\" href=\"";
+        // line 36
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("vendor/libs/flatpickr/flatpickr.css"), "html", null, true);
+        yield "\" />
+    <link rel=\"stylesheet\" href=\"";
+        // line 37
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("vendor/libs/select2/select2.css"), "html", null, true);
+        yield "\" />
+    <link rel=\"stylesheet\" href=\"";
+        // line 38
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("vendor/libs/animate-css/animate.css"), "html", null, true);
+        yield "\" />
+    <link rel=\"stylesheet\" href=\"";
+        // line 39
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("vendor/libs/sweetalert2/sweetalert2.css"), "html", null, true);
+        yield "\" />
+    
+    <!-- Page CSS -->
+    <link rel=\"stylesheet\" href=\"";
+        // line 42
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("vendor/css/pages/cards-advance.css"), "html", null, true);
+        yield "\" />
+    
+    <style>
+        /* Glassmorphism Effects */
+        .glassmorphism-ui {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+            transition: all 0.3s ease;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 16px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .glass-panel:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 35px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Form Elements */
+        .form-control, .form-select {
+            backdrop-filter: blur(4px);
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus, .form-select:focus {
+            box-shadow: 0 0 0 0.25rem rgba(115, 103, 240, 0.15);
+            border-color: #7367f0;
+            background: rgba(255, 255, 255, 0.95);
+            transform: translateY(-2px);
+        }
+
+        .form-floating label {
+            transition: all 0.3s ease;
+        }
+
+        .form-floating .form-control:focus ~ label {
+            color: #7367f0;
+            font-weight: 500;
+        }
+
+        /* Buttons */
+        .btn {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            background-image: radial-gradient(circle, #fff 10%, transparent 10.01%);
+            transform: scale(10, 10);
+            opacity: 0;
+            transition: transform .5s, opacity 1s;
+        }
+
+        .btn:active::after {
+            transform: scale(0, 0);
+            opacity: .3;
+            transition: 0s;
+        }
+
+        .btn-primary {
+            box-shadow: 0 8px 25px -8px rgba(115, 103, 240, 0.5);
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 8px 25px -5px rgba(115, 103, 240, 0.7);
+            transform: translateY(-3px);
+        }
+
+        /* Animation Effects */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .slide-up {
+            animation: slideUp 0.5s ease-in-out;
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(115, 103, 240, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(115, 103, 240, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(115, 103, 240, 0); }
+        }
+
+        /* Form Validation Animation */
+        .form-control.is-valid, .was-validated .form-control:valid {
+            animation: validPulse 0.5s ease-in-out;
+        }
+
+        .form-control.is-invalid, .was-validated .form-control:invalid {
+            animation: invalidShake 0.5s ease-in-out;
+        }
+
+        @keyframes validPulse {
+            0% { box-shadow: 0 0 0 0 rgba(40, 199, 111, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(40, 199, 111, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(40, 199, 111, 0); }
+        }
+
+        @keyframes invalidShake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-5px); }
+            40%, 80% { transform: translateX(5px); }
+        }
+
+        /* Card Styles */
+        .card {
+            transition: all 0.3s ease;
+            border: none;
+            overflow: hidden;
+        }
+
+        .card-header {
+            border-bottom: 1px solid rgba(115, 103, 240, 0.1);
+            background: linear-gradient(to right, rgba(115, 103, 240, 0.1), rgba(255, 255, 255, 0));
+        }
+
+        /* Progress Bar */
+        .progress-bar-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            z-index: 1000;
+            background: transparent;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(to right, #7367f0, #9754cb);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        /* Form Section Styles */
+        .form-section {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+            position: absolute;
+            width: 100%;
+            left: 0;
+            visibility: hidden;
+            height: 0;
+            overflow: hidden;
+        }
+
+        .form-section.active {
+            opacity: 1;
+            transform: translateY(0);
+            position: relative;
+            visibility: visible;
+            height: auto;
+            overflow: visible;
+        }
+
+        /* Step Indicator */
+        .step-indicator {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+
+        .step {
+            flex: 1;
+            text-align: center;
+            position: relative;
+        }
+
+        .step-circle {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            color: #fff;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .step.active .step-circle {
+            background-color: #7367f0;
+            box-shadow: 0 0 0 5px rgba(115, 103, 240, 0.2);
+            transform: scale(1.2);
+        }
+
+        .step.completed .step-circle {
+            background-color: #28c76f;
+        }
+
+        .step-title {
+            font-size: 0.85rem;
+            color: #6e6b7b;
+            transition: all 0.3s ease;
+        }
+
+        .step.active .step-title {
+            color: #7367f0;
+            font-weight: 600;
+        }
+
+        .step-connector {
+            position: absolute;
+            top: 15px;
+            height: 2px;
+            background-color: #e0e0e0;
+            width: 100%;
+            left: -50%;
+            z-index: -1;
+        }
+
+        .step:first-child .step-connector {
+            display: none;
+        }
+
+        .step.completed .step-connector {
+            background-color: #28c76f;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .glass-panel {
+                margin: 10px;
+                padding: 15px;
+            }
+            
+            .row.g-3 {
+                margin: 0 5px;
+            }
+            
+            .btn {
+                width: 100%;
+                margin: 5px 0;
+            }
+
+            .step-title {
+                font-size: 0.7rem;
+            }
+        }
+
+        /* Background Effect */
+        .bg-dots {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            opacity: 0.4;
+            background-image: radial-gradient(circle, #7367f0 1px, transparent 1px);
+            background-size: 30px 30px;
+        }
+
+        /* Floating Labels Enhancement */
+        .form-floating > .form-control:focus ~ label,
+        .form-floating > .form-control:not(:placeholder-shown) ~ label {
+            color: #7367f0;
+            transform: scale(0.85) translateY(-0.5rem) translateX(0.15rem);
+        }
+
+        /* Image Upload Area */
+        .image-upload-area {
+            border: 2px dashed rgba(115, 103, 240, 0.4);
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.5);
+            margin-bottom: 20px;
+        }
+
+        .image-upload-area:hover, .image-upload-area.dragover {
+            background-color: rgba(115, 103, 240, 0.1);
+            border-color: #7367f0;
+        }
+
+        .image-upload-area .upload-icon {
+            font-size: 3rem;
+            color: #7367f0;
+            margin-bottom: 10px;
+            transition: transform 0.3s ease;
+        }
+
+        .image-upload-area:hover .upload-icon {
+            transform: translateY(-5px);
+        }
+
+        #imagePreviewContainer {
+            position: relative;
+            max-width: 100%;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        #imagePreviewContainer:hover {
+            transform: scale(1.02);
+        }
+
+        #imagePreview {
+            width: auto;
+            max-width: 100%;
+            height: auto;
+            max-height: 200px;
+            object-fit: contain;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .review-image {
+            max-height: 200px;
+            object-fit: contain;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Step indicator animation */
+        .step {
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .step.active .step-circle {
+            background-color: #7367f0;
+            color: white;
+            transform: scale(1.2);
+            box-shadow: 0 0 0 5px rgba(115, 103, 240, 0.2);
+        }
+
+        .step.completed .step-circle {
+            background-color: #28c76f;
+        }
+
+        /* Shake animation for validation errors */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-5px); }
+            40%, 80% { transform: translateX(5px); }
+        }
+
+        .shake {
+            animation: shake 0.6s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+        }
+
+        /* Server Image Browser Styles */
+        .server-browser {
+            min-height: 300px;
+        }
+        
+        .server-images-grid {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .server-image-item {
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            border: 2px solid transparent;
+        }
+        
+        .server-image-item:hover {
+            background-color: rgba(115, 103, 240, 0.05);
+            transform: translateY(-2px);
+        }
+        
+        .server-image-item.selected {
+            border-color: #7367f0;
+            background-color: rgba(115, 103, 240, 0.1);
+            box-shadow: 0 0 0 4px rgba(115, 103, 240, 0.2);
+        }
+        
+        .server-image-item img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .image-name {
+            font-size: 0.8rem;
+            color: #6e6b7b;
+            text-align: center;
+            margin-top: 5px;
+        }
+        
+        .directory-path {
+            font-size: 0.9rem;
+            color: #6e6b7b;
+        }
+        
+        /* Enhanced server image styling */
+        .server-image-card {
+            transition: all 0.2s ease-in-out;
+            cursor: pointer;
+            border: 2px solid transparent;
+            overflow: hidden;
+        }
+        
+        .server-image-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+        
+        .server-image-card.selected {
+            border-color: #7367f0;
+            box-shadow: 0 0 0 3px rgba(115, 103, 240, 0.25);
+        }
+        
+        .card-img-container {
+            height: 150px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f8f8f8;
+        }
+        
+        .card-img-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    </style>
+
+    <!-- Helpers -->
+    <script src=\"";
+        // line 506
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("vendor/js/helpers.js"), "html", null, true);
+        yield "\"></script>
+    <script src=\"";
+        // line 507
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("vendor/js/template-customizer.js"), "html", null, true);
+        yield "\"></script>
+    <script src=\"";
+        // line 508
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("js/config.js"), "html", null, true);
+        yield "\"></script>
+</head>
+
+<body>
+    <!-- Background Effect -->
+    <div class=\"bg-dots\"></div>
+
+    <!-- Progress Bar -->
+    <div class=\"progress-bar-container\">
+        <div class=\"progress-bar\" id=\"formProgressBar\"></div>
+    </div>
+
+    <!-- Layout wrapper -->
+    <div class=\"layout-wrapper layout-content-navbar\">
+        <div class=\"layout-container\">
+            <!-- Menu -->
+            <aside id=\"layout-menu\" class=\"layout-menu menu-vertical menu bg-menu-theme\">
+                <div class=\"app-brand demo\">
+                    <a href=\"";
+        // line 526
+        yield $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("admin_dashboard");
+        yield "\" class=\"app-brand-link\">
+                        <span class=\"app-brand-logo demo\">
+                            <svg width=\"32\" height=\"22\" viewBox=\"0 0 32 22\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">
+                                <path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M0.00172773 0V6.85398C0.00172773 6.85398 -0.133178 9.01207 1.98092 10.8388L13.6912 21.9964L19.7809 21.9181L18.8042 9.88248L16.4951 7.17289L9.23799 0H0.00172773Z\" fill=\"#7367F0\" />
+                            </svg>
+                        </span>
+                        <span class=\"app-brand-text demo menu-text fw-bold\">Golden Touch</span>
+                    </a>
+                </div>
+
+                <div class=\"menu-inner-shadow\"></div>
+
+                <ul class=\"menu-inner py-1\">
+                    <li class=\"menu-item\">
+                        <a href=\"";
+        // line 540
+        yield $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("admin_dashboard");
+        yield "\" class=\"menu-link\">
+                            <i class=\"menu-icon tf-icons ti ti-dashboard\"></i>
+                            <div>Dashboard</div>
+                        </a>
+                    </li>
+
+                    <li class=\"menu-item active\">
+                        <a href=\"";
+        // line 547
+        yield $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("admin_pack_index");
+        yield "\" class=\"menu-link\">
+                            <i class=\"menu-icon tf-icons ti ti-package\"></i>
+                            <div>Packs</div>
+                        </a>
+                    </li>
+                </ul>
+            </aside>
+            <!-- / Menu -->
+
+            <!-- Layout page -->
+            <div class=\"layout-page\">
+                <!-- Navbar -->
+                <nav class=\"layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme\" id=\"layout-navbar\">
+                    <div class=\"navbar-nav-right d-flex align-items-center\" id=\"navbar-collapse\">
+                        <div class=\"navbar-nav align-items-center\">
+                            <div class=\"nav-item navbar-search-wrapper mb-0\">
+                                <span class=\"d-none d-md-inline-block\">Golden Touch Admin</span>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+                <!-- / Navbar -->
+
+                <!-- Content wrapper -->
+                <div class=\"content-wrapper\">
+                    <!-- Content -->
+                    <div class=\"container-xxl flex-grow-1 container-p-y\">
+                        <div class=\"row\">
+                            <div class=\"col-12\">
+                                <div class=\"card glassmorphism-ui mb-4 fade-in\">
+                                    <div class=\"card-header d-flex justify-content-between align-items-center\">
+                                        <h4 class=\"mb-0\"><i class=\"ti ti-package me-2\"></i>Create New Pack</h4>
+                                        <a href=\"";
+        // line 579
+        yield $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("admin_pack_index");
+        yield "\" class=\"btn btn-label-secondary\">
+                                            <i class=\"ti ti-arrow-left me-1\"></i>Back to Packs
+                                        </a>
+                                    </div>
+                                    <div class=\"card-body\">
+                                        <!-- Step Indicator -->
+                                        <div class=\"step-indicator mb-4\">
+                                            <div class=\"step active\" data-step=\"1\">
+                                                <div class=\"step-circle\">1</div>
+                                                <div class=\"step-connector\"></div>
+                                                <div class=\"step-title\">Basic Info</div>
+                                            </div>
+                                            <div class=\"step\" data-step=\"2\">
+                                                <div class=\"step-circle\">2</div>
+                                                <div class=\"step-connector\"></div>
+                                                <div class=\"step-title\">Details</div>
+                                            </div>
+                                            <div class=\"step\" data-step=\"3\">
+                                                <div class=\"step-circle\">3</div>
+                                                <div class=\"step-connector\"></div>
+                                                <div class=\"step-title\">Media</div>
+                                            </div>
+                                            <div class=\"step\" data-step=\"4\">
+                                                <div class=\"step-circle\">4</div>
+                                                <div class=\"step-title\">Review</div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Pack Creation Form -->
+                                        <form id=\"createPackForm\" class=\"needs-validation\" novalidate>
+                                            <!-- Step 1: Basic Info -->
+                                            <div class=\"form-section active\" id=\"step1\">
+                                                <div class=\"row g-3\">
+                                                    <!-- Event selection removed as it will be created automatically -->
+                                                    <div class=\"col-md-6\">
+                                                        <div class=\"form-floating mb-3\">
+                                                            <select class=\"form-select\" id=\"category\" name=\"category\" required>
+                                                                <option value=\"\" selected disabled>Select a category</option>
+                                                                <option value=\"Mariage\">Mariage</option>
+                                                                <option value=\"Anniversaire\">Anniversaire</option>
+                                                                <option value=\"Conférence\">Conférence</option>
+                                                                <option value=\"Séminaire\">Séminaire</option>
+                                                                <option value=\"Autre\">Autre</option>
+                                                            </select>
+                                                            <label for=\"category\">Category</label>
+                                                            <div class=\"invalid-feedback\">Please select a category.</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class=\"col-12\">
+                                                        <div class=\"form-floating mb-3\">
+                                                            <input type=\"text\" class=\"form-control\" id=\"packName\" name=\"packName\" placeholder=\"Pack Name\" required>
+                                                            <label for=\"packName\">Pack Name</label>
+                                                            <div class=\"invalid-feedback\">Please provide a pack name.</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class=\"col-12\">
+                                                        <div class=\"form-floating mb-3\">
+                                                            <textarea class=\"form-control\" id=\"description\" name=\"description\" style=\"height: 100px\" placeholder=\"Description\" required></textarea>
+                                                            <label for=\"description\">Description</label>
+                                                            <div class=\"invalid-feedback\">Please provide a description.</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class=\"d-flex justify-content-end mt-3\">
+                                                    <button type=\"button\" class=\"btn btn-primary next-step\" data-next=\"2\">
+                                                        Next <i class=\"ti ti-arrow-right ms-1\"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            <!-- Step 2: Details -->
+                                            <div class=\"form-section\" id=\"step2\">
+                                                <div class=\"row g-3\">
+                                                    <div class=\"col-md-6\">
+                                                        <div class=\"form-floating mb-3\">
+                                                            <div class=\"input-group input-group-merge\">
+                                                                <span class=\"input-group-text\">\$</span>
+                                                                <div class=\"form-floating\">
+                                                                    <input type=\"number\" class=\"form-control\" id=\"prix\" name=\"prix\" placeholder=\"Price\" step=\"0.01\" min=\"0\" required>
+                                                                    <label for=\"prix\">Price</label>
+                                                                </div>
+                                                            </div>
+                                                            <div class=\"invalid-feedback\">Please provide a valid price.</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class=\"col-md-6\">
+                                                        <div class=\"form-floating mb-3\">
+                                                            <input type=\"number\" class=\"form-control\" id=\"capacite\" name=\"capacite\" placeholder=\"Capacity\" min=\"1\" required>
+                                                            <label for=\"capacite\">Capacity</label>
+                                                            <div class=\"invalid-feedback\">Please provide a valid capacity.</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class=\"col-md-6\">
+                                                        <div class=\"form-floating mb-3\">
+                                                            <input type=\"number\" class=\"form-control\" id=\"duree\" name=\"duree\" placeholder=\"Duration\" min=\"1\" required>
+                                                            <label for=\"duree\">Duration (hours)</label>
+                                                            <div class=\"invalid-feedback\">Please provide a valid duration.</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class=\"col-md-6\">
+                                                        <div class=\"form-floating mb-3\">
+                                                            <input type=\"text\" class=\"form-control flatpickr\" id=\"date\" name=\"date\" placeholder=\"Start Date\" required data-default-date=\"today\">
+                                                            <label for=\"date\">Start Date</label>
+                                                            <div class=\"invalid-feedback\">Please provide a start date.</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class=\"col-md-6\">
+                                                        <div class=\"form-floating mb-3\">
+                                                            <input type=\"text\" class=\"form-control flatpickr\" id=\"endDate\" name=\"endDate\" placeholder=\"End Date\">
+                                                            <label for=\"endDate\">End Date (optional)</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class=\"d-flex justify-content-between mt-3\">
+                                                    <button type=\"button\" class=\"btn btn-label-secondary prev-step\" data-prev=\"1\">
+                                                        <i class=\"ti ti-arrow-left me-1\"></i> Previous
+                                                    </button>
+                                                    <button type=\"button\" class=\"btn btn-primary next-step\" data-next=\"3\">
+                                                        Next <i class=\"ti ti-arrow-right ms-1\"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            <!-- Step 3: Media -->
+                                            <div class=\"form-section\" id=\"step3\">
+                                                <div class=\"row g-3\">
+                                                    <div class=\"col-12\">
+                                                        <label class=\"form-label\">Pack Image</label>
+                                                        <ul class=\"nav nav-tabs mb-3\" role=\"tablist\">
+                                                            <li class=\"nav-item\">
+                                                                <button class=\"nav-link active\" id=\"upload-tab\" data-bs-toggle=\"tab\" data-bs-target=\"#upload-content\" type=\"button\" role=\"tab\" aria-controls=\"upload-content\" aria-selected=\"true\">
+                                                                    <i class=\"ti ti-upload me-1\"></i> Upload New Image
+                                                                </button>
+                                                            </li>
+                                                            <li class=\"nav-item\">
+                                                                <button class=\"nav-link\" id=\"server-tab\" data-bs-toggle=\"tab\" data-bs-target=\"#server-content\" type=\"button\" role=\"tab\" aria-controls=\"server-content\" aria-selected=\"false\">
+                                                                    <i class=\"ti ti-server me-1\"></i> Select from Server
+                                                                </button>
+                                                            </li>
+                                                        </ul>
+                                                        <div class=\"tab-content\">
+                                                            <!-- Upload New Image Tab -->
+                                                            <div class=\"tab-pane fade show active\" id=\"upload-content\" role=\"tabpanel\" aria-labelledby=\"upload-tab\">
+                                                                <div class=\"image-upload-area\" id=\"imageUploadArea\">
+                                                                    <input type=\"file\" id=\"packImage\" name=\"packImage\" accept=\"image/*\" class=\"d-none\">
+                                                                    <div id=\"imageUploadPlaceholder\">
+                                                                        <i class=\"ti ti-upload upload-icon mb-2\"></i>
+                                                                        <h6>Drop your image here or click to browse</h6>
+                                                                        <p class=\"text-muted small\">Supports JPG, PNG or GIF up to 5MB</p>
+                                                                    </div>
+                                                                    <div id=\"imagePreviewContainer\" class=\"text-center mt-3 d-none\">
+                                                                        <img id=\"imagePreview\" class=\"img-fluid rounded shadow-sm\" style=\"max-height: 200px;\">
+                                                                        <div class=\"mt-2\">
+                                                                            <button type=\"button\" class=\"btn btn-sm btn-outline-danger\" id=\"removeImage\">
+                                                                                <i class=\"ti ti-trash me-1\"></i> Remove
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            
+                                                            <!-- Select from Server Tab -->
+                                                            <div class=\"tab-pane fade\" id=\"server-content\" role=\"tabpanel\" aria-labelledby=\"server-tab\">
+                                                                <div class=\"server-browser glass-panel p-3\">
+                                                                    <div class=\"d-flex justify-content-between align-items-center mb-3\">
+                                                                        <div class=\"directory-path\">
+                                                                            <span class=\"badge bg-label-primary\">
+                                                                                <i class=\"ti ti-folder me-1\"></i> uploads/packs/Images
+                                                                            </span>
+                                                                        </div>
+                                                                        <button type=\"button\" id=\"refreshServerImages\" class=\"btn btn-sm btn-outline-primary\">
+                                                                            <i class=\"ti ti-refresh me-1\"></i> Refresh
+                                                                        </button>
+                                                                    </div>
+                                                                    
+                                                                    <div id=\"serverImagesContainer\" class=\"row g-3 server-images-grid\">
+                                                                        <div class=\"col-12 text-center py-5\">
+                                                                            <div class=\"spinner-border text-primary\" role=\"status\">
+                                                                                <span class=\"visually-hidden\">Loading...</span>
+                                                                            </div>
+                                                                            <p class=\"mt-2\">Loading server images...</p>
+                                                                        </div>
+                                                                    </div>
+                                                                    
+                                                                    <input type=\"hidden\" id=\"selectedServerImage\" name=\"selectedServerImage\">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class=\"col-12 mt-4\">
+                                                        <div class=\"form-check form-switch\">
+                                                            <input class=\"form-check-input\" type=\"checkbox\" id=\"featuredPack\" name=\"featuredPack\">
+                                                            <label class=\"form-check-label\" for=\"featuredPack\">Feature this pack on homepage</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class=\"d-flex justify-content-between mt-3\">
+                                                    <button type=\"button\" class=\"btn btn-label-secondary prev-step\" data-prev=\"2\">
+                                                        <i class=\"ti ti-arrow-left me-1\"></i> Previous
+                                                    </button>
+                                                    <button type=\"button\" class=\"btn btn-primary next-step\" data-next=\"4\">
+                                                        Review <i class=\"ti ti-arrow-right ms-1\"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            <!-- Step 4: Review -->
+                                            <div class=\"form-section\" id=\"step4\">
+                                                <div class=\"row\">
+                                                    <div class=\"col-12\">
+                                                        <div class=\"card glass-panel mb-4\">
+                                                            <div class=\"card-header\">
+                                                                <h5 class=\"mb-0\">Pack Summary</h5>
+                                                            </div>
+                                                            <div class=\"card-body\">
+                                                                <div class=\"row\">
+                                                                    <div class=\"col-md-4 mb-4\">
+                                                                        <div class=\"review-image-container mx-auto text-center\">
+                                                                            <img id=\"reviewImage\" src=\"\" alt=\"Pack Preview\" class=\"img-fluid rounded shadow-sm mb-2 review-image\">
+                                                                            <div id=\"reviewNoImage\" class=\"text-muted rounded p-3 bg-light text-center\">
+                                                                                <i class=\"ti ti-photo-off fs-1 text-secondary mb-2\"></i>
+                                                                                <p class=\"mb-0\">No image selected</p>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class=\"col-md-8\">
+                                                                        <div class=\"row g-3\">
+                                                                            <div class=\"col-md-6\">
+                                                                                <h6 class=\"text-muted fw-normal\">Pack Name:</h6>
+                                                                                <p id=\"reviewPackName\" class=\"fw-semibold\"></p>
+                                                                            </div>
+                                                                            <div class=\"col-md-6\">
+                                                                                <h6 class=\"text-muted fw-normal\">Category:</h6>
+                                                                                <p id=\"reviewCategory\" class=\"fw-semibold\"></p>
+                                                                            </div>
+                                                                            <div class=\"col-md-6\">
+                                                                                <h6 class=\"text-muted fw-normal\">Price:</h6>
+                                                                                <p id=\"reviewPrice\" class=\"fw-semibold text-primary\"></p>
+                                                                            </div>
+                                                                            <div class=\"col-md-6\">
+                                                                                <h6 class=\"text-muted fw-normal\">Capacity:</h6>
+                                                                                <p id=\"reviewCapacity\" class=\"fw-semibold\"></p>
+                                                                            </div>
+                                                                            <div class=\"col-md-6\">
+                                                                                <h6 class=\"text-muted fw-normal\">Duration:</h6>
+                                                                                <p id=\"reviewDuration\" class=\"fw-semibold\"></p>
+                                                                            </div>
+                                                                            <div class=\"col-md-6\">
+                                                                                <h6 class=\"text-muted fw-normal\">Start Date:</h6>
+                                                                                <p id=\"reviewStartDate\" class=\"fw-semibold\"></p>
+                                                                            </div>
+                                                                            <div class=\"col-md-6\">
+                                                                                <h6 class=\"text-muted fw-normal\">End Date:</h6>
+                                                                                <p id=\"reviewEndDate\" class=\"fw-semibold\"></p>
+                                                                            </div>
+                                                                            <div class=\"col-md-6\">
+                                                                                <h6 class=\"text-muted fw-normal\">Featured:</h6>
+                                                                                <p id=\"reviewFeatured\" class=\"fw-semibold\"></p>
+                                                                            </div>
+                                                                            <div class=\"col-12\">
+                                                                                <h6 class=\"text-muted fw-normal\">Description:</h6>
+                                                                                <p id=\"reviewDescription\" class=\"fw-semibold\"></p>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class=\"d-flex justify-content-between mt-3\">
+                                                    <button type=\"button\" class=\"btn btn-label-secondary prev-step\" data-prev=\"3\">
+                                                        <i class=\"ti ti-arrow-left me-1\"></i> Previous
+                                                    </button>
+                                                    <button type=\"submit\" class=\"btn btn-primary pulse\">
+                                                        <i class=\"ti ti-check me-1\"></i> Create Pack
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Core JS -->
+    <script src=\"";
+        // line 870
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("vendor/libs/jquery/jquery.js"), "html", null, true);
+        yield "\"></script>
+    <script src=\"";
+        // line 871
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("vendor/libs/popper/popper.js"), "html", null, true);
+        yield "\"></script>
+    <script src=\"";
+        // line 872
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("vendor/js/bootstrap.js"), "html", null, true);
+        yield "\"></script>
+    <script src=\"";
+        // line 873
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("vendor/libs/perfect-scrollbar/perfect-scrollbar.js"), "html", null, true);
+        yield "\"></script>
+    <script src=\"";
+        // line 874
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("vendor/libs/node-waves/node-waves.js"), "html", null, true);
+        yield "\"></script>
+    <script src=\"";
+        // line 875
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("vendor/libs/hammer/hammer.js"), "html", null, true);
+        yield "\"></script>
+    <script src=\"";
+        // line 876
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("vendor/js/menu.js"), "html", null, true);
+        yield "\"></script>
+
+    <!-- Vendors JS -->
+    <script src=\"";
+        // line 879
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("vendor/libs/flatpickr/flatpickr.js"), "html", null, true);
+        yield "\"></script>
+    <script src=\"";
+        // line 880
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("vendor/libs/select2/select2.full.min.js"), "html", null, true);
+        yield "\"></script>
+    <script src=\"";
+        // line 881
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("vendor/libs/sweetalert2/sweetalert2.js"), "html", null, true);
+        yield "\"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('createPackForm');
+            const formSections = document.querySelectorAll('.form-section');
+            const steps = document.querySelectorAll('.step');
+            const progressBar = document.getElementById('formProgressBar');
+            let currentStep = 1;
+        
+            // Function to validate current step
+            function validateStep(step) {
+                let isValid = true;
+                const fields = document.querySelectorAll(`#step\${step} .form-control, #step\${step} .form-select`);
+                
+                fields.forEach(field => {
+                    const value = field.value.trim();
+                    const name = field.getAttribute('name');
+                    
+                    if (field.hasAttribute('required') && value === '') {
+                        isValid = false;
+                        field.classList.add('is-invalid');
+                        field.classList.remove('is-valid');
+                        
+                        // Add custom error message for required fields
+                        let errorMsg = 'Ce champ est requis.';
+                        
+                        // Show corresponding validation message based on field name
+                        switch(name) {
+                            case 'packName':
+                                errorMsg = 'Le nom du pack est requis.';
+                                break;
+                            case 'prix':
+                                errorMsg = 'Le prix est requis.';
+                                break;
+                            case 'capacite':
+                                errorMsg = 'La capacité est requise.';
+                                break;
+                            case 'duree':
+                                errorMsg = 'La durée est requise.';
+                                break;
+                            case 'date':
+                                errorMsg = 'La date de début est requise.';
+                                break;
+                            case 'endDate':
+                                errorMsg = 'La date de fin est requise.';
+                                break;
+                            case 'description':
+                                errorMsg = 'La description est requise.';
+                                break;
+                            case 'category':
+                                errorMsg = 'La catégorie est requise.';
+                                break;
+                        }
+                        
+                        // Find or create validation message element
+                        let feedback = field.nextElementSibling;
+                        if (!feedback || !feedback.classList.contains('invalid-feedback')) {
+                            feedback = document.createElement('div');
+                            feedback.className = 'invalid-feedback';
+                            field.parentNode.appendChild(feedback);
+                        }
+                        feedback.textContent = errorMsg;
+                    } else if (name === 'prix' && (isNaN(value) || parseFloat(value) <= 0)) {
+                        isValid = false;
+                        field.classList.add('is-invalid');
+                        field.classList.remove('is-valid');
+                        
+                        // Find or create validation message element
+                        let feedback = field.nextElementSibling;
+                        if (!feedback || !feedback.classList.contains('invalid-feedback')) {
+                            feedback = document.createElement('div');
+                            feedback.className = 'invalid-feedback';
+                            field.parentNode.appendChild(feedback);
+                        }
+                        feedback.textContent = 'Le prix doit être un nombre positif.';
+                    } else if (name === 'capacite' && (isNaN(value) || parseInt(value) <= 0)) {
+                        isValid = false;
+                        field.classList.add('is-invalid');
+                        field.classList.remove('is-valid');
+                        
+                        // Find or create validation message element
+                        let feedback = field.nextElementSibling;
+                        if (!feedback || !feedback.classList.contains('invalid-feedback')) {
+                            feedback = document.createElement('div');
+                            feedback.className = 'invalid-feedback';
+                            field.parentNode.appendChild(feedback);
+                        }
+                        feedback.textContent = 'La capacité doit être un nombre positif.';
+                    } else if (name === 'duree' && (isNaN(value) || parseInt(value) <= 0)) {
+                        isValid = false;
+                        field.classList.add('is-invalid');
+                        field.classList.remove('is-valid');
+                        
+                        // Find or create validation message element
+                        let feedback = field.nextElementSibling;
+                        if (!feedback || !feedback.classList.contains('invalid-feedback')) {
+                            feedback = document.createElement('div');
+                            feedback.className = 'invalid-feedback';
+                            field.parentNode.appendChild(feedback);
+                        }
+                        feedback.textContent = 'La durée doit être un nombre positif.';
+                    } else if (name === 'endDate' && document.querySelector('[name=\"date\"]').value !== '') {
+                        const startDate = new Date(document.querySelector('[name=\"date\"]').value);
+                        const endDate = new Date(value);
+                        
+                        if (endDate < startDate) {
+                            isValid = false;
+                            field.classList.add('is-invalid');
+                            field.classList.remove('is-valid');
+                            
+                            // Find or create validation message element
+                            let feedback = field.nextElementSibling;
+                            if (!feedback || !feedback.classList.contains('invalid-feedback')) {
+                                feedback = document.createElement('div');
+                                feedback.className = 'invalid-feedback';
+                                field.parentNode.appendChild(feedback);
+                            }
+                            feedback.textContent = 'La date de fin doit être après la date de début.';
+                        } else {
+                            field.classList.remove('is-invalid');
+                            field.classList.add('is-valid');
+                        }
+                    } else {
+                        field.classList.remove('is-invalid');
+                        field.classList.add('is-valid');
+                    }
+                });
+                
+                return isValid;
+            }
+        
+            // Function to update progress bar
+            function updateProgress() {
+                const progress = ((currentStep - 1) / (formSections.length - 1)) * 100;
+                progressBar.style.width = `\${progress}%`;
+            }
+        
+            // Function to update progress bar with custom value
+            function updateProgressBar(value) {
+                progressBar.style.width = `\${value}%`;
+            }
+        
+            // Function to show step
+            function showStep(step) {
+                formSections.forEach(section => section.classList.remove('active'));
+                steps.forEach(s => s.classList.remove('active'));
+        
+                document.getElementById('step' + step).classList.add('active');
+                steps[step - 1].classList.add('active');
+        
+                // Update completed steps
+                steps.forEach((s, index) => {
+                    if (index < step - 1) {
+                        s.classList.add('completed');
+                    } else {
+                        s.classList.remove('completed');
+                    }
+                });
+        
+                updateProgress();
+            }
+        
+            // Function to show errors
+            function showErrors(errors) {
+                let errorMessage = '';
+                if (Array.isArray(errors)) {
+                    errorMessage = errors.join('<br>');
+                } else {
+                    errorMessage = errors;
+                }
+                
+                Swal.fire({
+                    title: 'Error!',
+                    html: errorMessage,
+                    icon: 'error',
+                    customClass: {
+                        confirmButton: 'btn btn-primary'
+                    },
+                    buttonsStyling: false
+                });
+            }
+        
+            // Handle next button clicks
+            document.querySelectorAll('.next-step').forEach(button => {
+                button.addEventListener('click', function() {
+                    const nextStep = parseInt(this.dataset.next);
+                    
+                    if (validateStep(currentStep)) {
+                        currentStep = nextStep;
+                        showStep(currentStep);
+                        
+                        // Update review information when going to step 4
+                        if (nextStep === 4) {
+                            updateReviewInfo();
+                        }
+                    } else {
+                        // Show validation error message
+                        Swal.fire({
+                            title: 'Validation Error',
+                            text: 'Please fill in all required fields before proceeding.',
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                });
+            });
+        
+            // Handle back button clicks
+            document.querySelectorAll('.prev-step').forEach(button => {
+                button.addEventListener('click', function() {
+                    const prevStep = parseInt(this.dataset.prev);
+                    currentStep = prevStep;
+                    showStep(currentStep);
+                });
+            });
+            
+            // Function to update review information
+            function updateReviewInfo() {
+                document.getElementById('reviewCategory').textContent = document.getElementById('category').value;
+                document.getElementById('reviewPackName').textContent = document.getElementById('packName').value;
+                document.getElementById('reviewPrice').textContent = document.getElementById('prix').value + ' €';
+                document.getElementById('reviewCapacity').textContent = document.getElementById('capacite').value + ' personnes';
+                document.getElementById('reviewDuration').textContent = document.getElementById('duree').value + ' heures';
+                document.getElementById('reviewDescription').textContent = document.getElementById('description').value;
+                
+                const startDate = document.getElementById('date').value;
+                document.getElementById('reviewStartDate').textContent = startDate ? startDate : '-';
+                
+                const endDate = document.getElementById('endDate').value;
+                document.getElementById('reviewEndDate').textContent = endDate ? endDate : 'Non spécifié';
+                
+                if (document.getElementById('featuredPack')) {
+                    document.getElementById('reviewFeatured').textContent = document.getElementById('featuredPack').checked ? 'Oui' : 'Non';
+                }
+                
+                // Check if image is selected
+                if (document.getElementById('imagePreview').src && document.getElementById('imagePreview').src !== window.location.href) {
+                    document.getElementById('reviewImage').src = document.getElementById('imagePreview').src;
+                    document.getElementById('reviewImage').classList.remove('d-none');
+                    document.getElementById('reviewNoImage').classList.add('d-none');
+                } else {
+                    document.getElementById('reviewImage').classList.add('d-none');
+                    document.getElementById('reviewNoImage').classList.remove('d-none');
+                }
+            }
+            
+            // Image Upload handling
+            const imageUploadArea = document.getElementById('imageUploadArea');
+            const imagePreview = document.getElementById('imagePreview');
+            const packImageInput = document.getElementById('packImage');
+
+            // Initialize dropzone behavior
+            \$(imageUploadArea).on('dragover', function(e) {
+                e.preventDefault();
+                \$(this).addClass('dragover');
+            });
+
+            \$(imageUploadArea).on('dragleave drop', function(e) {
+                e.preventDefault();
+                \$(this).removeClass('dragover');
+                
+                if (e.type === 'drop') {
+                    packImageInput.files = e.originalEvent.dataTransfer.files;
+                    handleFileSelect(e.originalEvent.dataTransfer.files[0]);
+                }
+            });
+
+            // Click to browse files
+            \$(imageUploadArea).on('click', function() {
+                packImageInput.click();
+            });
+
+            \$(packImageInput).on('change', function() {
+                if (this.files && this.files[0]) {
+                    handleFileSelect(this.files[0]);
+                }
+            });
+
+            function handleFileSelect(file) {
+                // Check if file is an image
+                if (!file.type.match('image.*')) {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Please select an image file',
+                        icon: 'error',
+                        customClass: {
+                            confirmButton: 'btn btn-primary'
+                        },
+                        buttonsStyling: false
+                    });
+                    return;
+                }
+                
+                // Check file size (5MB max)
+                if (file.size > 5 * 1024 * 1024) {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'File size should not exceed 5MB',
+                        icon: 'error',
+                        customClass: {
+                            confirmButton: 'btn btn-primary'
+                        },
+                        buttonsStyling: false
+                    });
+                    return;
+                }
+                
+                // Show preview
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imagePreview.src = e.target.result;
+                    imagePreview.style.display = 'block';
+                    document.getElementById('imageUploadPlaceholder').style.display = 'none';
+                    document.getElementById('imagePreviewContainer').classList.remove('d-none');
+                };
+                reader.readAsDataURL(file);
+            }
+            
+            // Handle remove image button
+            \$('#removeImage').on('click', function() {
+                // Clear the file input
+                \$('#packImage').val('');
+                // Hide preview
+                \$('#imagePreviewContainer').addClass('d-none');
+                // Show placeholder
+                \$('#imageUploadPlaceholder').style.display = 'block';
+                // Clear preview image
+                \$('#imagePreview').attr('src', '');
+                
+                // Update review
+                \$('#reviewImage').addClass('d-none');
+                \$('#reviewNoImage').removeClass('d-none');
+            });
+            
+            // Server Image Browser functionality
+            function loadServerImages() {
+                const container = \$('#serverImagesContainer');
+                
+                // Show loading state
+                container.html(`
+                    <div class=\"col-12 text-center py-5\">
+                        <div class=\"spinner-border text-primary\" role=\"status\">
+                            <span class=\"visually-hidden\">Loading...</span>
+                        </div>
+                        <p class=\"mt-2\">Loading server images...</p>
+                    </div>
+                `);
+                
+                             // Fetch images from server
+                \$.ajax({
+                    url: '";
+        // line 1232
+        yield $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("admin_pack_list_files");
+        yield "',
+                    type: 'GET',
+                    data: {
+                        path: 'uploads/packs/Images'
+                    },
+                    success: function(response) {
+                        console.log('Server response:', response); // Debug response
+                        if (response.success) {
+                            if (response.files && response.files.length > 0) {
+                                let imagesHtml = '';
+                                response.files.forEach(function(image) {
+                                    imagesHtml += `
+                                        <div class=\"col-md-4 col-sm-6 mb-3\">
+                                            <div class=\"card h-100 server-image-card\" data-image-path=\"\${image.path}\">
+                                                <div class=\"card-img-container\">
+                                                    <img src=\"/uploads/packs/\${image.path}\" alt=\"\${image.name}\" class=\"card-img-top\">
+                                                </div>
+                                                <div class=\"card-body\">
+                                                    <p class=\"card-text small text-truncate\">\${image.name}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    `;
+                                });
+                                container.html(imagesHtml);
+                                
+                                console.log('Added ' + \$('.server-image-card').length + ' image cards'); // Debug count
+                                
+                                // Add click handler for server image cards - using event delegation for reliability
+                                \$(document).off('click', '.server-image-card').on('click', '.server-image-card', function(e) {
+                                    console.log('Image card clicked', \$(this).data('image-path')); // Debug click
+                                    e.preventDefault();
+                                    
+                                    // Remove selected class from all images
+                                    \$('.server-image-card').removeClass('selected');
+                                    
+                                    // Add selected class to clicked image
+                                    \$(this).addClass('selected');
+                                    
+                                    // Set the selected image path
+                                    const imagePath = \$(this).data('image-path');
+                                    console.log('Selected image path:', imagePath); // Debug path
+                                    \$('#selectedServerImage').val(imagePath);
+                                    
+                                    // Update preview
+                                    const imageUrl = \$(this).find('img').attr('src');
+                                    \$('#imagePreview').attr('src', imageUrl);
+                                    \$('#imagePreview').css('display', 'block');
+                                    \$('#imageUploadPlaceholder').css('display', 'none');
+                                    \$('#imagePreviewContainer').removeClass('d-none');
+                                    
+                                    // Update review
+                                    \$('#reviewImage').attr('src', imageUrl);
+                                    \$('#reviewImage').removeClass('d-none');
+                                    \$('#reviewNoImage').addClass('d-none');
+                                    
+                                    // Show visual feedback
+                                    Swal.fire({
+                                        title: 'Image sélectionnée!',
+                                        text: 'Vous avez sélectionné ' + \$(this).find('.card-text').text(),
+                                        icon: 'success',
+                                        toast: true,
+                                        position: 'top-end',
+                                        showConfirmButton: false,
+                                        timer: 3000
+                                    });
+                                });
+                            } else {
+                                container.html(`
+                                    <div class=\"col-12 text-center py-5\">
+                                        <i class=\"ti ti-photo-off fs-1 text-secondary mb-2\"></i>
+                                        <p class=\"mb-0\">No images found in this directory</p>
+                                    </div>
+                                `);
+                            }
+                        } else {
+                            container.html(`
+                                <div class=\"col-12 text-center py-5\">
+                                    <i class=\"ti ti-alert-triangle fs-1 text-warning mb-2\"></i>
+                                    <p class=\"mb-0\">\${response.message || 'Failed to load images'}</p>
+                                </div>
+                            `);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        container.html(`
+                            <div class=\"col-12 text-center py-5\">
+                                <i class=\"ti ti-alert-circle fs-1 text-danger mb-2\"></i>
+                                <p class=\"mb-0\">Error loading images: \${error}</p>
+                            </div>
+                        `);
+                    }
+                });
+            }
+            
+            // Load server images when tab is clicked
+            \$('#server-tab').on('click', function() {
+                loadServerImages();
+            });
+            
+            // Refresh server images
+            \$('#refreshServerImages').on('click', function() {
+                loadServerImages();
+            });
+            
+            // Form submission handler
+            \$('#createPackForm').on('submit', function(e) {
+                e.preventDefault();
+                
+                if (!validateStep(currentStep)) {
+                    showErrors(['Veuillez remplir tous les champs obligatoires.']);
+                    return;
+                }
+                
+                const formData = new FormData(this);
+                
+                // Add upload path information to ensure images go to the correct directory
+                formData.append('uploadPath', 'public/uploads/packs/Images');
+                
+                // Ensure date field is properly set
+                const dateField = document.getElementById('date');
+                if (dateField && dateField.value) {
+                    // Make sure the date is properly formatted
+                    try {
+                        const dateObj = new Date(dateField.value);
+                        if (!isNaN(dateObj.getTime())) {
+                            const formattedDate = dateObj.getFullYear() + '-' + 
+                                String(dateObj.getMonth() + 1).padStart(2, '0') + '-' + 
+                                String(dateObj.getDate()).padStart(2, '0');
+                            formData.set('date', formattedDate);
+                        }
+                    } catch (e) {
+                        console.error('Date parsing error:', e);
+                    }
+                }
+                
+                // Handle endDate field similarly
+                const endDateField = document.getElementById('endDate');
+                if (endDateField && endDateField.value) {
+                    try {
+                        const dateObj = new Date(endDateField.value);
+                        if (!isNaN(dateObj.getTime())) {
+                            const formattedDate = dateObj.getFullYear() + '-' + 
+                                String(dateObj.getMonth() + 1).padStart(2, '0') + '-' + 
+                                String(dateObj.getDate()).padStart(2, '0');
+                            formData.set('endDate', formattedDate);
+                        }
+                    } catch (e) {
+                        console.error('End date parsing error:', e);
+                    }
+                }
+            
+                // Show loading state
+                const submitBtn = \$(this).find('button[type=\"submit\"]');
+                submitBtn.html('<span class=\"spinner-border spinner-border-sm me-1\" role=\"status\" aria-hidden=\"true\"></span> Création en cours...').attr('disabled', true);
+                
+                // Progress for form submission
+                updateProgressBar(95);
+                
+                // Check if we're using a server image or an uploaded file
+                const selectedServerImage = \$('#selectedServerImage').val();
+                const packImageInput = document.getElementById('packImage');
+                
+                console.log('Selected server image:', selectedServerImage);
+                console.log('Has uploaded file:', packImageInput.files.length > 0);
+                
+                // Debug: Log form data
+                console.log('Form data being submitted:');
+                for (let pair of formData.entries()) {
+                    console.log(pair[0] + ': ' + pair[1]);
+                }
+                
+                \$.ajax({
+                    url: '";
+        // line 1405
+        yield $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("admin_pack_create");
+        yield "',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        console.log('Success response:', response);
+                        
+                        if (response.success) {
+                            // Show success message
+                            Swal.fire({
+                                title: 'Succès!',
+                                text: response.message || 'Le pack a été créé avec succès',
+                                icon: 'success',
+                                confirmButtonText: 'OK'
+                            }).then((result) => {
+                                // Redirect to admin pack page
+                                window.location.href = '";
+        // line 1422
+        yield $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("admin_pack_index");
+        yield "';
+                            });
+                        } else {
+                            // Reset button state
+                            submitBtn.html('<i class=\"ti ti-check me-1\"></i> Créer le Pack').attr('disabled', false);
+                            
+                            // Show error message
+                            showErrors(response.message || response.errors || ['Une erreur est survenue lors de la création du pack']);
+                            updateProgressBar(80);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('AJAX error:', status, error);
+                        console.log('Response:', xhr.responseText);
+                        
+                        // Reset button state
+                        submitBtn.html('<i class=\"ti ti-check me-1\"></i> Créer le Pack').attr('disabled', false);
+                        updateProgressBar(80);
+                        
+                        let errorMessage = 'Une erreur inattendue est survenue. Veuillez réessayer.';
+                        let errorDetails = '';
+                        
+                        try {
+                            const response = JSON.parse(xhr.responseText);
+                            if (response.message) {
+                                errorMessage = response.message;
+                            }
+                            
+                            // Add detailed debug information if available
+                            if (response.debug) {
+                                errorDetails += '<div class=\"error-details\"><strong>Données reçues:</strong><pre>' + 
+                                    JSON.stringify(response.debug, null, 2) + '</pre></div>';
+                            }
+                            
+                            if (response.trace) {
+                                errorDetails += '<div class=\"error-details\"><strong>Détails techniques:</strong><pre>' + 
+                                    response.file + ' (ligne ' + response.line + ')</pre></div>';
+                            }
+                            
+                            if (response.errors && response.errors.length > 0) {
+                                let errorHtml = '<ul>';
+                                response.errors.forEach(function(error) {
+                                    errorHtml += '<li>' + error + '</li>';
+                                });
+                                errorHtml += '</ul>';
+                                \$('.error-message').html(errorHtml).show();
+                            }
+                        } catch (e) {
+                            console.error('Error parsing response:', e);
+                        }
+                        
+                        // Show error message with SweetAlert
+                        Swal.fire({
+                            title: 'Erreur!',
+                            html: errorMessage + errorDetails,
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                        
+                        // Also update the error message container
+                        \$('.error-message').html('<p>' + errorMessage + '</p>' + errorDetails).show();
+                    }
+                });
+            });
+        
+            // Initialize form
+            showStep(1);
+            
+            // Initialize flatpickr for date inputs
+            flatpickr('.flatpickr', {
+                enableTime: false,
+                dateFormat: 'Y-m-d',
+                minDate: 'today',
+                allowInput: true
+            });
+            
+            // Set default date for the start date field
+            const today = new Date();
+            const formattedDate = today.getFullYear() + '-' + 
+                                 String(today.getMonth() + 1).padStart(2, '0') + '-' + 
+                                 String(today.getDate()).padStart(2, '0');
+            
+            // Get the flatpickr instance for the date field
+            const dateInput = document.getElementById('date');
+            if (dateInput && dateInput._flatpickr) {
+                dateInput._flatpickr.setDate(formattedDate);
+                // Also set the value directly to ensure it's properly set
+                dateInput.value = formattedDate;
+            }
+        });
+    </script>
+
+    <style>
+        @keyframes ripple {
+            to {
+                transform: scale(70);
+                opacity: 0;
+            }
+        }
+        
+        /* Dropzone styling */
+        .image-upload-area.dragover {
+            background-color: rgba(115, 103, 240, 0.1);
+            border-color: #7367f0;
+        }
+        
+        .error-details {
+            margin-top: 15px;
+            padding: 10px;
+            background: rgba(255, 200, 200, 0.2);
+            border-radius: 8px;
+            border-left: 3px solid #d33;
+            font-family: monospace;
+            max-height: 200px;
+            overflow: auto;
+        }
+        
+        .error-details pre {
+            white-space: pre-wrap;
+            word-break: break-word;
+            margin: 0;
+            font-size: 12px;
+        }
+    </style>
+</body>
+</html>";
+        
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->leave($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof);
+
+        
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->leave($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof);
+
+        yield from [];
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    public function getTemplateName(): string
+    {
+        return "admin/pack/create_pack.html.twig";
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    public function isTraitable(): bool
+    {
+        return false;
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    public function getDebugInfo(): array
+    {
+        return array (  1573 => 1422,  1553 => 1405,  1377 => 1232,  1023 => 881,  1019 => 880,  1015 => 879,  1009 => 876,  1005 => 875,  1001 => 874,  997 => 873,  993 => 872,  989 => 871,  985 => 870,  691 => 579,  656 => 547,  646 => 540,  629 => 526,  608 => 508,  604 => 507,  600 => 506,  133 => 42,  127 => 39,  123 => 38,  119 => 37,  115 => 36,  111 => 35,  107 => 34,  101 => 31,  97 => 30,  93 => 29,  87 => 26,  83 => 25,  79 => 24,  68 => 16,  56 => 7,  48 => 1,);
+    }
+
+    public function getSourceContext(): Source
+    {
+        return new Source("<!DOCTYPE html>
+<html
+  lang=\"en\"
+  class=\"light-style layout-navbar-fixed layout-menu-fixed\"
+  dir=\"ltr\"
+  data-theme=\"theme-default\"
+  data-assets-path=\"{{ asset('') }}\"
+  data-template=\"vertical-menu-template\">
+<head>
+    <meta charset=\"utf-8\" />
+    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0\" />
+    <title>Create New Pack - Admin Dashboard</title>
+    <meta name=\"description\" content=\"Create a new event pack with advanced features\" />
+
+    <!-- Favicon -->
+    <link rel=\"icon\" type=\"image/x-icon\" href=\"{{ asset('img/favicon/favicon.ico') }}\" />
+
+    <!-- Fonts -->
+    <link rel=\"preconnect\" href=\"https://fonts.googleapis.com\" />
+    <link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin />
+    <link href=\"https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap\" rel=\"stylesheet\" />
+
+    <!-- Icons -->
+    <link rel=\"stylesheet\" href=\"{{ asset('vendor/fonts/fontawesome.css') }}\" />
+    <link rel=\"stylesheet\" href=\"{{ asset('vendor/fonts/tabler-icons.css') }}\" />
+    <link rel=\"stylesheet\" href=\"{{ asset('vendor/fonts/flag-icons.css') }}\" />
+
+    <!-- Core CSS -->
+    <link rel=\"stylesheet\" href=\"{{ asset('vendor/css/rtl/core.css') }}\" class=\"template-customizer-core-css\" />
+    <link rel=\"stylesheet\" href=\"{{ asset('vendor/css/rtl/theme-default.css') }}\" class=\"template-customizer-theme-css\" />
+    <link rel=\"stylesheet\" href=\"{{ asset('css/demo.css') }}\" />
+
+    <!-- Vendors CSS -->
+    <link rel=\"stylesheet\" href=\"{{ asset('vendor/libs/perfect-scrollbar/perfect-scrollbar.css') }}\" />
+    <link rel=\"stylesheet\" href=\"{{ asset('vendor/libs/node-waves/node-waves.css') }}\" />
+    <link rel=\"stylesheet\" href=\"{{ asset('vendor/libs/flatpickr/flatpickr.css') }}\" />
+    <link rel=\"stylesheet\" href=\"{{ asset('vendor/libs/select2/select2.css') }}\" />
+    <link rel=\"stylesheet\" href=\"{{ asset('vendor/libs/animate-css/animate.css') }}\" />
+    <link rel=\"stylesheet\" href=\"{{ asset('vendor/libs/sweetalert2/sweetalert2.css') }}\" />
+    
+    <!-- Page CSS -->
+    <link rel=\"stylesheet\" href=\"{{ asset('vendor/css/pages/cards-advance.css') }}\" />
+    
+    <style>
+        /* Glassmorphism Effects */
+        .glassmorphism-ui {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+            transition: all 0.3s ease;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 16px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .glass-panel:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 35px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Form Elements */
+        .form-control, .form-select {
+            backdrop-filter: blur(4px);
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus, .form-select:focus {
+            box-shadow: 0 0 0 0.25rem rgba(115, 103, 240, 0.15);
+            border-color: #7367f0;
+            background: rgba(255, 255, 255, 0.95);
+            transform: translateY(-2px);
+        }
+
+        .form-floating label {
+            transition: all 0.3s ease;
+        }
+
+        .form-floating .form-control:focus ~ label {
+            color: #7367f0;
+            font-weight: 500;
+        }
+
+        /* Buttons */
+        .btn {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            background-image: radial-gradient(circle, #fff 10%, transparent 10.01%);
+            transform: scale(10, 10);
+            opacity: 0;
+            transition: transform .5s, opacity 1s;
+        }
+
+        .btn:active::after {
+            transform: scale(0, 0);
+            opacity: .3;
+            transition: 0s;
+        }
+
+        .btn-primary {
+            box-shadow: 0 8px 25px -8px rgba(115, 103, 240, 0.5);
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 8px 25px -5px rgba(115, 103, 240, 0.7);
+            transform: translateY(-3px);
+        }
+
+        /* Animation Effects */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .slide-up {
+            animation: slideUp 0.5s ease-in-out;
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(115, 103, 240, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(115, 103, 240, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(115, 103, 240, 0); }
+        }
+
+        /* Form Validation Animation */
+        .form-control.is-valid, .was-validated .form-control:valid {
+            animation: validPulse 0.5s ease-in-out;
+        }
+
+        .form-control.is-invalid, .was-validated .form-control:invalid {
+            animation: invalidShake 0.5s ease-in-out;
+        }
+
+        @keyframes validPulse {
+            0% { box-shadow: 0 0 0 0 rgba(40, 199, 111, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(40, 199, 111, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(40, 199, 111, 0); }
+        }
+
+        @keyframes invalidShake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-5px); }
+            40%, 80% { transform: translateX(5px); }
+        }
+
+        /* Card Styles */
+        .card {
+            transition: all 0.3s ease;
+            border: none;
+            overflow: hidden;
+        }
+
+        .card-header {
+            border-bottom: 1px solid rgba(115, 103, 240, 0.1);
+            background: linear-gradient(to right, rgba(115, 103, 240, 0.1), rgba(255, 255, 255, 0));
+        }
+
+        /* Progress Bar */
+        .progress-bar-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            z-index: 1000;
+            background: transparent;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(to right, #7367f0, #9754cb);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        /* Form Section Styles */
+        .form-section {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+            position: absolute;
+            width: 100%;
+            left: 0;
+            visibility: hidden;
+            height: 0;
+            overflow: hidden;
+        }
+
+        .form-section.active {
+            opacity: 1;
+            transform: translateY(0);
+            position: relative;
+            visibility: visible;
+            height: auto;
+            overflow: visible;
+        }
+
+        /* Step Indicator */
+        .step-indicator {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+
+        .step {
+            flex: 1;
+            text-align: center;
+            position: relative;
+        }
+
+        .step-circle {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            color: #fff;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .step.active .step-circle {
+            background-color: #7367f0;
+            box-shadow: 0 0 0 5px rgba(115, 103, 240, 0.2);
+            transform: scale(1.2);
+        }
+
+        .step.completed .step-circle {
+            background-color: #28c76f;
+        }
+
+        .step-title {
+            font-size: 0.85rem;
+            color: #6e6b7b;
+            transition: all 0.3s ease;
+        }
+
+        .step.active .step-title {
+            color: #7367f0;
+            font-weight: 600;
+        }
+
+        .step-connector {
+            position: absolute;
+            top: 15px;
+            height: 2px;
+            background-color: #e0e0e0;
+            width: 100%;
+            left: -50%;
+            z-index: -1;
+        }
+
+        .step:first-child .step-connector {
+            display: none;
+        }
+
+        .step.completed .step-connector {
+            background-color: #28c76f;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .glass-panel {
+                margin: 10px;
+                padding: 15px;
+            }
+            
+            .row.g-3 {
+                margin: 0 5px;
+            }
+            
+            .btn {
+                width: 100%;
+                margin: 5px 0;
+            }
+
+            .step-title {
+                font-size: 0.7rem;
+            }
+        }
+
+        /* Background Effect */
+        .bg-dots {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            opacity: 0.4;
+            background-image: radial-gradient(circle, #7367f0 1px, transparent 1px);
+            background-size: 30px 30px;
+        }
+
+        /* Floating Labels Enhancement */
+        .form-floating > .form-control:focus ~ label,
+        .form-floating > .form-control:not(:placeholder-shown) ~ label {
+            color: #7367f0;
+            transform: scale(0.85) translateY(-0.5rem) translateX(0.15rem);
+        }
+
+        /* Image Upload Area */
+        .image-upload-area {
+            border: 2px dashed rgba(115, 103, 240, 0.4);
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.5);
+            margin-bottom: 20px;
+        }
+
+        .image-upload-area:hover, .image-upload-area.dragover {
+            background-color: rgba(115, 103, 240, 0.1);
+            border-color: #7367f0;
+        }
+
+        .image-upload-area .upload-icon {
+            font-size: 3rem;
+            color: #7367f0;
+            margin-bottom: 10px;
+            transition: transform 0.3s ease;
+        }
+
+        .image-upload-area:hover .upload-icon {
+            transform: translateY(-5px);
+        }
+
+        #imagePreviewContainer {
+            position: relative;
+            max-width: 100%;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        #imagePreviewContainer:hover {
+            transform: scale(1.02);
+        }
+
+        #imagePreview {
+            width: auto;
+            max-width: 100%;
+            height: auto;
+            max-height: 200px;
+            object-fit: contain;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .review-image {
+            max-height: 200px;
+            object-fit: contain;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Step indicator animation */
+        .step {
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .step.active .step-circle {
+            background-color: #7367f0;
+            color: white;
+            transform: scale(1.2);
+            box-shadow: 0 0 0 5px rgba(115, 103, 240, 0.2);
+        }
+
+        .step.completed .step-circle {
+            background-color: #28c76f;
+        }
+
+        /* Shake animation for validation errors */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-5px); }
+            40%, 80% { transform: translateX(5px); }
+        }
+
+        .shake {
+            animation: shake 0.6s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+        }
+
+        /* Server Image Browser Styles */
+        .server-browser {
+            min-height: 300px;
+        }
+        
+        .server-images-grid {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .server-image-item {
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            border: 2px solid transparent;
+        }
+        
+        .server-image-item:hover {
+            background-color: rgba(115, 103, 240, 0.05);
+            transform: translateY(-2px);
+        }
+        
+        .server-image-item.selected {
+            border-color: #7367f0;
+            background-color: rgba(115, 103, 240, 0.1);
+            box-shadow: 0 0 0 4px rgba(115, 103, 240, 0.2);
+        }
+        
+        .server-image-item img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .image-name {
+            font-size: 0.8rem;
+            color: #6e6b7b;
+            text-align: center;
+            margin-top: 5px;
+        }
+        
+        .directory-path {
+            font-size: 0.9rem;
+            color: #6e6b7b;
+        }
+        
+        /* Enhanced server image styling */
+        .server-image-card {
+            transition: all 0.2s ease-in-out;
+            cursor: pointer;
+            border: 2px solid transparent;
+            overflow: hidden;
+        }
+        
+        .server-image-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+        
+        .server-image-card.selected {
+            border-color: #7367f0;
+            box-shadow: 0 0 0 3px rgba(115, 103, 240, 0.25);
+        }
+        
+        .card-img-container {
+            height: 150px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f8f8f8;
+        }
+        
+        .card-img-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    </style>
+
+    <!-- Helpers -->
+    <script src=\"{{ asset('vendor/js/helpers.js') }}\"></script>
+    <script src=\"{{ asset('vendor/js/template-customizer.js') }}\"></script>
+    <script src=\"{{ asset('js/config.js') }}\"></script>
+</head>
+
+<body>
+    <!-- Background Effect -->
+    <div class=\"bg-dots\"></div>
+
+    <!-- Progress Bar -->
+    <div class=\"progress-bar-container\">
+        <div class=\"progress-bar\" id=\"formProgressBar\"></div>
+    </div>
+
+    <!-- Layout wrapper -->
+    <div class=\"layout-wrapper layout-content-navbar\">
+        <div class=\"layout-container\">
+            <!-- Menu -->
+            <aside id=\"layout-menu\" class=\"layout-menu menu-vertical menu bg-menu-theme\">
+                <div class=\"app-brand demo\">
+                    <a href=\"{{ path('admin_dashboard') }}\" class=\"app-brand-link\">
+                        <span class=\"app-brand-logo demo\">
+                            <svg width=\"32\" height=\"22\" viewBox=\"0 0 32 22\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">
+                                <path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M0.00172773 0V6.85398C0.00172773 6.85398 -0.133178 9.01207 1.98092 10.8388L13.6912 21.9964L19.7809 21.9181L18.8042 9.88248L16.4951 7.17289L9.23799 0H0.00172773Z\" fill=\"#7367F0\" />
+                            </svg>
+                        </span>
+                        <span class=\"app-brand-text demo menu-text fw-bold\">Golden Touch</span>
+                    </a>
+                </div>
+
+                <div class=\"menu-inner-shadow\"></div>
+
+                <ul class=\"menu-inner py-1\">
+                    <li class=\"menu-item\">
+                        <a href=\"{{ path('admin_dashboard') }}\" class=\"menu-link\">
+                            <i class=\"menu-icon tf-icons ti ti-dashboard\"></i>
+                            <div>Dashboard</div>
+                        </a>
+                    </li>
+
+                    <li class=\"menu-item active\">
+                        <a href=\"{{ path('admin_pack_index') }}\" class=\"menu-link\">
+                            <i class=\"menu-icon tf-icons ti ti-package\"></i>
+                            <div>Packs</div>
+                        </a>
+                    </li>
+                </ul>
+            </aside>
+            <!-- / Menu -->
+
+            <!-- Layout page -->
+            <div class=\"layout-page\">
+                <!-- Navbar -->
+                <nav class=\"layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme\" id=\"layout-navbar\">
+                    <div class=\"navbar-nav-right d-flex align-items-center\" id=\"navbar-collapse\">
+                        <div class=\"navbar-nav align-items-center\">
+                            <div class=\"nav-item navbar-search-wrapper mb-0\">
+                                <span class=\"d-none d-md-inline-block\">Golden Touch Admin</span>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+                <!-- / Navbar -->
+
+                <!-- Content wrapper -->
+                <div class=\"content-wrapper\">
+                    <!-- Content -->
+                    <div class=\"container-xxl flex-grow-1 container-p-y\">
+                        <div class=\"row\">
+                            <div class=\"col-12\">
+                                <div class=\"card glassmorphism-ui mb-4 fade-in\">
+                                    <div class=\"card-header d-flex justify-content-between align-items-center\">
+                                        <h4 class=\"mb-0\"><i class=\"ti ti-package me-2\"></i>Create New Pack</h4>
+                                        <a href=\"{{ path('admin_pack_index') }}\" class=\"btn btn-label-secondary\">
+                                            <i class=\"ti ti-arrow-left me-1\"></i>Back to Packs
+                                        </a>
+                                    </div>
+                                    <div class=\"card-body\">
+                                        <!-- Step Indicator -->
+                                        <div class=\"step-indicator mb-4\">
+                                            <div class=\"step active\" data-step=\"1\">
+                                                <div class=\"step-circle\">1</div>
+                                                <div class=\"step-connector\"></div>
+                                                <div class=\"step-title\">Basic Info</div>
+                                            </div>
+                                            <div class=\"step\" data-step=\"2\">
+                                                <div class=\"step-circle\">2</div>
+                                                <div class=\"step-connector\"></div>
+                                                <div class=\"step-title\">Details</div>
+                                            </div>
+                                            <div class=\"step\" data-step=\"3\">
+                                                <div class=\"step-circle\">3</div>
+                                                <div class=\"step-connector\"></div>
+                                                <div class=\"step-title\">Media</div>
+                                            </div>
+                                            <div class=\"step\" data-step=\"4\">
+                                                <div class=\"step-circle\">4</div>
+                                                <div class=\"step-title\">Review</div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Pack Creation Form -->
+                                        <form id=\"createPackForm\" class=\"needs-validation\" novalidate>
+                                            <!-- Step 1: Basic Info -->
+                                            <div class=\"form-section active\" id=\"step1\">
+                                                <div class=\"row g-3\">
+                                                    <!-- Event selection removed as it will be created automatically -->
+                                                    <div class=\"col-md-6\">
+                                                        <div class=\"form-floating mb-3\">
+                                                            <select class=\"form-select\" id=\"category\" name=\"category\" required>
+                                                                <option value=\"\" selected disabled>Select a category</option>
+                                                                <option value=\"Mariage\">Mariage</option>
+                                                                <option value=\"Anniversaire\">Anniversaire</option>
+                                                                <option value=\"Conférence\">Conférence</option>
+                                                                <option value=\"Séminaire\">Séminaire</option>
+                                                                <option value=\"Autre\">Autre</option>
+                                                            </select>
+                                                            <label for=\"category\">Category</label>
+                                                            <div class=\"invalid-feedback\">Please select a category.</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class=\"col-12\">
+                                                        <div class=\"form-floating mb-3\">
+                                                            <input type=\"text\" class=\"form-control\" id=\"packName\" name=\"packName\" placeholder=\"Pack Name\" required>
+                                                            <label for=\"packName\">Pack Name</label>
+                                                            <div class=\"invalid-feedback\">Please provide a pack name.</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class=\"col-12\">
+                                                        <div class=\"form-floating mb-3\">
+                                                            <textarea class=\"form-control\" id=\"description\" name=\"description\" style=\"height: 100px\" placeholder=\"Description\" required></textarea>
+                                                            <label for=\"description\">Description</label>
+                                                            <div class=\"invalid-feedback\">Please provide a description.</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class=\"d-flex justify-content-end mt-3\">
+                                                    <button type=\"button\" class=\"btn btn-primary next-step\" data-next=\"2\">
+                                                        Next <i class=\"ti ti-arrow-right ms-1\"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            <!-- Step 2: Details -->
+                                            <div class=\"form-section\" id=\"step2\">
+                                                <div class=\"row g-3\">
+                                                    <div class=\"col-md-6\">
+                                                        <div class=\"form-floating mb-3\">
+                                                            <div class=\"input-group input-group-merge\">
+                                                                <span class=\"input-group-text\">\$</span>
+                                                                <div class=\"form-floating\">
+                                                                    <input type=\"number\" class=\"form-control\" id=\"prix\" name=\"prix\" placeholder=\"Price\" step=\"0.01\" min=\"0\" required>
+                                                                    <label for=\"prix\">Price</label>
+                                                                </div>
+                                                            </div>
+                                                            <div class=\"invalid-feedback\">Please provide a valid price.</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class=\"col-md-6\">
+                                                        <div class=\"form-floating mb-3\">
+                                                            <input type=\"number\" class=\"form-control\" id=\"capacite\" name=\"capacite\" placeholder=\"Capacity\" min=\"1\" required>
+                                                            <label for=\"capacite\">Capacity</label>
+                                                            <div class=\"invalid-feedback\">Please provide a valid capacity.</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class=\"col-md-6\">
+                                                        <div class=\"form-floating mb-3\">
+                                                            <input type=\"number\" class=\"form-control\" id=\"duree\" name=\"duree\" placeholder=\"Duration\" min=\"1\" required>
+                                                            <label for=\"duree\">Duration (hours)</label>
+                                                            <div class=\"invalid-feedback\">Please provide a valid duration.</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class=\"col-md-6\">
+                                                        <div class=\"form-floating mb-3\">
+                                                            <input type=\"text\" class=\"form-control flatpickr\" id=\"date\" name=\"date\" placeholder=\"Start Date\" required data-default-date=\"today\">
+                                                            <label for=\"date\">Start Date</label>
+                                                            <div class=\"invalid-feedback\">Please provide a start date.</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class=\"col-md-6\">
+                                                        <div class=\"form-floating mb-3\">
+                                                            <input type=\"text\" class=\"form-control flatpickr\" id=\"endDate\" name=\"endDate\" placeholder=\"End Date\">
+                                                            <label for=\"endDate\">End Date (optional)</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class=\"d-flex justify-content-between mt-3\">
+                                                    <button type=\"button\" class=\"btn btn-label-secondary prev-step\" data-prev=\"1\">
+                                                        <i class=\"ti ti-arrow-left me-1\"></i> Previous
+                                                    </button>
+                                                    <button type=\"button\" class=\"btn btn-primary next-step\" data-next=\"3\">
+                                                        Next <i class=\"ti ti-arrow-right ms-1\"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            <!-- Step 3: Media -->
+                                            <div class=\"form-section\" id=\"step3\">
+                                                <div class=\"row g-3\">
+                                                    <div class=\"col-12\">
+                                                        <label class=\"form-label\">Pack Image</label>
+                                                        <ul class=\"nav nav-tabs mb-3\" role=\"tablist\">
+                                                            <li class=\"nav-item\">
+                                                                <button class=\"nav-link active\" id=\"upload-tab\" data-bs-toggle=\"tab\" data-bs-target=\"#upload-content\" type=\"button\" role=\"tab\" aria-controls=\"upload-content\" aria-selected=\"true\">
+                                                                    <i class=\"ti ti-upload me-1\"></i> Upload New Image
+                                                                </button>
+                                                            </li>
+                                                            <li class=\"nav-item\">
+                                                                <button class=\"nav-link\" id=\"server-tab\" data-bs-toggle=\"tab\" data-bs-target=\"#server-content\" type=\"button\" role=\"tab\" aria-controls=\"server-content\" aria-selected=\"false\">
+                                                                    <i class=\"ti ti-server me-1\"></i> Select from Server
+                                                                </button>
+                                                            </li>
+                                                        </ul>
+                                                        <div class=\"tab-content\">
+                                                            <!-- Upload New Image Tab -->
+                                                            <div class=\"tab-pane fade show active\" id=\"upload-content\" role=\"tabpanel\" aria-labelledby=\"upload-tab\">
+                                                                <div class=\"image-upload-area\" id=\"imageUploadArea\">
+                                                                    <input type=\"file\" id=\"packImage\" name=\"packImage\" accept=\"image/*\" class=\"d-none\">
+                                                                    <div id=\"imageUploadPlaceholder\">
+                                                                        <i class=\"ti ti-upload upload-icon mb-2\"></i>
+                                                                        <h6>Drop your image here or click to browse</h6>
+                                                                        <p class=\"text-muted small\">Supports JPG, PNG or GIF up to 5MB</p>
+                                                                    </div>
+                                                                    <div id=\"imagePreviewContainer\" class=\"text-center mt-3 d-none\">
+                                                                        <img id=\"imagePreview\" class=\"img-fluid rounded shadow-sm\" style=\"max-height: 200px;\">
+                                                                        <div class=\"mt-2\">
+                                                                            <button type=\"button\" class=\"btn btn-sm btn-outline-danger\" id=\"removeImage\">
+                                                                                <i class=\"ti ti-trash me-1\"></i> Remove
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            
+                                                            <!-- Select from Server Tab -->
+                                                            <div class=\"tab-pane fade\" id=\"server-content\" role=\"tabpanel\" aria-labelledby=\"server-tab\">
+                                                                <div class=\"server-browser glass-panel p-3\">
+                                                                    <div class=\"d-flex justify-content-between align-items-center mb-3\">
+                                                                        <div class=\"directory-path\">
+                                                                            <span class=\"badge bg-label-primary\">
+                                                                                <i class=\"ti ti-folder me-1\"></i> uploads/packs/Images
+                                                                            </span>
+                                                                        </div>
+                                                                        <button type=\"button\" id=\"refreshServerImages\" class=\"btn btn-sm btn-outline-primary\">
+                                                                            <i class=\"ti ti-refresh me-1\"></i> Refresh
+                                                                        </button>
+                                                                    </div>
+                                                                    
+                                                                    <div id=\"serverImagesContainer\" class=\"row g-3 server-images-grid\">
+                                                                        <div class=\"col-12 text-center py-5\">
+                                                                            <div class=\"spinner-border text-primary\" role=\"status\">
+                                                                                <span class=\"visually-hidden\">Loading...</span>
+                                                                            </div>
+                                                                            <p class=\"mt-2\">Loading server images...</p>
+                                                                        </div>
+                                                                    </div>
+                                                                    
+                                                                    <input type=\"hidden\" id=\"selectedServerImage\" name=\"selectedServerImage\">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class=\"col-12 mt-4\">
+                                                        <div class=\"form-check form-switch\">
+                                                            <input class=\"form-check-input\" type=\"checkbox\" id=\"featuredPack\" name=\"featuredPack\">
+                                                            <label class=\"form-check-label\" for=\"featuredPack\">Feature this pack on homepage</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class=\"d-flex justify-content-between mt-3\">
+                                                    <button type=\"button\" class=\"btn btn-label-secondary prev-step\" data-prev=\"2\">
+                                                        <i class=\"ti ti-arrow-left me-1\"></i> Previous
+                                                    </button>
+                                                    <button type=\"button\" class=\"btn btn-primary next-step\" data-next=\"4\">
+                                                        Review <i class=\"ti ti-arrow-right ms-1\"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            <!-- Step 4: Review -->
+                                            <div class=\"form-section\" id=\"step4\">
+                                                <div class=\"row\">
+                                                    <div class=\"col-12\">
+                                                        <div class=\"card glass-panel mb-4\">
+                                                            <div class=\"card-header\">
+                                                                <h5 class=\"mb-0\">Pack Summary</h5>
+                                                            </div>
+                                                            <div class=\"card-body\">
+                                                                <div class=\"row\">
+                                                                    <div class=\"col-md-4 mb-4\">
+                                                                        <div class=\"review-image-container mx-auto text-center\">
+                                                                            <img id=\"reviewImage\" src=\"\" alt=\"Pack Preview\" class=\"img-fluid rounded shadow-sm mb-2 review-image\">
+                                                                            <div id=\"reviewNoImage\" class=\"text-muted rounded p-3 bg-light text-center\">
+                                                                                <i class=\"ti ti-photo-off fs-1 text-secondary mb-2\"></i>
+                                                                                <p class=\"mb-0\">No image selected</p>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class=\"col-md-8\">
+                                                                        <div class=\"row g-3\">
+                                                                            <div class=\"col-md-6\">
+                                                                                <h6 class=\"text-muted fw-normal\">Pack Name:</h6>
+                                                                                <p id=\"reviewPackName\" class=\"fw-semibold\"></p>
+                                                                            </div>
+                                                                            <div class=\"col-md-6\">
+                                                                                <h6 class=\"text-muted fw-normal\">Category:</h6>
+                                                                                <p id=\"reviewCategory\" class=\"fw-semibold\"></p>
+                                                                            </div>
+                                                                            <div class=\"col-md-6\">
+                                                                                <h6 class=\"text-muted fw-normal\">Price:</h6>
+                                                                                <p id=\"reviewPrice\" class=\"fw-semibold text-primary\"></p>
+                                                                            </div>
+                                                                            <div class=\"col-md-6\">
+                                                                                <h6 class=\"text-muted fw-normal\">Capacity:</h6>
+                                                                                <p id=\"reviewCapacity\" class=\"fw-semibold\"></p>
+                                                                            </div>
+                                                                            <div class=\"col-md-6\">
+                                                                                <h6 class=\"text-muted fw-normal\">Duration:</h6>
+                                                                                <p id=\"reviewDuration\" class=\"fw-semibold\"></p>
+                                                                            </div>
+                                                                            <div class=\"col-md-6\">
+                                                                                <h6 class=\"text-muted fw-normal\">Start Date:</h6>
+                                                                                <p id=\"reviewStartDate\" class=\"fw-semibold\"></p>
+                                                                            </div>
+                                                                            <div class=\"col-md-6\">
+                                                                                <h6 class=\"text-muted fw-normal\">End Date:</h6>
+                                                                                <p id=\"reviewEndDate\" class=\"fw-semibold\"></p>
+                                                                            </div>
+                                                                            <div class=\"col-md-6\">
+                                                                                <h6 class=\"text-muted fw-normal\">Featured:</h6>
+                                                                                <p id=\"reviewFeatured\" class=\"fw-semibold\"></p>
+                                                                            </div>
+                                                                            <div class=\"col-12\">
+                                                                                <h6 class=\"text-muted fw-normal\">Description:</h6>
+                                                                                <p id=\"reviewDescription\" class=\"fw-semibold\"></p>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class=\"d-flex justify-content-between mt-3\">
+                                                    <button type=\"button\" class=\"btn btn-label-secondary prev-step\" data-prev=\"3\">
+                                                        <i class=\"ti ti-arrow-left me-1\"></i> Previous
+                                                    </button>
+                                                    <button type=\"submit\" class=\"btn btn-primary pulse\">
+                                                        <i class=\"ti ti-check me-1\"></i> Create Pack
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Core JS -->
+    <script src=\"{{ asset('vendor/libs/jquery/jquery.js') }}\"></script>
+    <script src=\"{{ asset('vendor/libs/popper/popper.js') }}\"></script>
+    <script src=\"{{ asset('vendor/js/bootstrap.js') }}\"></script>
+    <script src=\"{{ asset('vendor/libs/perfect-scrollbar/perfect-scrollbar.js') }}\"></script>
+    <script src=\"{{ asset('vendor/libs/node-waves/node-waves.js') }}\"></script>
+    <script src=\"{{ asset('vendor/libs/hammer/hammer.js') }}\"></script>
+    <script src=\"{{ asset('vendor/js/menu.js') }}\"></script>
+
+    <!-- Vendors JS -->
+    <script src=\"{{ asset('vendor/libs/flatpickr/flatpickr.js') }}\"></script>
+    <script src=\"{{ asset('vendor/libs/select2/select2.full.min.js') }}\"></script>
+    <script src=\"{{ asset('vendor/libs/sweetalert2/sweetalert2.js') }}\"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('createPackForm');
+            const formSections = document.querySelectorAll('.form-section');
+            const steps = document.querySelectorAll('.step');
+            const progressBar = document.getElementById('formProgressBar');
+            let currentStep = 1;
+        
+            // Function to validate current step
+            function validateStep(step) {
+                let isValid = true;
+                const fields = document.querySelectorAll(`#step\${step} .form-control, #step\${step} .form-select`);
+                
+                fields.forEach(field => {
+                    const value = field.value.trim();
+                    const name = field.getAttribute('name');
+                    
+                    if (field.hasAttribute('required') && value === '') {
+                        isValid = false;
+                        field.classList.add('is-invalid');
+                        field.classList.remove('is-valid');
+                        
+                        // Add custom error message for required fields
+                        let errorMsg = 'Ce champ est requis.';
+                        
+                        // Show corresponding validation message based on field name
+                        switch(name) {
+                            case 'packName':
+                                errorMsg = 'Le nom du pack est requis.';
+                                break;
+                            case 'prix':
+                                errorMsg = 'Le prix est requis.';
+                                break;
+                            case 'capacite':
+                                errorMsg = 'La capacité est requise.';
+                                break;
+                            case 'duree':
+                                errorMsg = 'La durée est requise.';
+                                break;
+                            case 'date':
+                                errorMsg = 'La date de début est requise.';
+                                break;
+                            case 'endDate':
+                                errorMsg = 'La date de fin est requise.';
+                                break;
+                            case 'description':
+                                errorMsg = 'La description est requise.';
+                                break;
+                            case 'category':
+                                errorMsg = 'La catégorie est requise.';
+                                break;
+                        }
+                        
+                        // Find or create validation message element
+                        let feedback = field.nextElementSibling;
+                        if (!feedback || !feedback.classList.contains('invalid-feedback')) {
+                            feedback = document.createElement('div');
+                            feedback.className = 'invalid-feedback';
+                            field.parentNode.appendChild(feedback);
+                        }
+                        feedback.textContent = errorMsg;
+                    } else if (name === 'prix' && (isNaN(value) || parseFloat(value) <= 0)) {
+                        isValid = false;
+                        field.classList.add('is-invalid');
+                        field.classList.remove('is-valid');
+                        
+                        // Find or create validation message element
+                        let feedback = field.nextElementSibling;
+                        if (!feedback || !feedback.classList.contains('invalid-feedback')) {
+                            feedback = document.createElement('div');
+                            feedback.className = 'invalid-feedback';
+                            field.parentNode.appendChild(feedback);
+                        }
+                        feedback.textContent = 'Le prix doit être un nombre positif.';
+                    } else if (name === 'capacite' && (isNaN(value) || parseInt(value) <= 0)) {
+                        isValid = false;
+                        field.classList.add('is-invalid');
+                        field.classList.remove('is-valid');
+                        
+                        // Find or create validation message element
+                        let feedback = field.nextElementSibling;
+                        if (!feedback || !feedback.classList.contains('invalid-feedback')) {
+                            feedback = document.createElement('div');
+                            feedback.className = 'invalid-feedback';
+                            field.parentNode.appendChild(feedback);
+                        }
+                        feedback.textContent = 'La capacité doit être un nombre positif.';
+                    } else if (name === 'duree' && (isNaN(value) || parseInt(value) <= 0)) {
+                        isValid = false;
+                        field.classList.add('is-invalid');
+                        field.classList.remove('is-valid');
+                        
+                        // Find or create validation message element
+                        let feedback = field.nextElementSibling;
+                        if (!feedback || !feedback.classList.contains('invalid-feedback')) {
+                            feedback = document.createElement('div');
+                            feedback.className = 'invalid-feedback';
+                            field.parentNode.appendChild(feedback);
+                        }
+                        feedback.textContent = 'La durée doit être un nombre positif.';
+                    } else if (name === 'endDate' && document.querySelector('[name=\"date\"]').value !== '') {
+                        const startDate = new Date(document.querySelector('[name=\"date\"]').value);
+                        const endDate = new Date(value);
+                        
+                        if (endDate < startDate) {
+                            isValid = false;
+                            field.classList.add('is-invalid');
+                            field.classList.remove('is-valid');
+                            
+                            // Find or create validation message element
+                            let feedback = field.nextElementSibling;
+                            if (!feedback || !feedback.classList.contains('invalid-feedback')) {
+                                feedback = document.createElement('div');
+                                feedback.className = 'invalid-feedback';
+                                field.parentNode.appendChild(feedback);
+                            }
+                            feedback.textContent = 'La date de fin doit être après la date de début.';
+                        } else {
+                            field.classList.remove('is-invalid');
+                            field.classList.add('is-valid');
+                        }
+                    } else {
+                        field.classList.remove('is-invalid');
+                        field.classList.add('is-valid');
+                    }
+                });
+                
+                return isValid;
+            }
+        
+            // Function to update progress bar
+            function updateProgress() {
+                const progress = ((currentStep - 1) / (formSections.length - 1)) * 100;
+                progressBar.style.width = `\${progress}%`;
+            }
+        
+            // Function to update progress bar with custom value
+            function updateProgressBar(value) {
+                progressBar.style.width = `\${value}%`;
+            }
+        
+            // Function to show step
+            function showStep(step) {
+                formSections.forEach(section => section.classList.remove('active'));
+                steps.forEach(s => s.classList.remove('active'));
+        
+                document.getElementById('step' + step).classList.add('active');
+                steps[step - 1].classList.add('active');
+        
+                // Update completed steps
+                steps.forEach((s, index) => {
+                    if (index < step - 1) {
+                        s.classList.add('completed');
+                    } else {
+                        s.classList.remove('completed');
+                    }
+                });
+        
+                updateProgress();
+            }
+        
+            // Function to show errors
+            function showErrors(errors) {
+                let errorMessage = '';
+                if (Array.isArray(errors)) {
+                    errorMessage = errors.join('<br>');
+                } else {
+                    errorMessage = errors;
+                }
+                
+                Swal.fire({
+                    title: 'Error!',
+                    html: errorMessage,
+                    icon: 'error',
+                    customClass: {
+                        confirmButton: 'btn btn-primary'
+                    },
+                    buttonsStyling: false
+                });
+            }
+        
+            // Handle next button clicks
+            document.querySelectorAll('.next-step').forEach(button => {
+                button.addEventListener('click', function() {
+                    const nextStep = parseInt(this.dataset.next);
+                    
+                    if (validateStep(currentStep)) {
+                        currentStep = nextStep;
+                        showStep(currentStep);
+                        
+                        // Update review information when going to step 4
+                        if (nextStep === 4) {
+                            updateReviewInfo();
+                        }
+                    } else {
+                        // Show validation error message
+                        Swal.fire({
+                            title: 'Validation Error',
+                            text: 'Please fill in all required fields before proceeding.',
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                });
+            });
+        
+            // Handle back button clicks
+            document.querySelectorAll('.prev-step').forEach(button => {
+                button.addEventListener('click', function() {
+                    const prevStep = parseInt(this.dataset.prev);
+                    currentStep = prevStep;
+                    showStep(currentStep);
+                });
+            });
+            
+            // Function to update review information
+            function updateReviewInfo() {
+                document.getElementById('reviewCategory').textContent = document.getElementById('category').value;
+                document.getElementById('reviewPackName').textContent = document.getElementById('packName').value;
+                document.getElementById('reviewPrice').textContent = document.getElementById('prix').value + ' €';
+                document.getElementById('reviewCapacity').textContent = document.getElementById('capacite').value + ' personnes';
+                document.getElementById('reviewDuration').textContent = document.getElementById('duree').value + ' heures';
+                document.getElementById('reviewDescription').textContent = document.getElementById('description').value;
+                
+                const startDate = document.getElementById('date').value;
+                document.getElementById('reviewStartDate').textContent = startDate ? startDate : '-';
+                
+                const endDate = document.getElementById('endDate').value;
+                document.getElementById('reviewEndDate').textContent = endDate ? endDate : 'Non spécifié';
+                
+                if (document.getElementById('featuredPack')) {
+                    document.getElementById('reviewFeatured').textContent = document.getElementById('featuredPack').checked ? 'Oui' : 'Non';
+                }
+                
+                // Check if image is selected
+                if (document.getElementById('imagePreview').src && document.getElementById('imagePreview').src !== window.location.href) {
+                    document.getElementById('reviewImage').src = document.getElementById('imagePreview').src;
+                    document.getElementById('reviewImage').classList.remove('d-none');
+                    document.getElementById('reviewNoImage').classList.add('d-none');
+                } else {
+                    document.getElementById('reviewImage').classList.add('d-none');
+                    document.getElementById('reviewNoImage').classList.remove('d-none');
+                }
+            }
+            
+            // Image Upload handling
+            const imageUploadArea = document.getElementById('imageUploadArea');
+            const imagePreview = document.getElementById('imagePreview');
+            const packImageInput = document.getElementById('packImage');
+
+            // Initialize dropzone behavior
+            \$(imageUploadArea).on('dragover', function(e) {
+                e.preventDefault();
+                \$(this).addClass('dragover');
+            });
+
+            \$(imageUploadArea).on('dragleave drop', function(e) {
+                e.preventDefault();
+                \$(this).removeClass('dragover');
+                
+                if (e.type === 'drop') {
+                    packImageInput.files = e.originalEvent.dataTransfer.files;
+                    handleFileSelect(e.originalEvent.dataTransfer.files[0]);
+                }
+            });
+
+            // Click to browse files
+            \$(imageUploadArea).on('click', function() {
+                packImageInput.click();
+            });
+
+            \$(packImageInput).on('change', function() {
+                if (this.files && this.files[0]) {
+                    handleFileSelect(this.files[0]);
+                }
+            });
+
+            function handleFileSelect(file) {
+                // Check if file is an image
+                if (!file.type.match('image.*')) {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Please select an image file',
+                        icon: 'error',
+                        customClass: {
+                            confirmButton: 'btn btn-primary'
+                        },
+                        buttonsStyling: false
+                    });
+                    return;
+                }
+                
+                // Check file size (5MB max)
+                if (file.size > 5 * 1024 * 1024) {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'File size should not exceed 5MB',
+                        icon: 'error',
+                        customClass: {
+                            confirmButton: 'btn btn-primary'
+                        },
+                        buttonsStyling: false
+                    });
+                    return;
+                }
+                
+                // Show preview
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imagePreview.src = e.target.result;
+                    imagePreview.style.display = 'block';
+                    document.getElementById('imageUploadPlaceholder').style.display = 'none';
+                    document.getElementById('imagePreviewContainer').classList.remove('d-none');
+                };
+                reader.readAsDataURL(file);
+            }
+            
+            // Handle remove image button
+            \$('#removeImage').on('click', function() {
+                // Clear the file input
+                \$('#packImage').val('');
+                // Hide preview
+                \$('#imagePreviewContainer').addClass('d-none');
+                // Show placeholder
+                \$('#imageUploadPlaceholder').style.display = 'block';
+                // Clear preview image
+                \$('#imagePreview').attr('src', '');
+                
+                // Update review
+                \$('#reviewImage').addClass('d-none');
+                \$('#reviewNoImage').removeClass('d-none');
+            });
+            
+            // Server Image Browser functionality
+            function loadServerImages() {
+                const container = \$('#serverImagesContainer');
+                
+                // Show loading state
+                container.html(`
+                    <div class=\"col-12 text-center py-5\">
+                        <div class=\"spinner-border text-primary\" role=\"status\">
+                            <span class=\"visually-hidden\">Loading...</span>
+                        </div>
+                        <p class=\"mt-2\">Loading server images...</p>
+                    </div>
+                `);
+                
+                             // Fetch images from server
+                \$.ajax({
+                    url: '{{ path('admin_pack_list_files') }}',
+                    type: 'GET',
+                    data: {
+                        path: 'uploads/packs/Images'
+                    },
+                    success: function(response) {
+                        console.log('Server response:', response); // Debug response
+                        if (response.success) {
+                            if (response.files && response.files.length > 0) {
+                                let imagesHtml = '';
+                                response.files.forEach(function(image) {
+                                    imagesHtml += `
+                                        <div class=\"col-md-4 col-sm-6 mb-3\">
+                                            <div class=\"card h-100 server-image-card\" data-image-path=\"\${image.path}\">
+                                                <div class=\"card-img-container\">
+                                                    <img src=\"/uploads/packs/\${image.path}\" alt=\"\${image.name}\" class=\"card-img-top\">
+                                                </div>
+                                                <div class=\"card-body\">
+                                                    <p class=\"card-text small text-truncate\">\${image.name}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    `;
+                                });
+                                container.html(imagesHtml);
+                                
+                                console.log('Added ' + \$('.server-image-card').length + ' image cards'); // Debug count
+                                
+                                // Add click handler for server image cards - using event delegation for reliability
+                                \$(document).off('click', '.server-image-card').on('click', '.server-image-card', function(e) {
+                                    console.log('Image card clicked', \$(this).data('image-path')); // Debug click
+                                    e.preventDefault();
+                                    
+                                    // Remove selected class from all images
+                                    \$('.server-image-card').removeClass('selected');
+                                    
+                                    // Add selected class to clicked image
+                                    \$(this).addClass('selected');
+                                    
+                                    // Set the selected image path
+                                    const imagePath = \$(this).data('image-path');
+                                    console.log('Selected image path:', imagePath); // Debug path
+                                    \$('#selectedServerImage').val(imagePath);
+                                    
+                                    // Update preview
+                                    const imageUrl = \$(this).find('img').attr('src');
+                                    \$('#imagePreview').attr('src', imageUrl);
+                                    \$('#imagePreview').css('display', 'block');
+                                    \$('#imageUploadPlaceholder').css('display', 'none');
+                                    \$('#imagePreviewContainer').removeClass('d-none');
+                                    
+                                    // Update review
+                                    \$('#reviewImage').attr('src', imageUrl);
+                                    \$('#reviewImage').removeClass('d-none');
+                                    \$('#reviewNoImage').addClass('d-none');
+                                    
+                                    // Show visual feedback
+                                    Swal.fire({
+                                        title: 'Image sélectionnée!',
+                                        text: 'Vous avez sélectionné ' + \$(this).find('.card-text').text(),
+                                        icon: 'success',
+                                        toast: true,
+                                        position: 'top-end',
+                                        showConfirmButton: false,
+                                        timer: 3000
+                                    });
+                                });
+                            } else {
+                                container.html(`
+                                    <div class=\"col-12 text-center py-5\">
+                                        <i class=\"ti ti-photo-off fs-1 text-secondary mb-2\"></i>
+                                        <p class=\"mb-0\">No images found in this directory</p>
+                                    </div>
+                                `);
+                            }
+                        } else {
+                            container.html(`
+                                <div class=\"col-12 text-center py-5\">
+                                    <i class=\"ti ti-alert-triangle fs-1 text-warning mb-2\"></i>
+                                    <p class=\"mb-0\">\${response.message || 'Failed to load images'}</p>
+                                </div>
+                            `);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        container.html(`
+                            <div class=\"col-12 text-center py-5\">
+                                <i class=\"ti ti-alert-circle fs-1 text-danger mb-2\"></i>
+                                <p class=\"mb-0\">Error loading images: \${error}</p>
+                            </div>
+                        `);
+                    }
+                });
+            }
+            
+            // Load server images when tab is clicked
+            \$('#server-tab').on('click', function() {
+                loadServerImages();
+            });
+            
+            // Refresh server images
+            \$('#refreshServerImages').on('click', function() {
+                loadServerImages();
+            });
+            
+            // Form submission handler
+            \$('#createPackForm').on('submit', function(e) {
+                e.preventDefault();
+                
+                if (!validateStep(currentStep)) {
+                    showErrors(['Veuillez remplir tous les champs obligatoires.']);
+                    return;
+                }
+                
+                const formData = new FormData(this);
+                
+                // Add upload path information to ensure images go to the correct directory
+                formData.append('uploadPath', 'public/uploads/packs/Images');
+                
+                // Ensure date field is properly set
+                const dateField = document.getElementById('date');
+                if (dateField && dateField.value) {
+                    // Make sure the date is properly formatted
+                    try {
+                        const dateObj = new Date(dateField.value);
+                        if (!isNaN(dateObj.getTime())) {
+                            const formattedDate = dateObj.getFullYear() + '-' + 
+                                String(dateObj.getMonth() + 1).padStart(2, '0') + '-' + 
+                                String(dateObj.getDate()).padStart(2, '0');
+                            formData.set('date', formattedDate);
+                        }
+                    } catch (e) {
+                        console.error('Date parsing error:', e);
+                    }
+                }
+                
+                // Handle endDate field similarly
+                const endDateField = document.getElementById('endDate');
+                if (endDateField && endDateField.value) {
+                    try {
+                        const dateObj = new Date(endDateField.value);
+                        if (!isNaN(dateObj.getTime())) {
+                            const formattedDate = dateObj.getFullYear() + '-' + 
+                                String(dateObj.getMonth() + 1).padStart(2, '0') + '-' + 
+                                String(dateObj.getDate()).padStart(2, '0');
+                            formData.set('endDate', formattedDate);
+                        }
+                    } catch (e) {
+                        console.error('End date parsing error:', e);
+                    }
+                }
+            
+                // Show loading state
+                const submitBtn = \$(this).find('button[type=\"submit\"]');
+                submitBtn.html('<span class=\"spinner-border spinner-border-sm me-1\" role=\"status\" aria-hidden=\"true\"></span> Création en cours...').attr('disabled', true);
+                
+                // Progress for form submission
+                updateProgressBar(95);
+                
+                // Check if we're using a server image or an uploaded file
+                const selectedServerImage = \$('#selectedServerImage').val();
+                const packImageInput = document.getElementById('packImage');
+                
+                console.log('Selected server image:', selectedServerImage);
+                console.log('Has uploaded file:', packImageInput.files.length > 0);
+                
+                // Debug: Log form data
+                console.log('Form data being submitted:');
+                for (let pair of formData.entries()) {
+                    console.log(pair[0] + ': ' + pair[1]);
+                }
+                
+                \$.ajax({
+                    url: '{{ path('admin_pack_create') }}',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        console.log('Success response:', response);
+                        
+                        if (response.success) {
+                            // Show success message
+                            Swal.fire({
+                                title: 'Succès!',
+                                text: response.message || 'Le pack a été créé avec succès',
+                                icon: 'success',
+                                confirmButtonText: 'OK'
+                            }).then((result) => {
+                                // Redirect to admin pack page
+                                window.location.href = '{{ path('admin_pack_index') }}';
+                            });
+                        } else {
+                            // Reset button state
+                            submitBtn.html('<i class=\"ti ti-check me-1\"></i> Créer le Pack').attr('disabled', false);
+                            
+                            // Show error message
+                            showErrors(response.message || response.errors || ['Une erreur est survenue lors de la création du pack']);
+                            updateProgressBar(80);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('AJAX error:', status, error);
+                        console.log('Response:', xhr.responseText);
+                        
+                        // Reset button state
+                        submitBtn.html('<i class=\"ti ti-check me-1\"></i> Créer le Pack').attr('disabled', false);
+                        updateProgressBar(80);
+                        
+                        let errorMessage = 'Une erreur inattendue est survenue. Veuillez réessayer.';
+                        let errorDetails = '';
+                        
+                        try {
+                            const response = JSON.parse(xhr.responseText);
+                            if (response.message) {
+                                errorMessage = response.message;
+                            }
+                            
+                            // Add detailed debug information if available
+                            if (response.debug) {
+                                errorDetails += '<div class=\"error-details\"><strong>Données reçues:</strong><pre>' + 
+                                    JSON.stringify(response.debug, null, 2) + '</pre></div>';
+                            }
+                            
+                            if (response.trace) {
+                                errorDetails += '<div class=\"error-details\"><strong>Détails techniques:</strong><pre>' + 
+                                    response.file + ' (ligne ' + response.line + ')</pre></div>';
+                            }
+                            
+                            if (response.errors && response.errors.length > 0) {
+                                let errorHtml = '<ul>';
+                                response.errors.forEach(function(error) {
+                                    errorHtml += '<li>' + error + '</li>';
+                                });
+                                errorHtml += '</ul>';
+                                \$('.error-message').html(errorHtml).show();
+                            }
+                        } catch (e) {
+                            console.error('Error parsing response:', e);
+                        }
+                        
+                        // Show error message with SweetAlert
+                        Swal.fire({
+                            title: 'Erreur!',
+                            html: errorMessage + errorDetails,
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                        
+                        // Also update the error message container
+                        \$('.error-message').html('<p>' + errorMessage + '</p>' + errorDetails).show();
+                    }
+                });
+            });
+        
+            // Initialize form
+            showStep(1);
+            
+            // Initialize flatpickr for date inputs
+            flatpickr('.flatpickr', {
+                enableTime: false,
+                dateFormat: 'Y-m-d',
+                minDate: 'today',
+                allowInput: true
+            });
+            
+            // Set default date for the start date field
+            const today = new Date();
+            const formattedDate = today.getFullYear() + '-' + 
+                                 String(today.getMonth() + 1).padStart(2, '0') + '-' + 
+                                 String(today.getDate()).padStart(2, '0');
+            
+            // Get the flatpickr instance for the date field
+            const dateInput = document.getElementById('date');
+            if (dateInput && dateInput._flatpickr) {
+                dateInput._flatpickr.setDate(formattedDate);
+                // Also set the value directly to ensure it's properly set
+                dateInput.value = formattedDate;
+            }
+        });
+    </script>
+
+    <style>
+        @keyframes ripple {
+            to {
+                transform: scale(70);
+                opacity: 0;
+            }
+        }
+        
+        /* Dropzone styling */
+        .image-upload-area.dragover {
+            background-color: rgba(115, 103, 240, 0.1);
+            border-color: #7367f0;
+        }
+        
+        .error-details {
+            margin-top: 15px;
+            padding: 10px;
+            background: rgba(255, 200, 200, 0.2);
+            border-radius: 8px;
+            border-left: 3px solid #d33;
+            font-family: monospace;
+            max-height: 200px;
+            overflow: auto;
+        }
+        
+        .error-details pre {
+            white-space: pre-wrap;
+            word-break: break-word;
+            margin: 0;
+            font-size: 12px;
+        }
+    </style>
+</body>
+</html>", "admin/pack/create_pack.html.twig", "C:\\Users\\Rayen\\Desktop\\Nouveau dossier (13)\\GoldenTouch-Symfony\\templates\\admin\\pack\\create_pack.html.twig");
+    }
+}

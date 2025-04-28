@@ -1,0 +1,2701 @@
+<?php
+
+use Twig\Environment;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Extension\CoreExtension;
+use Twig\Extension\SandboxExtension;
+use Twig\Markup;
+use Twig\Sandbox\SecurityError;
+use Twig\Sandbox\SecurityNotAllowedTagError;
+use Twig\Sandbox\SecurityNotAllowedFilterError;
+use Twig\Sandbox\SecurityNotAllowedFunctionError;
+use Twig\Source;
+use Twig\Template;
+use Twig\TemplateWrapper;
+
+/* perso/stats.html.twig */
+class __TwigTemplate_717ad1254758bb38b85f29db0b0569ec extends Template
+{
+    private Source $source;
+    /**
+     * @var array<string, Template>
+     */
+    private array $macros = [];
+
+    public function __construct(Environment $env)
+    {
+        parent::__construct($env);
+
+        $this->source = $this->getSourceContext();
+
+        $this->parent = false;
+
+        $this->blocks = [
+        ];
+    }
+
+    protected function doDisplay(array $context, array $blocks = []): iterable
+    {
+        $macros = $this->macros;
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2 = $this->extensions["Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension"];
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->enter($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "template", "perso/stats.html.twig"));
+
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f = $this->extensions["Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension"];
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->enter($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "template", "perso/stats.html.twig"));
+
+        // line 1
+        yield "<!DOCTYPE html>
+<html
+  lang=\"fr\"
+  class=\"light-style layout-navbar-fixed layout-menu-fixed\"
+  dir=\"ltr\"
+  data-theme=\"theme-default\"
+  data-assets-path=\"";
+        // line 7
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl(""), "html", null, true);
+        yield "\"
+  data-template=\"vertical-menu-template\">
+<head>
+    <meta charset=\"utf-8\" />
+    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0\" />
+    <title>Statistiques Personnels</title>
+    <meta name=\"description\" content=\"Statistiques des personnels et réservations\" />
+
+    <!-- Favicon -->
+    <link rel=\"icon\" type=\"image/x-icon\" href=\"";
+        // line 16
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("img/favicon/favicon.ico"), "html", null, true);
+        yield "\" />
+
+    <!-- Fonts -->
+    <link rel=\"preconnect\" href=\"https://fonts.googleapis.com\" />
+    <link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin />
+    <link href=\"https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap\" rel=\"stylesheet\" />
+
+    <!-- Icons -->
+    <link rel=\"stylesheet\" href=\"";
+        // line 24
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("vendor/fonts/fontawesome.css"), "html", null, true);
+        yield "\" />
+    <link rel=\"stylesheet\" href=\"";
+        // line 25
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("vendor/fonts/tabler-icons.css"), "html", null, true);
+        yield "\" />
+
+    <!-- Core CSS -->
+    <link rel=\"stylesheet\" href=\"";
+        // line 28
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("vendor/css/rtl/core.css"), "html", null, true);
+        yield "\" />
+    <link rel=\"stylesheet\" href=\"";
+        // line 29
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("vendor/css/rtl/theme-default.css"), "html", null, true);
+        yield "\" />
+    <link rel=\"stylesheet\" href=\"";
+        // line 30
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("css/demo.css"), "html", null, true);
+        yield "\" />
+
+    <!-- Vendors CSS -->
+    <link rel=\"stylesheet\" href=\"";
+        // line 33
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("vendor/libs/perfect-scrollbar/perfect-scrollbar.css"), "html", null, true);
+        yield "\" />
+    <link rel=\"stylesheet\" href=\"";
+        // line 34
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("vendor/libs/apex-charts/apex-charts.css"), "html", null, true);
+        yield "\" />
+
+    <style>
+        :root {
+            --chart-height: 280px;
+            --compact-card-height: 380px;
+            --animation-duration: 1.5s;
+        }
+        
+        .compact-chart {
+            height: var(--chart-height);
+            position: relative;
+        }
+        
+        .compact-card {
+            height: var(--compact-card-height);
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            margin-bottom: 1rem;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp var(--animation-duration) ease-out forwards;
+        }
+        
+        .compact-card:nth-child(1) { animation-delay: 0.1s; }
+        .compact-card:nth-child(2) { animation-delay: 0.2s; }
+        .compact-card:nth-child(3) { animation-delay: 0.3s; }
+        .compact-card:nth-child(4) { animation-delay: 0.4s; }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .compact-card:hover {
+            transform: translateY(-5px) !important;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+        }
+        
+        .compact-card-header {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        
+        .compact-card-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin: 0;
+            color: #566a7f;
+        }
+        
+        .compact-card-body {
+            padding: 1rem;
+            height: calc(100% - 56px);
+            overflow: hidden;
+        }
+        
+        .service-badge {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .scrollable-content {
+            height: calc(var(--compact-card-height) - 120px);
+            overflow-y: auto;
+        }
+        
+        .metric-card {
+            background: rgba(105, 108, 255, 0.05);
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            margin-bottom: 0.75rem;
+            transition: all 0.3s ease;
+        }
+        
+        .metric-card:hover {
+            transform: translateX(5px);
+            background: rgba(105, 108, 255, 0.1);
+        }
+        
+        .metric-value {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+        
+        .metric-label {
+            font-size: 0.75rem;
+            color: #6c757d;
+        }
+        
+        .chart-tooltip {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(105, 108, 255, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(105, 108, 255, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(105, 108, 255, 0); }
+        }
+        
+        @media (max-width: 992px) {
+            :root {
+                --chart-height: 240px;
+                --compact-card-height: auto;
+            }
+            
+            .compact-card {
+                height: auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class=\"layout-wrapper layout-content-navbar\">
+        <div class=\"layout-container\">
+            <!-- Sidebar -->
+            <aside id=\"layout-menu\" class=\"layout-menu menu-vertical menu bg-menu-theme\">
+                <div class=\"app-brand demo\">
+                    <a href=\"index.html\" class=\"app-brand-link\">
+                        <span class=\"app-brand-logo demo\">
+                            <svg width=\"32\" height=\"22\" viewBox=\"0 0 32 22\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">
+                                <path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M0.00172773 0V6.85398C0.00172773 6.85398 -0.133178 9.01207 1.98092 10.8388L13.6912 21.9964L19.7809 21.9181L18.8042 9.88248L16.4951 7.17289L9.23799 0H0.00172773Z\" fill=\"#7367F0\" />
+                                <path opacity=\"0.06\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M7.69824 16.4364L12.5199 3.23696L16.5541 7.25596L7.69824 16.4364Z\" fill=\"#161616\" />
+                                <path opacity=\"0.06\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M8.07751 15.9175L13.9419 4.63989L16.5849 7.28475L8.07751 15.9175Z\" fill=\"#161616\" />
+                                <path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M7.77295 16.3566L23.6563 0H32V6.88383C32 6.88383 31.8262 9.17836 30.6591 10.4057L19.7824 22H13.6938L7.77295 16.3566Z\" fill=\"#7367F0\" />
+                            </svg>
+                        </span>
+                        <span class=\"app-brand-text demo menu-text fw-bold\">Vuexy</span>
+                    </a>
+                    <a href=\"javascript:void(0);\" class=\"layout-menu-toggle menu-link text-large ms-auto\">
+                        <i class=\"ti menu-toggle-icon d-none d-xl-block ti-sm align-middle\"></i>
+                        <i class=\"ti ti-x d-block d-xl-none ti-sm align-middle\"></i>
+                    </a>
+                </div>
+
+                <div class=\"menu-inner-shadow\"></div>
+
+<ul class=\"menu-inner py-1\">
+  <!-- Packs -->
+  <li class=\"menu-item \">
+    <a href=\"packs.html\" class=\"menu-link\">
+      <i class=\"menu-icon tf-icons ti ti-package\"></i>
+      <div data-i18n=\"Packs\">Packs</div>
+    </a>
+  </li>
+
+  <!-- Gestion Événements -->
+  <li class=\"menu-item\">
+    <a href=\"javascript:void(0);\" class=\"menu-link menu-toggle\">
+      <i class=\"menu-icon tf-icons ti ti-calendar-event\"></i>
+      <div data-i18n=\"Gestion Événements\">Gestion Événements</div>
+    </a>
+    <ul class=\"menu-sub\">
+      <li class=\"menu-item\">
+        <a href=\"ajouter-evenement.html\" class=\"menu-link\">
+          <i class=\"menu-icon tf-icons ti ti-circle\"></i>
+          <div data-i18n=\"Ajouter Événement\">Ajouter Événement</div>
+        </a>
+      </li>
+      <li class=\"menu-item\">
+        <a href=\"liste-evenements.html\" class=\"menu-link\">
+          <i class=\"menu-icon tf-icons ti ti-circle\"></i>
+          <div data-i18n=\"Liste Événements\">Liste Événements</div>
+        </a>
+      </li>
+    </ul>
+  </li>
+
+  <!-- Gestion Matérielle -->
+  <li class=\"menu-item\">
+    <a href=\"javascript:void(0);\" class=\"menu-link menu-toggle\">
+      <i class=\"menu-icon tf-icons ti ti-tools\"></i>
+      <div data-i18n=\"Gestion Matérielle\">Gestion Matérielle</div>
+    </a>
+    <ul class=\"menu-sub\">
+      <li class=\"menu-item\">
+        <a href=\"ajouter-materiel.html\" class=\"menu-link\">
+          <i class=\"menu-icon tf-icons ti ti-circle\"></i>
+          <div data-i18n=\"Ajouter Matériel\">Ajouter Matériel</div>
+        </a>
+      </li>
+      <li class=\"menu-item\">
+        <a href=\"liste-materiel.html\" class=\"menu-link\">
+          <i class=\"menu-icon tf-icons ti ti-circle\"></i>
+          <div data-i18n=\"Liste Matériel\">Liste Matériel</div>
+        </a>
+      </li>
+    </ul>
+  </li>
+
+  <!-- Gestion Lieu -->
+  <li class=\"menu-item\">
+    <a href=\"javascript:void(0);\" class=\"menu-link menu-toggle\">
+      <i class=\"menu-icon tf-icons ti ti-map-pin\"></i>
+      <div data-i18n=\"Gestion Lieu\">Gestion Lieu</div>
+    </a>
+    <ul class=\"menu-sub\">
+      <li class=\"menu-item\">
+        <a href=\"ajouter-lieu.html\" class=\"menu-link\">
+          <i class=\"menu-icon tf-icons ti ti-circle\"></i>
+          <div data-i18n=\"Ajouter Lieu\">Ajouter Lieu</div>
+        </a>
+      </li>
+      <li class=\"menu-item\">
+        <a href=\"liste-lieux.html\" class=\"menu-link\">
+          <i class=\"menu-icon tf-icons ti ti-circle\"></i>
+          <div data-i18n=\"Liste Lieux\">Liste Lieux</div>
+        </a>
+      </li>
+    </ul>
+  </li>
+
+  <!-- Gestion Personnels -->
+    <li class=\"menu-item active\">
+    <a href=\"packs.html\" class=\"menu-link\">
+      <i class=\"menu-icon tf-icons ti ti-package\"></i>
+      <div data-i18n=\"Personnels\">Personnels</div>
+    </a>
+  </li>
+
+  <!-- Gestion Commandes -->
+  <li class=\"menu-item\">
+    <a href=\"javascript:void(0);\" class=\"menu-link menu-toggle\">
+      <i class=\"menu-icon tf-icons ti ti-shopping-cart\"></i>
+      <div data-i18n=\"Gestion Commandes\">Gestion Commandes</div>
+    </a>
+    <ul class=\"menu-sub\">
+      <li class=\"menu-item\">
+        <a href=\"panier.html\" class=\"menu-link\">
+          <i class=\"menu-icon tf-icons ti ti-circle\"></i>
+          <div data-i18n=\"Panier\">Panier</div>
+          <div class=\"badge bg-label-primary rounded-pill ms-auto\">3</div>
+        </a>
+      </li>
+      <li class=\"menu-item\">
+        <a href=\"liste-commandes.html\" class=\"menu-link\">
+          <i class=\"menu-icon tf-icons ti ti-circle\"></i>
+          <div data-i18n=\"Liste Commandes\">Liste Commandes</div>
+        </a>
+      </li>
+      <li class=\"menu-item\">
+        <a href=\"liste-reclamations.html\" class=\"menu-link\">
+          <i class=\"menu-icon tf-icons ti ti-circle\"></i>
+          <div data-i18n=\"Liste Réclamations\">Liste Réclamations</div>
+          <div class=\"badge bg-label-warning rounded-pill ms-auto\">2</div>
+        </a>
+      </li>
+    </ul>
+  </li>
+
+  <!-- Divider -->
+  <li class=\"menu-header small text-uppercase\">
+    <span class=\"menu-header-text\">Compte</span>
+  </li>
+
+  <!-- Compte -->
+  <li class=\"menu-item\">
+    <a href=\"compte.html\" class=\"menu-link\">
+      <i class=\"menu-icon tf-icons ti ti-user\"></i>
+      <div data-i18n=\"Mon Compte\">Mon Compte</div>
+    </a>
+  </li>
+
+  <!-- Déconnexion -->
+  <li class=\"menu-item\">
+    <a href=\"deconnexion.html\" class=\"menu-link\">
+      <i class=\"menu-icon tf-icons ti ti-logout\"></i>
+      <div data-i18n=\"Déconnexion\">Déconnexion</div>
+    </a>
+  </li>
+</ul>
+            </aside>
+            <!-- / Sidebar -->
+
+            <div class=\"layout-page\">
+                <!-- Navbar -->
+          <nav
+            class=\"layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme\"
+            id=\"layout-navbar\">
+            <div class=\"layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none\">
+              <a class=\"nav-item nav-link px-0 me-xl-4\" href=\"javascript:void(0)\">
+                <i class=\"ti ti-menu-2 ti-sm\"></i>
+              </a>
+            </div>
+
+            <div class=\"navbar-nav-right d-flex align-items-center\" id=\"navbar-collapse\">
+              <!-- Search -->
+              <div class=\"navbar-nav align-items-center\">
+                <div class=\"nav-item navbar-search-wrapper mb-0\">
+                  <a class=\"nav-item nav-link search-toggler d-flex align-items-center px-0\" href=\"javascript:void(0);\">
+                    <i class=\"ti ti-search ti-md me-2\"></i>
+                    <span class=\"d-none d-md-inline-block text-muted\">Search (Ctrl+/)</span>
+                  </a>
+                </div>
+              </div>
+              <!-- /Search -->
+
+              <ul class=\"navbar-nav flex-row align-items-center ms-auto\">
+                <!-- Language -->
+                <li class=\"nav-item dropdown-language dropdown me-2 me-xl-0\">
+                  <a class=\"nav-link dropdown-toggle hide-arrow\" href=\"javascript:void(0);\" data-bs-toggle=\"dropdown\">
+                    <i class=\"fi fi-us fis rounded-circle me-1 fs-3\"></i>
+                  </a>
+                  <ul class=\"dropdown-menu dropdown-menu-end\">
+                    <li>
+                      <a class=\"dropdown-item\" href=\"javascript:void(0);\" data-language=\"en\">
+                        <i class=\"fi fi-us fis rounded-circle me-1 fs-3\"></i>
+                        <span class=\"align-middle\">English</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a class=\"dropdown-item\" href=\"javascript:void(0);\" data-language=\"fr\">
+                        <i class=\"fi fi-fr fis rounded-circle me-1 fs-3\"></i>
+                        <span class=\"align-middle\">French</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a class=\"dropdown-item\" href=\"javascript:void(0);\" data-language=\"de\">
+                        <i class=\"fi fi-de fis rounded-circle me-1 fs-3\"></i>
+                        <span class=\"align-middle\">German</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a class=\"dropdown-item\" href=\"javascript:void(0);\" data-language=\"pt\">
+                        <i class=\"fi fi-pt fis rounded-circle me-1 fs-3\"></i>
+                        <span class=\"align-middle\">Portuguese</span>
+                      </a>
+                    </li>
+                  </ul>
+                </li>
+                <!--/ Language -->
+
+                <!-- Style Switcher -->
+                <li class=\"nav-item me-2 me-xl-0\">
+                  <a class=\"nav-link style-switcher-toggle hide-arrow\" href=\"javascript:void(0);\">
+                    <i class=\"ti ti-md\"></i>
+                  </a>
+                </li>
+                <!--/ Style Switcher -->
+
+                <!-- Quick links  -->
+                <li class=\"nav-item dropdown-shortcuts navbar-dropdown dropdown me-2 me-xl-0\">
+                  <a
+                    class=\"nav-link dropdown-toggle hide-arrow\"
+                    href=\"javascript:void(0);\"
+                    data-bs-toggle=\"dropdown\"
+                    data-bs-auto-close=\"outside\"
+                    aria-expanded=\"false\">
+                    <i class=\"ti ti-layout-grid-add ti-md\"></i>
+                  </a>
+                  <div class=\"dropdown-menu dropdown-menu-end py-0\">
+                    <div class=\"dropdown-menu-header border-bottom\">
+                      <div class=\"dropdown-header d-flex align-items-center py-3\">
+                        <h5 class=\"text-body mb-0 me-auto\">Shortcuts</h5>
+                        <a
+                          href=\"javascript:void(0)\"
+                          class=\"dropdown-shortcuts-add text-body\"
+                          data-bs-toggle=\"tooltip\"
+                          data-bs-placement=\"top\"
+                          title=\"Add shortcuts\"
+                          ><i class=\"ti ti-sm ti-apps\"></i
+                        ></a>
+                      </div>
+                    </div>
+                    <div class=\"dropdown-shortcuts-list scrollable-container\">
+                      <div class=\"row row-bordered overflow-visible g-0\">
+                        <div class=\"dropdown-shortcuts-item col\">
+                          <span class=\"dropdown-shortcuts-icon rounded-circle mb-2\">
+                            <i class=\"ti ti-calendar fs-4\"></i>
+                          </span>
+                          <a href=\"app-calendar.html\" class=\"stretched-link\">Calendar</a>
+                          <small class=\"text-muted mb-0\">Appointments</small>
+                        </div>
+                        <div class=\"dropdown-shortcuts-item col\">
+                          <span class=\"dropdown-shortcuts-icon rounded-circle mb-2\">
+                            <i class=\"ti ti-file-invoice fs-4\"></i>
+                          </span>
+                          <a href=\"app-invoice-list.html\" class=\"stretched-link\">Invoice App</a>
+                          <small class=\"text-muted mb-0\">Manage Accounts</small>
+                        </div>
+                      </div>
+                      <div class=\"row row-bordered overflow-visible g-0\">
+                        <div class=\"dropdown-shortcuts-item col\">
+                          <span class=\"dropdown-shortcuts-icon rounded-circle mb-2\">
+                            <i class=\"ti ti-users fs-4\"></i>
+                          </span>
+                          <a href=\"app-user-list.html\" class=\"stretched-link\">User App</a>
+                          <small class=\"text-muted mb-0\">Manage Users</small>
+                        </div>
+                        <div class=\"dropdown-shortcuts-item col\">
+                          <span class=\"dropdown-shortcuts-icon rounded-circle mb-2\">
+                            <i class=\"ti ti-lock fs-4\"></i>
+                          </span>
+                          <a href=\"app-access-roles.html\" class=\"stretched-link\">Role Management</a>
+                          <small class=\"text-muted mb-0\">Permission</small>
+                        </div>
+                      </div>
+                      <div class=\"row row-bordered overflow-visible g-0\">
+                        <div class=\"dropdown-shortcuts-item col\">
+                          <span class=\"dropdown-shortcuts-icon rounded-circle mb-2\">
+                            <i class=\"ti ti-chart-bar fs-4\"></i>
+                          </span>
+                          <a href=\"index.html\" class=\"stretched-link\">Dashboard</a>
+                          <small class=\"text-muted mb-0\">User Profile</small>
+                        </div>
+                        <div class=\"dropdown-shortcuts-item col\">
+                          <span class=\"dropdown-shortcuts-icon rounded-circle mb-2\">
+                            <i class=\"ti ti-settings fs-4\"></i>
+                          </span>
+                          <a href=\"pages-account-settings-account.html\" class=\"stretched-link\">Setting</a>
+                          <small class=\"text-muted mb-0\">Account Settings</small>
+                        </div>
+                      </div>
+                      <div class=\"row row-bordered overflow-visible g-0\">
+                        <div class=\"dropdown-shortcuts-item col\">
+                          <span class=\"dropdown-shortcuts-icon rounded-circle mb-2\">
+                            <i class=\"ti ti-help fs-4\"></i>
+                          </span>
+                          <a href=\"pages-help-center-landing.html\" class=\"stretched-link\">Help Center</a>
+                          <small class=\"text-muted mb-0\">FAQs & Articles</small>
+                        </div>
+                        <div class=\"dropdown-shortcuts-item col\">
+                          <span class=\"dropdown-shortcuts-icon rounded-circle mb-2\">
+                            <i class=\"ti ti-square fs-4\"></i>
+                          </span>
+                          <a href=\"modal-examples.html\" class=\"stretched-link\">Modals</a>
+                          <small class=\"text-muted mb-0\">Useful Popups</small>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+                <!-- Quick links -->
+
+                <!-- Notification -->
+                <li class=\"nav-item dropdown-notifications navbar-dropdown dropdown me-3 me-xl-1\">
+                  <a
+                    class=\"nav-link dropdown-toggle hide-arrow\"
+                    href=\"javascript:void(0);\"
+                    data-bs-toggle=\"dropdown\"
+                    data-bs-auto-close=\"outside\"
+                    aria-expanded=\"false\">
+                    <i class=\"ti ti-bell ti-md\"></i>
+                    <span class=\"badge bg-danger rounded-pill badge-notifications\">5</span>
+                  </a>
+                  <ul class=\"dropdown-menu dropdown-menu-end py-0\">
+                    <li class=\"dropdown-menu-header border-bottom\">
+                      <div class=\"dropdown-header d-flex align-items-center py-3\">
+                        <h5 class=\"text-body mb-0 me-auto\">Notification</h5>
+                        <a
+                          href=\"javascript:void(0)\"
+                          class=\"dropdown-notifications-all text-body\"
+                          data-bs-toggle=\"tooltip\"
+                          data-bs-placement=\"top\"
+                          title=\"Mark all as read\"
+                          ><i class=\"ti ti-mail-opened fs-4\"></i
+                        ></a>
+                      </div>
+                    </li>
+                    <li class=\"dropdown-notifications-list scrollable-container\">
+                      <ul class=\"list-group list-group-flush\">
+                        <li class=\"list-group-item list-group-item-action dropdown-notifications-item\">
+                          <div class=\"d-flex\">
+                            <div class=\"flex-shrink-0 me-3\">
+                              <div class=\"avatar\">
+    <img src=\"";
+        // line 507
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("img/avatars/1.png"), "html", null, true);
+        yield "\" alt class=\"h-auto rounded-circle\" />
+                              </div>
+                            </div>
+                            <div class=\"flex-grow-1\">
+                              <h6 class=\"mb-1\">Congratulation Lettie 🎉</h6>
+                              <p class=\"mb-0\">Won the monthly best seller gold badge</p>
+                              <small class=\"text-muted\">1h ago</small>
+                            </div>
+                            <div class=\"flex-shrink-0 dropdown-notifications-actions\">
+                              <a href=\"javascript:void(0)\" class=\"dropdown-notifications-read\"
+                                ><span class=\"badge badge-dot\"></span
+                              ></a>
+                              <a href=\"javascript:void(0)\" class=\"dropdown-notifications-archive\"
+                                ><span class=\"ti ti-x\"></span
+                              ></a>
+                            </div>
+                          </div>
+                        </li>
+                        <li class=\"list-group-item list-group-item-action dropdown-notifications-item\">
+                          <div class=\"d-flex\">
+                            <div class=\"flex-shrink-0 me-3\">
+                              <div class=\"avatar\">
+                                <span class=\"avatar-initial rounded-circle bg-label-danger\">CF</span>
+                              </div>
+                            </div>
+                            <div class=\"flex-grow-1\">
+                              <h6 class=\"mb-1\">Charles Franklin</h6>
+                              <p class=\"mb-0\">Accepted your connection</p>
+                              <small class=\"text-muted\">12hr ago</small>
+                            </div>
+                            <div class=\"flex-shrink-0 dropdown-notifications-actions\">
+                              <a href=\"javascript:void(0)\" class=\"dropdown-notifications-read\"
+                                ><span class=\"badge badge-dot\"></span
+                              ></a>
+                              <a href=\"javascript:void(0)\" class=\"dropdown-notifications-archive\"
+                                ><span class=\"ti ti-x\"></span
+                              ></a>
+                            </div>
+                          </div>
+                        </li>
+                        <li class=\"list-group-item list-group-item-action dropdown-notifications-item marked-as-read\">
+                          <div class=\"d-flex\">
+                            <div class=\"flex-shrink-0 me-3\">
+                              <div class=\"avatar\">
+    <img src=\"";
+        // line 551
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("img/avatars/2.png"), "html", null, true);
+        yield "\" alt class=\"h-auto rounded-circle\" />
+                              </div>
+                            </div>
+                            <div class=\"flex-grow-1\">
+                              <h6 class=\"mb-1\">New Message ✉️</h6>
+                              <p class=\"mb-0\">You have new message from Natalie</p>
+                              <small class=\"text-muted\">1h ago</small>
+                            </div>
+                            <div class=\"flex-shrink-0 dropdown-notifications-actions\">
+                              <a href=\"javascript:void(0)\" class=\"dropdown-notifications-read\"
+                                ><span class=\"badge badge-dot\"></span
+                              ></a>
+                              <a href=\"javascript:void(0)\" class=\"dropdown-notifications-archive\"
+                                ><span class=\"ti ti-x\"></span
+                              ></a>
+                            </div>
+                          </div>
+                        </li>
+                        <li class=\"list-group-item list-group-item-action dropdown-notifications-item\">
+                          <div class=\"d-flex\">
+                            <div class=\"flex-shrink-0 me-3\">
+                              <div class=\"avatar\">
+                                <span class=\"avatar-initial rounded-circle bg-label-success\"
+                                  ><i class=\"ti ti-shopping-cart\"></i
+                                ></span>
+                              </div>
+                            </div>
+                            <div class=\"flex-grow-1\">
+                              <h6 class=\"mb-1\">Whoo! You have new order 🛒</h6>
+                              <p class=\"mb-0\">ACME Inc. made new order \$1,154</p>
+                              <small class=\"text-muted\">1 day ago</small>
+                            </div>
+                            <div class=\"flex-shrink-0 dropdown-notifications-actions\">
+                              <a href=\"javascript:void(0)\" class=\"dropdown-notifications-read\"
+                                ><span class=\"badge badge-dot\"></span
+                              ></a>
+                              <a href=\"javascript:void(0)\" class=\"dropdown-notifications-archive\"
+                                ><span class=\"ti ti-x\"></span
+                              ></a>
+                            </div>
+                          </div>
+                        </li>
+                        <li class=\"list-group-item list-group-item-action dropdown-notifications-item marked-as-read\">
+                          <div class=\"d-flex\">
+                            <div class=\"flex-shrink-0 me-3\">
+                              <div class=\"avatar\">
+    <img src=\"";
+        // line 597
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("img/avatars/9.png"), "html", null, true);
+        yield "\" alt class=\"h-auto rounded-circle\" />
+                              </div>
+                            </div>
+                            <div class=\"flex-grow-1\">
+                              <h6 class=\"mb-1\">Application has been approved 🚀</h6>
+                              <p class=\"mb-0\">Your ABC project application has been approved.</p>
+                              <small class=\"text-muted\">2 days ago</small>
+                            </div>
+                            <div class=\"flex-shrink-0 dropdown-notifications-actions\">
+                              <a href=\"javascript:void(0)\" class=\"dropdown-notifications-read\"
+                                ><span class=\"badge badge-dot\"></span
+                              ></a>
+                              <a href=\"javascript:void(0)\" class=\"dropdown-notifications-archive\"
+                                ><span class=\"ti ti-x\"></span
+                              ></a>
+                            </div>
+                          </div>
+                        </li>
+                        <li class=\"list-group-item list-group-item-action dropdown-notifications-item marked-as-read\">
+                          <div class=\"d-flex\">
+                            <div class=\"flex-shrink-0 me-3\">
+                              <div class=\"avatar\">
+                                <span class=\"avatar-initial rounded-circle bg-label-success\"
+                                  ><i class=\"ti ti-chart-pie\"></i
+                                ></span>
+                              </div>
+                            </div>
+                            <div class=\"flex-grow-1\">
+                              <h6 class=\"mb-1\">Monthly report is generated</h6>
+                              <p class=\"mb-0\">July monthly financial report is generated</p>
+                              <small class=\"text-muted\">3 days ago</small>
+                            </div>
+                            <div class=\"flex-shrink-0 dropdown-notifications-actions\">
+                              <a href=\"javascript:void(0)\" class=\"dropdown-notifications-read\"
+                                ><span class=\"badge badge-dot\"></span
+                              ></a>
+                              <a href=\"javascript:void(0)\" class=\"dropdown-notifications-archive\"
+                                ><span class=\"ti ti-x\"></span
+                              ></a>
+                            </div>
+                          </div>
+                        </li>
+                        <li class=\"list-group-item list-group-item-action dropdown-notifications-item marked-as-read\">
+                          <div class=\"d-flex\">
+                            <div class=\"flex-shrink-0 me-3\">
+                              <div class=\"avatar\">
+    <img src=\"";
+        // line 643
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("img/avatars/5.png"), "html", null, true);
+        yield "\" alt class=\"h-auto rounded-circle\" />
+                              </div>
+                            </div>
+                            <div class=\"flex-grow-1\">
+                              <h6 class=\"mb-1\">Send connection request</h6>
+                              <p class=\"mb-0\">Peter sent you connection request</p>
+                              <small class=\"text-muted\">4 days ago</small>
+                            </div>
+                            <div class=\"flex-shrink-0 dropdown-notifications-actions\">
+                              <a href=\"javascript:void(0)\" class=\"dropdown-notifications-read\"
+                                ><span class=\"badge badge-dot\"></span
+                              ></a>
+                              <a href=\"javascript:void(0)\" class=\"dropdown-notifications-archive\"
+                                ><span class=\"ti ti-x\"></span
+                              ></a>
+                            </div>
+                          </div>
+                        </li>
+                        <li class=\"list-group-item list-group-item-action dropdown-notifications-item\">
+                          <div class=\"d-flex\">
+                            <div class=\"flex-shrink-0 me-3\">
+                              <div class=\"avatar\">
+    <img src=\"";
+        // line 665
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("img/avatars/6.png"), "html", null, true);
+        yield "\" alt class=\"h-auto rounded-circle\" />
+                              </div>
+                            </div>
+                            <div class=\"flex-grow-1\">
+                              <h6 class=\"mb-1\">New message from Jane</h6>
+                              <p class=\"mb-0\">Your have new message from Jane</p>
+                              <small class=\"text-muted\">5 days ago</small>
+                            </div>
+                            <div class=\"flex-shrink-0 dropdown-notifications-actions\">
+                              <a href=\"javascript:void(0)\" class=\"dropdown-notifications-read\"
+                                ><span class=\"badge badge-dot\"></span
+                              ></a>
+                              <a href=\"javascript:void(0)\" class=\"dropdown-notifications-archive\"
+                                ><span class=\"ti ti-x\"></span
+                              ></a>
+                            </div>
+                          </div>
+                        </li>
+                        <li class=\"list-group-item list-group-item-action dropdown-notifications-item marked-as-read\">
+                          <div class=\"d-flex\">
+                            <div class=\"flex-shrink-0 me-3\">
+                              <div class=\"avatar\">
+                                <span class=\"avatar-initial rounded-circle bg-label-warning\"
+                                  ><i class=\"ti ti-alert-triangle\"></i
+                                ></span>
+                              </div>
+                            </div>
+                            <div class=\"flex-grow-1\">
+                              <h6 class=\"mb-1\">CPU is running high</h6>
+                              <p class=\"mb-0\">CPU Utilization Percent is currently at 88.63%,</p>
+                              <small class=\"text-muted\">5 days ago</small>
+                            </div>
+                            <div class=\"flex-shrink-0 dropdown-notifications-actions\">
+                              <a href=\"javascript:void(0)\" class=\"dropdown-notifications-read\"
+                                ><span class=\"badge badge-dot\"></span
+                              ></a>
+                              <a href=\"javascript:void(0)\" class=\"dropdown-notifications-archive\"
+                                ><span class=\"ti ti-x\"></span
+                              ></a>
+                            </div>
+                          </div>
+                        </li>
+                      </ul>
+                    </li>
+                    <li class=\"dropdown-menu-footer border-top\">
+                      <a
+                        href=\"javascript:void(0);\"
+                        class=\"dropdown-item d-flex justify-content-center text-primary p-2 h-px-40 mb-1 align-items-center\">
+                        View all notifications
+                      </a>
+                    </li>
+                  </ul>
+                </li>
+                <!--/ Notification -->
+
+                <!-- User -->
+                <li class=\"nav-item navbar-dropdown dropdown-user dropdown\">
+                  <a class=\"nav-link dropdown-toggle hide-arrow\" href=\"javascript:void(0);\" data-bs-toggle=\"dropdown\">
+                    <div class=\"avatar avatar-online\">
+    <img src=\"";
+        // line 724
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("img/avatars/1.png"), "html", null, true);
+        yield "\" alt class=\"h-auto rounded-circle\" />
+                    </div>
+                  </a>
+                  <ul class=\"dropdown-menu dropdown-menu-end\">
+                    <li>
+                      <a class=\"dropdown-item\" href=\"pages-account-settings-account.html\">
+                        <div class=\"d-flex\">
+                          <div class=\"flex-shrink-0 me-3\">
+                            <div class=\"avatar avatar-online\">
+    <img src=\"";
+        // line 733
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("img/avatars/1.png"), "html", null, true);
+        yield "\" alt class=\"h-auto rounded-circle\" />
+                            </div>
+                          </div>
+                          <div class=\"flex-grow-1\">
+                            <span class=\"fw-semibold d-block\">John Doe</span>
+                            <small class=\"text-muted\">Admin</small>
+                          </div>
+                        </div>
+                      </a>
+                    </li>
+                    <li>
+                      <div class=\"dropdown-divider\"></div>
+                    </li>
+                    <li>
+                      <a class=\"dropdown-item\" href=\"pages-profile-user.html\">
+                        <i class=\"ti ti-user-check me-2 ti-sm\"></i>
+                        <span class=\"align-middle\">My Profile</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a class=\"dropdown-item\" href=\"pages-account-settings-account.html\">
+                        <i class=\"ti ti-settings me-2 ti-sm\"></i>
+                        <span class=\"align-middle\">Settings</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a class=\"dropdown-item\" href=\"pages-account-settings-billing.html\">
+                        <span class=\"d-flex align-items-center align-middle\">
+                          <i class=\"flex-shrink-0 ti ti-credit-card me-2 ti-sm\"></i>
+                          <span class=\"flex-grow-1 align-middle\">Billing</span>
+                          <span class=\"flex-shrink-0 badge badge-center rounded-pill bg-label-danger w-px-20 h-px-20\"
+                            >2</span
+                          >
+                        </span>
+                      </a>
+                    </li>
+                    <li>
+                      <div class=\"dropdown-divider\"></div>
+                    </li>
+                    <li>
+                      <a class=\"dropdown-item\" href=\"pages-help-center-landing.html\">
+                        <i class=\"ti ti-lifebuoy me-2 ti-sm\"></i>
+                        <span class=\"align-middle\">Help</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a class=\"dropdown-item\" href=\"pages-faq.html\">
+                        <i class=\"ti ti-help me-2 ti-sm\"></i>
+                        <span class=\"align-middle\">FAQ</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a class=\"dropdown-item\" href=\"pages-pricing.html\">
+                        <i class=\"ti ti-currency-dollar me-2 ti-sm\"></i>
+                        <span class=\"align-middle\">Pricing</span>
+                      </a>
+                    </li>
+                    <li>
+                      <div class=\"dropdown-divider\"></div>
+                    </li>
+                    <li>
+                      <a class=\"dropdown-item\" href=\"auth-login-cover.html\" target=\"_blank\">
+                        <i class=\"ti ti-logout me-2 ti-sm\"></i>
+                        <span class=\"align-middle\">Log Out</span>
+                      </a>
+                    </li>
+                  </ul>
+                </li>
+                <!--/ User -->
+              </ul>
+            </div>
+
+            <!-- Search Small Screens -->
+            <div class=\"navbar-search-wrapper search-input-wrapper d-none\">
+              <input
+                type=\"text\"
+                class=\"form-control search-input container-xxl border-0\"
+                placeholder=\"Search...\"
+                aria-label=\"Search...\" />
+              <i class=\"ti ti-x ti-sm search-toggler cursor-pointer\"></i>
+            </div>
+          </nav>
+                <!-- / Navbar -->
+
+                <!-- Content wrapper -->
+                <div class=\"content-wrapper\">
+                    <div class=\"container-xxl flex-grow-1 container-p-y\">
+                        <!-- Header -->
+                        <div class=\"row mb-3\">
+                            <div class=\"col-12\">
+                                <div class=\"d-flex justify-content-between align-items-center\">
+                                    <h4 class=\"fw-bold mb-0\">
+                                        <span class=\"text-muted fw-light\">Personnels /</span> Statistiques
+                                    </h4>
+                                    <div>
+                                        <a href=\"";
+        // line 828
+        yield $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("app_perso_index");
+        yield "\" class=\"btn btn-outline-primary btn-sm\">
+                                            <i class=\"ti ti-arrow-left me-1\"></i> Retour
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Première ligne - Graphiques -->
+                        <div class=\"row\">
+                            <!-- Pie Chart -->
+                            <div class=\"col-lg-6 mb-4\">
+                                <div class=\"card compact-card\">
+                                    <div class=\"compact-card-header d-flex justify-content-between align-items-center\">
+                                        <h5 class=\"compact-card-title\">Répartition par service</h5>
+                                        <div class=\"dropdown\">
+                                            <button class=\"btn p-0\" type=\"button\" data-bs-toggle=\"dropdown\">
+                                                <i class=\"ti ti-dots-vertical\"></i>
+                                            </button>
+                                            <div class=\"dropdown-menu dropdown-menu-end\">
+                                                <a class=\"dropdown-item\" href=\"javascript:void(0);\" id=\"refreshPieChart\">
+                                                    <i class=\"ti ti-refresh me-1\"></i> Actualiser
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class=\"compact-card-body\">
+                                        <div id=\"servicePieChart\" class=\"compact-chart\"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Bar Chart -->
+                            <div class=\"col-lg-6 mb-4\">
+                                <div class=\"card compact-card\">
+                                    <div class=\"compact-card-header d-flex justify-content-between align-items-center\">
+                                        <h5 class=\"compact-card-title\">Réservations par personnel</h5>
+                                        <div class=\"dropdown\">
+                                            <button class=\"btn p-0\" type=\"button\" data-bs-toggle=\"dropdown\">
+                                                <i class=\"ti ti-dots-vertical\"></i>
+                                            </button>
+                                            <div class=\"dropdown-menu dropdown-menu-end\">
+                                                <a class=\"dropdown-item\" href=\"javascript:void(0);\" id=\"refreshBarChart\">
+                                                    <i class=\"ti ti-refresh me-1\"></i> Actualiser
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class=\"compact-card-body\">
+                                        <div id=\"reservationBarChart\" class=\"compact-chart\"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Deuxième ligne - Détails -->
+                        <div class=\"row\">
+                            <!-- Détails services -->
+                            <div class=\"col-md-4 mb-4\">
+                                <div class=\"card compact-card\">
+                                    <div class=\"compact-card-header\">
+                                        <h5 class=\"compact-card-title\">Détails des services</h5>
+                                    </div>
+                                    <div class=\"compact-card-body\">
+                                        <div class=\"d-flex justify-content-between mb-3\">
+                                            <div class=\"metric-card text-center w-100 me-2\">
+                                                <div class=\"metric-value\">";
+        // line 894
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape(Twig\Extension\CoreExtension::reduce($this->env, (isset($context["stats"]) || array_key_exists("stats", $context) ? $context["stats"] : (function () { throw new RuntimeError('Variable "stats" does not exist.', 894, $this->source); })()), function ($__total__, $__item__) use ($context, $macros) { $context["total"] = $__total__; $context["item"] = $__item__; return ((isset($context["total"]) || array_key_exists("total", $context) ? $context["total"] : (function () { throw new RuntimeError('Variable "total" does not exist.', 894, $this->source); })()) + CoreExtension::getAttribute($this->env, $this->source, (isset($context["item"]) || array_key_exists("item", $context) ? $context["item"] : (function () { throw new RuntimeError('Variable "item" does not exist.', 894, $this->source); })()), "count", [], "any", false, false, false, 894)); }, 0), "html", null, true);
+        yield "</div>
+                                                <div class=\"metric-label\">Personnels</div>
+                                            </div>
+                                            <div class=\"metric-card text-center w-100\">
+                                                <div class=\"metric-value\">";
+        // line 898
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape(Twig\Extension\CoreExtension::length($this->env->getCharset(), (isset($context["stats"]) || array_key_exists("stats", $context) ? $context["stats"] : (function () { throw new RuntimeError('Variable "stats" does not exist.', 898, $this->source); })())), "html", null, true);
+        yield "</div>
+                                                <div class=\"metric-label\">Services</div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class=\"scrollable-content\">
+                                            ";
+        // line 904
+        $context['_parent'] = $context;
+        $context['_seq'] = CoreExtension::ensureTraversable((isset($context["stats"]) || array_key_exists("stats", $context) ? $context["stats"] : (function () { throw new RuntimeError('Variable "stats" does not exist.', 904, $this->source); })()));
+        foreach ($context['_seq'] as $context["_key"] => $context["item"]) {
+            // line 905
+            yield "                                            <div class=\"d-flex justify-content-between align-items-center py-2 border-bottom\">
+                                                <div class=\"d-flex align-items-center\">
+                                                    <span class=\"badge service-badge me-2\" style=\"background-color: ";
+            // line 907
+            yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape(Twig\Extension\CoreExtension::random($this->env->getCharset(), ["#696cff", "#8592a3", "#71dd37", "#ff3e1d"]), "html", null, true);
+            yield "\">&nbsp;</span>
+                                                    <span>";
+            // line 908
+            yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape(CoreExtension::getAttribute($this->env, $this->source, $context["item"], "service", [], "any", false, false, false, 908), "html", null, true);
+            yield "</span>
+                                                </div>
+                                                <span class=\"badge bg-label-primary rounded-pill\">";
+            // line 910
+            yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape(CoreExtension::getAttribute($this->env, $this->source, $context["item"], "count", [], "any", false, false, false, 910), "html", null, true);
+            yield "</span>
+                                            </div>
+                                            ";
+        }
+        $_parent = $context['_parent'];
+        unset($context['_seq'], $context['_key'], $context['item'], $context['_parent']);
+        $context = array_intersect_key($context, $_parent) + $_parent;
+        // line 913
+        yield "                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Top réservations -->
+                            <div class=\"col-md-4 mb-4\">
+                                <div class=\"card compact-card\">
+                                    <div class=\"compact-card-header\">
+                                        <h5 class=\"compact-card-title\">Top personnels</h5>
+                                    </div>
+                                    <div class=\"compact-card-body\">
+                                        <div class=\"scrollable-content\">
+                                            ";
+        // line 926
+        $context['_parent'] = $context;
+        $context['_seq'] = CoreExtension::ensureTraversable(Twig\Extension\CoreExtension::slice($this->env->getCharset(), (isset($context["reservationStats"]) || array_key_exists("reservationStats", $context) ? $context["reservationStats"] : (function () { throw new RuntimeError('Variable "reservationStats" does not exist.', 926, $this->source); })()), 0, 10));
+        $context['loop'] = [
+          'parent' => $context['_parent'],
+          'index0' => 0,
+          'index'  => 1,
+          'first'  => true,
+        ];
+        if (is_array($context['_seq']) || (is_object($context['_seq']) && $context['_seq'] instanceof \Countable)) {
+            $length = count($context['_seq']);
+            $context['loop']['revindex0'] = $length - 1;
+            $context['loop']['revindex'] = $length;
+            $context['loop']['length'] = $length;
+            $context['loop']['last'] = 1 === $length;
+        }
+        foreach ($context['_seq'] as $context["_key"] => $context["item"]) {
+            // line 927
+            yield "                                            <div class=\"d-flex justify-content-between align-items-center py-2 border-bottom\">
+                                                <div class=\"text-truncate\" style=\"max-width: 65%;\">
+                                                    ";
+            // line 929
+            yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape(CoreExtension::getAttribute($this->env, $this->source, $context["loop"], "index", [], "any", false, false, false, 929), "html", null, true);
+            yield ". ";
+            yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape(CoreExtension::getAttribute($this->env, $this->source, $context["item"], "personnel", [], "any", false, false, false, 929), "html", null, true);
+            yield "
+                                                </div>
+                                                <span class=\"badge bg-primary rounded-pill\">";
+            // line 931
+            yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape(CoreExtension::getAttribute($this->env, $this->source, $context["item"], "reservations", [], "any", false, false, false, 931), "html", null, true);
+            yield "</span>
+                                            </div>
+                                            ";
+            ++$context['loop']['index0'];
+            ++$context['loop']['index'];
+            $context['loop']['first'] = false;
+            if (isset($context['loop']['revindex0'], $context['loop']['revindex'])) {
+                --$context['loop']['revindex0'];
+                --$context['loop']['revindex'];
+                $context['loop']['last'] = 0 === $context['loop']['revindex0'];
+            }
+        }
+        $_parent = $context['_parent'];
+        unset($context['_seq'], $context['_key'], $context['item'], $context['_parent'], $context['loop']);
+        $context = array_intersect_key($context, $_parent) + $_parent;
+        // line 934
+        yield "                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Métriques -->
+                            <div class=\"col-md-4 mb-4\">
+                                <div class=\"card compact-card\">
+                                    <div class=\"compact-card-header\">
+                                        <h5 class=\"compact-card-title\">Indicateurs</h5>
+                                    </div>
+                                    <div class=\"compact-card-body\">
+                                        <div class=\"metric-card\">
+                                            <div class=\"d-flex align-items-center mb-1\">
+                                                <span class=\"badge bg-label-primary me-2\">
+                                                    <i class=\"ti ti-users\"></i>
+                                                </span>
+                                                <span>Personnels actifs</span>
+                                            </div>
+                                            <div class=\"d-flex justify-content-between align-items-center\">
+                                                <span class=\"metric-value\">";
+        // line 954
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape(Twig\Extension\CoreExtension::random($this->env->getCharset(), 15, 25), "html", null, true);
+        yield "</span>
+                                                <span class=\"badge bg-label-success\">+8.2%</span>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class=\"metric-card\">
+                                            <div class=\"d-flex align-items-center mb-1\">
+                                                <span class=\"badge bg-label-warning me-2\">
+                                                    <i class=\"ti ti-star\"></i>
+                                                </span>
+                                                <span>Personnels premium</span>
+                                            </div>
+                                            <div class=\"d-flex justify-content-between align-items-center\">
+                                                <span class=\"metric-value\">";
+        // line 967
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape(Twig\Extension\CoreExtension::random($this->env->getCharset(), 5, 10), "html", null, true);
+        yield "</span>
+                                                <span class=\"badge bg-label-success\">+15.3%</span>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class=\"metric-card\">
+                                            <div class=\"d-flex align-items-center mb-1\">
+                                                <span class=\"badge bg-label-info me-2\">
+                                                    <i class=\"ti ti-currency-dollar\"></i>
+                                                </span>
+                                                <span>Tarif moyen</span>
+                                            </div>
+                                            <div class=\"d-flex justify-content-between align-items-center\">
+                                                <span class=\"metric-value\">";
+        // line 980
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape(Twig\Extension\CoreExtension::random($this->env->getCharset(), 80, 120), "html", null, true);
+        yield " TND</span>
+                                                <span class=\"badge bg-label-danger\">-2.1%</span>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class=\"metric-card\">
+                                            <div class=\"d-flex align-items-center mb-1\">
+                                                <span class=\"badge bg-label-success me-2\">
+                                                    <i class=\"ti ti-calendar-event\"></i>
+                                                </span>
+                                                <span>Réservations ce mois</span>
+                                            </div>
+                                            <div class=\"d-flex justify-content-between align-items-center\">
+                                                <span class=\"metric-value\">";
+        // line 993
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape(Twig\Extension\CoreExtension::random($this->env->getCharset(), 30, 50), "html", null, true);
+        yield "</span>
+                                                <span class=\"badge bg-label-success\">+12.8%</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Footer -->
+                    <footer class=\"content-footer footer bg-footer-theme\">
+                        <div class=\"container-xxl d-flex flex-wrap justify-content-between py-2 flex-md-row flex-column\">
+                            <div class=\"mb-2 mb-md-0\">
+                                ©
+                                <script>
+                                    document.write(new Date().getFullYear());
+                                </script>
+                                , développé avec ❤️ par
+                                <a href=\"#\" target=\"_blank\" class=\"footer-link fw-bolder\">Votre Équipe</a>
+                            </div>
+                        </div>
+                    </footer>
+                    <!-- / Footer -->
+
+                    <div class=\"content-backdrop fade\"></div>
+                </div>
+                <!-- Content wrapper -->
+            </div>
+        </div>
+
+        <!-- Overlay -->
+        <div class=\"layout-overlay layout-menu-toggle\"></div>
+    </div>
+
+    <!-- Core JS -->
+    <script src=\"";
+        // line 1029
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("/vendor/libs/jquery/jquery.js"), "html", null, true);
+        yield "\"></script>
+    <script src=\"";
+        // line 1030
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("/vendor/js/bootstrap.js"), "html", null, true);
+        yield "\"></script>
+    <script src=\"";
+        // line 1031
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"), "html", null, true);
+        yield "\"></script>
+    <script src=\"";
+        // line 1032
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("/vendor/libs/apex-charts/apexcharts.js"), "html", null, true);
+        yield "\"></script>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Pie Chart Configuration avec animations plus longues
+        const pieChart = new ApexCharts(document.querySelector(\"#servicePieChart\"), {
+            series: ";
+        // line 1038
+        yield json_encode(Twig\Extension\CoreExtension::map($this->env, (isset($context["stats"]) || array_key_exists("stats", $context) ? $context["stats"] : (function () { throw new RuntimeError('Variable "stats" does not exist.', 1038, $this->source); })()), function ($__item__) use ($context, $macros) { $context["item"] = $__item__; return CoreExtension::getAttribute($this->env, $this->source, (isset($context["item"]) || array_key_exists("item", $context) ? $context["item"] : (function () { throw new RuntimeError('Variable "item" does not exist.', 1038, $this->source); })()), "count", [], "any", false, false, false, 1038); }));
+        yield ",
+            chart: {
+                type: 'donut',
+                height: '100%',
+                animations: {
+                    enabled: true,
+                    easing: 'easeOutQuad',
+                    speed: 1500,
+                    animateGradually: {
+                        enabled: true,
+                        delay: 300
+                    }
+                }
+            },
+            colors: ['#696cff', '#8592a3', '#71dd37', '#ff3e1d', '#ffab00', '#03c3ec'],
+            labels: ";
+        // line 1053
+        yield json_encode(Twig\Extension\CoreExtension::map($this->env, (isset($context["stats"]) || array_key_exists("stats", $context) ? $context["stats"] : (function () { throw new RuntimeError('Variable "stats" does not exist.', 1053, $this->source); })()), function ($__item__) use ($context, $macros) { $context["item"] = $__item__; return CoreExtension::getAttribute($this->env, $this->source, (isset($context["item"]) || array_key_exists("item", $context) ? $context["item"] : (function () { throw new RuntimeError('Variable "item" does not exist.', 1053, $this->source); })()), "service", [], "any", false, false, false, 1053); }));
+        yield ",
+            legend: {
+                position: 'bottom',
+                fontSize: '12px',
+                itemMargin: { horizontal: 8, vertical: 4 },
+                onItemHover: {
+                    highlightDataSeries: true
+                }
+            },
+            plotOptions: {
+                pie: {
+                    donut: {
+                        size: '65%',
+                        labels: {
+                            show: true,
+                            total: {
+                                show: true,
+                                label: 'Total',
+                                formatter: function(w) {
+                                    return w.globals.seriesTotals.reduce((a, b) => a + b, 0);
+                                }
+                            }
+                        }
+                    },
+                    customScale: 0.9,
+                    expandOnClick: true
+                }
+            },
+            tooltip: {
+                enabled: true,
+                y: {
+                    formatter: function(value) {
+                        return value + \" personnels\";
+                    }
+                },
+                style: {
+                    fontSize: '14px'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                style: {
+                    fontSize: '12px',
+                    fontFamily: 'Public Sans'
+                },
+                dropShadow: {
+                    enabled: false
+                }
+            },
+            states: {
+                hover: {
+                    filter: {
+                        type: 'none'
+                    }
+                },
+                active: {
+                    filter: {
+                        type: 'none'
+                    }
+                }
+            },
+            responsive: [{
+                breakpoint: 992,
+                options: { 
+                    chart: { height: '100%' },
+                    legend: { position: 'bottom' }
+                }
+            }]
+        });
+        pieChart.render();
+
+        // Bar Chart Configuration avec animations plus longues
+        const barChart = new ApexCharts(document.querySelector(\"#reservationBarChart\"), {
+            series: [{
+                name: 'Réservations',
+                data: ";
+        // line 1128
+        yield json_encode(Twig\Extension\CoreExtension::map($this->env, (isset($context["reservationStats"]) || array_key_exists("reservationStats", $context) ? $context["reservationStats"] : (function () { throw new RuntimeError('Variable "reservationStats" does not exist.', 1128, $this->source); })()), function ($__item__) use ($context, $macros) { $context["item"] = $__item__; return CoreExtension::getAttribute($this->env, $this->source, (isset($context["item"]) || array_key_exists("item", $context) ? $context["item"] : (function () { throw new RuntimeError('Variable "item" does not exist.', 1128, $this->source); })()), "reservations", [], "any", false, false, false, 1128); }));
+        yield "
+            }],
+            chart: {
+                type: 'bar',
+                height: '100%',
+                animations: {
+                    enabled: true,
+                    easing: 'easeOutQuad',
+                    speed: 1500,
+                    animateGradually: {
+                        enabled: true,
+                        delay: 300
+                    }
+                },
+                toolbar: { show: false }
+            },
+            colors: ['#696cff'],
+            xaxis: {
+                categories: ";
+        // line 1146
+        yield json_encode(Twig\Extension\CoreExtension::map($this->env, (isset($context["reservationStats"]) || array_key_exists("reservationStats", $context) ? $context["reservationStats"] : (function () { throw new RuntimeError('Variable "reservationStats" does not exist.', 1146, $this->source); })()), function ($__item__) use ($context, $macros) { $context["item"] = $__item__; return CoreExtension::getAttribute($this->env, $this->source, (isset($context["item"]) || array_key_exists("item", $context) ? $context["item"] : (function () { throw new RuntimeError('Variable "item" does not exist.', 1146, $this->source); })()), "personnel", [], "any", false, false, false, 1146); }));
+        yield ",
+                labels: { 
+                    style: { fontSize: '12px' },
+                    trim: true,
+                    hideOverlappingLabels: true
+                }
+            },
+            yaxis: { 
+                labels: { style: { fontSize: '12px' } },
+                title: { 
+                    text: 'Nombre de réservations', 
+                    style: { fontSize: '14px' } 
+                }
+            },
+            plotOptions: {
+                bar: {
+                    borderRadius: 6,
+                    columnWidth: '55%',
+                    dataLabels: { position: 'top' },
+                    distributed: false,
+                    endingShape: 'rounded'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                formatter: function(val) { return val; },
+                style: { 
+                    fontSize: '12px',
+                    colors: ['#566a7f']
+                },
+                offsetY: -20,
+                background: {
+                    enabled: false
+                }
+            },
+            tooltip: {
+                enabled: true,
+                style: {
+                    fontSize: '14px'
+                },
+                y: {
+                    formatter: function(val) {
+                        return val + \" réservation(s)\";
+                    }
+                }
+            },
+            states: {
+                hover: {
+                    filter: {
+                        type: 'lighten',
+                        value: 0.1
+                    }
+                }
+            },
+            responsive: [{
+                breakpoint: 768,
+                options: {
+                    plotOptions: { bar: { columnWidth: '70%' } },
+                    xaxis: { labels: { rotate: -45 } }
+                }
+            }]
+        });
+        barChart.render();
+
+        // Refresh buttons
+        document.getElementById('refreshPieChart').addEventListener('click', function() {
+            pieChart.updateSeries(";
+        // line 1212
+        yield json_encode(Twig\Extension\CoreExtension::map($this->env, (isset($context["stats"]) || array_key_exists("stats", $context) ? $context["stats"] : (function () { throw new RuntimeError('Variable "stats" does not exist.', 1212, $this->source); })()), function ($__item__) use ($context, $macros) { $context["item"] = $__item__; return CoreExtension::getAttribute($this->env, $this->source, (isset($context["item"]) || array_key_exists("item", $context) ? $context["item"] : (function () { throw new RuntimeError('Variable "item" does not exist.', 1212, $this->source); })()), "count", [], "any", false, false, false, 1212); }));
+        yield ", true, true, 1500);
+        });
+        
+        document.getElementById('refreshBarChart').addEventListener('click', function() {
+            barChart.updateSeries([{
+                data: ";
+        // line 1217
+        yield json_encode(Twig\Extension\CoreExtension::map($this->env, (isset($context["reservationStats"]) || array_key_exists("reservationStats", $context) ? $context["reservationStats"] : (function () { throw new RuntimeError('Variable "reservationStats" does not exist.', 1217, $this->source); })()), function ($__item__) use ($context, $macros) { $context["item"] = $__item__; return CoreExtension::getAttribute($this->env, $this->source, (isset($context["item"]) || array_key_exists("item", $context) ? $context["item"] : (function () { throw new RuntimeError('Variable "item" does not exist.', 1217, $this->source); })()), "reservations", [], "any", false, false, false, 1217); }));
+        yield "
+            }], true, true, 1500);
+        });
+
+        // Animation au chargement
+        setTimeout(() => {
+            document.querySelectorAll('.compact-card').forEach((card, index) => {
+                card.style.animationDelay = `\${index * 0.1}s`;
+            });
+        }, 300);
+    });
+    </script>
+</body>
+</html>";
+        
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->leave($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof);
+
+        
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->leave($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof);
+
+        yield from [];
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    public function getTemplateName(): string
+    {
+        return "perso/stats.html.twig";
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    public function isTraitable(): bool
+    {
+        return false;
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    public function getDebugInfo(): array
+    {
+        return array (  1420 => 1217,  1412 => 1212,  1343 => 1146,  1322 => 1128,  1244 => 1053,  1226 => 1038,  1217 => 1032,  1213 => 1031,  1209 => 1030,  1205 => 1029,  1166 => 993,  1150 => 980,  1134 => 967,  1118 => 954,  1096 => 934,  1079 => 931,  1072 => 929,  1068 => 927,  1051 => 926,  1036 => 913,  1027 => 910,  1022 => 908,  1018 => 907,  1014 => 905,  1010 => 904,  1001 => 898,  994 => 894,  925 => 828,  827 => 733,  815 => 724,  753 => 665,  728 => 643,  679 => 597,  630 => 551,  583 => 507,  107 => 34,  103 => 33,  97 => 30,  93 => 29,  89 => 28,  83 => 25,  79 => 24,  68 => 16,  56 => 7,  48 => 1,);
+    }
+
+    public function getSourceContext(): Source
+    {
+        return new Source("<!DOCTYPE html>
+<html
+  lang=\"fr\"
+  class=\"light-style layout-navbar-fixed layout-menu-fixed\"
+  dir=\"ltr\"
+  data-theme=\"theme-default\"
+  data-assets-path=\"{{ asset('') }}\"
+  data-template=\"vertical-menu-template\">
+<head>
+    <meta charset=\"utf-8\" />
+    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0\" />
+    <title>Statistiques Personnels</title>
+    <meta name=\"description\" content=\"Statistiques des personnels et réservations\" />
+
+    <!-- Favicon -->
+    <link rel=\"icon\" type=\"image/x-icon\" href=\"{{ asset('img/favicon/favicon.ico') }}\" />
+
+    <!-- Fonts -->
+    <link rel=\"preconnect\" href=\"https://fonts.googleapis.com\" />
+    <link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin />
+    <link href=\"https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap\" rel=\"stylesheet\" />
+
+    <!-- Icons -->
+    <link rel=\"stylesheet\" href=\"{{ asset('vendor/fonts/fontawesome.css') }}\" />
+    <link rel=\"stylesheet\" href=\"{{ asset('vendor/fonts/tabler-icons.css') }}\" />
+
+    <!-- Core CSS -->
+    <link rel=\"stylesheet\" href=\"{{ asset('vendor/css/rtl/core.css') }}\" />
+    <link rel=\"stylesheet\" href=\"{{ asset('vendor/css/rtl/theme-default.css') }}\" />
+    <link rel=\"stylesheet\" href=\"{{ asset('css/demo.css') }}\" />
+
+    <!-- Vendors CSS -->
+    <link rel=\"stylesheet\" href=\"{{ asset('vendor/libs/perfect-scrollbar/perfect-scrollbar.css') }}\" />
+    <link rel=\"stylesheet\" href=\"{{ asset('vendor/libs/apex-charts/apex-charts.css') }}\" />
+
+    <style>
+        :root {
+            --chart-height: 280px;
+            --compact-card-height: 380px;
+            --animation-duration: 1.5s;
+        }
+        
+        .compact-chart {
+            height: var(--chart-height);
+            position: relative;
+        }
+        
+        .compact-card {
+            height: var(--compact-card-height);
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            margin-bottom: 1rem;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp var(--animation-duration) ease-out forwards;
+        }
+        
+        .compact-card:nth-child(1) { animation-delay: 0.1s; }
+        .compact-card:nth-child(2) { animation-delay: 0.2s; }
+        .compact-card:nth-child(3) { animation-delay: 0.3s; }
+        .compact-card:nth-child(4) { animation-delay: 0.4s; }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .compact-card:hover {
+            transform: translateY(-5px) !important;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+        }
+        
+        .compact-card-header {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        
+        .compact-card-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin: 0;
+            color: #566a7f;
+        }
+        
+        .compact-card-body {
+            padding: 1rem;
+            height: calc(100% - 56px);
+            overflow: hidden;
+        }
+        
+        .service-badge {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .scrollable-content {
+            height: calc(var(--compact-card-height) - 120px);
+            overflow-y: auto;
+        }
+        
+        .metric-card {
+            background: rgba(105, 108, 255, 0.05);
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            margin-bottom: 0.75rem;
+            transition: all 0.3s ease;
+        }
+        
+        .metric-card:hover {
+            transform: translateX(5px);
+            background: rgba(105, 108, 255, 0.1);
+        }
+        
+        .metric-value {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+        
+        .metric-label {
+            font-size: 0.75rem;
+            color: #6c757d;
+        }
+        
+        .chart-tooltip {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(105, 108, 255, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(105, 108, 255, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(105, 108, 255, 0); }
+        }
+        
+        @media (max-width: 992px) {
+            :root {
+                --chart-height: 240px;
+                --compact-card-height: auto;
+            }
+            
+            .compact-card {
+                height: auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class=\"layout-wrapper layout-content-navbar\">
+        <div class=\"layout-container\">
+            <!-- Sidebar -->
+            <aside id=\"layout-menu\" class=\"layout-menu menu-vertical menu bg-menu-theme\">
+                <div class=\"app-brand demo\">
+                    <a href=\"index.html\" class=\"app-brand-link\">
+                        <span class=\"app-brand-logo demo\">
+                            <svg width=\"32\" height=\"22\" viewBox=\"0 0 32 22\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">
+                                <path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M0.00172773 0V6.85398C0.00172773 6.85398 -0.133178 9.01207 1.98092 10.8388L13.6912 21.9964L19.7809 21.9181L18.8042 9.88248L16.4951 7.17289L9.23799 0H0.00172773Z\" fill=\"#7367F0\" />
+                                <path opacity=\"0.06\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M7.69824 16.4364L12.5199 3.23696L16.5541 7.25596L7.69824 16.4364Z\" fill=\"#161616\" />
+                                <path opacity=\"0.06\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M8.07751 15.9175L13.9419 4.63989L16.5849 7.28475L8.07751 15.9175Z\" fill=\"#161616\" />
+                                <path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M7.77295 16.3566L23.6563 0H32V6.88383C32 6.88383 31.8262 9.17836 30.6591 10.4057L19.7824 22H13.6938L7.77295 16.3566Z\" fill=\"#7367F0\" />
+                            </svg>
+                        </span>
+                        <span class=\"app-brand-text demo menu-text fw-bold\">Vuexy</span>
+                    </a>
+                    <a href=\"javascript:void(0);\" class=\"layout-menu-toggle menu-link text-large ms-auto\">
+                        <i class=\"ti menu-toggle-icon d-none d-xl-block ti-sm align-middle\"></i>
+                        <i class=\"ti ti-x d-block d-xl-none ti-sm align-middle\"></i>
+                    </a>
+                </div>
+
+                <div class=\"menu-inner-shadow\"></div>
+
+<ul class=\"menu-inner py-1\">
+  <!-- Packs -->
+  <li class=\"menu-item \">
+    <a href=\"packs.html\" class=\"menu-link\">
+      <i class=\"menu-icon tf-icons ti ti-package\"></i>
+      <div data-i18n=\"Packs\">Packs</div>
+    </a>
+  </li>
+
+  <!-- Gestion Événements -->
+  <li class=\"menu-item\">
+    <a href=\"javascript:void(0);\" class=\"menu-link menu-toggle\">
+      <i class=\"menu-icon tf-icons ti ti-calendar-event\"></i>
+      <div data-i18n=\"Gestion Événements\">Gestion Événements</div>
+    </a>
+    <ul class=\"menu-sub\">
+      <li class=\"menu-item\">
+        <a href=\"ajouter-evenement.html\" class=\"menu-link\">
+          <i class=\"menu-icon tf-icons ti ti-circle\"></i>
+          <div data-i18n=\"Ajouter Événement\">Ajouter Événement</div>
+        </a>
+      </li>
+      <li class=\"menu-item\">
+        <a href=\"liste-evenements.html\" class=\"menu-link\">
+          <i class=\"menu-icon tf-icons ti ti-circle\"></i>
+          <div data-i18n=\"Liste Événements\">Liste Événements</div>
+        </a>
+      </li>
+    </ul>
+  </li>
+
+  <!-- Gestion Matérielle -->
+  <li class=\"menu-item\">
+    <a href=\"javascript:void(0);\" class=\"menu-link menu-toggle\">
+      <i class=\"menu-icon tf-icons ti ti-tools\"></i>
+      <div data-i18n=\"Gestion Matérielle\">Gestion Matérielle</div>
+    </a>
+    <ul class=\"menu-sub\">
+      <li class=\"menu-item\">
+        <a href=\"ajouter-materiel.html\" class=\"menu-link\">
+          <i class=\"menu-icon tf-icons ti ti-circle\"></i>
+          <div data-i18n=\"Ajouter Matériel\">Ajouter Matériel</div>
+        </a>
+      </li>
+      <li class=\"menu-item\">
+        <a href=\"liste-materiel.html\" class=\"menu-link\">
+          <i class=\"menu-icon tf-icons ti ti-circle\"></i>
+          <div data-i18n=\"Liste Matériel\">Liste Matériel</div>
+        </a>
+      </li>
+    </ul>
+  </li>
+
+  <!-- Gestion Lieu -->
+  <li class=\"menu-item\">
+    <a href=\"javascript:void(0);\" class=\"menu-link menu-toggle\">
+      <i class=\"menu-icon tf-icons ti ti-map-pin\"></i>
+      <div data-i18n=\"Gestion Lieu\">Gestion Lieu</div>
+    </a>
+    <ul class=\"menu-sub\">
+      <li class=\"menu-item\">
+        <a href=\"ajouter-lieu.html\" class=\"menu-link\">
+          <i class=\"menu-icon tf-icons ti ti-circle\"></i>
+          <div data-i18n=\"Ajouter Lieu\">Ajouter Lieu</div>
+        </a>
+      </li>
+      <li class=\"menu-item\">
+        <a href=\"liste-lieux.html\" class=\"menu-link\">
+          <i class=\"menu-icon tf-icons ti ti-circle\"></i>
+          <div data-i18n=\"Liste Lieux\">Liste Lieux</div>
+        </a>
+      </li>
+    </ul>
+  </li>
+
+  <!-- Gestion Personnels -->
+    <li class=\"menu-item active\">
+    <a href=\"packs.html\" class=\"menu-link\">
+      <i class=\"menu-icon tf-icons ti ti-package\"></i>
+      <div data-i18n=\"Personnels\">Personnels</div>
+    </a>
+  </li>
+
+  <!-- Gestion Commandes -->
+  <li class=\"menu-item\">
+    <a href=\"javascript:void(0);\" class=\"menu-link menu-toggle\">
+      <i class=\"menu-icon tf-icons ti ti-shopping-cart\"></i>
+      <div data-i18n=\"Gestion Commandes\">Gestion Commandes</div>
+    </a>
+    <ul class=\"menu-sub\">
+      <li class=\"menu-item\">
+        <a href=\"panier.html\" class=\"menu-link\">
+          <i class=\"menu-icon tf-icons ti ti-circle\"></i>
+          <div data-i18n=\"Panier\">Panier</div>
+          <div class=\"badge bg-label-primary rounded-pill ms-auto\">3</div>
+        </a>
+      </li>
+      <li class=\"menu-item\">
+        <a href=\"liste-commandes.html\" class=\"menu-link\">
+          <i class=\"menu-icon tf-icons ti ti-circle\"></i>
+          <div data-i18n=\"Liste Commandes\">Liste Commandes</div>
+        </a>
+      </li>
+      <li class=\"menu-item\">
+        <a href=\"liste-reclamations.html\" class=\"menu-link\">
+          <i class=\"menu-icon tf-icons ti ti-circle\"></i>
+          <div data-i18n=\"Liste Réclamations\">Liste Réclamations</div>
+          <div class=\"badge bg-label-warning rounded-pill ms-auto\">2</div>
+        </a>
+      </li>
+    </ul>
+  </li>
+
+  <!-- Divider -->
+  <li class=\"menu-header small text-uppercase\">
+    <span class=\"menu-header-text\">Compte</span>
+  </li>
+
+  <!-- Compte -->
+  <li class=\"menu-item\">
+    <a href=\"compte.html\" class=\"menu-link\">
+      <i class=\"menu-icon tf-icons ti ti-user\"></i>
+      <div data-i18n=\"Mon Compte\">Mon Compte</div>
+    </a>
+  </li>
+
+  <!-- Déconnexion -->
+  <li class=\"menu-item\">
+    <a href=\"deconnexion.html\" class=\"menu-link\">
+      <i class=\"menu-icon tf-icons ti ti-logout\"></i>
+      <div data-i18n=\"Déconnexion\">Déconnexion</div>
+    </a>
+  </li>
+</ul>
+            </aside>
+            <!-- / Sidebar -->
+
+            <div class=\"layout-page\">
+                <!-- Navbar -->
+          <nav
+            class=\"layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme\"
+            id=\"layout-navbar\">
+            <div class=\"layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none\">
+              <a class=\"nav-item nav-link px-0 me-xl-4\" href=\"javascript:void(0)\">
+                <i class=\"ti ti-menu-2 ti-sm\"></i>
+              </a>
+            </div>
+
+            <div class=\"navbar-nav-right d-flex align-items-center\" id=\"navbar-collapse\">
+              <!-- Search -->
+              <div class=\"navbar-nav align-items-center\">
+                <div class=\"nav-item navbar-search-wrapper mb-0\">
+                  <a class=\"nav-item nav-link search-toggler d-flex align-items-center px-0\" href=\"javascript:void(0);\">
+                    <i class=\"ti ti-search ti-md me-2\"></i>
+                    <span class=\"d-none d-md-inline-block text-muted\">Search (Ctrl+/)</span>
+                  </a>
+                </div>
+              </div>
+              <!-- /Search -->
+
+              <ul class=\"navbar-nav flex-row align-items-center ms-auto\">
+                <!-- Language -->
+                <li class=\"nav-item dropdown-language dropdown me-2 me-xl-0\">
+                  <a class=\"nav-link dropdown-toggle hide-arrow\" href=\"javascript:void(0);\" data-bs-toggle=\"dropdown\">
+                    <i class=\"fi fi-us fis rounded-circle me-1 fs-3\"></i>
+                  </a>
+                  <ul class=\"dropdown-menu dropdown-menu-end\">
+                    <li>
+                      <a class=\"dropdown-item\" href=\"javascript:void(0);\" data-language=\"en\">
+                        <i class=\"fi fi-us fis rounded-circle me-1 fs-3\"></i>
+                        <span class=\"align-middle\">English</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a class=\"dropdown-item\" href=\"javascript:void(0);\" data-language=\"fr\">
+                        <i class=\"fi fi-fr fis rounded-circle me-1 fs-3\"></i>
+                        <span class=\"align-middle\">French</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a class=\"dropdown-item\" href=\"javascript:void(0);\" data-language=\"de\">
+                        <i class=\"fi fi-de fis rounded-circle me-1 fs-3\"></i>
+                        <span class=\"align-middle\">German</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a class=\"dropdown-item\" href=\"javascript:void(0);\" data-language=\"pt\">
+                        <i class=\"fi fi-pt fis rounded-circle me-1 fs-3\"></i>
+                        <span class=\"align-middle\">Portuguese</span>
+                      </a>
+                    </li>
+                  </ul>
+                </li>
+                <!--/ Language -->
+
+                <!-- Style Switcher -->
+                <li class=\"nav-item me-2 me-xl-0\">
+                  <a class=\"nav-link style-switcher-toggle hide-arrow\" href=\"javascript:void(0);\">
+                    <i class=\"ti ti-md\"></i>
+                  </a>
+                </li>
+                <!--/ Style Switcher -->
+
+                <!-- Quick links  -->
+                <li class=\"nav-item dropdown-shortcuts navbar-dropdown dropdown me-2 me-xl-0\">
+                  <a
+                    class=\"nav-link dropdown-toggle hide-arrow\"
+                    href=\"javascript:void(0);\"
+                    data-bs-toggle=\"dropdown\"
+                    data-bs-auto-close=\"outside\"
+                    aria-expanded=\"false\">
+                    <i class=\"ti ti-layout-grid-add ti-md\"></i>
+                  </a>
+                  <div class=\"dropdown-menu dropdown-menu-end py-0\">
+                    <div class=\"dropdown-menu-header border-bottom\">
+                      <div class=\"dropdown-header d-flex align-items-center py-3\">
+                        <h5 class=\"text-body mb-0 me-auto\">Shortcuts</h5>
+                        <a
+                          href=\"javascript:void(0)\"
+                          class=\"dropdown-shortcuts-add text-body\"
+                          data-bs-toggle=\"tooltip\"
+                          data-bs-placement=\"top\"
+                          title=\"Add shortcuts\"
+                          ><i class=\"ti ti-sm ti-apps\"></i
+                        ></a>
+                      </div>
+                    </div>
+                    <div class=\"dropdown-shortcuts-list scrollable-container\">
+                      <div class=\"row row-bordered overflow-visible g-0\">
+                        <div class=\"dropdown-shortcuts-item col\">
+                          <span class=\"dropdown-shortcuts-icon rounded-circle mb-2\">
+                            <i class=\"ti ti-calendar fs-4\"></i>
+                          </span>
+                          <a href=\"app-calendar.html\" class=\"stretched-link\">Calendar</a>
+                          <small class=\"text-muted mb-0\">Appointments</small>
+                        </div>
+                        <div class=\"dropdown-shortcuts-item col\">
+                          <span class=\"dropdown-shortcuts-icon rounded-circle mb-2\">
+                            <i class=\"ti ti-file-invoice fs-4\"></i>
+                          </span>
+                          <a href=\"app-invoice-list.html\" class=\"stretched-link\">Invoice App</a>
+                          <small class=\"text-muted mb-0\">Manage Accounts</small>
+                        </div>
+                      </div>
+                      <div class=\"row row-bordered overflow-visible g-0\">
+                        <div class=\"dropdown-shortcuts-item col\">
+                          <span class=\"dropdown-shortcuts-icon rounded-circle mb-2\">
+                            <i class=\"ti ti-users fs-4\"></i>
+                          </span>
+                          <a href=\"app-user-list.html\" class=\"stretched-link\">User App</a>
+                          <small class=\"text-muted mb-0\">Manage Users</small>
+                        </div>
+                        <div class=\"dropdown-shortcuts-item col\">
+                          <span class=\"dropdown-shortcuts-icon rounded-circle mb-2\">
+                            <i class=\"ti ti-lock fs-4\"></i>
+                          </span>
+                          <a href=\"app-access-roles.html\" class=\"stretched-link\">Role Management</a>
+                          <small class=\"text-muted mb-0\">Permission</small>
+                        </div>
+                      </div>
+                      <div class=\"row row-bordered overflow-visible g-0\">
+                        <div class=\"dropdown-shortcuts-item col\">
+                          <span class=\"dropdown-shortcuts-icon rounded-circle mb-2\">
+                            <i class=\"ti ti-chart-bar fs-4\"></i>
+                          </span>
+                          <a href=\"index.html\" class=\"stretched-link\">Dashboard</a>
+                          <small class=\"text-muted mb-0\">User Profile</small>
+                        </div>
+                        <div class=\"dropdown-shortcuts-item col\">
+                          <span class=\"dropdown-shortcuts-icon rounded-circle mb-2\">
+                            <i class=\"ti ti-settings fs-4\"></i>
+                          </span>
+                          <a href=\"pages-account-settings-account.html\" class=\"stretched-link\">Setting</a>
+                          <small class=\"text-muted mb-0\">Account Settings</small>
+                        </div>
+                      </div>
+                      <div class=\"row row-bordered overflow-visible g-0\">
+                        <div class=\"dropdown-shortcuts-item col\">
+                          <span class=\"dropdown-shortcuts-icon rounded-circle mb-2\">
+                            <i class=\"ti ti-help fs-4\"></i>
+                          </span>
+                          <a href=\"pages-help-center-landing.html\" class=\"stretched-link\">Help Center</a>
+                          <small class=\"text-muted mb-0\">FAQs & Articles</small>
+                        </div>
+                        <div class=\"dropdown-shortcuts-item col\">
+                          <span class=\"dropdown-shortcuts-icon rounded-circle mb-2\">
+                            <i class=\"ti ti-square fs-4\"></i>
+                          </span>
+                          <a href=\"modal-examples.html\" class=\"stretched-link\">Modals</a>
+                          <small class=\"text-muted mb-0\">Useful Popups</small>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+                <!-- Quick links -->
+
+                <!-- Notification -->
+                <li class=\"nav-item dropdown-notifications navbar-dropdown dropdown me-3 me-xl-1\">
+                  <a
+                    class=\"nav-link dropdown-toggle hide-arrow\"
+                    href=\"javascript:void(0);\"
+                    data-bs-toggle=\"dropdown\"
+                    data-bs-auto-close=\"outside\"
+                    aria-expanded=\"false\">
+                    <i class=\"ti ti-bell ti-md\"></i>
+                    <span class=\"badge bg-danger rounded-pill badge-notifications\">5</span>
+                  </a>
+                  <ul class=\"dropdown-menu dropdown-menu-end py-0\">
+                    <li class=\"dropdown-menu-header border-bottom\">
+                      <div class=\"dropdown-header d-flex align-items-center py-3\">
+                        <h5 class=\"text-body mb-0 me-auto\">Notification</h5>
+                        <a
+                          href=\"javascript:void(0)\"
+                          class=\"dropdown-notifications-all text-body\"
+                          data-bs-toggle=\"tooltip\"
+                          data-bs-placement=\"top\"
+                          title=\"Mark all as read\"
+                          ><i class=\"ti ti-mail-opened fs-4\"></i
+                        ></a>
+                      </div>
+                    </li>
+                    <li class=\"dropdown-notifications-list scrollable-container\">
+                      <ul class=\"list-group list-group-flush\">
+                        <li class=\"list-group-item list-group-item-action dropdown-notifications-item\">
+                          <div class=\"d-flex\">
+                            <div class=\"flex-shrink-0 me-3\">
+                              <div class=\"avatar\">
+    <img src=\"{{ asset('img/avatars/1.png') }}\" alt class=\"h-auto rounded-circle\" />
+                              </div>
+                            </div>
+                            <div class=\"flex-grow-1\">
+                              <h6 class=\"mb-1\">Congratulation Lettie 🎉</h6>
+                              <p class=\"mb-0\">Won the monthly best seller gold badge</p>
+                              <small class=\"text-muted\">1h ago</small>
+                            </div>
+                            <div class=\"flex-shrink-0 dropdown-notifications-actions\">
+                              <a href=\"javascript:void(0)\" class=\"dropdown-notifications-read\"
+                                ><span class=\"badge badge-dot\"></span
+                              ></a>
+                              <a href=\"javascript:void(0)\" class=\"dropdown-notifications-archive\"
+                                ><span class=\"ti ti-x\"></span
+                              ></a>
+                            </div>
+                          </div>
+                        </li>
+                        <li class=\"list-group-item list-group-item-action dropdown-notifications-item\">
+                          <div class=\"d-flex\">
+                            <div class=\"flex-shrink-0 me-3\">
+                              <div class=\"avatar\">
+                                <span class=\"avatar-initial rounded-circle bg-label-danger\">CF</span>
+                              </div>
+                            </div>
+                            <div class=\"flex-grow-1\">
+                              <h6 class=\"mb-1\">Charles Franklin</h6>
+                              <p class=\"mb-0\">Accepted your connection</p>
+                              <small class=\"text-muted\">12hr ago</small>
+                            </div>
+                            <div class=\"flex-shrink-0 dropdown-notifications-actions\">
+                              <a href=\"javascript:void(0)\" class=\"dropdown-notifications-read\"
+                                ><span class=\"badge badge-dot\"></span
+                              ></a>
+                              <a href=\"javascript:void(0)\" class=\"dropdown-notifications-archive\"
+                                ><span class=\"ti ti-x\"></span
+                              ></a>
+                            </div>
+                          </div>
+                        </li>
+                        <li class=\"list-group-item list-group-item-action dropdown-notifications-item marked-as-read\">
+                          <div class=\"d-flex\">
+                            <div class=\"flex-shrink-0 me-3\">
+                              <div class=\"avatar\">
+    <img src=\"{{ asset('img/avatars/2.png') }}\" alt class=\"h-auto rounded-circle\" />
+                              </div>
+                            </div>
+                            <div class=\"flex-grow-1\">
+                              <h6 class=\"mb-1\">New Message ✉️</h6>
+                              <p class=\"mb-0\">You have new message from Natalie</p>
+                              <small class=\"text-muted\">1h ago</small>
+                            </div>
+                            <div class=\"flex-shrink-0 dropdown-notifications-actions\">
+                              <a href=\"javascript:void(0)\" class=\"dropdown-notifications-read\"
+                                ><span class=\"badge badge-dot\"></span
+                              ></a>
+                              <a href=\"javascript:void(0)\" class=\"dropdown-notifications-archive\"
+                                ><span class=\"ti ti-x\"></span
+                              ></a>
+                            </div>
+                          </div>
+                        </li>
+                        <li class=\"list-group-item list-group-item-action dropdown-notifications-item\">
+                          <div class=\"d-flex\">
+                            <div class=\"flex-shrink-0 me-3\">
+                              <div class=\"avatar\">
+                                <span class=\"avatar-initial rounded-circle bg-label-success\"
+                                  ><i class=\"ti ti-shopping-cart\"></i
+                                ></span>
+                              </div>
+                            </div>
+                            <div class=\"flex-grow-1\">
+                              <h6 class=\"mb-1\">Whoo! You have new order 🛒</h6>
+                              <p class=\"mb-0\">ACME Inc. made new order \$1,154</p>
+                              <small class=\"text-muted\">1 day ago</small>
+                            </div>
+                            <div class=\"flex-shrink-0 dropdown-notifications-actions\">
+                              <a href=\"javascript:void(0)\" class=\"dropdown-notifications-read\"
+                                ><span class=\"badge badge-dot\"></span
+                              ></a>
+                              <a href=\"javascript:void(0)\" class=\"dropdown-notifications-archive\"
+                                ><span class=\"ti ti-x\"></span
+                              ></a>
+                            </div>
+                          </div>
+                        </li>
+                        <li class=\"list-group-item list-group-item-action dropdown-notifications-item marked-as-read\">
+                          <div class=\"d-flex\">
+                            <div class=\"flex-shrink-0 me-3\">
+                              <div class=\"avatar\">
+    <img src=\"{{ asset('img/avatars/9.png') }}\" alt class=\"h-auto rounded-circle\" />
+                              </div>
+                            </div>
+                            <div class=\"flex-grow-1\">
+                              <h6 class=\"mb-1\">Application has been approved 🚀</h6>
+                              <p class=\"mb-0\">Your ABC project application has been approved.</p>
+                              <small class=\"text-muted\">2 days ago</small>
+                            </div>
+                            <div class=\"flex-shrink-0 dropdown-notifications-actions\">
+                              <a href=\"javascript:void(0)\" class=\"dropdown-notifications-read\"
+                                ><span class=\"badge badge-dot\"></span
+                              ></a>
+                              <a href=\"javascript:void(0)\" class=\"dropdown-notifications-archive\"
+                                ><span class=\"ti ti-x\"></span
+                              ></a>
+                            </div>
+                          </div>
+                        </li>
+                        <li class=\"list-group-item list-group-item-action dropdown-notifications-item marked-as-read\">
+                          <div class=\"d-flex\">
+                            <div class=\"flex-shrink-0 me-3\">
+                              <div class=\"avatar\">
+                                <span class=\"avatar-initial rounded-circle bg-label-success\"
+                                  ><i class=\"ti ti-chart-pie\"></i
+                                ></span>
+                              </div>
+                            </div>
+                            <div class=\"flex-grow-1\">
+                              <h6 class=\"mb-1\">Monthly report is generated</h6>
+                              <p class=\"mb-0\">July monthly financial report is generated</p>
+                              <small class=\"text-muted\">3 days ago</small>
+                            </div>
+                            <div class=\"flex-shrink-0 dropdown-notifications-actions\">
+                              <a href=\"javascript:void(0)\" class=\"dropdown-notifications-read\"
+                                ><span class=\"badge badge-dot\"></span
+                              ></a>
+                              <a href=\"javascript:void(0)\" class=\"dropdown-notifications-archive\"
+                                ><span class=\"ti ti-x\"></span
+                              ></a>
+                            </div>
+                          </div>
+                        </li>
+                        <li class=\"list-group-item list-group-item-action dropdown-notifications-item marked-as-read\">
+                          <div class=\"d-flex\">
+                            <div class=\"flex-shrink-0 me-3\">
+                              <div class=\"avatar\">
+    <img src=\"{{ asset('img/avatars/5.png') }}\" alt class=\"h-auto rounded-circle\" />
+                              </div>
+                            </div>
+                            <div class=\"flex-grow-1\">
+                              <h6 class=\"mb-1\">Send connection request</h6>
+                              <p class=\"mb-0\">Peter sent you connection request</p>
+                              <small class=\"text-muted\">4 days ago</small>
+                            </div>
+                            <div class=\"flex-shrink-0 dropdown-notifications-actions\">
+                              <a href=\"javascript:void(0)\" class=\"dropdown-notifications-read\"
+                                ><span class=\"badge badge-dot\"></span
+                              ></a>
+                              <a href=\"javascript:void(0)\" class=\"dropdown-notifications-archive\"
+                                ><span class=\"ti ti-x\"></span
+                              ></a>
+                            </div>
+                          </div>
+                        </li>
+                        <li class=\"list-group-item list-group-item-action dropdown-notifications-item\">
+                          <div class=\"d-flex\">
+                            <div class=\"flex-shrink-0 me-3\">
+                              <div class=\"avatar\">
+    <img src=\"{{ asset('img/avatars/6.png') }}\" alt class=\"h-auto rounded-circle\" />
+                              </div>
+                            </div>
+                            <div class=\"flex-grow-1\">
+                              <h6 class=\"mb-1\">New message from Jane</h6>
+                              <p class=\"mb-0\">Your have new message from Jane</p>
+                              <small class=\"text-muted\">5 days ago</small>
+                            </div>
+                            <div class=\"flex-shrink-0 dropdown-notifications-actions\">
+                              <a href=\"javascript:void(0)\" class=\"dropdown-notifications-read\"
+                                ><span class=\"badge badge-dot\"></span
+                              ></a>
+                              <a href=\"javascript:void(0)\" class=\"dropdown-notifications-archive\"
+                                ><span class=\"ti ti-x\"></span
+                              ></a>
+                            </div>
+                          </div>
+                        </li>
+                        <li class=\"list-group-item list-group-item-action dropdown-notifications-item marked-as-read\">
+                          <div class=\"d-flex\">
+                            <div class=\"flex-shrink-0 me-3\">
+                              <div class=\"avatar\">
+                                <span class=\"avatar-initial rounded-circle bg-label-warning\"
+                                  ><i class=\"ti ti-alert-triangle\"></i
+                                ></span>
+                              </div>
+                            </div>
+                            <div class=\"flex-grow-1\">
+                              <h6 class=\"mb-1\">CPU is running high</h6>
+                              <p class=\"mb-0\">CPU Utilization Percent is currently at 88.63%,</p>
+                              <small class=\"text-muted\">5 days ago</small>
+                            </div>
+                            <div class=\"flex-shrink-0 dropdown-notifications-actions\">
+                              <a href=\"javascript:void(0)\" class=\"dropdown-notifications-read\"
+                                ><span class=\"badge badge-dot\"></span
+                              ></a>
+                              <a href=\"javascript:void(0)\" class=\"dropdown-notifications-archive\"
+                                ><span class=\"ti ti-x\"></span
+                              ></a>
+                            </div>
+                          </div>
+                        </li>
+                      </ul>
+                    </li>
+                    <li class=\"dropdown-menu-footer border-top\">
+                      <a
+                        href=\"javascript:void(0);\"
+                        class=\"dropdown-item d-flex justify-content-center text-primary p-2 h-px-40 mb-1 align-items-center\">
+                        View all notifications
+                      </a>
+                    </li>
+                  </ul>
+                </li>
+                <!--/ Notification -->
+
+                <!-- User -->
+                <li class=\"nav-item navbar-dropdown dropdown-user dropdown\">
+                  <a class=\"nav-link dropdown-toggle hide-arrow\" href=\"javascript:void(0);\" data-bs-toggle=\"dropdown\">
+                    <div class=\"avatar avatar-online\">
+    <img src=\"{{ asset('img/avatars/1.png') }}\" alt class=\"h-auto rounded-circle\" />
+                    </div>
+                  </a>
+                  <ul class=\"dropdown-menu dropdown-menu-end\">
+                    <li>
+                      <a class=\"dropdown-item\" href=\"pages-account-settings-account.html\">
+                        <div class=\"d-flex\">
+                          <div class=\"flex-shrink-0 me-3\">
+                            <div class=\"avatar avatar-online\">
+    <img src=\"{{ asset('img/avatars/1.png') }}\" alt class=\"h-auto rounded-circle\" />
+                            </div>
+                          </div>
+                          <div class=\"flex-grow-1\">
+                            <span class=\"fw-semibold d-block\">John Doe</span>
+                            <small class=\"text-muted\">Admin</small>
+                          </div>
+                        </div>
+                      </a>
+                    </li>
+                    <li>
+                      <div class=\"dropdown-divider\"></div>
+                    </li>
+                    <li>
+                      <a class=\"dropdown-item\" href=\"pages-profile-user.html\">
+                        <i class=\"ti ti-user-check me-2 ti-sm\"></i>
+                        <span class=\"align-middle\">My Profile</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a class=\"dropdown-item\" href=\"pages-account-settings-account.html\">
+                        <i class=\"ti ti-settings me-2 ti-sm\"></i>
+                        <span class=\"align-middle\">Settings</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a class=\"dropdown-item\" href=\"pages-account-settings-billing.html\">
+                        <span class=\"d-flex align-items-center align-middle\">
+                          <i class=\"flex-shrink-0 ti ti-credit-card me-2 ti-sm\"></i>
+                          <span class=\"flex-grow-1 align-middle\">Billing</span>
+                          <span class=\"flex-shrink-0 badge badge-center rounded-pill bg-label-danger w-px-20 h-px-20\"
+                            >2</span
+                          >
+                        </span>
+                      </a>
+                    </li>
+                    <li>
+                      <div class=\"dropdown-divider\"></div>
+                    </li>
+                    <li>
+                      <a class=\"dropdown-item\" href=\"pages-help-center-landing.html\">
+                        <i class=\"ti ti-lifebuoy me-2 ti-sm\"></i>
+                        <span class=\"align-middle\">Help</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a class=\"dropdown-item\" href=\"pages-faq.html\">
+                        <i class=\"ti ti-help me-2 ti-sm\"></i>
+                        <span class=\"align-middle\">FAQ</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a class=\"dropdown-item\" href=\"pages-pricing.html\">
+                        <i class=\"ti ti-currency-dollar me-2 ti-sm\"></i>
+                        <span class=\"align-middle\">Pricing</span>
+                      </a>
+                    </li>
+                    <li>
+                      <div class=\"dropdown-divider\"></div>
+                    </li>
+                    <li>
+                      <a class=\"dropdown-item\" href=\"auth-login-cover.html\" target=\"_blank\">
+                        <i class=\"ti ti-logout me-2 ti-sm\"></i>
+                        <span class=\"align-middle\">Log Out</span>
+                      </a>
+                    </li>
+                  </ul>
+                </li>
+                <!--/ User -->
+              </ul>
+            </div>
+
+            <!-- Search Small Screens -->
+            <div class=\"navbar-search-wrapper search-input-wrapper d-none\">
+              <input
+                type=\"text\"
+                class=\"form-control search-input container-xxl border-0\"
+                placeholder=\"Search...\"
+                aria-label=\"Search...\" />
+              <i class=\"ti ti-x ti-sm search-toggler cursor-pointer\"></i>
+            </div>
+          </nav>
+                <!-- / Navbar -->
+
+                <!-- Content wrapper -->
+                <div class=\"content-wrapper\">
+                    <div class=\"container-xxl flex-grow-1 container-p-y\">
+                        <!-- Header -->
+                        <div class=\"row mb-3\">
+                            <div class=\"col-12\">
+                                <div class=\"d-flex justify-content-between align-items-center\">
+                                    <h4 class=\"fw-bold mb-0\">
+                                        <span class=\"text-muted fw-light\">Personnels /</span> Statistiques
+                                    </h4>
+                                    <div>
+                                        <a href=\"{{ path('app_perso_index') }}\" class=\"btn btn-outline-primary btn-sm\">
+                                            <i class=\"ti ti-arrow-left me-1\"></i> Retour
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Première ligne - Graphiques -->
+                        <div class=\"row\">
+                            <!-- Pie Chart -->
+                            <div class=\"col-lg-6 mb-4\">
+                                <div class=\"card compact-card\">
+                                    <div class=\"compact-card-header d-flex justify-content-between align-items-center\">
+                                        <h5 class=\"compact-card-title\">Répartition par service</h5>
+                                        <div class=\"dropdown\">
+                                            <button class=\"btn p-0\" type=\"button\" data-bs-toggle=\"dropdown\">
+                                                <i class=\"ti ti-dots-vertical\"></i>
+                                            </button>
+                                            <div class=\"dropdown-menu dropdown-menu-end\">
+                                                <a class=\"dropdown-item\" href=\"javascript:void(0);\" id=\"refreshPieChart\">
+                                                    <i class=\"ti ti-refresh me-1\"></i> Actualiser
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class=\"compact-card-body\">
+                                        <div id=\"servicePieChart\" class=\"compact-chart\"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Bar Chart -->
+                            <div class=\"col-lg-6 mb-4\">
+                                <div class=\"card compact-card\">
+                                    <div class=\"compact-card-header d-flex justify-content-between align-items-center\">
+                                        <h5 class=\"compact-card-title\">Réservations par personnel</h5>
+                                        <div class=\"dropdown\">
+                                            <button class=\"btn p-0\" type=\"button\" data-bs-toggle=\"dropdown\">
+                                                <i class=\"ti ti-dots-vertical\"></i>
+                                            </button>
+                                            <div class=\"dropdown-menu dropdown-menu-end\">
+                                                <a class=\"dropdown-item\" href=\"javascript:void(0);\" id=\"refreshBarChart\">
+                                                    <i class=\"ti ti-refresh me-1\"></i> Actualiser
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class=\"compact-card-body\">
+                                        <div id=\"reservationBarChart\" class=\"compact-chart\"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Deuxième ligne - Détails -->
+                        <div class=\"row\">
+                            <!-- Détails services -->
+                            <div class=\"col-md-4 mb-4\">
+                                <div class=\"card compact-card\">
+                                    <div class=\"compact-card-header\">
+                                        <h5 class=\"compact-card-title\">Détails des services</h5>
+                                    </div>
+                                    <div class=\"compact-card-body\">
+                                        <div class=\"d-flex justify-content-between mb-3\">
+                                            <div class=\"metric-card text-center w-100 me-2\">
+                                                <div class=\"metric-value\">{{ stats|reduce((total, item) => total + item.count, 0) }}</div>
+                                                <div class=\"metric-label\">Personnels</div>
+                                            </div>
+                                            <div class=\"metric-card text-center w-100\">
+                                                <div class=\"metric-value\">{{ stats|length }}</div>
+                                                <div class=\"metric-label\">Services</div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class=\"scrollable-content\">
+                                            {% for item in stats %}
+                                            <div class=\"d-flex justify-content-between align-items-center py-2 border-bottom\">
+                                                <div class=\"d-flex align-items-center\">
+                                                    <span class=\"badge service-badge me-2\" style=\"background-color: {{ random(['#696cff', '#8592a3', '#71dd37', '#ff3e1d']) }}\">&nbsp;</span>
+                                                    <span>{{ item.service }}</span>
+                                                </div>
+                                                <span class=\"badge bg-label-primary rounded-pill\">{{ item.count }}</span>
+                                            </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Top réservations -->
+                            <div class=\"col-md-4 mb-4\">
+                                <div class=\"card compact-card\">
+                                    <div class=\"compact-card-header\">
+                                        <h5 class=\"compact-card-title\">Top personnels</h5>
+                                    </div>
+                                    <div class=\"compact-card-body\">
+                                        <div class=\"scrollable-content\">
+                                            {% for item in reservationStats|slice(0, 10) %}
+                                            <div class=\"d-flex justify-content-between align-items-center py-2 border-bottom\">
+                                                <div class=\"text-truncate\" style=\"max-width: 65%;\">
+                                                    {{ loop.index }}. {{ item.personnel }}
+                                                </div>
+                                                <span class=\"badge bg-primary rounded-pill\">{{ item.reservations }}</span>
+                                            </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Métriques -->
+                            <div class=\"col-md-4 mb-4\">
+                                <div class=\"card compact-card\">
+                                    <div class=\"compact-card-header\">
+                                        <h5 class=\"compact-card-title\">Indicateurs</h5>
+                                    </div>
+                                    <div class=\"compact-card-body\">
+                                        <div class=\"metric-card\">
+                                            <div class=\"d-flex align-items-center mb-1\">
+                                                <span class=\"badge bg-label-primary me-2\">
+                                                    <i class=\"ti ti-users\"></i>
+                                                </span>
+                                                <span>Personnels actifs</span>
+                                            </div>
+                                            <div class=\"d-flex justify-content-between align-items-center\">
+                                                <span class=\"metric-value\">{{ random(15, 25) }}</span>
+                                                <span class=\"badge bg-label-success\">+8.2%</span>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class=\"metric-card\">
+                                            <div class=\"d-flex align-items-center mb-1\">
+                                                <span class=\"badge bg-label-warning me-2\">
+                                                    <i class=\"ti ti-star\"></i>
+                                                </span>
+                                                <span>Personnels premium</span>
+                                            </div>
+                                            <div class=\"d-flex justify-content-between align-items-center\">
+                                                <span class=\"metric-value\">{{ random(5, 10) }}</span>
+                                                <span class=\"badge bg-label-success\">+15.3%</span>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class=\"metric-card\">
+                                            <div class=\"d-flex align-items-center mb-1\">
+                                                <span class=\"badge bg-label-info me-2\">
+                                                    <i class=\"ti ti-currency-dollar\"></i>
+                                                </span>
+                                                <span>Tarif moyen</span>
+                                            </div>
+                                            <div class=\"d-flex justify-content-between align-items-center\">
+                                                <span class=\"metric-value\">{{ random(80, 120) }} TND</span>
+                                                <span class=\"badge bg-label-danger\">-2.1%</span>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class=\"metric-card\">
+                                            <div class=\"d-flex align-items-center mb-1\">
+                                                <span class=\"badge bg-label-success me-2\">
+                                                    <i class=\"ti ti-calendar-event\"></i>
+                                                </span>
+                                                <span>Réservations ce mois</span>
+                                            </div>
+                                            <div class=\"d-flex justify-content-between align-items-center\">
+                                                <span class=\"metric-value\">{{ random(30, 50) }}</span>
+                                                <span class=\"badge bg-label-success\">+12.8%</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Footer -->
+                    <footer class=\"content-footer footer bg-footer-theme\">
+                        <div class=\"container-xxl d-flex flex-wrap justify-content-between py-2 flex-md-row flex-column\">
+                            <div class=\"mb-2 mb-md-0\">
+                                ©
+                                <script>
+                                    document.write(new Date().getFullYear());
+                                </script>
+                                , développé avec ❤️ par
+                                <a href=\"#\" target=\"_blank\" class=\"footer-link fw-bolder\">Votre Équipe</a>
+                            </div>
+                        </div>
+                    </footer>
+                    <!-- / Footer -->
+
+                    <div class=\"content-backdrop fade\"></div>
+                </div>
+                <!-- Content wrapper -->
+            </div>
+        </div>
+
+        <!-- Overlay -->
+        <div class=\"layout-overlay layout-menu-toggle\"></div>
+    </div>
+
+    <!-- Core JS -->
+    <script src=\"{{ asset('/vendor/libs/jquery/jquery.js') }}\"></script>
+    <script src=\"{{ asset('/vendor/js/bootstrap.js') }}\"></script>
+    <script src=\"{{ asset('/vendor/libs/perfect-scrollbar/perfect-scrollbar.js') }}\"></script>
+    <script src=\"{{ asset('/vendor/libs/apex-charts/apexcharts.js') }}\"></script>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Pie Chart Configuration avec animations plus longues
+        const pieChart = new ApexCharts(document.querySelector(\"#servicePieChart\"), {
+            series: {{ stats|map(item => item.count)|json_encode|raw }},
+            chart: {
+                type: 'donut',
+                height: '100%',
+                animations: {
+                    enabled: true,
+                    easing: 'easeOutQuad',
+                    speed: 1500,
+                    animateGradually: {
+                        enabled: true,
+                        delay: 300
+                    }
+                }
+            },
+            colors: ['#696cff', '#8592a3', '#71dd37', '#ff3e1d', '#ffab00', '#03c3ec'],
+            labels: {{ stats|map(item => item.service)|json_encode|raw }},
+            legend: {
+                position: 'bottom',
+                fontSize: '12px',
+                itemMargin: { horizontal: 8, vertical: 4 },
+                onItemHover: {
+                    highlightDataSeries: true
+                }
+            },
+            plotOptions: {
+                pie: {
+                    donut: {
+                        size: '65%',
+                        labels: {
+                            show: true,
+                            total: {
+                                show: true,
+                                label: 'Total',
+                                formatter: function(w) {
+                                    return w.globals.seriesTotals.reduce((a, b) => a + b, 0);
+                                }
+                            }
+                        }
+                    },
+                    customScale: 0.9,
+                    expandOnClick: true
+                }
+            },
+            tooltip: {
+                enabled: true,
+                y: {
+                    formatter: function(value) {
+                        return value + \" personnels\";
+                    }
+                },
+                style: {
+                    fontSize: '14px'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                style: {
+                    fontSize: '12px',
+                    fontFamily: 'Public Sans'
+                },
+                dropShadow: {
+                    enabled: false
+                }
+            },
+            states: {
+                hover: {
+                    filter: {
+                        type: 'none'
+                    }
+                },
+                active: {
+                    filter: {
+                        type: 'none'
+                    }
+                }
+            },
+            responsive: [{
+                breakpoint: 992,
+                options: { 
+                    chart: { height: '100%' },
+                    legend: { position: 'bottom' }
+                }
+            }]
+        });
+        pieChart.render();
+
+        // Bar Chart Configuration avec animations plus longues
+        const barChart = new ApexCharts(document.querySelector(\"#reservationBarChart\"), {
+            series: [{
+                name: 'Réservations',
+                data: {{ reservationStats|map(item => item.reservations)|json_encode|raw }}
+            }],
+            chart: {
+                type: 'bar',
+                height: '100%',
+                animations: {
+                    enabled: true,
+                    easing: 'easeOutQuad',
+                    speed: 1500,
+                    animateGradually: {
+                        enabled: true,
+                        delay: 300
+                    }
+                },
+                toolbar: { show: false }
+            },
+            colors: ['#696cff'],
+            xaxis: {
+                categories: {{ reservationStats|map(item => item.personnel)|json_encode|raw }},
+                labels: { 
+                    style: { fontSize: '12px' },
+                    trim: true,
+                    hideOverlappingLabels: true
+                }
+            },
+            yaxis: { 
+                labels: { style: { fontSize: '12px' } },
+                title: { 
+                    text: 'Nombre de réservations', 
+                    style: { fontSize: '14px' } 
+                }
+            },
+            plotOptions: {
+                bar: {
+                    borderRadius: 6,
+                    columnWidth: '55%',
+                    dataLabels: { position: 'top' },
+                    distributed: false,
+                    endingShape: 'rounded'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                formatter: function(val) { return val; },
+                style: { 
+                    fontSize: '12px',
+                    colors: ['#566a7f']
+                },
+                offsetY: -20,
+                background: {
+                    enabled: false
+                }
+            },
+            tooltip: {
+                enabled: true,
+                style: {
+                    fontSize: '14px'
+                },
+                y: {
+                    formatter: function(val) {
+                        return val + \" réservation(s)\";
+                    }
+                }
+            },
+            states: {
+                hover: {
+                    filter: {
+                        type: 'lighten',
+                        value: 0.1
+                    }
+                }
+            },
+            responsive: [{
+                breakpoint: 768,
+                options: {
+                    plotOptions: { bar: { columnWidth: '70%' } },
+                    xaxis: { labels: { rotate: -45 } }
+                }
+            }]
+        });
+        barChart.render();
+
+        // Refresh buttons
+        document.getElementById('refreshPieChart').addEventListener('click', function() {
+            pieChart.updateSeries({{ stats|map(item => item.count)|json_encode|raw }}, true, true, 1500);
+        });
+        
+        document.getElementById('refreshBarChart').addEventListener('click', function() {
+            barChart.updateSeries([{
+                data: {{ reservationStats|map(item => item.reservations)|json_encode|raw }}
+            }], true, true, 1500);
+        });
+
+        // Animation au chargement
+        setTimeout(() => {
+            document.querySelectorAll('.compact-card').forEach((card, index) => {
+                card.style.animationDelay = `\${index * 0.1}s`;
+            });
+        }, 300);
+    });
+    </script>
+</body>
+</html>", "perso/stats.html.twig", "C:\\Users\\Rayen\\Desktop\\Nouveau dossier (13)\\GoldenTouch-Symfony\\templates\\perso\\stats.html.twig");
+    }
+}

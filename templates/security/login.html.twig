@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+  class="light-style customizer-hide"
+  dir="ltr"
+  data-theme="theme-default"
+  data-assets-path=""
+  data-template="vertical-menu-template">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+
+    <title>Connexion</title>
+
+    <meta name="description" content="" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{{ asset('img/favicon/favicon.ico') }}" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
+      rel="stylesheet" />
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="{{ asset('vendor/fonts/fontawesome.css') }}" />
+    <link rel="stylesheet" href="{{ asset('vendor/fonts/tabler-icons.css') }}" />
+    <link rel="stylesheet" href="{{ asset('vendor/fonts/flag-icons.css') }}" />
+
+    <!-- Core CSS -->
+    <link rel="stylesheet" href="{{ asset('css/core.css') }}" />
+    <link rel="stylesheet" href="{{ asset('css/theme-default.css') }}" />
+    <link rel="stylesheet" href="{{ asset('css/demo.css') }}" />
+
+    <!-- Vendors CSS -->
+    <link rel="stylesheet" href="{{ asset('vendor/libs/perfect-scrollbar/perfect-scrollbar.css') }}" />
+    <link rel="stylesheet" href="{{ asset('vendor/libs/node-waves/node-waves.css') }}" />
+    <link rel="stylesheet" href="{{ asset('vendor/libs/typeahead-js/typeahead.css') }}" />
+    <link rel="stylesheet" href="{{ asset('vendor/libs/formvalidation/dist/css/formValidation.min.css') }}" />
+
+    <!-- Page CSS -->
+    <link rel="stylesheet" href="{{ asset('vendor/css/pages/page-auth.css') }}" />
+
+    <!-- Helpers -->
+    <script src="{{ asset('vendor/js/helpers.js') }}"></script>
+    <script src="{{ asset('vendor/js/template-customizer.js') }}"></script>
+    <script src="{{ asset('js/config.js') }}"></script>
+    
+    <style>
+    .auth-cover-bg-color {
+        background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('{{ asset('img/login.jpg') }}');
+        background-size: cover;
+        background-position: center;
+    }
+    
+    .brand-content {
+        max-width: 500px;
+        color: white;
+        z-index: 2;
+        padding: 2rem;
+    }
+    
+    .brand-logo {
+        margin-bottom: 1.5rem;
+    }
+    
+    .btn-arrow {
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s;
+    }
+    
+    .btn-arrow i {
+        transition: transform 0.3s;
+    }
+    
+    .btn-arrow:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(78, 115, 223, 0.3);
+    }
+    
+    .btn-arrow:hover i {
+        transform: translateX(3px);
+    }
+    
+    .alert-elevated {
+        border-left: 4px solid;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    </style>
+  </head>
+
+  <body>
+    <div class="authentication-wrapper authentication-cover authentication-bg">
+      <div class="authentication-inner row">
+        <!-- Left Panel with Branding -->
+        <div class="d-none d-lg-flex col-lg-7 p-0">
+          <div class="auth-cover-bg  d-flex justify-content-center align-items-center">
+           
+               <img src="{{ asset('logo.jpeg') }}" alt="logo" />
+       
+          </div>
+        </div>
+
+        <!-- Right Panel with Login Form -->
+        <div class="d-flex col-12 col-lg-5 align-items-center p-sm-5 p-4">
+          <div class="w-px-400 mx-auto">
+            <div class="app-brand mb-4">
+              <a href="#" class="app-brand-link gap-2">
+                <span class="app-brand-logo demo">
+                  <!-- SVG Logo -->
+                </span>
+              </a>
+            </div>
+            
+            <h3 class="mb-1 fw-bold">Connexion</h3>
+            <p class="mb-4">Entrez vos identifiants pour continuer</p>
+
+            <!-- Error Messages -->
+            {% if error %}
+            <div class="alert alert-danger alert-elevated fade show" role="alert">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    <span>Identifiants incorrects. Veuillez réessayer.</span>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endif %}
+
+            {% for label, messages in app.flashes %}
+            <div class="alert alert-{{ label }} alert-elevated fade show" role="alert">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-{{ label == 'success' ? 'check-circle' : 'info-circle' }} me-2"></i>
+                    <div>
+                        {% for message in messages %}
+                        <p class="mb-0">{{ message | raw }}</p>
+                        {% endfor %}
+                    </div>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+
+            <!-- Login Form -->
+            <form class="mb-3" action="{{ path('login') }}" method="post">
+              <div class="mb-3">
+                <label for="inputEmail" class="form-label">Adresse email</label>
+                <div class="input-group input-group-merge">
+                  <span class="input-group-text"><i class="ti ti-mail"></i></span>
+                  <input type="email" 
+                         value="{{ last_username }}" 
+                         name="email" 
+                         id="inputEmail" 
+                         class="form-control" 
+                         placeholder="email@example.com"
+                         autocomplete="email" 
+                        
+                         autofocus>
+                </div>
+              </div>
+              
+              <div class="mb-3 form-password-toggle">
+                <div class="d-flex justify-content-between">
+                  <label class="form-label" for="inputPassword">Mot de passe</label>
+                  <a href="{{ path('forgot_password') }}">
+                    <small>Mot de passe oublié ?</small>
+                  </a>
+                </div>
+                <div class="input-group input-group-merge">
+                  <span class="input-group-text"><i class="ti ti-lock"></i></span>
+                  <input type="password" 
+                         name="password" 
+                         id="inputPassword" 
+                         class="form-control" 
+                         placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
+                         autocomplete="current-password" 
+                        >
+                  <span class="input-group-text cursor-pointer"><i class="ti ti-eye-off"></i></span>
+                </div>
+              </div>
+              
+              <div class="mb-3">
+                <div class="form-check">
+                  <input type="checkbox" 
+                         name="_remember_me" 
+                         class="form-check-input" 
+                         id="remember_me" 
+                         checked>
+                  <label class="form-check-label" for="remember_me">Se souvenir de moi</label>
+                </div>
+              </div>
+
+              <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+              <button type="submit" class="btn btn-primary d-grid w-100 btn-arrow">
+                Se connecter
+                <i class="fas fa-arrow-right ms-2"></i>
+              </button>
+            </form>
+
+            <p class="text-center">
+              <span>Pas encore de compte ?</span>
+              <a href="{{ path('registration') }}">
+                <span>S'inscrire</span>
+              </a>
+            </p>
+
+            <div class="divider my-4">
+              <div class="divider-text">ou continuer avec</div>
+            </div>
+
+            <div class="d-flex justify-content-center">
+              <a href="javascript:;" class="btn btn-icon btn-label-facebook me-3">
+                <i class="tf-icons fa-brands fa-facebook-f fs-5"></i>
+              </a>
+              <a href="javascript:;" class="btn btn-icon btn-label-google-plus me-3">
+                <i class="tf-icons fa-brands fa-google fs-5"></i>
+              </a>
+              <a href="javascript:;" class="btn btn-icon btn-label-twitter">
+                <i class="tf-icons fa-brands fa-twitter fs-5"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="{{ asset('vendor/libs/jquery/jquery.js') }}"></script>
+    <script src="{{ asset('vendor/libs/popper/popper.js') }}"></script>
+    <script src="{{ asset('vendor/js/bootstrap.js') }}"></script>
+    <script src="{{ asset('vendor/libs/perfect-scrollbar/perfect-scrollbar.js') }}"></script>
+    <script src="{{ asset('vendor/libs/node-waves/node-waves.js') }}"></script>
+    <script src="{{ asset('vendor/js/menu.js') }}"></script>
+    <script src="{{ asset('vendor/libs/formvalidation/dist/js/FormValidation.min.js') }}"></script>
+    <script src="{{ asset('vendor/libs/formvalidation/dist/js/plugins/Bootstrap5.min.js') }}"></script>
+    <script src="{{ asset('vendor/libs/formvalidation/dist/js/plugins/AutoFocus.min.js') }}"></script>
+    <script src="{{ asset('js/main.js') }}"></script>
+    <script src="{{ asset('js/pages-auth.js') }}"></script>
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Password toggle
+        const passwordToggle = document.querySelector('.form-password-toggle .cursor-pointer');
+        if (passwordToggle) {
+            passwordToggle.addEventListener('click', function() {
+                const passwordInput = document.getElementById('inputPassword');
+                const icon = this.querySelector('i');
+                
+                if (passwordInput.type === 'password') {
+                    passwordInput.type = 'text';
+                    icon.classList.replace('ti-eye-off', 'ti-eye');
+                } else {
+                    passwordInput.type = 'password';
+                    icon.classList.replace('ti-eye', 'ti-eye-off');
+                }
+            });
+        }
+        
+        // Form validation
+        const form = document.querySelector('form');
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                let valid = true;
+                
+                // Simple validation example
+                const email = document.getElementById('inputEmail');
+                if (!email.value || !email.value.includes('@')) {
+                    email.classList.add('is-invalid');
+                    valid = false;
+                } else {
+                    email.classList.remove('is-invalid');
+                }
+                
+                const password = document.getElementById('inputPassword');
+                if (!password.value || password.value.length < 6) {
+                    password.classList.add('is-invalid');
+                    valid = false;
+                } else {
+                    password.classList.remove('is-invalid');
+                }
+                
+                if (!valid) {
+                    e.preventDefault();
+                }
+            });
+        }
+    });
+    </script>
+  </body>
+</html>
