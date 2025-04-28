@@ -164,8 +164,12 @@ class PackController extends AbstractController
     }
 
     #[Route('/pack/shop/{id}', name: 'app_pack_shop_details')]
-    public function shopDetails(Pack $pack): Response
+    public function shopDetails(Request $request, Pack $pack): Response
     {
+        $user = $this->getUser();
+        if (!$user) {
+            throw $this->createAccessDeniedException('You must be logged in to add an event.');
+        }
         // Get the category from the pack's event
         $category = $pack->getCategorie();
         $relatedPacks = [];
@@ -175,7 +179,7 @@ class PackController extends AbstractController
 
         $demandePacks = $this->entityManager->getRepository(DemandePack::class)
             ->createQueryBuilder('dp')
-            ->leftJoin('dp.utilisateur', 'u')
+            ->leftJoin('dp.user', 'u')
             ->addSelect('u')
             ->getQuery()
             ->getResult();
@@ -193,6 +197,10 @@ class PackController extends AbstractController
     #[Route('/pack/book/{id}', name: 'app_pack_booking')]
     public function booking(Request $request, Pack $pack, EntityManagerInterface $entityManager, ClockInterface $clock): Response
     {
+        $user = $this->getUser();
+        if (!$user) {
+            throw $this->createAccessDeniedException('You must be logged in to add an event.');
+        }
         // Create form instance with HTML5 validation disable
         $form = $this->createForm(BookingType::class, null, [
             'attr' => ['novalidate' => 'novalidate']
@@ -222,11 +230,13 @@ class PackController extends AbstractController
                     $demande->setStatut('EN_ATTENTE');
 
                     // Set user
-                    $user = $this->utilisateurRepository->find(25);
+                    $user = $this->getUser();
                     if (!$user) {
-                        throw new \Exception("L'utilisateur avec ID 25 n'existe pas");
+                        return $this->redirectToRoute('app_login', [
+                            '_target_path' => $request->getRequestUri()
+                        ]);
                     }
-                    $demande->setUtilisateur($user);
+                    $demande->setUser($user);
 
                     // Persist demande
                     $entityManager->persist($demande);
@@ -235,7 +245,7 @@ class PackController extends AbstractController
                     // Create admin notification
                     $notification = new NotificationsAdmin();
                     $notification->setAdmin($entityManager->getReference('App\Entity\Utilisateur', 1));
-                    $notification->setUtilisateur($entityManager->getReference('App\Entity\Utilisateur', 25));
+                    $notification->setUtilisateur($user);
                     $notification->setDemandePack($demande);
                     // Toxicity detection and masking for admin notification
                     $userMessage = $formData['message'] ?? 'Aucun message';
@@ -358,7 +368,7 @@ class PackController extends AbstractController
         $q = $request->query->get('q');
         $repo = $this->entityManager->getRepository(DemandePack::class);
         $qb = $repo->createQueryBuilder('d')
-            ->leftJoin('d.utilisateur', 'u')->addSelect('u')
+            ->leftJoin('d.user', 'u')->addSelect('u')
             ->leftJoin('d.pack', 'p')->addSelect('p')
             ->leftJoin('d.event', 'e')->addSelect('e');
 
