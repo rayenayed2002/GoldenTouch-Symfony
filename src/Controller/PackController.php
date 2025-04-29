@@ -23,6 +23,7 @@ use Symfony\Component\Clock\ClockInterface;
 use App\Service\GrammarCorrectionService;
 
 use App\Repository\NotificationsAdminRepository;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 class PackController extends AbstractController
 {
@@ -361,6 +362,7 @@ class PackController extends AbstractController
         return $this->redirectToRoute('app_packs');
     }
 
+    #[IsGranted('ROLE_ADMIN')]
     #[Route('/demande-packs', name: 'admin_advanced_statistiques_demande_packs', methods: ['GET'])]
     public function listDemandePacks(Request $request, \Knp\Component\Pager\PaginatorInterface $paginator, \App\Repository\NotificationsAdminRepository $notificationsRepo): Response
     {

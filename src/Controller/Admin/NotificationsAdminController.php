@@ -14,6 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/admin')]
+#[IsGranted('ROLE_ADMIN')]
 class NotificationsAdminController extends AbstractController
 {
     private NotificationsAdminRepository $notificationsAdminRepository;
@@ -36,7 +37,8 @@ class NotificationsAdminController extends AbstractController
     #[Route('/notifications', name: 'admin_notifications')]
     public function index(Request $request): Response
     {
-        $adminId = 1;
+        $user = $this->getUser();
+        $adminId = $user ? $user->getId() : null;
         $q = $request->query->get('q');
         $status = $request->query->get('status', 'all');
         $date = $request->query->get('date');

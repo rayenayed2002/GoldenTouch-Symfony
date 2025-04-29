@@ -25,6 +25,7 @@ use Doctrine\ORM\Query\Expr\Join;
 use Knp\Component\Pager\PaginatorInterface;
 
 #[Route('/admin/advanced-statistiques', name: 'admin_advanced_statistiques_')]
+#[IsGranted('ROLE_ADMIN')]
 class AdvancedStatistiquesController extends AbstractController
 {
     #[Route('/demande-packs/excel', name: 'admin_advanced_statistiques_admin_demande_pack_excel')]
@@ -306,7 +307,7 @@ class AdvancedStatistiquesController extends AbstractController
         $q = $request->query->get('q');
         $repo = $this->entityManager->getRepository(DemandePack::class);
         $qb = $repo->createQueryBuilder('d')
-            ->leftJoin('d.utilisateur', 'u')->addSelect('u')
+            ->leftJoin('d.user', 'u')->addSelect('u')
             ->leftJoin('d.pack', 'p')->addSelect('p')
             ->leftJoin('d.event', 'e')->addSelect('e');
 

@@ -32,6 +32,7 @@ use Symfony\Bundle\SecurityBundle\Security;
 use App\Service\EmailServicePackReady;
 
 #[Route('/admin/customize-pack', name: 'admin_customize_pack_')]
+#[IsGranted('ROLE_ADMIN')]
 class CustomizePackController extends AbstractController
 {
     private EntityManagerInterface $entityManager;
@@ -93,7 +94,7 @@ class CustomizePackController extends AbstractController
         }
 
         // Get the client information
-        $client = $this->utilisateurRepository->find($demandePack->getUtilisateurId());
+        $client = $demandePack->getUser();
         
         // Get all available materielle with their quantities
         $materielles = $this->materielleRepository->findAll();
@@ -110,9 +111,9 @@ class CustomizePackController extends AbstractController
             $eventDate = $demandePack->getEvent()->getDate();
         }
         
-        // Fetch the currently logged-in admin if available (fallback to 1)
+        // Fetch the currently logged-in admin
         $admin = $this->getUser();
-        $adminId = ($admin && method_exists($admin, 'getId')) ? $admin->getId() : 1;
+        $adminId = ($admin && method_exists($admin, 'getId')) ? $admin->getId() : null;
         $latestNotifications = $this->notificationsAdminRepository->createQueryBuilder('n')
             ->andWhere('n.admin = :adminId')
             ->setParameter('adminId', $adminId)
@@ -192,7 +193,9 @@ class CustomizePackController extends AbstractController
                     $reservation->setMaterielle($materielle);
                     $reservation->setEvent($event);
                     $reservation->setQuantite($materielleData['quantity']);
-                    $reservation->setUtilisateur($this->utilisateurRepository->find($demandePack->getUtilisateurId()));
+                    $user = $demandePack->getUser();
+$utilisateur = $user ? $this->utilisateurRepository->findOneBy(['email' => $user->getEmail()]) : null;
+$reservation->setUtilisateur($utilisateur);
                     $this->entityManager->persist($reservation);
                 }
             }
@@ -244,7 +247,7 @@ class CustomizePackController extends AbstractController
         $this->entityManager->flush();
 
         // Send notification email to client
-        $client = $this->utilisateurRepository->find($demandePack->getUtilisateurId());
+        $client = $demandePack->getUser();
         $packName = $demandePack->getPack() ? $demandePack->getPack()->getNom() : 'Votre pack';
         $recipientEmail = $client ? $client->getEmail() : null;
         if ($client && $recipientEmail) {
