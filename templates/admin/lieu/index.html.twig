@@ -185,6 +185,31 @@
             background-color: #7367f0;
             color: white;
         }
+
+        /* Search bar styles */
+        #searchInput {
+            transition: all 0.3s ease;
+        }
+
+        #searchInput:focus {
+            box-shadow: 0 0 0 3px rgba(115, 103, 240, 0.2);
+        }
+
+        #advancedSearchPanel {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        #advancedSearchToggle {
+            transition: all 0.3s ease;
+        }
+
+        #advancedSearchToggle:hover {
+            background-color: #7367f0;
+            color: white;
+        }
     </style>
 </head>
 
@@ -235,6 +260,7 @@
                 <div class="content-wrapper">
                     <!-- Content -->
                     <div class="container-xxl flex-grow-1 container-p-y">
+                        <!-- Suppression de la barre de recherche et des filtres ici -->
                         <div class="row mb-4">
                             <div class="col-12">
                                 <div class="card">
@@ -308,7 +334,6 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    
                                                     <div class="quick-actions">
                                                         <div class="btn-group shadow">
                                                             <button type="button" class="btn btn-primary btn-sm" onclick="editLocation({{ lieu.id }})">
@@ -320,6 +345,9 @@
                                                             <button type="button" class="btn btn-danger btn-sm" onclick="deleteLocation({{ lieu.id }})">
                                                                 <i class="ti ti-trash"></i>
                                                             </button>
+                                                            <a href="{{ path('app_lieu_calendar', {'id': lieu.id}) }}" class="btn btn-success btn-sm">
+                                                                <i class="ti ti-calendar"></i>
+                                                            </a>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -348,36 +376,32 @@
                                                     <tr>
                                                         <td>
                                                             {% if lieu.imageUrl %}
-                                                                <img src="{{ asset('uploads/lieux/' ~ lieu.imageUrl) }}" class="rounded" width="40" height="40" style="object-fit: cover;" alt="{{ lieu.name }}">
+                                                                <img src="{{ asset(lieu.imageUrl) }}" alt="{{ lieu.name }}" style="width: 60px; height: 40px; object-fit: cover; border-radius: 4px;">
                                                             {% else %}
-                                                                <i class="ti ti-photo text-muted"></i>
+                                                                <i class="ti ti-photo text-muted" style="font-size: 1.5rem;"></i>
                                                             {% endif %}
                                                         </td>
                                                         <td>{{ lieu.name }}</td>
                                                         <td>{{ lieu.description }}</td>
                                                         <td>${{ lieu.price }}</td>
-                                                        <td>
-                                                            <span class="badge bg-label-primary">{{ lieu.capacity }} spots</span>
-                                                        </td>
+                                                        <td>{{ lieu.capacity }}</td>
                                                         <td>{{ lieu.location }}</td>
                                                         <td>{{ lieu.ville }}</td>
                                                         <td>{{ lieu.category }}</td>
                                                         <td>
-                                                            <div class="d-flex gap-2">
-                                                                <button type="button" class="btn btn-sm btn-icon btn-primary" 
-                                                                        onclick="editLocation({{ lieu.id }})"
-                                                                        data-bs-toggle="tooltip" 
-                                                                        data-bs-placement="top" 
-                                                                        title="Edit">
+                                                            <div class="btn-group">
+                                                                <button type="button" class="btn btn-primary btn-sm" onclick="editLocation({{ lieu.id }})">
                                                                     <i class="ti ti-edit"></i>
                                                                 </button>
-                                                                <button type="button" class="btn btn-sm btn-icon btn-danger"
-                                                                        onclick="deleteLocation({{ lieu.id }})"
-                                                                        data-bs-toggle="tooltip"
-                                                                        data-bs-placement="top"
-                                                                        title="Delete">
+                                                                <button type="button" class="btn btn-primary btn-sm" onclick="viewLocationDetails({{ lieu.id }})">
+                                                                    <i class="ti ti-eye"></i>
+                                                                </button>
+                                                                <button type="button" class="btn btn-danger btn-sm" onclick="deleteLocation({{ lieu.id }})">
                                                                     <i class="ti ti-trash"></i>
                                                                 </button>
+                                                                <a href="{{ path('app_lieu_calendar', {'id': lieu.id}) }}" class="btn btn-success btn-sm">
+                                                                    <i class="ti ti-calendar"></i>
+                                                                </a>
                                                             </div>
                                                         </td>
                                                     </tr>
@@ -832,11 +856,12 @@
     // Delete location
     function deleteLocation(id) {
         Swal.fire({
-            title: 'Are you sure?',
-            text: "You won't be able to revert this!",
+            title: 'Êtes-vous sûr ?',
+            text: "Cette action est irréversible !",
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonText: 'Yes, delete it!',
+            confirmButtonText: 'Oui, supprimer',
+            cancelButtonText: 'Annuler',
             customClass: {
                 confirmButton: 'btn btn-primary me-3',
                 cancelButton: 'btn btn-label-secondary'
@@ -845,40 +870,32 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 fetch(`/admin/lieu/${id}/delete`, {
-                    method: 'POST',
+                    method: 'DELETE',
                     headers: {
                         'X-Requested-With': 'XMLHttpRequest',
-                        // For Symfony to recognize this as DELETE
-                        'X-HTTP-Method-Override': 'DELETE'
+                        'Content-Type': 'application/json'
                     }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Deleted!',
-                            text: data.message,
-                            showConfirmButton: false,
-                            timer: 1500
-                        }).then(() => {
-                            location.reload();
-                        });
-                    } else {
-                        throw new Error(data.message);
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Suppression visuelle de la carte
+                    const locationCard = document.querySelector(`.location-card [data-location-id="${id}"]`);
+                    if (locationCard) {
+                        locationCard.closest('.col-md-4').remove();
                     }
-                })
-                .catch(error => {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error!',
-                        text: error.message,
-                        confirmButtonText: 'OK'
-                    });
-                });
-            }
-        });
-    }
+                    
+                    Swal.fire('Supprimé!', data.message, 'success');
+                } else {
+                    throw new Error(data.message);
+                }
+            })
+            .catch(error => {
+                Swal.fire('Erreur!', error.message, 'error');
+            });
+        }
+    });
+}
     
     // View location details function
     function viewLocationDetails(id) {
@@ -908,6 +925,127 @@
 
     // Initial fetch
     fetchUnreadCount();
+
+    // Search functionality
+    let searchTimeout;
+    const searchInput = document.getElementById('searchInput');
+    const categoryFilter = document.getElementById('categoryFilter');
+    const minPrice = document.getElementById('minPrice');
+    const maxPrice = document.getElementById('maxPrice');
+    const advancedSearchPanel = document.getElementById('advancedSearchPanel');
+    const advancedSearchToggle = document.getElementById('advancedSearchToggle');
+
+    // Toggle advanced search panel
+    advancedSearchToggle.addEventListener('click', () => {
+        advancedSearchPanel.style.display = advancedSearchPanel.style.display === 'none' ? 'block' : 'none';
+    });
+
+    // Function to perform search
+    function performSearch() {
+        const searchTerm = searchInput.value.trim();
+        const category = categoryFilter.value;
+        const min = minPrice.value ? parseFloat(minPrice.value) : null;
+        const max = maxPrice.value ? parseFloat(maxPrice.value) : null;
+        
+        // Show loading indicator
+        const searchIcon = searchInput.previousElementSibling;
+        searchIcon.innerHTML = '<div class="spinner-border spinner-border-sm" role="status"></div>';
+        
+        fetch(`/admin/lieu/search?q=${encodeURIComponent(searchTerm)}&category=${encodeURIComponent(category)}&minPrice=${min}&maxPrice=${max}`, {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                updateSearchResults(data.results);
+            }
+        })
+        .catch(error => {
+            console.error('Search error:', error);
+        })
+        .finally(() => {
+            // Restore search icon
+            searchIcon.innerHTML = '<i class="ti ti-search"></i>';
+        });
+    }
+
+    // Update the UI with search results
+    function updateSearchResults(results) {
+        const galleryView = document.querySelector('.gallery-view');
+        
+        if (results.length === 0) {
+            galleryView.innerHTML = '<div class="col-12 text-center py-5"><i class="ti ti-mood-sad text-muted" style="font-size: 3rem;"></i><p class="mt-3">Aucun résultat trouvé</p></div>';
+            return;
+        }
+        
+        // Clear current results
+        galleryView.innerHTML = '';
+        
+        // Add new results
+        results.forEach(lieu => {
+            const cardHtml = `
+                <div class="col-md-4 col-lg-3">
+                    <div class="card location-card">
+                        ${lieu.imageUrl ? 
+                            `<img src="${lieu.imageUrl}" class="location-image" alt="${lieu.name}">` : 
+                            `<div class="location-image d-flex align-items-center justify-content-center bg-light">
+                                <i class="ti ti-photo text-muted" style="font-size: 3rem;"></i>
+                            </div>`}
+                        
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h5 class="card-title mb-0">${lieu.name}</h5>
+                                <span class="badge bg-info rounded-pill" data-bs-toggle="tooltip" title="Nombre de réservations">
+                                    0
+                                </span>
+                            </div>
+                            <p class="card-text text-truncate">${lieu.description || 'Aucune description'}</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="location-price">$${lieu.price}</div>
+                                <div class="location-capacity">
+                                    <i class="ti ti-users"></i> ${lieu.capacity}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="quick-actions">
+                            <div class="btn-group shadow">
+                                <button type="button" class="btn btn-primary btn-sm" onclick="editLocation(${lieu.id})">
+                                    <i class="ti ti-edit"></i>
+                                </button>
+                                <button type="button" class="btn btn-primary btn-sm" onclick="viewLocationDetails(${lieu.id})">
+                                    <i class="ti ti-eye"></i>
+                                </button>
+                                <button type="button" class="btn btn-danger btn-sm" onclick="deleteLocation(${lieu.id})">
+                                    <i class="ti ti-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            galleryView.insertAdjacentHTML('beforeend', cardHtml);
+        });
+    }
+
+    // Event listeners for search
+    searchInput.addEventListener('input', () => {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(performSearch, 300);
+    });
+
+    categoryFilter.addEventListener('change', performSearch);
+    minPrice.addEventListener('input', () => {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(performSearch, 500);
+    });
+    maxPrice.addEventListener('input', () => {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(performSearch, 500);
+    });
 </script>
 </body>
 </html>

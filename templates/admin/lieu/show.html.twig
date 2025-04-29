@@ -504,11 +504,12 @@
     // Delete location - also updated to match the index implementation
     function deleteLocation(id) {
         Swal.fire({
-            title: 'Are you sure?',
-            text: "You won't be able to revert this!",
+            title: 'Êtes-vous sûr ?',
+            text: "Cette action est irréversible !",
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonText: 'Yes, delete it!',
+            confirmButtonText: 'Oui, supprimer',
+            cancelButtonText: 'Annuler',
             customClass: {
                 confirmButton: 'btn btn-primary me-3',
                 cancelButton: 'btn btn-label-secondary'
@@ -517,7 +518,7 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 fetch(`/admin/lieu/${id}/delete`, {
-                    method: 'POST',
+                    method: 'DELETE',
                     headers: {
                         'X-Requested-With': 'XMLHttpRequest',
                         // For Symfony to recognize this as DELETE

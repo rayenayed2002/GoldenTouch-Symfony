@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Liste des Lieux - GoldenTouch</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .header { text-align: center; margin-bottom: 30px; }
+        .logo { font-size: 24px; font-weight: bold; color: #FFC107; }
+        .title { font-size: 20px; margin: 20px 0; }
+        .lieu-item { margin-bottom: 20px; padding: 10px; border-bottom: 1px solid #eee; }
+        .lieu-name { font-size: 18px; font-weight: bold; color: #333; }
+        .lieu-details { color: #666; margin: 10px 0; }
+        .lieu-category { color: #0066cc; font-size: 14px; }
+        .lieu-capacity { color: #666; font-size: 14px; }
+        .page-number { text-align: center; font-size: 12px; color: #999; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">GoldenTouch</div>
+        <h1 class="title">Liste des Lieux Disponibles</h1>
+    </div>
+
+    {% for lieu in lieux %}
+    <div class="lieu-item">
+        <div class="lieu-name">{{ lieu.name }}</div>
+        <div class="lieu-details">
+            <p>{{ lieu.description }}</p>
+            <div class="lieu-category">Catégorie: {{ lieu.category }}</div>
+            <div class="lieu-capacity">Capacité: {{ lieu.capacity }} personnes</div>
+            <div class="lieu-details">Prix: {{ lieu.price }}€</div>
+            <div class="lieu-details">Adresse: {{ lieu.location }}</div>
+        </div>
+    </div>
+    {% endfor %}
+
+    <div class="page-number">Page 1</div>
+</body>
+</html>

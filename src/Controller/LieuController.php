@@ -15,10 +15,41 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Dompdf\Dompdf;
+use Dompdf\Options;
 
 
 class LieuController extends AbstractController
 {
+    #[Route('/lieux/pdf', name: 'app_lieux_pdf')]
+    public function exportPdf(): Response
+    {
+        $lieux = $this->lieuRepository->findAll();
+        
+        // Configuration de Dompdf
+        $options = new Options();
+        $options->set('isHtml5ParserEnabled', true);
+        $options->set('isPhpEnabled', true);
+        
+        $dompdf = new Dompdf($options);
+        
+        // Génération du contenu HTML
+        $html = $this->renderView('lieu/pdf_template.html.twig', [
+            'lieux' => $lieux
+        ]);
+        
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
+        
+        // Génération du PDF
+        $response = new Response($dompdf->output());
+        $response->headers->set('Content-Type', 'application/pdf');
+        $response->headers->set('Content-Disposition', 'attachment;filename="lieux.pdf"');
+        
+        return $response;
+    }
+
     public function __construct(
         private LieuRepository $lieuRepository,
         private EntityManagerInterface $entityManager,
@@ -65,8 +96,18 @@ class LieuController extends AbstractController
         #[Route('/lieux', name: 'app_lieux')]
         public function index(Request $request): Response
         {
+            $page = $request->query->getInt('page', 1);
+            $limit = $request->query->getInt('limit', 9);
             $searchTerm = $request->query->get('search', '');
+            $category = $request->query->get('category');
+            $orderBy = $request->query->get('orderby');
             $filter = $request->query->get('filter', 'all');
+
+            $lieux = $this->lieuRepository->findAllPaginated($page, $limit, $searchTerm, $category, $orderBy);
+
+            if ($request->isXmlHttpRequest()) {
+                return $this->render('lieu/_lieu_list.html.twig', ['lieux' => $lieux]);
+            }
             $page = $request->query->getInt('page', 1);
             $limit = 10;
             
