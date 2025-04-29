@@ -8,6 +8,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Validator\Constraints\Image;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
 class UserType extends AbstractType
 {
@@ -15,7 +16,16 @@ class UserType extends AbstractType
     {
         $builder
             ->add('email')
-            ->add('roles')
+            ->add('roles', ChoiceType::class, [
+                'choices' => [
+                    'Admin' => 'ROLE_ADMIN',
+                    'Client' => 'ROLE_CLIENT',
+                    'Personnel' => 'ROLE_PERSONNEL'
+                ],
+                'multiple' => true,
+                'expanded' => true,
+                'required' => true
+            ])
             ->add('password')
             ->add('username')
             ->add('firstName')

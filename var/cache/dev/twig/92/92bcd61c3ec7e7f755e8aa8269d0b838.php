@@ -2074,6 +2074,6 @@ class __TwigTemplate_bc617cfda9c93714ddfe7e7a8ac900f1 extends Template
     
   </body>
 </html>
-", "base-front.html.twig", "C:\\Users\\ASUS\\Desktop\\user symfony\\templates\\base-front.html.twig");
+", "base-front.html.twig", "C:\\Users\\ASUS\\Desktop\\souha\\GoldenTouch-Symfony\\templates\\base-front.html.twig");
     }
 }

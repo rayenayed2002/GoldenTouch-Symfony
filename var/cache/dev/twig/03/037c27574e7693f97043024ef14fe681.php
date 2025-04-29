@@ -83,6 +83,6 @@ class __TwigTemplate_4a5fb1fb752b627f77aad2cf934147ee extends Template
     <line x1=\"3\" y1=\"19\" x2=\"21\" y2=\"19\" />
     <rect x=\"5\" y=\"6\" width=\"14\" height=\"10\" rx=\"1\" />
 </svg>
-", "@WebProfiler/Icon/settings-theme-system.svg", "C:\\Users\\ASUS\\Desktop\\user symfony\\vendor\\symfony\\web-profiler-bundle\\Resources\\views\\Icon\\settings-theme-system.svg");
+", "@WebProfiler/Icon/settings-theme-system.svg", "C:\\Users\\ASUS\\Desktop\\souha\\GoldenTouch-Symfony\\vendor\\symfony\\web-profiler-bundle\\Resources\\views\\Icon\\settings-theme-system.svg");
     }
 }

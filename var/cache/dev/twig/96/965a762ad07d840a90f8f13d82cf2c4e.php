@@ -118,6 +118,6 @@ class __TwigTemplate_f81f24681ae28912256301d4e3219b05 extends Template
     {% if segment in app.request.attributes.get('_route') %}
         active
     {% endif %}
-{% endmacro %}", "partials/_macro.html.twig", "C:\\Users\\ASUS\\Desktop\\user symfony\\templates\\partials\\_macro.html.twig");
+{% endmacro %}", "partials/_macro.html.twig", "C:\\Users\\ASUS\\Desktop\\souha\\GoldenTouch-Symfony\\templates\\partials\\_macro.html.twig");
     }
 }

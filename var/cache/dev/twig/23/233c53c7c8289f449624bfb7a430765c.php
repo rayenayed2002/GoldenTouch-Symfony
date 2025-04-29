@@ -81,6 +81,6 @@ class __TwigTemplate_fa6095eed32934dd33e83b057ac3cd42 extends Template
     <path stroke=\"none\" d=\"M0 0h24v24H0z\" fill=\"none\"/>
     <rect x=\"3\" y=\"5\" width=\"18\" height=\"14\" rx=\"2\" />
 </svg>
-", "@WebProfiler/Icon/settings-width-fixed.svg", "C:\\Users\\ASUS\\Desktop\\user symfony\\vendor\\symfony\\web-profiler-bundle\\Resources\\views\\Icon\\settings-width-fixed.svg");
+", "@WebProfiler/Icon/settings-width-fixed.svg", "C:\\Users\\ASUS\\Desktop\\souha\\GoldenTouch-Symfony\\vendor\\symfony\\web-profiler-bundle\\Resources\\views\\Icon\\settings-width-fixed.svg");
     }
 }

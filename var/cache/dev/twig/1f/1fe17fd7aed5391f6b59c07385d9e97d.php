@@ -176,6 +176,6 @@ class __TwigTemplate_ba64406336fdf034795be5ee78bb424a extends Template
     </ul>
 </div>
 {% endblock %}
-", "front/index.html.twig", "C:\\Users\\ASUS\\Desktop\\user symfony\\templates\\front\\index.html.twig");
+", "front/index.html.twig", "C:\\Users\\ASUS\\Desktop\\souha\\GoldenTouch-Symfony\\templates\\front\\index.html.twig");
     }
 }

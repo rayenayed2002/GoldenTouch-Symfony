@@ -117,6 +117,6 @@ class __TwigTemplate_7e30eaaba63e61dd2705a016dc406a36 extends Template
 \t\t</ul>
 \t</div>
 </nav>
-", "partials/_navbar.html.twig", "C:\\Users\\ASUS\\Desktop\\user symfony\\templates\\partials\\_navbar.html.twig");
+", "partials/_navbar.html.twig", "C:\\Users\\ASUS\\Desktop\\souha\\GoldenTouch-Symfony\\templates\\partials\\_navbar.html.twig");
     }
 }

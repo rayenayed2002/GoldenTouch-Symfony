@@ -169,6 +169,6 @@ class __TwigTemplate_79a24397cef0ba43b97e6f3997cb9733 extends Template
 {% endapply %}
 {% endif %}
 {% endblock %}
-", "@GregwarCaptcha/captcha.html.twig", "C:\\Users\\ASUS\\Desktop\\user symfony\\vendor\\gregwar\\captcha-bundle\\Resources\\views\\captcha.html.twig");
+", "@GregwarCaptcha/captcha.html.twig", "C:\\Users\\ASUS\\Desktop\\souha\\GoldenTouch-Symfony\\vendor\\gregwar\\captcha-bundle\\Resources\\views\\captcha.html.twig");
     }
 }

@@ -87,6 +87,6 @@ class __TwigTemplate_caacfb60a2251b5806353a0dc2b73c12 extends Template
     <line x1=\"7\" y1=\"21\" x2=\"7\" y2=\"3\"></line>
     <path d=\"M20 6l-3 -3l-3 3\"></path>
 </svg>
-", "@WebProfiler/Icon/ajax.svg", "C:\\Users\\ASUS\\Desktop\\user symfony\\vendor\\symfony\\web-profiler-bundle\\Resources\\views\\Icon\\ajax.svg");
+", "@WebProfiler/Icon/ajax.svg", "C:\\Users\\ASUS\\Desktop\\souha\\GoldenTouch-Symfony\\vendor\\symfony\\web-profiler-bundle\\Resources\\views\\Icon\\ajax.svg");
     }
 }

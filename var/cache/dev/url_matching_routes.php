@@ -22,9 +22,8 @@ return [
         '/inscription' => [[['_route' => 'registration', '_controller' => 'App\\Controller\\RegistrationController::register'], null, null, null, false, false, null]],
         '/register' => [[['_route' => 'app_register', '_controller' => 'App\\Controller\\RegistrationController1::register'], null, null, null, false, false, null]],
         '/verify/email' => [[['_route' => 'app_verify_email', '_controller' => 'App\\Controller\\RegistrationController1::verifyUserEmail'], null, null, null, false, false, null]],
-        '/mot-de-passe' => [[['_route' => 'forgot_password', '_controller' => 'App\\Controller\\ResetPasswordController::request'], null, null, null, false, false, null]],
-        '/mot-de-passe/check-email' => [[['_route' => 'check_email', '_controller' => 'App\\Controller\\ResetPasswordController::checkEmail'], null, null, null, false, false, null]],
-        '/mot-de-passe/force-reset' => [[['_route' => 'force_reset_password', '_controller' => 'App\\Controller\\ResetPasswordController::forceResetPassword'], null, null, null, false, false, null]],
+        '/reset-password' => [[['_route' => 'app_forgot_password_request', '_controller' => 'App\\Controller\\ResetPasswordController::request'], null, null, null, false, false, null]],
+        '/reset-password/check-email' => [[['_route' => 'app_check_email', '_controller' => 'App\\Controller\\ResetPasswordController::checkEmail'], null, null, null, false, false, null]],
         '/search' => [[['_route' => 'app_search', '_controller' => 'App\\Controller\\SearchController::search'], null, null, null, false, false, null]],
         '/connexion' => [[['_route' => 'login', '_controller' => 'App\\Controller\\SecurityController::login'], null, null, null, false, false, null]],
         '/deconnexion' => [[['_route' => 'logout', '_controller' => 'App\\Controller\\SecurityController::logout'], null, null, null, false, false, null]],
@@ -48,24 +47,21 @@ return [
                         .'|suppression(*:91)'
                     .')'
                 .')'
-                .'|/mot\\-de\\-passe/(?'
-                    .'|nouveau\\-mot\\-de\\-passe(?:/([^/]++))?(*:156)'
-                    .'|debug/reset\\-link/([^/]++)(*:190)'
-                .')'
-                .'|/qr\\-code/([^/]++)/([\\w\\W]+)(*:227)'
+                .'|/reset\\-password/reset(?:/([^/]++))?(*:136)'
+                .'|/qr\\-code/([^/]++)/([\\w\\W]+)(*:172)'
                 .'|/_(?'
-                    .'|error/(\\d+)(?:\\.([^/]++))?(*:266)'
-                    .'|wdt/([^/]++)(*:286)'
+                    .'|error/(\\d+)(?:\\.([^/]++))?(*:211)'
+                    .'|wdt/([^/]++)(*:231)'
                     .'|profiler/([^/]++)(?'
                         .'|/(?'
-                            .'|search/results(*:332)'
-                            .'|router(*:346)'
+                            .'|search/results(*:277)'
+                            .'|router(*:291)'
                             .'|exception(?'
-                                .'|(*:366)'
-                                .'|\\.css(*:379)'
+                                .'|(*:311)'
+                                .'|\\.css(*:324)'
                             .')'
                         .')'
-                        .'|(*:389)'
+                        .'|(*:334)'
                     .')'
                 .')'
             .')/?$}sDu',
@@ -75,16 +71,15 @@ return [
         52 => [[['_route' => 'admin_user_edit', '_controller' => 'App\\Controller\\AdminUserController::edit'], ['id'], ['GET' => 0, 'POST' => 1], null, false, false, null]],
         73 => [[['_route' => 'admin_user_toggle_verify', '_controller' => 'App\\Controller\\AdminUserController::toggleVerify'], ['id'], ['POST' => 0], null, false, false, null]],
         91 => [[['_route' => 'admin_user_delete', '_controller' => 'App\\Controller\\AdminUserController::delete'], ['id'], ['POST' => 0], null, false, false, null]],
-        156 => [[['_route' => 'reset_password', 'token' => null, '_controller' => 'App\\Controller\\ResetPasswordController::resetPassword'], ['token'], null, null, false, true, null]],
-        190 => [[['_route' => 'debug_reset_link', '_controller' => 'App\\Controller\\ResetPasswordController::debugGenerateResetLink'], ['email'], null, null, false, true, null]],
-        227 => [[['_route' => 'qr_code_generate', '_controller' => 'Endroid\\QrCodeBundle\\Controller\\GenerateController'], ['builder', 'data'], null, null, false, true, null]],
-        266 => [[['_route' => '_preview_error', '_controller' => 'error_controller::preview', '_format' => 'html'], ['code', '_format'], null, null, false, true, null]],
-        286 => [[['_route' => '_wdt', '_controller' => 'web_profiler.controller.profiler::toolbarAction'], ['token'], null, null, false, true, null]],
-        332 => [[['_route' => '_profiler_search_results', '_controller' => 'web_profiler.controller.profiler::searchResultsAction'], ['token'], null, null, false, false, null]],
-        346 => [[['_route' => '_profiler_router', '_controller' => 'web_profiler.controller.router::panelAction'], ['token'], null, null, false, false, null]],
-        366 => [[['_route' => '_profiler_exception', '_controller' => 'web_profiler.controller.exception_panel::body'], ['token'], null, null, false, false, null]],
-        379 => [[['_route' => '_profiler_exception_css', '_controller' => 'web_profiler.controller.exception_panel::stylesheet'], ['token'], null, null, false, false, null]],
-        389 => [
+        136 => [[['_route' => 'app_reset_password', 'token' => null, '_controller' => 'App\\Controller\\ResetPasswordController::reset'], ['token'], null, null, false, true, null]],
+        172 => [[['_route' => 'qr_code_generate', '_controller' => 'Endroid\\QrCodeBundle\\Controller\\GenerateController'], ['builder', 'data'], null, null, false, true, null]],
+        211 => [[['_route' => '_preview_error', '_controller' => 'error_controller::preview', '_format' => 'html'], ['code', '_format'], null, null, false, true, null]],
+        231 => [[['_route' => '_wdt', '_controller' => 'web_profiler.controller.profiler::toolbarAction'], ['token'], null, null, false, true, null]],
+        277 => [[['_route' => '_profiler_search_results', '_controller' => 'web_profiler.controller.profiler::searchResultsAction'], ['token'], null, null, false, false, null]],
+        291 => [[['_route' => '_profiler_router', '_controller' => 'web_profiler.controller.router::panelAction'], ['token'], null, null, false, false, null]],
+        311 => [[['_route' => '_profiler_exception', '_controller' => 'web_profiler.controller.exception_panel::body'], ['token'], null, null, false, false, null]],
+        324 => [[['_route' => '_profiler_exception_css', '_controller' => 'web_profiler.controller.exception_panel::stylesheet'], ['token'], null, null, false, false, null]],
+        334 => [
             [['_route' => '_profiler', '_controller' => 'web_profiler.controller.profiler::panelAction'], ['token'], null, null, false, true, null],
             [null, null, null, null, false, false, 0],
         ],

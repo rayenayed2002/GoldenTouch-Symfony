@@ -71,6 +71,6 @@ class __TwigTemplate_b506f94595a8909cc21bd5bace0c9c94 extends Template
 
     public function getSourceContext(): Source
     {
-        return new Source("", "front/register.html.twig", "C:\\Users\\ASUS\\Desktop\\user symfony\\templates\\front\\register.html.twig");
+        return new Source("", "front/register.html.twig", "C:\\Users\\ASUS\\Desktop\\souha\\GoldenTouch-Symfony\\templates\\front\\register.html.twig");
     }
 }

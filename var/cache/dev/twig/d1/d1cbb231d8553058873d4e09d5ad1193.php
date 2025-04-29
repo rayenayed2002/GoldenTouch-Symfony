@@ -81,6 +81,6 @@ class __TwigTemplate_5557160f7b0a7bd6accb48c45c360151 extends Template
     <path stroke=\"none\" d=\"M0 0h24v24H0z\" fill=\"none\"/>
     <path d=\"M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z\" />
 </svg>
-", "@WebProfiler/Icon/settings-theme-dark.svg", "C:\\Users\\ASUS\\Desktop\\user symfony\\vendor\\symfony\\web-profiler-bundle\\Resources\\views\\Icon\\settings-theme-dark.svg");
+", "@WebProfiler/Icon/settings-theme-dark.svg", "C:\\Users\\ASUS\\Desktop\\souha\\GoldenTouch-Symfony\\vendor\\symfony\\web-profiler-bundle\\Resources\\views\\Icon\\settings-theme-dark.svg");
     }
 }

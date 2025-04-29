@@ -402,6 +402,6 @@ class __TwigTemplate_9f90675c69f6de9d223e651b6403e9a8 extends Template
     }
 </style>
 {% endblock %}
-", "user/account/index.html.twig", "C:\\Users\\ASUS\\Desktop\\user symfony\\templates\\user\\account\\index.html.twig");
+", "user/account/index.html.twig", "C:\\Users\\ASUS\\Desktop\\souha\\GoldenTouch-Symfony\\templates\\user\\account\\index.html.twig");
     }
 }

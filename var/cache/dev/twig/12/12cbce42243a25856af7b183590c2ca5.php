@@ -109,6 +109,6 @@ class __TwigTemplate_191c23c33c516411d2a2731ccb8c0de7 extends Template
 <p>
     Cheers!
 </p>
-", "registration/confirmation_email.html.twig", "C:\\Users\\ASUS\\Desktop\\user symfony\\templates\\registration\\confirmation_email.html.twig");
+", "registration/confirmation_email.html.twig", "C:\\Users\\ASUS\\Desktop\\souha\\GoldenTouch-Symfony\\templates\\registration\\confirmation_email.html.twig");
     }
 }

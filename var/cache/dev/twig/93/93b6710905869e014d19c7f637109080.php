@@ -284,6 +284,6 @@ class __TwigTemplate_87b95e990555577b7974ba716b890179 extends Template
 
 </body>
 
-</html>", "back/register.html.twig", "C:\\Users\\ASUS\\Desktop\\user symfony\\templates\\back\\register.html.twig");
+</html>", "back/register.html.twig", "C:\\Users\\ASUS\\Desktop\\souha\\GoldenTouch-Symfony\\templates\\back\\register.html.twig");
     }
 }

@@ -303,7 +303,7 @@ class __TwigTemplate_8a6840a6af481537b7156f18965cef5f extends Template
                   <label class=\"form-label\" for=\"inputPassword\">Mot de passe</label>
                   <a href=\"";
         // line 168
-        yield $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("forgot_password");
+        yield $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("app_forgot_password_request");
         yield "\">
                     <small>Mot de passe oublié ?</small>
                   </a>
@@ -670,7 +670,7 @@ class __TwigTemplate_8a6840a6af481537b7156f18965cef5f extends Template
               <div class=\"mb-3 form-password-toggle\">
                 <div class=\"d-flex justify-content-between\">
                   <label class=\"form-label\" for=\"inputPassword\">Mot de passe</label>
-                  <a href=\"{{ path('forgot_password') }}\">
+                  <a href=\"{{ path('app_forgot_password_request') }}\">
                     <small>Mot de passe oublié ?</small>
                   </a>
                 </div>
@@ -791,6 +791,6 @@ class __TwigTemplate_8a6840a6af481537b7156f18965cef5f extends Template
     });
     </script>
   </body>
-</html>", "security/login.html.twig", "C:\\Users\\ASUS\\Desktop\\user symfony\\templates\\security\\login.html.twig");
+</html>", "security/login.html.twig", "C:\\Users\\ASUS\\Desktop\\souha\\GoldenTouch-Symfony\\templates\\security\\login.html.twig");
     }
 }

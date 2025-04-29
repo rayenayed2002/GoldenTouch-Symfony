@@ -194,6 +194,6 @@ class __TwigTemplate_9553ac645fdcd9caf7756a2d6f9c047c extends Template
         <button type=\"submit\" class=\"btn\">Register</button>
     {{ form_end(registrationForm) }}
 {% endblock %}
-", "registration/register.html.twig", "C:\\Users\\ASUS\\Desktop\\user symfony\\templates\\registration\\register.html.twig");
+", "registration/register.html.twig", "C:\\Users\\ASUS\\Desktop\\souha\\GoldenTouch-Symfony\\templates\\registration\\register.html.twig");
     }
 }

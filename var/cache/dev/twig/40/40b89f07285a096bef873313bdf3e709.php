@@ -1911,6 +1911,6 @@ class __TwigTemplate_76a4b41b630b2b10e5d97eb67994c926 extends Template
   </body>
 </html>
 
-", "admin/layout.html.twig", "C:\\Users\\ASUS\\Desktop\\user symfony\\templates\\admin\\layout.html.twig");
+", "admin/layout.html.twig", "C:\\Users\\ASUS\\Desktop\\souha\\GoldenTouch-Symfony\\templates\\admin\\layout.html.twig");
     }
 }

@@ -407,6 +407,6 @@ class __TwigTemplate_e565ed86f6c62456f1e56501b911dc42 extends Template
         </tbody>
     </table>
 </body>
-</html>", "emails/reset_password.html.twig", "C:\\Users\\ASUS\\Desktop\\user symfony\\templates\\emails\\reset_password.html.twig");
+</html>", "emails/reset_password.html.twig", "C:\\Users\\ASUS\\Desktop\\souha\\GoldenTouch-Symfony\\templates\\emails\\reset_password.html.twig");
     }
 }

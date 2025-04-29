@@ -1108,6 +1108,6 @@ class __TwigTemplate_f12344508bdde04ca86362835bd302a7 extends Template
         }
     });
     </script>
-{% endblock %}", "admin/parameter/update_password.html.twig", "C:\\Users\\ASUS\\Desktop\\user symfony\\templates\\admin\\parameter\\update_password.html.twig");
+{% endblock %}", "admin/parameter/update_password.html.twig", "C:\\Users\\ASUS\\Desktop\\souha\\GoldenTouch-Symfony\\templates\\admin\\parameter\\update_password.html.twig");
     }
 }

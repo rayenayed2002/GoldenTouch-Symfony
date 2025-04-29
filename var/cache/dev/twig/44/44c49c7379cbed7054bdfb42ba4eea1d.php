@@ -387,6 +387,6 @@ class __TwigTemplate_c7e6db8c7abe5be575aecc80c8cd0446 extends Template
 
 </nav>
 <!-- End of Topbar -->
-", "admin/partials/topbar.html.twig", "C:\\Users\\ASUS\\Desktop\\user symfony\\templates\\admin\\partials\\topbar.html.twig");
+", "admin/partials/topbar.html.twig", "C:\\Users\\ASUS\\Desktop\\souha\\GoldenTouch-Symfony\\templates\\admin\\partials\\topbar.html.twig");
     }
 }

@@ -311,6 +311,6 @@ class __TwigTemplate_89981e793869bd671e2fdcff0e5b7ae8 extends Template
         <script src=\"{{ asset('js/pages-auth.js') }}\"></script>
         </body>
 </html>
-", "admin/base.html.twig", "C:\\Users\\ASUS\\Desktop\\user symfony\\templates\\admin\\base.html.twig");
+", "admin/base.html.twig", "C:\\Users\\ASUS\\Desktop\\souha\\GoldenTouch-Symfony\\templates\\admin\\base.html.twig");
     }
 }

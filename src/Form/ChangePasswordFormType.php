@@ -9,7 +9,6 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\Validator\Constraints\Regex;
 
 class ChangePasswordFormType extends AbstractType
 {
@@ -21,10 +20,7 @@ class ChangePasswordFormType extends AbstractType
                 'options' => [
                     'attr' => [
                         'autocomplete' => 'new-password',
-                        'class' => 'form-control password-field',
-                        'data-toggle' => 'password',
                     ],
-                    'toggle' => true,
                 ],
                 'first_options' => [
                     'constraints' => [
@@ -32,49 +28,27 @@ class ChangePasswordFormType extends AbstractType
                             'message' => 'Please enter a password',
                         ]),
                         new Length([
-                            'min' => 8,
+                            'min' => 6,
                             'minMessage' => 'Your password should be at least {{ limit }} characters',
+                            // max length allowed by Symfony for security reasons
                             'max' => 4096,
                         ]),
-                        new Regex([
-                            'pattern' => '/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/',
-                            'message' => 'Password must contain at least one uppercase letter, one lowercase letter, one number and one special character'
-                        ])
                     ],
                     'label' => 'New password',
-                    'help' => 'Minimum 8 characters with at least one uppercase, one lowercase, one number and one special character',
-                    'attr' => [
-                        'placeholder' => 'Enter your new password',
-                    ],
-                    'row_attr' => [
-                        'class' => 'mb-3 password-field-container',
-                    ],
                 ],
                 'second_options' => [
-                    'label' => 'Confirm new password',
-                    'attr' => [
-                        'placeholder' => 'Repeat your new password',
-                    ],
-                    'row_attr' => [
-                        'class' => 'mb-3',
-                    ],
+                    'label' => 'Repeat Password',
                 ],
                 'invalid_message' => 'The password fields must match.',
+                // Instead of being set onto the object directly,
+                // this is read and encoded in the controller
                 'mapped' => false,
-                'row_attr' => [
-                    'class' => 'mb-4',
-                ],
             ])
         ;
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setDefaults([
-            'attr' => [
-                'novalidate' => 'novalidate',
-                'class' => 'needs-validation',
-            ],
-        ]);
+        $resolver->setDefaults([]);
     }
 }

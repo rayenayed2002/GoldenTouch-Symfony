@@ -198,6 +198,6 @@ class __TwigTemplate_90a42221bc955c91f5efde4bdf49e456 extends Template
     </div>
 
 </ul>
-", "admin/sidebar.html.twig", "C:\\Users\\ASUS\\Desktop\\user symfony\\templates\\admin\\sidebar.html.twig");
+", "admin/sidebar.html.twig", "C:\\Users\\ASUS\\Desktop\\souha\\GoldenTouch-Symfony\\templates\\admin\\sidebar.html.twig");
     }
 }

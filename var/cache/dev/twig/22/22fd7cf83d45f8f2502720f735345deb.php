@@ -116,6 +116,6 @@ class __TwigTemplate_0af8942f8fe04bcb6598906caf6d379f extends Template
             </div>
         </div>
     </div>
-</div>", "admin/partials/_modal_logout.html.twig", "C:\\Users\\ASUS\\Desktop\\user symfony\\templates\\admin\\partials\\_modal_logout.html.twig");
+</div>", "admin/partials/_modal_logout.html.twig", "C:\\Users\\ASUS\\Desktop\\souha\\GoldenTouch-Symfony\\templates\\admin\\partials\\_modal_logout.html.twig");
     }
 }

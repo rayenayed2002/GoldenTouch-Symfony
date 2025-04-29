@@ -85,6 +85,6 @@ class __TwigTemplate_4c93a1072f69f10419fabff77d454216 extends Template
     <line x1=\"7\" y1=\"7\" x2=\"7\" y2=\"17\"></line>
     <line x1=\"4\" y1=\"8\" x2=\"4\" y2=\"16\"></line>
 </svg>
-", "@DoctrineMigrations/Collector/icon-v3.svg", "C:\\Users\\ASUS\\Desktop\\user symfony\\vendor\\doctrine\\doctrine-migrations-bundle\\templates\\Collector\\icon-v3.svg");
+", "@DoctrineMigrations/Collector/icon-v3.svg", "C:\\Users\\ASUS\\Desktop\\souha\\GoldenTouch-Symfony\\vendor\\doctrine\\doctrine-migrations-bundle\\templates\\Collector\\icon-v3.svg");
     }
 }

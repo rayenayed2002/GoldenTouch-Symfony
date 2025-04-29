@@ -536,6 +536,6 @@ class __TwigTemplate_73239b5cde5b2e17b51280384bf17a26 extends Template
         nextSibling.innerText = fileName;
     });
 </script>
-{% endblock %}", "admin/user/edit.html.twig", "C:\\Users\\ASUS\\Desktop\\user symfony\\templates\\admin\\user\\edit.html.twig");
+{% endblock %}", "admin/user/edit.html.twig", "C:\\Users\\ASUS\\Desktop\\souha\\GoldenTouch-Symfony\\templates\\admin\\user\\edit.html.twig");
     }
 }

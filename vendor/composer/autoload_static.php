@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInite5a1d9dca06cfda031723a2b1bc7ad19
+class ComposerStaticInitb41062388a878d82deeec1afe018be40
 {
     public static $files = array (
         '6e3fae29631ef280660b3cdad06f25a8' => __DIR__ . '/..' . '/symfony/deprecation-contracts/function.php',
@@ -719,28 +719,27 @@ class ComposerStaticInite5a1d9dca06cfda031723a2b1bc7ad19
         'App\\Controller\\AdminUserController' => __DIR__ . '/../..' . '/src/Controller/AdminUserController.php',
         'App\\Controller\\BackController' => __DIR__ . '/../..' . '/src/Controller/BackController.php',
         'App\\Controller\\FrontController' => __DIR__ . '/../..' . '/src/Controller/FrontController.php',
+        'App\\Controller\\GoogleController' => __DIR__ . '/../..' . '/src/Controller/GoogleController.php',
         'App\\Controller\\HomeController' => __DIR__ . '/../..' . '/src/Controller/HomeController.php',
         'App\\Controller\\RegistrationController' => __DIR__ . '/../..' . '/src/Controller/RegistrationController.php',
         'App\\Controller\\RegistrationController1' => __DIR__ . '/../..' . '/src/Controller/RegistrationController1.php',
-        'App\\Controller\\ResetPasswordController' => __DIR__ . '/../..' . '/src/Controller/ResetPasswordController.php',
+        'App\\Controller\\SearchController' => __DIR__ . '/../..' . '/src/Controller/SearchController.php',
         'App\\Controller\\SecurityController' => __DIR__ . '/../..' . '/src/Controller/SecurityController.php',
         'App\\Controller\\UserAccountController' => __DIR__ . '/../..' . '/src/Controller/UserAccountController.php',
-        'App\\Entity\\ResetPasswordRequest' => __DIR__ . '/../..' . '/src/Entity/ResetPasswordRequest.php',
         'App\\Entity\\User' => __DIR__ . '/../..' . '/src/Entity/User.php',
         'App\\Form\\ChangePasswordFormType' => __DIR__ . '/../..' . '/src/Form/ChangePasswordFormType.php',
         'App\\Form\\RegistrationFormType' => __DIR__ . '/../..' . '/src/Form/RegistrationFormType.php',
         'App\\Form\\RegistrationFormType1' => __DIR__ . '/../..' . '/src/Form/RegistrationFormType1.php',
-        'App\\Form\\ResetPasswordRequestFormType' => __DIR__ . '/../..' . '/src/Form/ResetPasswordRequestFormType.php',
         'App\\Form\\UpdatePasswordType' => __DIR__ . '/../..' . '/src/Form/UpdatePasswordType.php',
         'App\\Form\\UserAddType' => __DIR__ . '/../..' . '/src/Form/UserAddType.php',
         'App\\Form\\UserEditProfileType' => __DIR__ . '/../..' . '/src/Form/UserEditProfileType.php',
         'App\\Form\\UserEditType' => __DIR__ . '/../..' . '/src/Form/UserEditType.php',
         'App\\Form\\UserType' => __DIR__ . '/../..' . '/src/Form/UserType.php',
         'App\\Kernel' => __DIR__ . '/../..' . '/src/Kernel.php',
-        'App\\Repository\\ResetPasswordRequestRepository' => __DIR__ . '/../..' . '/src/Repository/ResetPasswordRequestRepository.php',
         'App\\Repository\\UserRepository' => __DIR__ . '/../..' . '/src/Repository/UserRepository.php',
         'App\\Security\\AppCustomAuthenticator' => __DIR__ . '/../..' . '/src/Security/AppCustomAuthenticator.php',
         'App\\Security\\EmailVerifier' => __DIR__ . '/../..' . '/src/Security/EmailVerifier.php',
+        'App\\Security\\GoogleAuthenticator' => __DIR__ . '/../..' . '/src/Security/GoogleAuthenticator.php',
         'App\\Security\\UserChecker' => __DIR__ . '/../..' . '/src/Security/UserChecker.php',
         'Attribute' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
         'BaconQrCode\\Common\\BitArray' => __DIR__ . '/..' . '/bacon/bacon-qr-code/src/Common/BitArray.php',
@@ -7549,9 +7548,9 @@ class ComposerStaticInite5a1d9dca06cfda031723a2b1bc7ad19
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInite5a1d9dca06cfda031723a2b1bc7ad19::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInite5a1d9dca06cfda031723a2b1bc7ad19::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInite5a1d9dca06cfda031723a2b1bc7ad19::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInitb41062388a878d82deeec1afe018be40::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInitb41062388a878d82deeec1afe018be40::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInitb41062388a878d82deeec1afe018be40::$classMap;
 
         }, null, ClassLoader::class);
     }

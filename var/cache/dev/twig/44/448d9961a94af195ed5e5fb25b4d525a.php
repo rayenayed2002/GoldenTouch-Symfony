@@ -87,6 +87,6 @@ class __TwigTemplate_eb73699d63e8a76820a5993f43768a96 extends Template
     <path d=\"M12 14a6 6 0 0 1 6 -6h3v1a6 6 0 0 1 -6 6h-3\"></path>
     <line x1=\"12\" y1=\"20\" x2=\"12\" y2=\"10\"></line>
 </svg>
-", "@WebProfiler/Icon/twig.svg", "C:\\Users\\ASUS\\Desktop\\user symfony\\vendor\\symfony\\web-profiler-bundle\\Resources\\views\\Icon\\twig.svg");
+", "@WebProfiler/Icon/twig.svg", "C:\\Users\\ASUS\\Desktop\\souha\\GoldenTouch-Symfony\\vendor\\symfony\\web-profiler-bundle\\Resources\\views\\Icon\\twig.svg");
     }
 }

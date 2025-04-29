@@ -1073,6 +1073,6 @@ document.addEventListener('DOMContentLoaded', function() {
   {{ parent() }}
   <script src=\"{{ asset(\"sbadmin2/vendor/datatables/jquery.dataTables.min.js\") }}\"></script>
   <script src=\"{{ asset(\"sbadmin2/vendor/datatables/dataTables.bootstrap4.min.js\") }}\"></script>
-{% endblock %}", "admin/user/index.html.twig", "C:\\Users\\ASUS\\Desktop\\user symfony\\templates\\admin\\user\\index.html.twig");
+{% endblock %}", "admin/user/index.html.twig", "C:\\Users\\ASUS\\Desktop\\souha\\GoldenTouch-Symfony\\templates\\admin\\user\\index.html.twig");
     }
 }
