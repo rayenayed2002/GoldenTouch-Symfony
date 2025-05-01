@@ -72,18 +72,38 @@ class AvisController extends AbstractController
         $avis->setDateCreation(new \DateTime());
 
         // Server-side toxicity detection (same as booking)
+        $session = $request->getSession();
         $toxicityResult = $this->toxicityDetectionService->detect($avis->getCommentaire() ?? '');
         $labelsEn = $toxicityResult['en'] ?? [];
+        $labelsFr = $toxicityResult['fr'] ?? [];
         $isToxic = false;
-        foreach ($labelsEn as $label) {
+        foreach (array_merge($labelsEn, $labelsFr) as $label) {
             if ($label['label'] === 'toxic' && $label['score'] > 0.5) {
                 $isToxic = true;
                 break;
             }
         }
         if ($isToxic) {
-            $this->addFlash('error', 'Votre commentaire contient des propos inappropriés (toxiques). Veuillez le reformuler.');
-            return $this->redirectToRoute('app_pack_shop_details', ['id' => $packId]);
+            $lastToxicReview = $session->get('last_toxic_review');
+            if ($lastToxicReview !== $avis->getCommentaire()) {
+                // First time toxic review, ask user to correct
+                $session->set('last_toxic_review', $avis->getCommentaire());
+                $this->addFlash('error', 'Votre commentaire contient des propos inappropriés (toxiques). Veuillez le reformuler.');
+                return $this->redirectToRoute('app_pack_shop_details', [
+                    'id' => $packId,
+                    'comment' => $avis->getCommentaire(),
+                    'rating' => $request->request->get('rating', 5),
+                    'error_commentaire' => 'Votre commentaire contient des propos inappropriés (toxiques). Veuillez le reformuler.'
+                ]);
+            
+            } else {
+                // User insisted, mask the review
+                $masked = $this->toxicityDetectionService->maskToxicWords($avis->getCommentaire(), array_merge($labelsEn, $labelsFr));
+                $avis->setCommentaire($masked);
+                $session->remove('last_toxic_review');
+            }
+        } else {
+            $session->remove('last_toxic_review');
         }
         // AI Sentiment Analysis via Hugging Face (directly from comment)
         $sentiment = $reviewSentimentService->analyze($avis->getCommentaire() ?? '');

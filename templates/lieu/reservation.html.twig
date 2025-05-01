@@ -18,13 +18,26 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- Bouclez ici sur vos réservations -->
-                        <tr>
-                            <td>Aucune réservation pour le moment</td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
+                        {% for reservation in reservations %}
+                            <tr>
+                                <td>{{ reservation.lieuId.name }}</td>
+                                <td>{{ reservation.dateReservation|date('d/m/Y H:i') }}</td>
+                                <td>{{ reservation.status|default('En attente') }}</td>
+                                <td>
+                                    {% if reservation.status == 'pending' %}
+                                        <form action="{{ path('app_reservation_cancel', {'id': reservation.id}) }}" method="post" style="display: inline;">
+                                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Êtes-vous sûr de vouloir annuler cette réservation ?')">
+                                                Annuler
+                                            </button>
+                                        </form>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="4" class="text-center">Aucune réservation pour le moment</td>
+                            </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>

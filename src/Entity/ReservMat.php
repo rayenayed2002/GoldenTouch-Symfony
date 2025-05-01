@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\ReservMatRepository;
 use Doctrine\ORM\Mapping as ORM;
+use App\Entity\Utilisateur;
 
 #[ORM\Entity(repositoryClass: ReservMatRepository::class)]
 #[ORM\Table(name: 'reserve_mat')]  // Explicitly define the table name
@@ -74,15 +75,15 @@ private ?Event $event = null;
     }
 
     public function getUtilisateur(): ?Utilisateur
-{
-    return $this->utilisateur;
-}
+    {
+        return $this->utilisateur;
+    }
 
-public function setUtilisateur(?Utilisateur $utilisateur): self
-{
-    $this->utilisateur = $utilisateur;
-    return $this;
-}
+    public function setUtilisateur(?Utilisateur $utilisateur): self
+    {
+        $this->utilisateur = $utilisateur;
+        return $this;
+    }
 
     public function __toString(): string
     {

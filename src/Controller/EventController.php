@@ -174,86 +174,81 @@ class EventController extends AbstractController
     public function draftEvents(Request $request, EntityManagerInterface $entityManager): Response
     {
         $currentPage = $request->query->getInt('page', 1);
-    $orderBy = $request->query->get('orderby', 'date');
-    $sortDirection = $request->query->get('sort', 'DESC');
-    $pageSize = 9;
-    $user = $this->getUser();
-    
-    if (!$user) {
-        throw $this->createAccessDeniedException('You must be logged in to add an event.');
-    }
-    // Query 1: Events where the user is the owner
-    $qbOwner = $entityManager->createQueryBuilder() 
-        ->select('e')
-        ->from(Event::class, 'e')
-        ->leftJoin('e.paniers', 'p')
-        ->leftJoin('e.detailPayments', 'dc')
-        ->where('e.user = :userId')
-        ->andWhere('p.id IS NULL')
-        ->andWhere('dc.id IS NULL')
-        ->setParameter('userId', $user->getId());
-
-    $eventsOwner = $qbOwner->getQuery()->getResult();
-
-    // Query 2: Events for which the user has a CONFIRMÉ DemandePack
-    $qbDemande = $entityManager->createQueryBuilder()
-        ->select('DISTINCT e')
-        ->from(Event::class, 'e')
-        ->innerJoin('App\Entity\Pack', 'pack', 'WITH', 'pack.event = e.id')
-        ->innerJoin('App\Entity\DemandePack', 'dp', 'WITH', 'dp.pack = pack.id')
-        ->leftJoin('e.paniers', 'p')
-        ->leftJoin('e.detailPayments', 'dc')
-        ->where('dp.user = :userId')
-        ->andWhere('dp.statut = :statutConfirme')
-        ->andWhere('p.id IS NULL')
-        ->andWhere('dc.id IS NULL')
-        ->setParameter('userId', $user->getId())
-        ->setParameter('statutConfirme', 'CONFIRMÉ');
-
-    $eventsDemande = $qbDemande->getQuery()->getResult();
-
-    // Merge and deduplicate events
-    $events = array_filter(array_merge($eventsOwner, $eventsDemande), function($item) {
-        return $item instanceof \App\Entity\Event;
-    });
-    $events = array_unique($events, SORT_REGULAR);
-
-    // Use ArrayPaginator for manual pagination
-    $totalItems = count($events);
-    $totalPages = ceil($totalItems / $pageSize);
-    $offset = $pageSize * ($currentPage - 1);
-    $eventsPage = array_slice($events, $offset, $pageSize);
-
-
+        $orderBy = $request->query->get('orderby', 'date');
+        $sortDirection = $request->query->get('sort', 'DESC');
+        $pageSize = 9;
+        $user = $this->getUser();
         
+        if (!$user) {
+            throw $this->createAccessDeniedException('You must be logged in to add an event.');
+        }
 
-    // Sort the merged events array manually since we are not using a query builder
-    usort($events, function($a, $b) use ($orderBy, $sortDirection) {
-        switch ($orderBy) {
-            case 'name':
-                $valA = method_exists($a, 'getNom') ? $a->getNom() : '';
-                $valB = method_exists($b, 'getNom') ? $b->getNom() : '';
-                break;
-            case 'date':
-                $valA = method_exists($a, 'getDate') ? $a->getDate() : null;
-                $valB = method_exists($b, 'getDate') ? $b->getDate() : null;
-                break;
-            case 'category':
-                $valA = method_exists($a, 'getCategorie') ? $a->getCategorie() : '';
-                $valB = method_exists($b, 'getCategorie') ? $b->getCategorie() : '';
-                break;
-            default:
-                $valA = method_exists($a, 'getDate') ? $a->getDate() : null;
-                $valB = method_exists($b, 'getDate') ? $b->getDate() : null;
-        }
-        if ($valA == $valB) return 0;
-        if ($sortDirection === 'DESC') {
-            return ($valA < $valB) ? 1 : -1;
-        } else {
-            return ($valA > $valB) ? 1 : -1;
-        }
-    });
-    // Pagination is already handled above; remove obsolete paginator code
+        // Query 1: Events where the user is the owner
+        $qbOwner = $entityManager->createQueryBuilder() 
+            ->select('e')
+            ->from(Event::class, 'e')
+            ->leftJoin('e.paniers', 'p')
+            ->leftJoin('e.detailPayments', 'dc')
+            ->where('e.user = :userId')
+            ->andWhere('p.id IS NULL')
+            ->andWhere('dc.id IS NULL')
+            ->setParameter('userId', $user->getId());
+
+        $eventsOwner = $qbOwner->getQuery()->getResult();
+
+        // Query 2: Events for which the user has a CONFIRMÉ DemandePack
+        $qbDemande = $entityManager->createQueryBuilder()
+            ->select('DISTINCT e')
+            ->from(Event::class, 'e')
+            ->join('e.packs', 'p')
+            ->join('p.demandePacks', 'd')
+            ->leftJoin('e.paniers', 'pan')
+            ->leftJoin('e.detailPayments', 'dc')
+            ->where('d.user = :userId')
+            ->andWhere('d.statut = :statutConfirme')
+            ->andWhere('pan.id IS NULL')
+            ->andWhere('dc.id IS NULL')
+            ->setParameter('userId', $user)
+            ->setParameter('statutConfirme', 'CONFIRMÉ');
+
+        $eventsDemande = $qbDemande->getQuery()->getResult();
+
+        // Merge and deduplicate events
+        $events = array_merge($eventsOwner, $eventsDemande);
+        $events = array_unique($events, SORT_REGULAR);
+
+        // Sort the events array
+        usort($events, function($a, $b) use ($orderBy, $sortDirection) {
+            switch ($orderBy) {
+                case 'name':
+                    $valA = $a->getNom();
+                    $valB = $b->getNom();
+                    break;
+                case 'date':
+                    $valA = $a->getDate();
+                    $valB = $b->getDate();
+                    break;
+                case 'category':
+                    $valA = $a->getCategorie();
+                    $valB = $b->getCategorie();
+                    break;
+                default:
+                    $valA = $a->getDate();
+                    $valB = $b->getDate();
+            }
+            if ($valA == $valB) return 0;
+            if ($sortDirection === 'DESC') {
+                return ($valA < $valB) ? 1 : -1;
+            } else {
+                return ($valA > $valB) ? 1 : -1;
+            }
+        });
+
+        // Calculate pagination
+        $totalItems = count($events);
+        $totalPages = ceil($totalItems / $pageSize);
+        $offset = ($currentPage - 1) * $pageSize;
+        $eventsPage = array_slice($events, $offset, $pageSize);
 
         // Category labels
         $categoryLabels = [
@@ -266,19 +261,6 @@ class EventController extends AbstractController
             CategorieEvent::SPORT->value => 'Sport',
             CategorieEvent::ATELIER->value => 'Atelier',
         ];
-    
-        $userId = $user->getId();
-        $demandePackRepo = $entityManager->getRepository(\App\Entity\DemandePack::class);
-        $userDemandePacks = $demandePackRepo->findBy([
-            'user' => $userId,
-            'statut' => 'CONFIRMÉ'
-        ]);
-        $demandePackByEvent = [];
-        foreach ($userDemandePacks as $dp) {
-            if ($dp->getEvent()) {
-                $demandePackByEvent[$dp->getEvent()->getId()] = $dp;
-            }
-        }
 
         return $this->render('GestionEvent/test.html.twig', [
             'events' => $eventsPage,
@@ -288,8 +270,7 @@ class EventController extends AbstractController
             'totalItems' => $totalItems,
             'pageSize' => $pageSize,
             'orderby' => $orderBy,
-            'sort' => $sortDirection,
-            'demandePackByEvent' => $demandePackByEvent
+            'sort' => $sortDirection
         ]);  
     }
     

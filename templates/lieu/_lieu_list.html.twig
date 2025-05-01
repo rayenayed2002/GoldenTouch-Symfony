@@ -2,7 +2,7 @@
 <div class="col-md-4 mb-4">
     <div class="lieu-card">
         {% if lieu.imageUrl %}
-            <img src="{{ asset('uploads/lieux/' ~ lieu.imageUrl) }}" alt="{{ lieu.name }}" class="lieu-image">
+            <img src="uploads/lieux/{{ lieu.imageUrl }}" alt="{{ lieu.name }}" class="lieu-image">
         {% endif %}
         <div class="lieu-content">
             <h3 class="lieu-title">{{ lieu.name }}</h3>

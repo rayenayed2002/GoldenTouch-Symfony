@@ -234,7 +234,8 @@
                 <h1 class="breadcumb-title" style="font-size: 1.5rem; margin-bottom: 5px;">Nos Lieux</h1>
                 <ul class="breadcumb-menu" style="font-size: 0.9rem;">
                     <li><a href="{{ path('front_index') }}">Accueil</a></li>
-                    <li>Lieux</li>
+                    <li><a href="{{ path('app_lieux') }}">Lieux</a></li>
+
                 </ul>
             </div>
         </div>
@@ -557,12 +558,12 @@
                     
                     {% if lieux.results|length > 0 %}
                         <div class="row gy-40">
-                            {% for lieu in lieux.results %}
+                            {% for lieu in lieux.results.results %}
                             <div class="col-xl-4 col-sm-6">
                                 <div class="th-product">
                                     <div class="product-img">
                                         {% if lieu.imageUrl %}
-                                            <img src="{{ lieu.imageUrl }}" alt="{{ lieu.name }}">
+                                            <img src="uploads/lieux/{{ lieu.imageUrl }}" alt="{{ lieu.name }}">
                                         {% else %}
                                             <img src="{{ asset('Front/img/placeholder.jpg') }}" alt="Lieu Image">
                                         {% endif %}
@@ -666,7 +667,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="col-xl-4 col-sm-6">
                         <div class="lieu-card">
                             <div class="product-img">
-                                <img src="${lieu.image || defaultImage}" alt="${lieu.name}" class="lieu-image">
+                                <img src="${lieu.image ? 'uploads/lieux/' + lieu.image : defaultImage}" alt="${lieu.name}" class="lieu-image">
                                 <div class="actions">
                                     <a href="${lieu.url}" class="icon-btn" title="Voir les détails"><i class="far fa-eye"></i></a>
                                     <a href="#" class="icon-btn toggle-favori" data-lieu-id="${lieu.id}" title="Ajouter aux favoris"><i class="far fa-heart"></i></a>
