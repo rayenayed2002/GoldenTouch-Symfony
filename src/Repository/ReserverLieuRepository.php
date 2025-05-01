@@ -24,6 +24,7 @@ class ReserverLieuRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
     }
+    
 
     public function remove(ReservationLieu $entity, bool $flush = false): void
     {
@@ -47,5 +48,50 @@ class ReserverLieuRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult()
         ;
+    }
+
+    /**
+     * Compte le nombre de réservations de lieux pour le mois en cours
+     */
+    public function countThisMonthReservations(): int
+    {
+        $start = new \DateTime('first day of this month 00:00:00');
+        $end = new \DateTime('last day of this month 23:59:59');
+        return (int) $this->createQueryBuilder('r')
+            ->select('COUNT(r.id)')
+            ->andWhere('r.date_reservation BETWEEN :start AND :end')
+            ->setParameter('start', $start)
+            ->setParameter('end', $end)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    /**
+     * Retourne le lieu le plus réservé du mois en cours
+     */
+    public function getMostReservedLieuThisMonth(): ?array
+    {
+        $start = new \DateTime('first day of this month 00:00:00');
+        $end = new \DateTime('last day of this month 23:59:59');
+        $qb = $this->createQueryBuilder('r')
+            ->select('IDENTITY(r.lieu) as lieu_id, COUNT(r.id) as reservations')
+            ->andWhere('r.date_reservation BETWEEN :start AND :end')
+            ->setParameter('start', $start)
+            ->setParameter('end', $end)
+            ->groupBy('lieu_id')
+            ->orderBy('reservations', 'DESC')
+            ->setMaxResults(1);
+        $result = $qb->getQuery()->getOneOrNullResult();
+        if ($result && $result['lieu_id']) {
+            // Récupérer le nom du lieu
+            $lieu = $this->getEntityManager()->getRepository('App\\Entity\\Lieu')->find($result['lieu_id']);
+            if ($lieu) {
+                return [
+                    'name' => $lieu->getName(),
+                    'reservations' => $result['reservations']
+                ];
+            }
+        }
+        return null;
     }
 }

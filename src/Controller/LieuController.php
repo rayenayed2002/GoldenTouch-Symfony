@@ -102,20 +102,86 @@ class LieuController extends AbstractController
             $category = $request->query->get('category');
             $orderBy = $request->query->get('orderby');
             $filter = $request->query->get('filter', 'all');
+            $location = $request->query->get('location', '');
+            $minPrice = $request->query->get('minPrice');
+            $maxPrice = $request->query->get('maxPrice');
 
-            $lieux = $this->lieuRepository->findAllPaginated($page, $limit, $searchTerm, $category, $orderBy);
+            $queryBuilder = $this->lieuRepository->createQueryBuilder('l');
+
+            if ($searchTerm) {
+                $queryBuilder->andWhere('LOWER(l.name) LIKE LOWER(:searchTerm) OR LOWER(l.description) LIKE LOWER(:searchTerm)')
+                    ->setParameter('searchTerm', '%' . $searchTerm . '%');
+            }
+
+            if ($location) {
+                $queryBuilder->andWhere('LOWER(l.location) LIKE LOWER(:location) OR LOWER(l.ville) LIKE LOWER(:location)')
+                    ->setParameter('location', '%' . $location . '%');
+            }
+
+            if ($category) {
+                $queryBuilder->andWhere('l.category = :category')
+                    ->setParameter('category', $category);
+            }
+
+            if ($minPrice) {
+                $queryBuilder->andWhere('l.price >= :minPrice')
+                    ->setParameter('minPrice', floatval($minPrice));
+            }
+
+            if ($maxPrice) {
+                $queryBuilder->andWhere('l.price <= :maxPrice')
+                    ->setParameter('maxPrice', floatval($maxPrice));
+            }
+
+            switch ($orderBy) {
+                case 'price_asc':
+                    $queryBuilder->orderBy('l.price', 'ASC');
+                    break;
+                case 'price_desc':
+                    $queryBuilder->orderBy('l.price', 'DESC');
+                    break;
+                case 'capacity_asc':
+                    $queryBuilder->orderBy('l.capacity', 'ASC');
+                    break;
+                case 'capacity_desc':
+                    $queryBuilder->orderBy('l.capacity', 'DESC');
+                    break;
+                default:
+                    $queryBuilder->orderBy('l.id', 'ASC');
+            }
+
+            $total = count($queryBuilder->getQuery()->getResult());
+            $lastPage = ceil($total / $limit);
+
+            $lieux = $queryBuilder
+                ->setFirstResult(($page - 1) * $limit)
+                ->setMaxResults($limit)
+                ->getQuery()
+                ->getResult();
 
             if ($request->isXmlHttpRequest()) {
-                return $this->render('lieu/_lieu_list.html.twig', ['lieux' => $lieux]);
+                return new JsonResponse([
+                    'results' => array_map(function($lieu) {
+                        return [
+                            'id' => $lieu->getId(),
+                            'name' => $lieu->getName(),
+                            'description' => $lieu->getDescription(),
+                            'location' => $lieu->getLocation(),
+                            'category' => $lieu->getCategory(),
+                            'price' => $lieu->getPrice(),
+                            'capacity' => $lieu->getCapacity(),
+                            'imageUrl' => $lieu->getImageUrl()
+                        ];
+                    }, $lieux),
+                    'currentPage' => $page,
+                    'lastPage' => $lastPage,
+                    'hasPreviousPage' => $page > 1,
+                    'hasNextPage' => $page < $lastPage
+                ]);
             }
-            $page = $request->query->getInt('page', 1);
-            $limit = 10;
-            
-            $allLieux = $this->lieuRepository->searchByName($searchTerm);
+
             $popularLieux = $this->lieuRepository->findPopularLieux();
             $newLieux = $this->lieuRepository->findNewLieux();
-            $total = count($allLieux);
-            $lastPage = ceil($total / $limit);
 
             // Statistiques
             if ($filter === 'statistics') {
@@ -482,4 +548,19 @@ public function mesFavoris(Request $request, LieuRepository $lieuRepo): Response
         'lieux' => $lieux
     ]);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

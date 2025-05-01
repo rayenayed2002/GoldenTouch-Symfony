@@ -188,32 +188,64 @@
     document.addEventListener('DOMContentLoaded', function() {
         const searchInput = document.getElementById('searchInput');
         const categorySelect = document.getElementById('categorySelect');
-        const orderbySelect = document.getElementById('orderbySelect');
-        const resultsContainer = document.querySelector('.row');
-
-        let searchTimeout;
+        const orderbySelect = document.getElementById('orderbySelect'); 
+        const locationInput = document.getElementById('locationInput');
+        const minPriceInput = document.getElementById('minPriceInput');
+        const maxPriceInput = document.getElementById('maxPriceInput');
+        const lieuContainer = document.querySelector('.row.gy-40');
+        const defaultImage = '{{ asset("Front/img/placeholder.jpg") }}';
+        let debounceTimer;
 
         function performSearch() {
-            const searchTerm = searchInput.value;
-            const category = categorySelect.value;
-            const orderby = orderbySelect.value;
+            const searchCriteria = {
+                search: searchInput.value.trim(),
+                category: categorySelect.value,
+                orderby: orderbySelect.value,
+                location: locationInput ? locationInput.value.trim() : '',
+                minPrice: minPriceInput ? minPriceInput.value : '',
+                maxPrice: maxPriceInput ? maxPriceInput.value : ''
+            };
 
-            const url = new URL('{{ path('app_lieux') }}', window.location.origin);
-            url.searchParams.append('search', searchTerm);
-            if (category) url.searchParams.append('category', category);
-            if (orderby) url.searchParams.append('orderby', orderby);
+            lieuContainer.innerHTML = '<div class="col-12 text-center py-5"><i class="fas fa-spinner fa-spin fa-2x"></i><p>Recherche en cours...</p></div>';
 
-            fetch(url)
-                .then(response => response.text())
-                .then(html => {
-                    const parser = new DOMParser();
-                    const doc = parser.parseFromString(html, 'text/html');
-                    const newResults = doc.querySelector('.row');
-                    if (newResults) {
-                        resultsContainer.innerHTML = newResults.innerHTML;
-                    }
-                })
-                .catch(error => console.error('Erreur:', error));
+            fetch('{{ path("app_lieux") }}?' + new URLSearchParams(searchCriteria), {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                let html = '';
+                if (data.results && data.results.length > 0) {
+                    data.results.forEach(lieu => {
+                        html += `
+                            <div class="col-lg-4 col-md-6">
+                                <div class="lieu-card">
+                                    <img src="${lieu.imageUrl || defaultImage}" class="lieu-image" alt="${lieu.name}">
+                                    <div class="lieu-content">
+                                        <h3 class="lieu-title">${lieu.name}</h3>
+                                        <div class="lieu-location"><i class="fas fa-map-marker-alt"></i> ${lieu.location}</div>
+                                        <span class="lieu-category">${lieu.category}</span>
+                                        <p class="lieu-description">${lieu.description}</p>
+                                        <div class="lieu-meta">
+                                            <span class="lieu-price">${lieu.price} €</span>
+                                            <span class="lieu-capacity"><i class="fas fa-users"></i> ${lieu.capacity}</span>
+                                        </div>
+                                        <a href="/lieu/${lieu.id}" class="btn btn-primary mt-3">Voir détails</a>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                } else {
+                    html = '<div class="col-12 text-center"><p>Aucun résultat trouvé</p></div>';
+                }
+                lieuContainer.innerHTML = html;
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                resultsContainer.innerHTML = '<div class="col-12 text-center"><p>Une erreur est survenue lors de la recherche</p></div>';
+            });
         }
 
         searchInput.addEventListener('input', function() {
@@ -223,7 +255,6 @@
 
         categorySelect.addEventListener('change', performSearch);
         orderbySelect.addEventListener('change', performSearch);
-
     });
     </script>
 
@@ -674,7 +705,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 </div>
                             </div>
                             <div class="lieu-content">
-                                ${lieu.category ? `<span class=\"lieu-category\">${lieu.category}</span>` : ''}
+                                ${lieu.category ? <span class=\"lieu-category\">${lieu.category}</span> : ''}
                                 <h3 class="lieu-title"><a href="${lieu.url}">${lieu.name}</a></h3>
                                 <div class="lieu-location">
                                     <i class="fas fa-map-marker-alt"></i>
@@ -724,7 +755,7 @@ document.addEventListener('DOMContentLoaded', function() {
             debounceTimer = setTimeout(() => {
                 if (query.length > 0) {
                     // Effectuer la requête AJAX
-                    fetch(`/lieu/search?q=${encodeURIComponent(query)}`, {
+                    fetch(/lieu/search?q=${encodeURIComponent(query)}, {
                         headers: {
                             'X-Requested-With': 'XMLHttpRequest'
                         }
