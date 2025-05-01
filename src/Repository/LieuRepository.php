@@ -279,17 +279,5 @@ class LieuRepository extends ServiceEntityRepository
     return $stats;
 }
 
-public function getMonthlyStats(): array
-{
-    return $this->getEntityManager()->getConnection()->executeQuery('
-        SELECT 
-            DATE_FORMAT(CURRENT_DATE(), "%Y-%m") as month,
-            COUNT(*) as locations_added,
-            (SELECT COUNT(*) FROM lieu WHERE DATE_FORMAT(created_at, "%Y-%m") = DATE_FORMAT(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH), "%Y-%m")) as prev_month_count,
-            (SELECT AVG(price) FROM lieu) as avg_price
-        FROM lieu
-        WHERE DATE_FORMAT(created_at, "%Y-%m") = DATE_FORMAT(CURRENT_DATE(), "%Y-%m")
-    ')->fetchAssociative();
-}
 
 }

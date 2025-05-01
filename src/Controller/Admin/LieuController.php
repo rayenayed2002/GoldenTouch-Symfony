@@ -448,4 +448,59 @@ public function index(): Response
         }
     }
 }
+
+
+
+
+// Dans LieuController.php
+
+#[Route('/stats', name: 'stats', methods: ['GET'])]
+public function stats(LieuRepository $lieuRepository, \App\Repository\ReserverLieuRepository $reserverLieuRepository): Response
+{
+    // Statistiques des réservations
+    $monthlyReservations = $lieuRepository->getMonthlyReservations();
+    
+    // Statistiques des revenus
+    $monthlyRevenue = $lieuRepository->getMonthlyRevenue();
+    
+    // Lieux les plus populaires
+    $topLieux = $lieuRepository->getTopLieux();
+    
+    // Répartition par catégorie
+    $categoryDistribution = $lieuRepository->getCategoryDistribution();
+    
+    // Statistiques globales
+    $locationStats = $lieuRepository->getLocationStats();
+    
+    // Nombre de réservations de lieux ce mois
+    $lieuxCeMois = $reserverLieuRepository->countThisMonthReservations();
+    $mostReservedLieuThisMonth = $reserverLieuRepository->getMostReservedLieuThisMonth();
+
+    return $this->render('admin/lieu/stat.html.twig', [
+        'monthlyReservations' => $monthlyReservations,
+        'monthlyRevenue' => $monthlyRevenue,
+        'topLieux' => $topLieux,
+        'categoryDistribution' => $categoryDistribution,
+        'locationStats' => $locationStats,
+        'lieuxCeMois' => $lieuxCeMois,
+        'mostReservedLieuThisMonth' => $mostReservedLieuThisMonth,
+    ]);
+}
+
+#[Route('/stats/reservations-data', name: 'reservations_data', methods: ['GET'])]
+public function getReservationsData(LieuRepository $lieuRepository): JsonResponse
+{
+    $data = $lieuRepository->getMonthlyReservations();
+    return $this->json($data);
+}
+
+#[Route('/stats/revenue-data', name: 'revenue_data', methods: ['GET'])]
+public function getRevenueData(LieuRepository $lieuRepository): JsonResponse
+{
+    $data = $lieuRepository->getMonthlyRevenue();
+    return $this->json($data);
+}
+
+
+
 }
