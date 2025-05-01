@@ -175,7 +175,7 @@ class EventController extends AbstractController
     {
         $currentPage = $request->query->getInt('page', 1);
     $orderBy = $request->query->get('orderby', 'date');
-    $sortDirection = strtoupper($request->query->get('sort', 'DESC'));
+    $sortDirection = $request->query->get('sort', 'DESC');
     $pageSize = 9;
     $user = $this->getUser();
     
@@ -193,24 +193,24 @@ class EventController extends AbstractController
         ->andWhere('dc.id IS NULL')
         ->setParameter('userId', $user->getId());
 
-    $eventsOwner = $qbOwner->getQuery()->getResult();
+        $eventsOwner = $qbOwner->getQuery()->getResult();
 
-    // Query 2: Events for which the user has a CONFIRMÉ DemandePack
-    $qbDemande = $entityManager->createQueryBuilder()
+        // Query 2: Events for which the user has a CONFIRMÉ DemandePack
+        $qbDemande = $entityManager->createQueryBuilder()
         ->select('DISTINCT e')
         ->from(Event::class, 'e')
-        ->innerJoin('App\Entity\Pack', 'pack', 'WITH', 'pack.event = e.id')
-        ->innerJoin('App\Entity\DemandePack', 'dp', 'WITH', 'dp.pack = pack.id')
+        ->join('e.packs', 'pack')  // Changed to proper relationship
+        ->join('pack.demandePacks', 'dp')  // Join through Pack to DemandePack
         ->leftJoin('e.paniers', 'p')
         ->leftJoin('e.detailPayments', 'dc')
         ->where('dp.user = :userId')
         ->andWhere('dp.statut = :statutConfirme')
         ->andWhere('p.id IS NULL')
         ->andWhere('dc.id IS NULL')
-        ->setParameter('userId', $user->getId())
+        ->setParameter('userId', $user)
         ->setParameter('statutConfirme', 'CONFIRMÉ');
 
-    $eventsDemande = $qbDemande->getQuery()->getResult();
+        $eventsDemande = $qbDemande->getQuery()->getResult();
 
     // Merge and deduplicate events
     $events = array_filter(array_merge($eventsOwner, $eventsDemande), fn($item) => $item instanceof Event);
@@ -239,6 +239,7 @@ class EventController extends AbstractController
         if ($valA == $valB) return 0;
         return ($sortDirection === 'DESC') ? $valB <=> $valA : $valA <=> $valB;
     });
+    
     // Use ArrayPaginator for manual pagination
     $totalItems = count($events);
     $totalPages = ceil($totalItems / $pageSize);
@@ -247,9 +248,6 @@ class EventController extends AbstractController
 
 
         
-        if (!$user) {
-            throw $this->createAccessDeniedException('You must be logged in to add an event.');
-        }
 
     // Pagination is already handled above; remove obsolete paginator code
 
