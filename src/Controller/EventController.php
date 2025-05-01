@@ -175,7 +175,7 @@ class EventController extends AbstractController
     {
         $currentPage = $request->query->getInt('page', 1);
     $orderBy = $request->query->get('orderby', 'date');
-    $sortDirection = $request->query->get('sort', 'DESC');
+    $sortDirection = strtoupper($request->query->get('sort', 'DESC'));
     $pageSize = 9;
     $user = $this->getUser();
     
@@ -213,11 +213,32 @@ class EventController extends AbstractController
     $eventsDemande = $qbDemande->getQuery()->getResult();
 
     // Merge and deduplicate events
-    $events = array_filter(array_merge($eventsOwner, $eventsDemande), function($item) {
-        return $item instanceof \App\Entity\Event;
-    });
+    $events = array_filter(array_merge($eventsOwner, $eventsDemande), fn($item) => $item instanceof Event);
     $events = array_unique($events, SORT_REGULAR);
 
+    
+    // Sort the merged events array manually since we are not using a query builder
+    usort($events, function($a, $b) use ($orderBy, $sortDirection) {
+        switch ($orderBy) {
+            case 'name':
+                $valA = $a->getNom();
+                $valB = $b->getNom();
+                break;
+            case 'date':
+                $valA = $a->getDate();
+                $valB = $b->getDate();
+                break;
+            case 'category':
+                $valA = $a->getCategorie()->value; // Assuming CategorieEvent is an enum
+                $valB = $b->getCategorie()->value;
+                break;
+            default:
+                $valA = $a->getDate();
+                $valB = $b->getDate();
+        }
+        if ($valA == $valB) return 0;
+        return ($sortDirection === 'DESC') ? $valB <=> $valA : $valA <=> $valB;
+    });
     // Use ArrayPaginator for manual pagination
     $totalItems = count($events);
     $totalPages = ceil($totalItems / $pageSize);
@@ -227,32 +248,6 @@ class EventController extends AbstractController
 
         
 
-    // Sort the merged events array manually since we are not using a query builder
-    usort($events, function($a, $b) use ($orderBy, $sortDirection) {
-        switch ($orderBy) {
-            case 'name':
-                $valA = method_exists($a, 'getNom') ? $a->getNom() : '';
-                $valB = method_exists($b, 'getNom') ? $b->getNom() : '';
-                break;
-            case 'date':
-                $valA = method_exists($a, 'getDate') ? $a->getDate() : null;
-                $valB = method_exists($b, 'getDate') ? $b->getDate() : null;
-                break;
-            case 'category':
-                $valA = method_exists($a, 'getCategorie') ? $a->getCategorie() : '';
-                $valB = method_exists($b, 'getCategorie') ? $b->getCategorie() : '';
-                break;
-            default:
-                $valA = method_exists($a, 'getDate') ? $a->getDate() : null;
-                $valB = method_exists($b, 'getDate') ? $b->getDate() : null;
-        }
-        if ($valA == $valB) return 0;
-        if ($sortDirection === 'DESC') {
-            return ($valA < $valB) ? 1 : -1;
-        } else {
-            return ($valA > $valB) ? 1 : -1;
-        }
-    });
     // Pagination is already handled above; remove obsolete paginator code
 
         // Category labels
