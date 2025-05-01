@@ -315,13 +315,10 @@
                                     fill="#7367F0" />
                             </svg>
                         </span>
-                        <span class="app-brand-text demo menu-text fw-bold">Vuexy</span>
+                        <span class="app-brand-text demo menu-text fw-bold">Golden Touch</span>
                     </a>
 
-                    <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto">
-                        <i class="ti menu-toggle-icon d-none d-xl-block ti-sm align-middle"></i>
-                        <i class="ti ti-x d-block d-xl-none ti-sm align-middle"></i>
-                    </a>
+                   
                 </div>
 
                 <div class="menu-inner-shadow"></div>
@@ -337,7 +334,7 @@
 
                     <!-- Gestion Événements -->
                     <li class="menu-item">
-                        <a href="javascript:void(0);" class="menu-link menu-toggle">
+                        <a href="{{ path('app_events_admin') }}" class="menu-link menu-toggle">
                             <i class="menu-icon tf-icons ti ti-calendar-event"></i>
                             <div data-i18n="Gestion Événements">Gestion Événements</div>
                         </a>
@@ -359,7 +356,7 @@
 
                     <!-- Gestion Matérielle -->
                     <li class="menu-item">
-                        <a href="javascript:void(0);" class="menu-link menu-toggle">
+                        <a href="{{ path('app_materielss') }}" class="menu-link menu-toggle">
                             <i class="menu-icon tf-icons ti ti-tools"></i>
                             <div data-i18n="Gestion Matérielle">Gestion Matérielle</div>
                         </a>
@@ -381,7 +378,7 @@
 
                     <!-- Gestion Lieu -->
                     <li class="menu-item">
-                        <a href="javascript:void(0);" class="menu-link menu-toggle">
+                        <a href="{{ path('admin_lieu_index') }}" class="menu-link menu-toggle">
                             <i class="menu-icon tf-icons ti ti-map-pin"></i>
                             <div data-i18n="Gestion Lieu">Gestion Lieu</div>
                         </a>
@@ -403,7 +400,7 @@
 
                     <!-- Gestion Personnels -->
                     <li class="menu-item">
-                        <a href="javascript:void(0);" class="menu-link menu-toggle">
+                        <a href="{{ path('app_perso_index') }}" class="menu-link menu-toggle">
                             <i class="menu-icon tf-icons ti ti-users"></i>
                             <div data-i18n="Gestion Personnels">Gestion Personnels</div>
                         </a>
@@ -425,7 +422,7 @@
 
                     <!-- Gestion Commandes -->
                     <li class="menu-item">
-                        <a href="javascript:void(0);" class="menu-link menu-toggle">
+                        <a href="{{ path('app_my_Commandes_admin') }}" class="menu-link menu-toggle">
                             <i class="menu-icon tf-icons ti ti-shopping-cart"></i>
                             <div data-i18n="Gestion Commandes">Gestion Commandes</div>
                         </a>
@@ -1054,11 +1051,17 @@ async function loadPackInspiration() {
                             <span class="badge bg-label-info text-primary">${insp.keywords}</span>
                         </div>
                         <button type="button" class="btn btn-outline-primary btn-sm w-100 copy-inspiration-btn"
-                            data-title="${insp.title}"
-                            data-description="${insp.description}"
-                            data-keywords="${insp.keywords}">
-                            <i class="ti ti-copy me-1"></i> Copier cette idée
-                        </button>
+    data-pack-id="${insp.id}"
+    data-nom="${insp.packName || insp.nom || ''}"
+    data-title="${insp.title}"
+    data-description="${insp.description}"
+    data-keywords="${insp.keywords}"
+    data-prix="${insp.prix}"
+    data-capacite="${insp.capacite}"
+    data-duree="${insp.duree}"
+    data-enddate="${insp.endDate}">
+    <i class="ti ti-copy me-1"></i> Copier cette idée
+</button>
                     </div>
                 </div>
             </div>
@@ -1073,9 +1076,21 @@ async function loadPackInspiration() {
                 const keywordsInput = document.querySelector('input[name="pack[keywords]"]');
                 const alertBox = document.getElementById('inspiration-copied-alert');
                 if (modal) {
-                    if (titleInput) titleInput.value = btn.getAttribute('data-title');
+                    // Set nom field
+                    const nomInput = document.querySelector('input[name="pack[nom]"]');
+                    if (nomInput) nomInput.value = btn.getAttribute('data-nom');
+                    // Do NOT set event field from inspiration
                     if (descInput) descInput.value = btn.getAttribute('data-description');
                     if (keywordsInput) keywordsInput.value = btn.getAttribute('data-keywords');
+                    // Fill additional required fields
+                    const prixInput = document.querySelector('input[name="pack[prix]"]');
+                    const capaciteInput = document.querySelector('input[name="pack[capacite]"]');
+                    const dureeInput = document.querySelector('input[name="pack[duree]"]');
+                    const endDateInput = document.querySelector('input[name="pack[endDate]"]');
+                    if (prixInput) prixInput.value = btn.getAttribute('data-prix');
+                    if (capaciteInput) capaciteInput.value = btn.getAttribute('data-capacite');
+                    if (dureeInput) dureeInput.value = btn.getAttribute('data-duree');
+                    if (endDateInput) endDateInput.value = btn.getAttribute('data-enddate');
                     if (alertBox) {
                         alertBox.classList.remove('d-none');
                         setTimeout(() => alertBox.classList.add('d-none'), 1500);
@@ -1264,7 +1279,7 @@ document.getElementById('refresh-inspiration-btn').addEventListener('click', loa
                     'id': 'packForm',
                     'class': 'needs-validation',
                     'novalidate': 'novalidate',
-                    'action': path('admin_pack_update', {'id': 'packId'}),
+                    'action': path('admin_pack_create'),
                     'method': 'POST'
                 }
             }) }}
@@ -1272,7 +1287,7 @@ document.getElementById('refresh-inspiration-btn').addEventListener('click', loa
     <div id="inspiration-copied-alert" class="alert alert-success d-none" role="alert">
         Suggestion copiée !
     </div>
-                    <input type="hidden" id="packId" name="id">
+                    
                     <div class="mb-3">
                         <label class="form-label" for="{{ form.event.vars.id }}">Événement</label>
                         {{ form_widget(form.event, {'attr': {'class': 'form-select', 'required': 'required'}}) }}
@@ -1317,10 +1332,7 @@ document.getElementById('refresh-inspiration-btn').addEventListener('click', loa
                         </div>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Fermer</button>
-                    <button type="submit" class="btn btn-primary">Enregistrer</button>
-                </div>
+                
             {{ form_end(form) }}
         </div>
     </div>
@@ -1339,19 +1351,67 @@ document.getElementById('refresh-inspiration-btn').addEventListener('click', loa
 
         copyBtns.forEach(btn => {
             btn.addEventListener('click', function () {
-                // Fill modal fields when modal is open
-                if (modal) {
-                    if (titleInput) titleInput.value = btn.getAttribute('data-title');
-                    if (descInput) descInput.value = btn.getAttribute('data-description');
-                    if (keywordsInput) keywordsInput.value = btn.getAttribute('data-keywords');
-                    if (alertBox) {
-                        alertBox.classList.remove('d-none');
-                        setTimeout(() => alertBox.classList.add('d-none'), 1500);
+                const packId = btn.getAttribute('data-pack-id');
+                if (!packId) return;
+                fetch(`/admin/pack/copy/${packId}`, {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'same-origin'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.pack && data.pack.id) {
+                        // Fill modal fields with copied pack data
+                        // Set form action to create route (always create new pack)
+                        const packForm = document.getElementById('packForm');
+                        if (packForm) {
+                            packForm.action = '/admin/pack/create';
+                        }
+                        // Auto-fill required modal fields from copied pack
+                        if (data.pack.nom && document.querySelector('input[name="pack[nom]"]')) {
+                            document.querySelector('input[name="pack[nom]"]').value = data.pack.nom;
+                        }
+                        if (data.pack.prix && document.querySelector('input[name="pack[prix]"]')) {
+                            document.querySelector('input[name="pack[prix]"]').value = data.pack.prix;
+                        }
+                        if (data.pack.description && document.querySelector('textarea[name="pack[description]"]')) {
+                            document.querySelector('textarea[name="pack[description]"]').value = data.pack.description;
+                        }
+                        if (data.pack.capacite && document.querySelector('input[name="pack[capacite]"]')) {
+                            document.querySelector('input[name="pack[capacite]"]').value = data.pack.capacite;
+                        }
+                        if (data.pack.duree && document.querySelector('input[name="pack[duree]"]')) {
+                            document.querySelector('input[name="pack[duree]"]').value = data.pack.duree;
+                        }
+                        if (data.pack.endDate && document.querySelector('input[name="pack[endDate]"]')) {
+                            document.querySelector('input[name="pack[endDate]"]').value = data.pack.endDate;
+                        }
+                        // Show alert
+                        if (alertBox) {
+                            alertBox.classList.remove('d-none');
+                            setTimeout(() => alertBox.classList.add('d-none'), 1500);
+                        }
+                        // Open modal
+                        const bsModal = bootstrap.Modal.getOrCreateInstance(modal);
+                        bsModal.show();
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Erreur',
+                            text: data.message || 'Erreur lors de la copie du pack.'
+                        });
                     }
-                    // Open modal if not already open
-                    const bsModal = bootstrap.Modal.getOrCreateInstance(modal);
-                    bsModal.show();
-                }
+                })
+                .catch(error => {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Erreur',
+                        text: error.message || 'Erreur réseau lors de la copie.'
+                    });
+                });
             });
         });
     });
@@ -1432,32 +1492,20 @@ document.getElementById('refresh-inspiration-btn').addEventListener('click', loa
 
             const form = e.target;
             const formData = new FormData(form);
-            const data = {};
-
-            // Convert FormData to object
-            for (let [key, value] of formData.entries()) {
-                // Remove the 'pack[' prefix from the key
-                const fieldName = key.replace('pack[', '').replace(']', '');
-                data[fieldName] = value;
-            }
-
-            // Get the pack ID from the hidden input
-            const packId = document.getElementById('packId').value;
-            
             // Show loading state
             form.classList.add('was-validated');
             const submitButton = form.querySelector('button[type="submit"]');
             submitButton.disabled = true;
             submitButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...';
 
-            // Send the request
-            fetch(`{{ path('admin_pack_update', {'id': 'PACK_ID'}) }}`.replace('PACK_ID', packId), {
+            // Send the request to the form's action (usually /admin/pack/create)
+            fetch(form.action, {
                 method: 'POST',
+                body: formData,
                 headers: {
-                    'Content-Type': 'application/json',
                     'X-Requested-With': 'XMLHttpRequest'
                 },
-                body: JSON.stringify(data)
+                credentials: 'same-origin'
             })
             .then(response => response.json())
             .then(response => {

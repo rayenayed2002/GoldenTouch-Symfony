@@ -220,42 +220,48 @@ class PackController extends AbstractController
                     // Set event ID to match pack ID
                     $event = $entityManager->getReference('App\Entity\Event', $pack->getId());
                     $demande->setEvent($event);
-
-                    // Process date with current time
-                    $date = $formData['eventDate'];
-                    $currentTime = $clock->now()->format('H:i:s');
-                    list($hour, $minute, $second) = explode(':', $currentTime);
-                    $date->setTime((int)$hour, (int)$minute, (int)$second);
-                    
-                    $demande->setDateDemande($date);
+                    $demande->setDateDemande(new \DateTime($clock->now()->format('Y-m-d H:i:s')));
+                    $demande->setUser($user);
                     $demande->setStatut('EN_ATTENTE');
 
-                    // Set user
-                    $user = $this->getUser();
-                    if (!$user) {
-                        return $this->redirectToRoute('app_login', [
-                            '_target_path' => $request->getRequestUri()
-                        ]);
-                    }
-                    $demande->setUser($user);
-
-                    // Create admin notification
-                    $userMessage = $formData['message'] ?? 'Aucun message';
+                    $userMessage = $formData['message'];
+                    $session = $request->getSession();
                     $toxicityResult = $this->toxicityDetectionService->detect($userMessage);
                     $labelsEn = $toxicityResult['en'] ?? [];
+                    $labelsFr = $toxicityResult['fr'] ?? [];
                     $isToxic = false;
-                    foreach ($labelsEn as $label) {
+                    foreach (array_merge($labelsEn, $labelsFr) as $label) {
                         if ($label['label'] === 'toxic' && $label['score'] > 0.5) {
                             $isToxic = true;
                             break;
                         }
                     }
+                    // Block toxic message at first submission
                     if ($isToxic) {
-                        $maskedMessage = $this->toxicityDetectionService->maskToxicWords($userMessage, $labelsEn);
-                        $adminMessage = $maskedMessage;
+                        $lastToxicMessage = $session->get('last_toxic_message');
+                        if ($lastToxicMessage !== $userMessage) {
+                            // First time toxic message, ask user to correct and STOP processing
+                            $session->set('last_toxic_message', $userMessage);
+                            $errorMsg = 'Votre message contient des propos inappropriés. Veuillez les corriger avant de soumettre.';
+                            if ($request->isXmlHttpRequest()) {
+                                return new JsonResponse([
+                                    'success' => false,
+                                    'message' => $errorMsg
+                                ]);
+                            }
+                            $this->addFlash('error', $errorMsg);
+                            return $this->redirectToRoute('app_pack_booking', ['id' => $pack->getId()]);
+                        } else {
+                            // User resubmitted same toxic message, auto-mask and proceed
+                            $adminMessage = $this->toxicityDetectionService->maskToxicWords($userMessage, array_merge($labelsEn, $labelsFr));
+                            $session->remove('last_toxic_message');
+                        }
                     } else {
                         $adminMessage = $this->grammarCorrectionService->correct($userMessage) ?: $userMessage;
+                        $session->remove('last_toxic_message');
                     }
+
+                    // Only reach this point if message is not toxic or is masked
                     $notification = new NotificationsAdmin();
                     $adminId = $pack->getAdminId();
                     $adminUser = $entityManager->getRepository(\App\Entity\User::class)->find($adminId);
@@ -272,7 +278,6 @@ class PackController extends AbstractController
                     ));
                     $notification->setStatut('NON_LU');
                     $notification->setDateCreation(new \DateTime());
-                    
                     $entityManager->persist($demande);
                     $entityManager->persist($notification);
                     $entityManager->flush();
@@ -288,7 +293,6 @@ class PackController extends AbstractController
 
                     $this->addFlash('success', 'Votre demande a été enregistrée avec succès!');
                     return $this->redirectToRoute('app_pack_booking', ['id' => $pack->getId()]);
-
                 } catch (\Exception $e) {
                     // Error handling
                     if ($request->isXmlHttpRequest()) {

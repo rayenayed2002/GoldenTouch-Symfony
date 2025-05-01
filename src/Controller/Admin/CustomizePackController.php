@@ -12,6 +12,7 @@ use App\Entity\ReservationPerso;
 use App\Entity\ReservationPersonnel;
 use App\Entity\ReservationMaterielle;
 use App\Entity\ReservationLieu;
+use App\Entity\Utilisateur;
 use App\Repository\PackRepository;
 use App\Repository\DemandePackRepository;
 use App\Repository\EventRepository;
@@ -79,8 +80,10 @@ class CustomizePackController extends AbstractController
             throw $this->createNotFoundException('Demande pack not found');
         }
         
+        // Get the notification for this demande pack
+        $notification = $this->notificationsAdminRepository->findOneBy(['demandePack' => $demandePack]);
+        
         // Mark the notification as read
-        $notification = $this->notificationsAdminRepository->findOneBy(['demandePack' => $id]);
         if ($notification && $notification->getStatut() === 'NON_LU') {
             $notification->setStatut('LU');
             $this->entityManager->flush();
@@ -131,9 +134,9 @@ class CustomizePackController extends AbstractController
             'personnel' => $personnel,
             'locations' => $locations,
             'eventDate' => $eventDate,
-            'notification' => $notification, // Pass the notification entity directly
             'latestNotifications' => $latestNotifications,
-            'unreadNotificationsCount' => $unreadNotificationsCount
+            'unreadNotificationsCount' => $unreadNotificationsCount,
+            'notification' => $notification
         ]);
     }
 
@@ -152,7 +155,7 @@ class CustomizePackController extends AbstractController
         $event = $demandePack->getPack()->getEvent();
         if (!$event) {
             $event = new Event();
-            $event->setUtilisateur($this->utilisateurRepository->find($demandePack->getUtilisateurId()));
+            $event->setUtilisateur($demandePack->getUser());
             $event->setStatut('CUSTOMIZED');
             $event->setDateDebut(new \DateTime());
             $event->setDateFin(new \DateTime());
@@ -194,8 +197,27 @@ class CustomizePackController extends AbstractController
                     $reservation->setEvent($event);
                     $reservation->setQuantite($materielleData['quantity']);
                     $user = $demandePack->getUser();
-$utilisateur = $user ? $this->utilisateurRepository->findOneBy(['email' => $user->getEmail()]) : null;
-$reservation->setUtilisateur($utilisateur);
+                    if ($user) {
+                        $utilisateur = $this->utilisateurRepository->findOneBy(['email' => $user->getEmail()]);
+                        if (!$utilisateur) {
+                            $utilisateur = new Utilisateur();
+                            $utilisateur->setEmail($user->getEmail());
+                            $utilisateur->setNom($user->getNom());
+                            $utilisateur->setPrenom($user->getPrenom());
+                            $utilisateur->setPassword($user->getPassword());
+                            $utilisateur->setRole('ROLE_USER');
+                            // Generate a random hash
+                            $utilisateur->setHash(random_bytes(32));
+                            // Generate a random salt
+                            $utilisateur->setSalt(random_bytes(32));
+                            $this->entityManager->persist($utilisateur);
+                            $this->entityManager->flush();
+                        }
+                        $reservation->setUtilisateur($utilisateur);
+                        $this->entityManager->persist($reservation);
+                    } else {
+                        throw new \Exception('Utilisateur non trouvé pour la réservation de matériel');
+                    }
                     $this->entityManager->persist($reservation);
                 }
             }

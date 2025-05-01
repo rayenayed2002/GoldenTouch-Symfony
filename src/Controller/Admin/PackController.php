@@ -24,6 +24,90 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 #[IsGranted('ROLE_ADMIN')]
 class PackController extends AbstractController
 {
+    #[Route('/copy/{id}', name: 'copy', methods: ['POST'])]
+    public function copy(Request $request, int $id): JsonResponse
+    {
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->json([
+                'success' => false,
+                'message' => 'Vous devez être connecté.'
+            ], 401);
+        }
+
+        $originalPack = $this->packRepository->find($id);
+        if (!$originalPack) {
+            return $this->json([
+                'success' => false,
+                'message' => 'Pack source introuvable.'
+            ], 404);
+        }
+
+        $conn = $this->entityManager->getConnection();
+        $conn->beginTransaction();
+        try {
+            // Get next available event/pack id
+            $sql = "SELECT MAX(id) as max_id FROM event";
+            $stmt = $conn->prepare($sql);
+            $result = $stmt->executeQuery();
+            $maxId = (int)($result->fetchAssociative()['max_id'] ?? 0);
+            $nextId = $maxId + 1;
+
+            // Dates
+            $startDate = $originalPack->getEvent()->getDate();
+            $endDate = $originalPack->getEndDate();
+
+            // Insert new event
+            $sql = "INSERT INTO event (id, nom, categorie, photo, date, type) VALUES (:id, :nom, :categorie, :photo, :date, 'PACK')";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindValue('id', $nextId);
+            $stmt->bindValue('nom', $originalPack->getEvent()->getNom());
+            $stmt->bindValue('categorie', $originalPack->getEvent()->getCategorie());
+            $stmt->bindValue('photo', $originalPack->getEvent()->getPhoto());
+            $stmt->bindValue('date', $startDate ? $startDate->format('Y-m-d') : null);
+            $stmt->executeStatement();
+
+            // Insert new pack
+            $sql = "INSERT INTO pack (id, description, prix, capacité, durée, end_date, event_id, admin_id) VALUES (:id, :description, :prix, :capacite, :duree, :end_date, :event_id, :admin_id)";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindValue('id', $nextId);
+            $stmt->bindValue('description', $originalPack->getDescription());
+            $stmt->bindValue('prix', $originalPack->getPrix());
+            $stmt->bindValue('capacite', $originalPack->getCapacite());
+            $stmt->bindValue('duree', $originalPack->getDuree());
+            if ($endDate) {
+                $stmt->bindValue('end_date', $endDate->format('Y-m-d'));
+            } else {
+                $stmt->bindValue('end_date', null, \PDO::PARAM_NULL);
+            }
+            $stmt->bindValue('event_id', $nextId);
+            $stmt->bindValue('admin_id', $user->getId());
+            $stmt->executeStatement();
+
+            $conn->commit();
+
+            return $this->json([
+                'success' => true,
+                'message' => 'Pack copié avec succès',
+                'pack' => [
+                    'id' => $nextId,
+                    'nom' => $originalPack->getEvent()->getNom(),
+                    'prix' => $originalPack->getPrix(),
+                    'description' => $originalPack->getDescription(),
+                    'capacite' => $originalPack->getCapacite(),
+                    'duree' => $originalPack->getDuree(),
+                    'endDate' => $endDate ? $endDate->format('Y-m-d') : '',
+                ]
+            ]);
+        } catch (\Throwable $e) {
+            $conn->rollBack();
+            return $this->json([
+                'success' => false,
+                'message' => 'Erreur lors de la copie du pack : ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
     #[Route('/existing-data', name: 'existing_data', methods: ['GET'])]
     public function existingData(Request $request): JsonResponse
     {
@@ -71,8 +155,9 @@ class PackController extends AbstractController
                 $client = new \GuzzleHttp\Client([
                     'timeout' => 8,
                 ]);
+                // Utilisation d'un modèle fonctionnel pour la correction grammaticale
                 $response = $client->post(
-                    'https://api-inference.huggingface.co/models/vennify/t5-base-grammar-correction',
+                    'https://api-inference.huggingface.co/models/facebook/bart-large-cnn',
                     [
                         'headers' => [
                             'Authorization' => 'Bearer ' . $apiToken,
@@ -93,26 +178,12 @@ class PackController extends AbstractController
                 $hfError = $e->getMessage();
             }
         }
-        // Local grammar correction fallback if API fails
-        if (!$corrected && $hfError) {
+        // Fallback local si l'API échoue
+        if (!$corrected && $desc) {
             $usedLocalGrammarFallback = true;
-            $corrected = localGrammarCorrect($desc);
+            // Correction simple : majuscule en début de phrase et suppression des espaces multiples
+            $corrected = ucfirst(preg_replace('/\s+/', ' ', trim($desc)));
         }
-        // Helper for local grammar correction
-        function localGrammarCorrect($txt) {
-            // Remove double spaces
-            $txt = preg_replace('/\s+/', ' ', trim($txt));
-            // Capitalize sentences
-            $txt = preg_replace_callback('/(^|[.!?]\s+)([a-z])/', function ($m) {
-                return $m[1] . strtoupper($m[2]);
-            }, $txt);
-            // Ensure ends with period
-            if ($txt && !preg_match('/[.!?]$/', $txt)) {
-                $txt .= '.';
-            }
-            return $txt;
-        }
-
         // Use corrected text if available, otherwise fallback to original
         $toEnhance = $corrected ?: $desc;
         // Local enhancement logic
@@ -126,8 +197,9 @@ class PackController extends AbstractController
         if ($apiToken) {
             try {
                 $client = $client ?? new \GuzzleHttp\Client(['timeout' => 8]);
+                // Utilisation d'un modèle fonctionnel pour la détection du sentiment
                 $vibeResponse = $client->post(
-                    'https://api-inference.huggingface.co/models/cardiffnlp/twitter-roberta-base-sentiment',
+                    'https://api-inference.huggingface.co/models/distilbert-base-uncased-finetuned-sst-2-english',
                     [
                         'headers' => [
                             'Authorization' => 'Bearer ' . $apiToken,
@@ -139,7 +211,7 @@ class PackController extends AbstractController
                     ]
                 );
                 $vibeBody = json_decode($vibeResponse->getBody()->getContents(), true);
-                // Typical output: [[{"label": "LABEL_2", "score": 0.9}, ...]]
+                // Sortie typique : [[{"label": "POSITIVE", "score": 0.9}, ...]]
                 if (isset($vibeBody[0]) && is_array($vibeBody[0])) {
                     $topVibe = $vibeBody[0][0]['label'] ?? null;
                     $vibe = $topVibe;
@@ -149,12 +221,14 @@ class PackController extends AbstractController
                 $vibeError = $e->getMessage();
             }
         }
-        // Map HuggingFace sentiment/vibe to emoji and tag
+        // Map sentiment/vibe à emoji et tag
         $vibeMap = [
-            'LABEL_0' => ['emoji' => '😞', 'tag' => 'Négatif'], // negative
-            'LABEL_1' => ['emoji' => '😐', 'tag' => 'Neutre'],   // neutral
-            'LABEL_2' => ['emoji' => '😊', 'tag' => 'Positif'],  // positive
-            // Extend here for more vibes
+            'negative' => ['emoji' => '😞', 'tag' => 'Négatif'],
+            'positive' => ['emoji' => '😊', 'tag' => 'Positif'],
+            'neutral' => ['emoji' => '😐', 'tag' => 'Neutre'],
+            'LABEL_0' => ['emoji' => '😞', 'tag' => 'Négatif'],
+            'LABEL_1' => ['emoji' => '😐', 'tag' => 'Neutre'],
+            'LABEL_2' => ['emoji' => '😊', 'tag' => 'Positif'],
         ];
         $emoji = $vibeMap[$vibe]['emoji'] ?? '';
         $moodTag = $vibeMap[$vibe]['tag'] ?? '';
@@ -203,19 +277,16 @@ class PackController extends AbstractController
             'emoji' => $emoji,
             'mood_tag' => $moodTag
         ];
-        if ($hfError) {
-            $result['hf_error'] = $hfError;
+        if ($hfError || $usedLocalGrammarFallback || $vibeError) {
             $result['used_fallback'] = true;
         }
-        if ($usedLocalGrammarFallback) {
-            $result['used_local_grammar_fallback'] = true;
-        }
-        if ($vibeError) {
-            $result['vibe_error'] = $vibeError;
-        }
         return $this->json($result);
+        
     }
 
+
+    
+    
     #[Route('/search', name: 'search', methods: ['GET'])]
     public function search(Request $request): JsonResponse
     {
@@ -406,13 +477,14 @@ class PackController extends AbstractController
                 $errors[] = 'La date de début est requise.';
             }
             
-            if (empty($data['endDate'])) {
-                $errors[] = 'La date de fin est requise.';
-            } elseif (!empty($data['date']) && !empty($data['endDate'])) {
-                $startDate = new \DateTime($data['date']);
-                $endDate = new \DateTime($data['endDate']);
-                if ($endDate < $startDate) {
-                    $errors[] = 'La date de fin doit être après la date de début.';
+            // endDate is now optional
+            if (!empty($data['endDate'])) {
+                if (!empty($data['date'])) {
+                    $startDate = new \DateTime($data['date']);
+                    $endDate = new \DateTime($data['endDate']);
+                    if ($endDate < $startDate) {
+                        $errors[] = 'La date de fin doit être après la date de début.';
+                    }
                 }
             }
             
@@ -527,8 +599,12 @@ class PackController extends AbstractController
                         $startDate = new \DateTime($data['date']);
                         $formattedStartDate = $startDate->format('Y-m-d');
                         
-                        $endDate = new \DateTime($data['endDate']);
-                        $formattedEndDate = $endDate->format('Y-m-d');
+                        if (!empty($data['endDate'])) {
+                            $endDate = new \DateTime($data['endDate']);
+                            $formattedEndDate = $endDate->format('Y-m-d');
+                        } else {
+                            $formattedEndDate = null;
+                        }
                         
                         // 2. Insert into the event table first
                         $sql = "INSERT INTO event (id, nom, categorie, photo, date, type) 
@@ -550,9 +626,13 @@ class PackController extends AbstractController
                         $stmt->bindValue('prix', (float)$data['prix']);
                         $stmt->bindValue('capacite', (int)$data['capacite']);
                         $stmt->bindValue('duree', (int)$data['duree']);
-                        $stmt->bindValue('end_date', $formattedEndDate);
+                        if ($formattedEndDate !== null) {
+                            $stmt->bindValue('end_date', $formattedEndDate);
+                        } else {
+                            $stmt->bindValue('end_date', null, \PDO::PARAM_NULL);
+                        }
                         $stmt->bindValue('event_id', $nextId);  // Reference to the event
-                        $stmt->bindValue('admin_id', 1);        // Default admin
+                        $stmt->bindValue('admin_id', $user->getId());        // Authenticated admin
                         $stmt->executeStatement();
                         
                         // Commit the transaction

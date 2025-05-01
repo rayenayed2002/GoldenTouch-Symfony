@@ -594,7 +594,7 @@
                                 <div class="th-product">
                                     <div class="product-img">
                                         {% if lieu.imageUrl %}
-                                            <img src="{{ lieu.imageUrl }}" alt="{{ lieu.name }}">
+                                            <img src="uploads/lieux/{{ lieu.imageUrl }}" alt="{{ lieu.name }}">
                                         {% else %}
                                             <img src="{{ asset('Front/img/placeholder.jpg') }}" alt="Lieu Image">
                                         {% endif %}
@@ -698,7 +698,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="col-xl-4 col-sm-6">
                         <div class="lieu-card">
                             <div class="product-img">
-                                <img src="${lieu.image ?  lieu.image : defaultImage}" alt="${lieu.name}" class="lieu-image">
+                                <img src="${lieu.image ? 'uploads/lieux/' + lieu.image : defaultImage}" alt="${lieu.name}" class="lieu-image">
                                 <div class="actions">
                                     <a href="${lieu.url}" class="icon-btn" title="Voir les détails"><i class="far fa-eye"></i></a>
                                     <a href="#" class="icon-btn toggle-favori" data-lieu-id="${lieu.id}" title="Ajouter aux favoris"><i class="far fa-heart"></i></a>
