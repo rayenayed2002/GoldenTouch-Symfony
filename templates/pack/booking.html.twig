@@ -250,7 +250,10 @@
                     {{ form_widget(form.personCount, {'attr': {
                         'class': 'form-control',
                         'required': 'required',
-                        'data-error': 'Veuillez indiquer le nombre de personnes'
+                        'data-error': 'Veuillez indiquer le nombre de personnes',
+                        'type': 'number',
+                        'min': '1',
+                        'oninput': "this.value = this.value.replace(/[^0-9]/g, '')"
                     }}) }}
                     <div class="invalid-feedback" style="display: none;">
                         {{ form_errors(form.personCount) ?: 'Ce champ est obligatoire' }}

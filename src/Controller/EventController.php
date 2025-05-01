@@ -247,6 +247,9 @@ class EventController extends AbstractController
 
 
         
+        if (!$user) {
+            throw $this->createAccessDeniedException('You must be logged in to add an event.');
+        }
 
     // Pagination is already handled above; remove obsolete paginator code
 
@@ -261,19 +264,6 @@ class EventController extends AbstractController
             CategorieEvent::SPORT->value => 'Sport',
             CategorieEvent::ATELIER->value => 'Atelier',
         ];
-    
-        $userId = $user->getId();
-        $demandePackRepo = $entityManager->getRepository(\App\Entity\DemandePack::class);
-        $userDemandePacks = $demandePackRepo->findBy([
-            'user' => $userId,
-            'statut' => 'CONFIRMÉ'
-        ]);
-        $demandePackByEvent = [];
-        foreach ($userDemandePacks as $dp) {
-            if ($dp->getEvent()) {
-                $demandePackByEvent[$dp->getEvent()->getId()] = $dp;
-            }
-        }
 
         return $this->render('GestionEvent/test.html.twig', [
             'events' => $eventsPage,
@@ -283,8 +273,7 @@ class EventController extends AbstractController
             'totalItems' => $totalItems,
             'pageSize' => $pageSize,
             'orderby' => $orderBy,
-            'sort' => $sortDirection,
-            'demandePackByEvent' => $demandePackByEvent
+            'sort' => $sortDirection
         ]);  
     }
     

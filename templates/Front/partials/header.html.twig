@@ -266,23 +266,25 @@
                             </li>
                             <li class="menu-item-has-children">
                                 <a href="#">Materielles</a>
-                                <ul class="sub-menu">
+                                <ul class="sub-menu">    
                                     <li><a href="#">Ajout Materielles</a></li>
-                                    <li><a href="#">Liste Materielles</a></li>
+                                    <li><a href="{{ path('app_reservations') }}">Liste Materielles</a></li>
                                 </ul>
                             </li>
                             <li class="menu-item-has-children">
                                 <a href="#">Personnel</a>
                                 <ul class="sub-menu">
-                                    <li><a href="#">Ajout Personnel</a></li>
-                                    <li><a href="#">Liste Personnel</a></li>
+                                     <li>
+                                <a href="{{ path('app_reservation_perso_index') }}"">Personnels</a>
+                            </li>
                                 </ul>
                             </li>
                             <li class="menu-item-has-children">
                                 <a href="#">Lieu</a>
                                 <ul class="sub-menu">
-                                    <li><a href="#">Ajout Lieu</a></li>
-                                    <li><a href="#">Liste Lieu</a></li>
+                                   <li>
+                                <a href="{{ path('app_lieu_index') }}"">Lieux</a>
+                            </li>
                                 </ul>
                             </li>
                             <li class="menu-item-has-children">
@@ -304,8 +306,7 @@
     <span class="badge">0</span>
 </a>
 
-                        <a href="#" class="icon-btn sideMenuToggler"><i class="far fa-bars"></i></a>
-                        <a href="booking.html" class="th-btn">BOOK A TAXI<i class="fa-regular fa-arrow-right ms-2"></i></a>
+                       
                     </div>
                 </div>
             </div>

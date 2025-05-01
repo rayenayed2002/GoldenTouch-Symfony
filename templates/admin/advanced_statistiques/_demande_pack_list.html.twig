@@ -1,7 +1,7 @@
 {% for demande in demandes %}
     <tr>
         <td>{{ demande.id }}</td>
-        <td>{{ demande.utilisateur ? demande.utilisateur.nom : '-' }}</td>
+        <td>{{ demande.user ? demande.user.nom : '-' }}</td>
         <td>{{ demande.pack ? demande.pack.nom : '-' }}</td>
         <td>{{ demande.event ? demande.event.nom : '-' }}</td>
         <td>

@@ -19,38 +19,58 @@
         
         .fc-event {
             cursor: pointer;
+            background-color: #FFD700;
+            border-color: #FFB700;
+            color: #000;
+        }
+        
+        .fc-event:hover {
+            background-color: #FFB700;
+            border-color: #FFA500;
         }
         
         .fc-toolbar-title {
             font-weight: 600;
-            color: #7367F0;
+            color: #FFB700;
         }
         
         .fc-button-primary {
-            background-color: #7367F0;
-            border-color: #7367F0;
+            background-color: #FFD700;
+            border-color: #FFB700;
+            color: #000;
         }
         
         .fc-button-primary:hover {
-            background-color: #5d52d1;
-            border-color: #5d52d1;
+            background-color: #FFB700;
+            border-color: #FFA500;
+            color: #000;
         }
-
+        
+        .fc-button-primary:not(:disabled):active,
+        .fc-button-primary:not(:disabled).fc-button-active {
+            background-color: #FFA500;
+            border-color: #FF8C00;
+            color: #000;
+        }
+        
         .google-calendar-btn {
-            background-color: #4285f4;
-            color: white;
+            background-color: #FFD700;
+            color: #000;
             border: none;
             padding: 10px 20px;
             border-radius: 5px;
             display: inline-flex;
             align-items: center;
             gap: 10px;
-            transition: background-color 0.3s;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(255, 215, 0, 0.4);
         }
 
         .google-calendar-btn:hover {
-            background-color: #357abd;
-            color: white;
+            background-color: #FFB700;
+            color: #000;
+            box-shadow: 0 4px 8px rgba(255, 183, 0, 0.5);
+            transform: translateY(-1px);
         }
 
         .google-calendar-btn i {

@@ -23,6 +23,7 @@ use Symfony\Component\Clock\ClockInterface;
 use App\Service\GrammarCorrectionService;
 
 use App\Repository\NotificationsAdminRepository;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 class PackController extends AbstractController
 {
@@ -164,8 +165,12 @@ class PackController extends AbstractController
     }
 
     #[Route('/pack/shop/{id}', name: 'app_pack_shop_details')]
-    public function shopDetails(Pack $pack): Response
+    public function shopDetails(Request $request, Pack $pack): Response
     {
+        $user = $this->getUser();
+        if (!$user) {
+            throw $this->createAccessDeniedException('You must be logged in to add an event.');
+        }
         // Get the category from the pack's event
         $category = $pack->getCategorie();
         $relatedPacks = [];
@@ -175,7 +180,7 @@ class PackController extends AbstractController
 
         $demandePacks = $this->entityManager->getRepository(DemandePack::class)
             ->createQueryBuilder('dp')
-            ->leftJoin('dp.utilisateur', 'u')
+            ->leftJoin('dp.user', 'u')
             ->addSelect('u')
             ->getQuery()
             ->getResult();
@@ -193,6 +198,10 @@ class PackController extends AbstractController
     #[Route('/pack/book/{id}', name: 'app_pack_booking')]
     public function booking(Request $request, Pack $pack, EntityManagerInterface $entityManager, ClockInterface $clock): Response
     {
+        $user = $this->getUser();
+        if (!$user) {
+            throw $this->createAccessDeniedException('You must be logged in to add an event.');
+        }
         // Create form instance with HTML5 validation disable
         $form = $this->createForm(BookingType::class, null, [
             'attr' => ['novalidate' => 'novalidate']
@@ -211,50 +220,56 @@ class PackController extends AbstractController
                     // Set event ID to match pack ID
                     $event = $entityManager->getReference('App\Entity\Event', $pack->getId());
                     $demande->setEvent($event);
-
-                    // Process date with current time
-                    $date = $formData['eventDate'];
-                    $currentTime = $clock->now()->format('H:i:s');
-                    list($hour, $minute, $second) = explode(':', $currentTime);
-                    $date->setTime((int)$hour, (int)$minute, (int)$second);
-                    
-                    $demande->setDateDemande($date);
+                    $demande->setDateDemande(new \DateTime($clock->now()->format('Y-m-d H:i:s')));
+                    $demande->setUser($user);
                     $demande->setStatut('EN_ATTENTE');
 
-                    // Set user
-                    $user = $this->utilisateurRepository->find(25);
-                    if (!$user) {
-                        throw new \Exception("L'utilisateur avec ID 25 n'existe pas");
-                    }
-                    $demande->setUtilisateur($user);
-
-                    // Persist demande
-                    $entityManager->persist($demande);
-                    $entityManager->flush();
-
-                    // Create admin notification
-                    $notification = new NotificationsAdmin();
-                    $notification->setAdmin($entityManager->getReference('App\Entity\Utilisateur', 1));
-                    $notification->setUtilisateur($entityManager->getReference('App\Entity\Utilisateur', 25));
-                    $notification->setDemandePack($demande);
-                    // Toxicity detection and masking for admin notification
-                    $userMessage = $formData['message'] ?? 'Aucun message';
-                    // Only use English toxicity detection (translation-based) for masking/admin
+                    $userMessage = $formData['message'];
+                    $session = $request->getSession();
                     $toxicityResult = $this->toxicityDetectionService->detect($userMessage);
                     $labelsEn = $toxicityResult['en'] ?? [];
+                    $labelsFr = $toxicityResult['fr'] ?? [];
                     $isToxic = false;
-                    foreach ($labelsEn as $label) {
+                    foreach (array_merge($labelsEn, $labelsFr) as $label) {
                         if ($label['label'] === 'toxic' && $label['score'] > 0.5) {
                             $isToxic = true;
                             break;
                         }
                     }
+                    // Block toxic message at first submission
                     if ($isToxic) {
-                        $maskedMessage = $this->toxicityDetectionService->maskToxicWords($userMessage, $labelsEn);
-                        $adminMessage = $maskedMessage;
+                        $lastToxicMessage = $session->get('last_toxic_message');
+                        if ($lastToxicMessage !== $userMessage) {
+                            // First time toxic message, ask user to correct and STOP processing
+                            $session->set('last_toxic_message', $userMessage);
+                            $errorMsg = 'Votre message contient des propos inappropriés. Veuillez les corriger avant de soumettre.';
+                            if ($request->isXmlHttpRequest()) {
+                                return new JsonResponse([
+                                    'success' => false,
+                                    'message' => $errorMsg
+                                ]);
+                            }
+                            $this->addFlash('error', $errorMsg);
+                            return $this->redirectToRoute('app_pack_booking', ['id' => $pack->getId()]);
+                        } else {
+                            // User resubmitted same toxic message, auto-mask and proceed
+                            $adminMessage = $this->toxicityDetectionService->maskToxicWords($userMessage, array_merge($labelsEn, $labelsFr));
+                            $session->remove('last_toxic_message');
+                        }
                     } else {
                         $adminMessage = $this->grammarCorrectionService->correct($userMessage) ?: $userMessage;
+                        $session->remove('last_toxic_message');
                     }
+
+                    // Only reach this point if message is not toxic or is masked
+                    $notification = new NotificationsAdmin();
+                    $adminId = $pack->getAdminId();
+                    $adminUser = $entityManager->getRepository(\App\Entity\User::class)->find($adminId);
+                    if ($adminUser) {
+                        $notification->setAdmin($adminUser);
+                    }
+                    $notification->setUser($user);
+                    $notification->setDemandePack($demande);
                     $notification->setMessage(sprintf(
                         "Nouvelle demande de réservation pour le pack %s\nNombre de personnes: %d\nMessage: %s",
                         $pack->getNom(),
@@ -263,7 +278,7 @@ class PackController extends AbstractController
                     ));
                     $notification->setStatut('NON_LU');
                     $notification->setDateCreation(new \DateTime());
-                    
+                    $entityManager->persist($demande);
                     $entityManager->persist($notification);
                     $entityManager->flush();
 
@@ -278,7 +293,6 @@ class PackController extends AbstractController
 
                     $this->addFlash('success', 'Votre demande a été enregistrée avec succès!');
                     return $this->redirectToRoute('app_pack_booking', ['id' => $pack->getId()]);
-
                 } catch (\Exception $e) {
                     // Error handling
                     if ($request->isXmlHttpRequest()) {
@@ -352,13 +366,14 @@ class PackController extends AbstractController
         return $this->redirectToRoute('app_packs');
     }
 
+    #[IsGranted('ROLE_ADMIN')]
     #[Route('/demande-packs', name: 'admin_advanced_statistiques_demande_packs', methods: ['GET'])]
     public function listDemandePacks(Request $request, \Knp\Component\Pager\PaginatorInterface $paginator, \App\Repository\NotificationsAdminRepository $notificationsRepo): Response
     {
         $q = $request->query->get('q');
         $repo = $this->entityManager->getRepository(DemandePack::class);
         $qb = $repo->createQueryBuilder('d')
-            ->leftJoin('d.utilisateur', 'u')->addSelect('u')
+            ->leftJoin('d.user', 'u')->addSelect('u')
             ->leftJoin('d.pack', 'p')->addSelect('p')
             ->leftJoin('d.event', 'e')->addSelect('e');
 

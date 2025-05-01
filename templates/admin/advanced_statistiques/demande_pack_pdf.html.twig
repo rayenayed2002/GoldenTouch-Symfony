@@ -373,9 +373,9 @@
                 <tr>
                     <td>{{ demande.id }}</td>
                     <td>
-                        {% if demande.utilisateur %}
-                            {{ demande.utilisateur.nom }} {{ demande.utilisateur.prenom }}<br>
-                            <small>{{ demande.utilisateur.email }}</small>
+                        {% if demande.user %}
+                            {{ demande.user.nom }} {{ demande.user.prenom }}<br>
+                            <small>{{ demande.user.email }}</small>
                         {% else %}
                             <em>N/A</em>
                         {% endif %}

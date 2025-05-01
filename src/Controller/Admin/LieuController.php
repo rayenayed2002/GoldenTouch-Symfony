@@ -259,32 +259,47 @@ public function index(): Response
         return $newFilename;
     }
 
-    #[Route('/{id}', name: 'delete', methods: ['DELETE'])]
-    public function delete(Lieu $lieu): JsonResponse
-    {
-        try {
-            // Suppression de l'image associée si elle existe
-            if ($lieu->getImageUrl()) {
-                $imagePath = $this->getParameter('kernel.project_dir') . '/public' . $lieu->getImageUrl();
-                if (file_exists($imagePath)) {
-                    unlink($imagePath);
-                }
-            }
-            
-            $this->entityManager->remove($lieu);
-            $this->entityManager->flush();
-
-            return $this->json([
-                'success' => true,
-                'message' => 'Lieu supprimé avec succès',
-            ]);
-        } catch (\Exception $e) {
+    #[Route('/{id}/delete', name: 'delete', methods: ['DELETE'])]
+    public function delete(int $id): JsonResponse
+{
+    try {
+        $lieu = $this->lieuRepository->find($id);
+        
+        if (!$lieu) {
             return $this->json([
                 'success' => false,
-                'message' => 'Erreur lors de la suppression du lieu: ' . $e->getMessage(),
-            ], 500);
+                'message' => 'Lieu non trouvé'
+            ], 404);
         }
+        
+        // Suppression de l'image associée si elle existe
+        if ($lieu->getImageUrl()) {
+            $imagePath = $this->getParameter('kernel.project_dir') . '/public' . $lieu->getImageUrl();
+            if (file_exists($imagePath)) {
+                try {
+                    unlink($imagePath);
+                } catch (\Exception $e) {
+                    // Log l'erreur mais continue la suppression
+                    error_log("Failed to delete image: " . $e->getMessage());
+                }
+            }
+        }
+        
+        $this->entityManager->remove($lieu);
+        $this->entityManager->flush();
+
+        return $this->json([
+            'success' => true,
+            'message' => 'Lieu supprimé avec succès',
+        ]);
+        
+    } catch (\Exception $e) {
+        return $this->json([
+            'success' => false,
+            'message' => 'Erreur lors de la suppression du lieu: ' . $e->getMessage(),
+        ], 500);
     }
+}
 
     #[Route('/list-files', name: 'list_files', methods: ['GET'])]
     public function listFiles(Request $request): JsonResponse

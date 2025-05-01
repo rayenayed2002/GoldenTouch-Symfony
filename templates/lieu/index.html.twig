@@ -95,6 +95,8 @@
         }
     }
     </style>
+
+    <style>
         /* Styles pour les cartes de lieux */
         .lieu-card {
             transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
@@ -180,8 +182,50 @@
 </head>
 
 <body>
-
     {% include 'Front/partials/header.html.twig' %}
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('searchInput');
+        const categorySelect = document.getElementById('categorySelect');
+        const orderbySelect = document.getElementById('orderbySelect');
+        const resultsContainer = document.querySelector('.row');
+
+        let searchTimeout;
+
+        function performSearch() {
+            const searchTerm = searchInput.value;
+            const category = categorySelect.value;
+            const orderby = orderbySelect.value;
+
+            const url = new URL('{{ path('app_lieux') }}', window.location.origin);
+            url.searchParams.append('search', searchTerm);
+            if (category) url.searchParams.append('category', category);
+            if (orderby) url.searchParams.append('orderby', orderby);
+
+            fetch(url)
+                .then(response => response.text())
+                .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const newResults = doc.querySelector('.row');
+                    if (newResults) {
+                        resultsContainer.innerHTML = newResults.innerHTML;
+                    }
+                })
+                .catch(error => console.error('Erreur:', error));
+        }
+
+        searchInput.addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(performSearch, 300);
+        });
+
+        categorySelect.addEventListener('change', performSearch);
+        orderbySelect.addEventListener('change', performSearch);
+
+    });
+    </script>
 
     <!-- Page Title -->
     <div class="breadcumb-wrapper" data-bg-src="{{ asset('Front/img/breadcumb/breadcumb-bg.jpg') }}" style="padding: 15px 0;">
@@ -190,7 +234,8 @@
                 <h1 class="breadcumb-title" style="font-size: 1.5rem; margin-bottom: 5px;">Nos Lieux</h1>
                 <ul class="breadcumb-menu" style="font-size: 0.9rem;">
                     <li><a href="{{ path('front_index') }}">Accueil</a></li>
-                    <li>Lieux</li>
+                    <li><a href="{{ path('app_lieux') }}">Lieux</a></li>
+
                 </ul>
             </div>
         </div>
@@ -204,11 +249,14 @@
     </a>
 </li>
     <div class="container my-3" style="text-align:right;">
-        {% if currentFilter != 'statistics' %}
-            <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({'filter':'statistics'})) }}" class="btn btn-warning"><i class="fas fa-chart-bar"></i> Statistique</a>
-        {% else %}
-            <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({'filter':null})) }}" class="btn btn-secondary"><i class="fas fa-list"></i> Retour à la liste</a>
-        {% endif %}
+        <div class="btn-group">
+            {% if currentFilter != 'statistics' %}
+                <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({'filter':'statistics'})) }}" class="btn btn-warning"><i class="fas fa-chart-bar"></i> Statistique</a>
+                <a href="{{ path('app_lieux_pdf') }}" class="btn btn-primary"><i class="fas fa-file-pdf"></i> Exporter PDF</a>
+            {% else %}
+                <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({'filter':null})) }}" class="btn btn-secondary"><i class="fas fa-list"></i> Retour à la liste</a>
+            {% endif %}
+        </div>
     </div>
     
     {% if currentFilter == 'statistics' %}
@@ -510,31 +558,34 @@
                     
                     {% if lieux.results|length > 0 %}
                         <div class="row gy-40">
-                            {% for lieu in lieux.results %}
+                            {% for lieu in lieux.results.results %}
                             <div class="col-xl-4 col-sm-6">
-                                <div class="lieu-card">
+                                <div class="th-product">
                                     <div class="product-img">
                                         {% if lieu.imageUrl %}
-<img src="{{ lieu.imageUrl }}" alt="{{ lieu.name }}" class="lieu-image">
+                                            <img src="uploads/lieux/{{ lieu.imageUrl }}" alt="{{ lieu.name }}">
                                         {% else %}
-                                            <img src="{{ asset('Front/img/placeholder.jpg') }}" alt="Lieu Image" class="lieu-image">
+                                            <img src="{{ asset('Front/img/placeholder.jpg') }}" alt="Lieu Image">
                                         {% endif %}
                                         <div class="actions">
                                             <a href="{{ path('app_lieu_details', {'id': lieu.id}) }}" class="icon-btn" title="Voir les détails"><i class="far fa-eye"></i></a>
                                             <a href="{{ path('app_lieu_calendar', {'id': lieu.id}) }}" class="icon-btn" title="Voir le calendrier"><i class="far fa-calendar-alt"></i></a>
-                                            <a href="#" class="icon-btn" title="Ajouter aux favoris"><i class="far fa-heart"></i></a>
+                                            <a href="#" class="icon-btn toggle-favori" data-lieu-id="{{ lieu.id }}" title="Ajouter aux favoris"><i class="far fa-heart"></i></a>
                                         </div>
-                                    <div class="lieu-content">
+                                    </div>
+                                    <div class="product-content">
                                         {% if lieu.category %}
-                                            <span class="lieu-category">{{ lieu.category }}</span>
+                                            <div class="star-rating" role="img" aria-label="Category: {{ lieu.category }}">
+                                                <span>{{ lieu.category }}</span>
+                                            </div>
                                         {% endif %}
-                                        <h3 class="lieu-title"><a href="{{ path('app_lieu_details', {'id': lieu.id}) }}">{{ lieu.name }}</a></h3>
+                                        <h3 class="product-title"><a href="{{ path('app_lieu_details', {'id': lieu.id}) }}">{{ lieu.name }}</a></h3>
                                         <div class="lieu-location">
                                             <i class="fas fa-map-marker-alt"></i>
                                             <span>{{ lieu.location }}{% if lieu.ville %}, {{ lieu.ville }}{% endif %}</span>
                                         </div>
                                         <p class="lieu-description">{{ lieu.description|default('Aucune description disponible') }}</p>
-                                        <div class="lieu-meta">
+                                        <div class="product-meta">
                                             <span class="price">{{ lieu.price }} €</span>
                                             <span class="lieu-capacity"><i class="fas fa-users"></i> {{ lieu.capacity }} personnes</span>
                                         </div>
@@ -546,38 +597,26 @@
                         
                         <!-- Pagination -->
                         <div class="th-pagination text-center pt-50">
-                            <nav aria-label="Page navigation">
-                                <ul class="pagination justify-content-center">
-                                    {% if lieux.hasPreviousPage %}
-                                        <li class="page-item">
-                                            <a class="page-link" href="{{ path('app_lieu_index', {'page': lieux.currentPage - 1, 'filter': currentFilter, 'search': searchTerm ?? ''}) }}" aria-label="Previous">
-                                                <i class="fas fa-arrow-left"></i>
-                                            </a>
-                                        </li>
-                                    {% endif %}
-                                    
-                                    {% for i in 1..lieux.lastPage %}
-                                        <li class="page-item {% if i == lieux.currentPage %}active{% endif %}">
-                                            <a class="page-link" href="{{ path('app_lieu_index', {'page': i, 'filter': currentFilter, 'search': searchTerm ?? ''}) }}">{{ i }}</a>
-                                        </li>
-                                    {% endfor %}
-                                    
-                                    {% if lieux.hasNextPage %}
-                                        <li class="page-item">
-                                            <a class="page-link" href="{{ path('app_lieu_index', {'page': lieux.currentPage + 1, 'filter': currentFilter, 'search': searchTerm ?? ''}) }}" aria-label="Next">
-                                                <i class="fas fa-arrow-right"></i>
-                                            </a>
-                                        </li>
-                                    {% endif %}
-                                </ul>
-                            </nav>
+                            <ul>
+                                {% if lieux.hasPreviousPage %}
+                                    <li><a href="{{ path('app_lieu_index', {'page': lieux.currentPage - 1, 'filter': currentFilter, 'search': searchTerm ?? ''}) }}"><i class="far fa-arrow-left"></i></a></li>
+                                {% endif %}
+                                
+                                {% for i in 1..lieux.lastPage %}
+                                    <li class="{% if i == lieux.currentPage %}active{% endif %}">
+                                        <a href="{{ path('app_lieu_index', {'page': i, 'filter': currentFilter, 'search': searchTerm ?? ''}) }}">{{ i }}</a>
+                                    </li>
+                                {% endfor %}
+                                
+                                {% if lieux.hasNextPage %}
+                                    <li><a href="{{ path('app_lieu_index', {'page': lieux.currentPage + 1, 'filter': currentFilter, 'search': searchTerm ?? ''}) }}"><i class="far fa-arrow-right"></i></a></li>
+                                {% endif %}
+                            </ul>
                         </div>
                     {% else %}
                         <div class="alert alert-info">Aucun lieu trouvé.</div>
                     {% endif %}
                 </div>
-                
-                
             </div>
         </div>
     </section>
@@ -628,7 +667,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="col-xl-4 col-sm-6">
                         <div class="lieu-card">
                             <div class="product-img">
-                                <img src="${lieu.image || defaultImage}" alt="${lieu.name}" class="lieu-image">
+                                <img src="${lieu.image ? 'uploads/lieux/' + lieu.image : defaultImage}" alt="${lieu.name}" class="lieu-image">
                                 <div class="actions">
                                     <a href="${lieu.url}" class="icon-btn" title="Voir les détails"><i class="far fa-eye"></i></a>
                                     <a href="#" class="icon-btn toggle-favori" data-lieu-id="${lieu.id}" title="Ajouter aux favoris"><i class="far fa-heart"></i></a>

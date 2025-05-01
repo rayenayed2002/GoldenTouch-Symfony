@@ -54,9 +54,13 @@ class Pack
     #[ORM\OneToMany(mappedBy: 'pack', targetEntity: Avis::class)]
     private Collection $avis;
 
+    #[ORM\OneToMany(mappedBy: 'pack', targetEntity: DemandePack::class)]
+    private Collection $demandePacks;
+
     public function __construct()
     {
         $this->avis = new ArrayCollection();
+        $this->demandePacks = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -220,5 +224,33 @@ class Pack
             $this->event->getId(),
             $this->adminId
         );
+    }
+
+    /**
+     * @return Collection<int, DemandePack>
+     */
+    public function getDemandePacks(): Collection
+    {
+        return $this->demandePacks;
+    }
+
+    public function addDemandePack(DemandePack $demandePack): self
+    {
+        if (!$this->demandePacks->contains($demandePack)) {
+            $this->demandePacks->add($demandePack);
+            $demandePack->setPack($this);
+        }
+        return $this;
+    }
+
+    public function removeDemandePack(DemandePack $demandePack): self
+    {
+        if ($this->demandePacks->removeElement($demandePack)) {
+            // set the owning side to null (unless already changed)
+            if ($demandePack->getPack() === $this) {
+                $demandePack->setPack(null);
+            }
+        }
+        return $this;
     }
 }

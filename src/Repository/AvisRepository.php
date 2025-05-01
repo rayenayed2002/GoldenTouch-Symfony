@@ -3,7 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Avis;
-use App\Entity\Utilisateur;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -51,7 +51,7 @@ class AvisRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('a')
             ->select('a', 'u', 'p')
-            ->innerJoin('a.utilisateur', 'u')
+            ->innerJoin('a.user', 'u')
             ->innerJoin('a.pack', 'p')
             ->where('p.id = :packId')
             ->setParameter('packId', $packId)
