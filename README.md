@@ -65,6 +65,7 @@ php bin/console doctrine:migrations:migrate
 
 # 5. Run the server
 symfony server:start
+```
 🚀 Usage
 Visit the app at: http://localhost:8000
 
