@@ -6,13 +6,13 @@ GoldenTouch is a comprehensive event planning application built with **Symfony 6
 
 ## 📚 Table of Contents
 
-- [✨ Features](#-features)
-- [🛠️ Installation](#-installation)
-- [🚀 Usage](#-usage)
-- [👥 User Roles](#-user-roles)
-- [🧰 Technologies Used](#-technologies-used)
-- [🤝 Contributing](#-contributing)
-- [📄 License](#-license)
+- [✨ Features](#-features)  
+- [🛠️ Installation](#-installation)  
+- [🚀 Usage](#-usage)  
+- [👥 User Roles](#-user-roles)  
+- [🧰 Technologies Used](#-technologies-used)  
+- [🤝 Contributing](#-contributing)  
+- [📄 License](#-license)  
 
 ---
 
@@ -40,10 +40,10 @@ GoldenTouch is a comprehensive event planning application built with **Symfony 6
 
 ### Prerequisites
 
-- PHP >= 8.1
-- Composer
-- Symfony CLI (optional but recommended)
-- MySQL or PostgreSQL
+- PHP >= 8.1  
+- Composer  
+- Symfony CLI (optional but recommended)  
+- MySQL or PostgreSQL  
 
 ### Steps
 
@@ -66,43 +66,48 @@ php bin/console doctrine:migrations:migrate
 # 5. Run the server
 symfony server:start
 ```
-🚀 Usage
-Visit the app at: http://localhost:8000
+
+---
+
+## 🚀 Usage
+
+Visit the app at: [http://localhost:8000](http://localhost:8000)
 
 You can register and log in as:
 
-Client
-
-Personnel
-
-Admin
+- **Client**
+- **Personnel**
+- **Admin**
 
 Explore the application based on your assigned role.
 
-👥 User Roles
-👤 Client
-Create/manage events
+---
 
-Add venues, materials, and personnel
+## 👥 User Roles
 
-View packages & reservations
+### 👤 Client
 
-Leave feedback
+- Create/manage events  
+- Add venues, materials, and personnel  
+- View packages & reservations  
+- Leave feedback  
+- Checkout via Stripe  
 
-Checkout via Stripe
+### 👨‍🔧 Personnel
 
-👨‍🔧 Personnel
-View assigned events & schedules
+- View assigned events & schedules  
 
-👨‍💼 Administrator
-Manage all system entities (events, packages, materials, etc.)
+### 👨‍💼 Administrator
 
-Moderate content & oversee users
+- Manage all system entities (events, packages, materials, etc.)  
+- Moderate content & oversee users  
 
-🧰 Technologies Used
+---
+
+## 🧰 Technologies Used
 
 | Category        | Technology                                                       |
-| --------------- | ---------------------------------------------------------------- |
+|----------------|-------------------------------------------------------------------|
 | **Framework**   | Symfony 6.4                                                      |
 | **Languages**   | PHP, JavaScript                                                  |
 | **Frontend**    | Twig, Stimulus                                                   |
@@ -110,17 +115,28 @@ Moderate content & oversee users
 | **APIs**        | Gemini AI, Stripe, Google Calendar, Weather, Maps, Bad Words API |
 | **Other Tools** | QR/Barcode Generators, Email Notifications, Advanced Search      |
 
-🤝 Contributing
-Fork the repository
+---
 
-Create your feature branch: git checkout -b feature/my-feature
+## 🤝 Contributing
 
-Commit your changes: git commit -m "Add my feature"
+1. Fork the repository  
+2. Create your feature branch:  
+   ```bash
+   git checkout -b feature/my-feature
+   ```
+3. Commit your changes:  
+   ```bash
+   git commit -m "Add my feature"
+   ```
+4. Push to the branch:  
+   ```bash
+   git push origin feature/my-feature
+   ```
+5. Submit a pull request ✅
 
-Push to the branch: git push origin feature/my-feature
+---
 
-Submit a pull request ✅
+## 📄 License
 
-📄 License
-This project is licensed under a proprietary license.
+This project is licensed under a **proprietary license**.  
 Contact the author for more details.
