@@ -28,7 +28,8 @@ class MaterielleType extends AbstractType
             ->add('prix_mat')
             ->add('categorie', EntityType::class, [
                 'class' => Categorie::class,
-                'choice_label' => 'id_cat',
+                'choice_label' => 'nom_cat',
+                'required' => false, // Add this
             ])
            
         ;

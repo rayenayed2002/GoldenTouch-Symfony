@@ -1,0 +1,824 @@
+
+
+<!doctype html>
+<html class="no-js" lang="zxx">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Taxiar - Online Taxi Service HTML Template - Home 1</title>
+    <meta name="author" content="Taxiar">
+    <meta name="description" content="Taxiar - Online Taxi Service HTML Template">
+    <meta name="keywords" content="Taxiar - Online Taxi Service HTML Template">
+    <meta name="robots" content="INDEX,FOLLOW">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+<link rel="apple-touch-icon" sizes="57x57" href="{{ asset('Front/img/favicons/apple-icon-57x57.png') }}">
+<link rel="apple-touch-icon" sizes="60x60" href="{{ asset('Front/img/favicons/apple-icon-60x60.png') }}">
+<link rel="apple-touch-icon" sizes="72x72" href="{{ asset('Front/img/favicons/apple-icon-72x72.png') }}">
+<link rel="apple-touch-icon" sizes="76x76" href="{{ asset('Front/img/favicons/apple-icon-76x76.png') }}">
+<link rel="apple-touch-icon" sizes="114x114" href="{{ asset('Front/img/favicons/apple-icon-114x114.png') }}">
+<link rel="apple-touch-icon" sizes="120x120" href="{{ asset('Front/img/favicons/apple-icon-120x120.png') }}">
+<link rel="apple-touch-icon" sizes="144x144" href="{{ asset('Front/img/favicons/apple-icon-144x144.png') }}">
+<link rel="apple-touch-icon" sizes="152x152" href="{{ asset('Front/img/favicons/apple-icon-152x152.png') }}">
+<link rel="apple-touch-icon" sizes="180x180" href="{{ asset('Front/img/favicons/apple-icon-180x180.png') }}">
+<link rel="icon" type="image/png" sizes="192x192" href="{{ asset('Front/img/favicons/android-icon-192x192.png') }}">
+<link rel="icon" type="image/png" sizes="32x32" href="{{ asset('Front/img/favicons/favicon-32x32.png') }}">
+<link rel="icon" type="image/png" sizes="96x96" href="{{ asset('Front/img/favicons/favicon-96x96.png') }}">
+<link rel="icon" type="image/png" sizes="16x16" href="{{ asset('Front/img/favicons/favicon-16x16.png') }}">
+<link rel="manifest" href="{{ asset('Front/img/favicons/manifest.json') }}">
+<meta name="msapplication-TileColor" content="#ffffff">
+<meta name="msapplication-TileImage" content="{{ asset('Front/img/favicons/ms-icon-144x144.png') }}">
+<meta name="theme-color" content="#ffffff">
+
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Radio+Canada:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+
+<link rel="stylesheet" href="{{ asset('Front/css/bootstrap.min.css') }}">
+<link rel="stylesheet" href="{{ asset('Front/css/fontawesome.min.css') }}">
+<link rel="stylesheet" href="{{ asset('Front/css/magnific-popup.min.css') }}">
+<link rel="stylesheet" href="{{ asset('Front/css/slick.min.css') }}">
+<link rel="stylesheet" href="{{ asset('Front/css/jquery.datetimepicker.min.css') }}">
+<link rel="stylesheet" href="{{ asset('Front/css/style.css') }}">
+<style> 
+/* Body background */
+body {
+    background-color: #f8f7fa;
+}
+
+/* Event Card Style */
+.th-product {
+    background-color: #ffffff;
+    border: 2px solid gold;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    margin: 10px;
+    padding: 10px;
+    height: 100%; /* Helps cards be uniform height */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    cursor: pointer;
+
+}
+
+/* Image wrapper to control sizing and spacing */
+.product-img {
+    overflow: hidden;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+/* Image style - same height and zoom on hover */
+.product-img img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+    border-radius: 8px;
+    display: block;
+}
+
+/* Zoom effect on hover */
+.th-product:hover .product-img img {
+    transform: scale(1.05);
+}
+
+/* Card hover effect */
+.th-product:hover {
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+    transform: translateY(-5px);
+}
+
+  .th-product .product-img::before {
+        content: none !important;
+        background-color: transparent !important;
+        opacity: 0 !important;
+        transform: none !important;
+        transition: none !important;
+        visibility: visible !important;
+    }
+    
+    /* Disable hover state */
+    .th-product:hover .product-img::before {
+        opacity: 0 !important;
+        visibility: hidden !important;
+    }
+    
+    /* Remove any other hover effects */
+    .th-product:hover {
+        transform: none !important;
+        box-shadow: none !important;
+    }
+</style>
+
+
+</head>
+
+<body class="">
+
+
+
+
+
+
+
+
+    <div class="th-menu-wrapper">
+        <div class="th-menu-area text-center">
+            <button class="th-menu-toggle "><i class="fal fa-times"></i></button>
+            <div class="mobile-logo">
+                <a href="index.html"><img src="{{ asset('Front/img/logo.svg') }}" alt="Taxiar"></a>
+            </div>
+            <div class="th-mobile-menu">
+                <ul>
+                    <li class="menu-item-has-children">
+                        <a href="index.html">Home</a>
+                        <ul class="sub-menu">
+                            <li><a href="index.html">Home One </a></li>
+                            <li><a href="index-2.html">Home Two </a></li>
+                            <li><a href="index-3.html">Home Three </a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="about.html">About Us</a>
+                    </li>
+                    <li class="menu-item-has-children">
+                        <a href="#">Service</a>
+                        <ul class="sub-menu">
+                            <li><a href="service.html">Service</a></li>
+                            <li><a href="service-details.html">Service Details</a></li>
+                        </ul>
+                    </li>
+                    <li class="menu-item-has-children">
+                        <a href="#">Blog</a>
+                        <ul class="sub-menu">
+                            <li><a href="blog.html">Blog</a></li>
+                            <li><a href="blog-details.html">Blog Details</a></li>
+                        </ul>
+                    </li>
+                    <li class="menu-item-has-children">
+                        <a href="#">Pages</a>
+                        <ul class="sub-menu">
+                            <li class="menu-item-has-children"><a href="#">Shop</a>
+                                <ul class="sub-menu">
+                                    <li><a href="shop.html">Shop</a></li>
+                                    <li><a href="shop-details.html">Shop Details</a></li>
+                                    <li><a href="cart.html">Cart Page</a></li>
+                                    <li><a href="checkout.html">Checkout</a></li>
+                                    <li><a href="wishlist.html">Wishlist</a></li>
+                                </ul>
+                            </li>
+                            <li><a href="team.html">Driver</a></li>
+                            <li><a href="team-details.html">Driver Details</a></li>
+                            <li><a href="taxi.html">Taxi</a></li>
+                            <li><a href="taxi-details.html">Taxi Details</a></li>
+                            <li><a href="booking.html">Booking Ride</a></li>
+                            <li><a href="faq.html">Faq</a></li>
+                            <li><a href="error.html">Error</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="contact.html">Contact</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="sidemenu-wrapper shopping-cart d-none d-lg-block  ">
+        <div class="sidemenu-content">
+            <button class="closeButton sideMenuCls"><i class="far fa-times"></i></button>
+            <div class="widget woocommerce widget_shopping_cart">
+                <h3 class="widget_title">Shopping cart</h3>
+                <div class="widget_shopping_cart_content">
+                    <ul class="woocommerce-mini-cart cart_list product_list_widget">
+                        <li class="woocommerce-mini-cart-item mini_cart_item">
+                            <a href="#" class="remove remove_from_cart_button"><i class="far fa-times"></i></a>
+                            <a href="#"><img src="{{ asset('Front/img/product/product_thumb_1_1.jpg') }}"
+                                    alt="Cart Image">Suspension-Coil</a>
+                            <span class="quantity">1 ×
+                                <span class="woocommerce-Price-amount amount">
+                                    <span class="woocommerce-Price-currencySymbol">$</span>94</span>,
+                            </span>
+                        </li>
+                        <li class="woocommerce-mini-cart-item mini_cart_item">
+                            <a href="#" class="remove remove_from_cart_button"><i class="far fa-times"></i></a>
+                            <a href="#"><img src="{{ asset('Front/img/product/product_thumb_1_2.jpg') }}" alt="Cart Image">absorbers
+                                Brake</a>
+                            <span class="quantity">1 ×
+                                <span class="woocommerce-Price-amount amount">
+                                    <span class="woocommerce-Price-currencySymbol">$</span>89</span>
+                            </span>
+                        </li>
+                        <li class="woocommerce-mini-cart-item mini_cart_item">
+                            <a href="#" class="remove remove_from_cart_button"><i class="far fa-times"></i></a>
+                            <a href="#"><img src="{{ asset('Front/img/product/product_thumb_1_3.jpg') }}"
+                                    alt="Cart Image">Motorcycle-Shock</a>
+                            <span class="quantity">1 ×
+                                <span class="woocommerce-Price-amount amount">
+                                    <span class="woocommerce-Price-currencySymbol">$</span>75</span>
+                            </span>
+                        </li>
+                        <li class="woocommerce-mini-cart-item mini_cart_item">
+                            <a href="#" class="remove remove_from_cart_button"><i class="far fa-times"></i></a>
+                            <a href="#"><img src="{{ asset('Front/img/product/product_thumb_1_4.jpg') }}" alt="Cart Image">Body
+                                Spring</a>
+                            <span class="quantity">1 ×
+                                <span class="woocommerce-Price-amount amount">
+                                    <span class="woocommerce-Price-currencySymbol">$</span>72</span>
+                            </span>
+                        </li>
+                        <li class="woocommerce-mini-cart-item mini_cart_item">
+                            <a href="#" class="remove remove_from_cart_button"><i class="far fa-times"></i></a>
+                            <a href="#"><img src="{{ asset('Front/img/product/product_thumb_1_5.jpg') }}" alt="Cart Image">Body
+                                Spring</a>
+                            <span class="quantity">1 ×
+                                <span class="woocommerce-Price-amount amount">
+                                    <span class="woocommerce-Price-currencySymbol">$</span>81</span>
+                            </span>
+                        </li>
+                    </ul>
+                    <p class="woocommerce-mini-cart__total total">
+                        <strong>Subtotal:</strong>
+                        <span class="woocommerce-Price-amount amount">
+                            <span class="woocommerce-Price-currencySymbol">$</span>318.00</span>
+                    </p>
+                    <p class="woocommerce-mini-cart__buttons buttons">
+                        <a href="cart.html" class="th-btn style1 wc-forward">View cart</a>
+                        <a href="checkout.html" class="th-btn style1 checkout wc-forward">Checkout</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="sidemenu-wrapper d-none d-lg-block  ">
+        <div class="sidemenu-content bg-title">
+            <button class="closeButton sideMenuCls"><i class="far fa-times"></i></button>
+            <div class="widget footer-widget">
+                <h3 class="widget_title">About Company</h3>
+                <div class="th-widget-about">
+                    <p class="footer-text">Centric aplications productize before front end vortals visualize front end
+                        is results and value added</p>
+                    <h4 class="footer-info-title">WE ARE AVAILABLE</h4>
+                    <p class="footer-text">Mon-Sat: 09.00 am to 6.30 pm</p>
+                    <a href="contact.html" class="th-btn style3"><span class="btn-text">Contact Us</span></a>
+                </div>
+            </div>
+            <div class="widget footer-widget">
+                <h3 class="widget_title">Recent Posts</h3>
+                <div class="recent-post-wrap">
+                    <div class="recent-post">
+                        <div class="media-img">
+                            <a href="blog-details.html"><img src="{{ asset('Front/img/blog/recent-post-1-2.jpg') }}"
+                                    alt="Blog Image"></a>
+                        </div>
+                        <div class="media-body">
+                            <div class="recent-post-meta">
+                                <a href="blog.html"><i class="far fa-calendar-days"></i>22th May, 2023</a>
+                            </div>
+                            <h4 class="post-title"><a class="text-inherit" href="blog-details.html">How To Start Car
+                                    Engine Faster</a></h4>
+                            <a class="line-btn" href="blog.html">Read More<i class="fa-regular fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                    <div class="recent-post">
+                        <div class="media-img">
+                            <a href="blog-details.html"><img src="{{ asset('Front/img/blog/recent-post-1-3.jpg') }}"
+                                    alt="Blog Image"></a>
+                        </div>
+                        <div class="media-body">
+                            <div class="recent-post-meta">
+                                <a href="blog.html"><i class="far fa-calendar-days"></i>25th May, 2023</a>
+                            </div>
+                            <h4 class="post-title"><a class="text-inherit" href="blog-details.html">How to start car
+                                    engine slowly</a></h4>
+                            <a class="line-btn" href="blog.html">Read More<i class="fa-regular fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="widget footer-widget">
+                <h4 class="widget_title">Get Newsletter</h4>
+                <div class="newsletter-widget">
+                    <p class="md-20">Sign up today for hints, tips & latest car overview and news</p>
+                    <form class="newsletter-form">
+                        <input class="form-control" type="email" placeholder="Email Address" required="">
+                        <button type="submit" class="newsletter-btn"><i class="fas fa-envelope"></i></button>
+                    </form>
+                    <div class="th-social  style2">
+                        <a target="_blank" href="https://facebook.com/"><i class="fab fa-facebook-f"></i></a>
+                        <a target="_blank" href="https://twitter.com/"><i class="fab fa-twitter"></i></a>
+                        <a target="_blank" href="https://instagram.com/"><i class="fab fa-instagram"></i></a>
+                        <a target="_blank" href="https://linkedin.com/"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="popup-search-box d-none d-lg-block">
+        <button class="searchClose"><i class="fal fa-times"></i></button>
+        <form action="#">
+            <input type="text" placeholder="What are you looking for">
+            <button type="submit"><i class="fal fa-search"></i></button>
+        </form>
+    </div>
+
+
+    <header class="th-header header-layout7">
+        <div class="header-top">
+            <div class="container">
+                <div class="row justify-content-center justify-content-md-between align-items-center gy-2">
+                    <div class="col-auto d-none d-md-block">
+                        <div class="header-links">
+                            <ul>
+                                <li><i class="fa-thin fa-envelope"></i><a
+                                        href="mailto:GoldenTouch@gmail.com">GoldenTouch@gmail.com</a>
+                                </li>
+                                <li><i class="fa-thin fa-phone"></i><a href="tel:+468254762443">(+468) 254 762 443</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <div class="header-right">
+                            <div class="langauge">
+                                <select class="form-select nice-select">
+                                    <option selected="">English</option>
+                                    <option>Hindi</option>
+                                </select>
+                            </div>
+                            <div class="header-social">
+                                <span class="social-title">Follow Us On:</span>
+                                <a href="https://www.facebook.com/"><i class="fab fa-facebook-f"></i></a>
+                                <a href="https://www.twitter.com/"><i class="fab fa-twitter"></i></a>
+                                <a href="https://www.linkedin.com/"><i class="fab fa-linkedin-in"></i></a>
+                                <a href="https://www.instagram.com/"><i class="fab fa-instagram"></i></a>
+                                <a href="https://www.youtube.com/"><i class="fa-brands fa-youtube"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+<div class="sticky-wrapper">
+    <div class="menu-area">
+        <div class="container">
+            <div class="row align-items-center justify-content-between">
+                <div class="col-auto">
+                    <div class="header-logo">
+<img src="{{ asset('Front/img/logo44.png') }}" alt="GoldenTouch" style="height: 130px;">
+                    </div>
+                </div>
+                <div class="col-auto me-xl-auto">
+                    <nav class="main-menu d-none d-lg-block">
+                        <ul>
+                            <li>
+                                <a href="index.html">Pack</a>
+                            </li>
+                            <li class="menu-item-has-children">
+                                <a href="#">Event Planner</a>
+                                <ul class="sub-menu">
+                                    <li><a href="#">Ajout Event</a></li>
+                                    <li><a href="#">Liste Event</a></li>
+                                </ul>
+                            </li>
+                            <li class="menu-item-has-children">
+                                <a href="#">Materielles</a>
+                                <ul class="sub-menu">
+                                    <li><a href="#">Ajout Materielles</a></li>
+                                    <li><a href="#">Liste Materielles</a></li>
+                                </ul>
+                            </li>
+                            <li class="menu-item-has-children">
+                                <a href="#">Personnel</a>
+                                <ul class="sub-menu">
+                                    <li><a href="#">Ajout Personnel</a></li>
+                                    <li><a href="#">Liste Personnel</a></li>
+                                </ul>
+                            </li>
+                            <li class="menu-item-has-children">
+                                <a href="#">Lieu</a>
+                                <ul class="sub-menu">
+                                    <li><a href="#">Ajout Lieu</a></li>
+                                    <li><a href="#">Liste Lieu</a></li>
+                                </ul>
+                            </li>
+                            <li class="menu-item-has-children">
+                                <a href="#">Autre</a>
+                                <ul class="sub-menu">
+                                    <li><a href="#">Commandes</a></li>
+                                    <li><a href="#">Reclamation</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </nav>
+                    <button class="th-menu-toggle d-inline-block d-lg-none"><i class="far fa-bars"></i></button>
+                </div>
+                <div class="col-auto d-none d-xl-block">
+                    <div class="header-button">
+                        <button type="button" class="icon-btn searchBoxToggler"><i class="far fa-search"></i></button>
+                        <a href="#" class="icon-btn sideMenuToggler2"><i class="fa-regular fa-bag-shopping"></i>
+                            <span class="badge">5</span></a>
+                        <a href="#" class="icon-btn sideMenuToggler"><i class="far fa-bars"></i></a>
+                        <a href="booking.html" class="th-btn">BOOK A TAXI<i class="fa-regular fa-arrow-right ms-2"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="logo-shape"><img src="{{ asset('Front/img/logo-shape.svg') }}" alt=""></div>
+    </header>
+
+
+
+
+<div class="content-wrapper">
+    <div class="container-xxl flex-grow-1 container-p-y" style="margin-bottom: 100px;">
+        {# Affichage des messages flash #}
+        {% for message in app.flashes('error') %}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong>Erreur :</strong> {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+        
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <strong>Succès :</strong> {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+
+        <div class="container mt-3">
+            <div class="card shadow-lg rounded-4 border-0">
+                <div class="card-body p-4 bg-light rounded-4">
+                    <div class="row g-4">
+                        <!-- Colonne Image -->
+                        <div class="col-md-5">
+                            <div class="position-relative">
+                                <img src="{{ asset('uploads/materiels/' ~ materiel.photoMat|default('default.jpg')) }}" 
+                                     alt="{{ materiel.nomMat }}" 
+                                     class="img-fluid rounded-3 w-100 border border-warning"
+                                     style="height: 300px; object-fit: cover;">
+                                <span class="position-absolute top-0 start-0 bg-warning text-white px-3 py-1 rounded-end">
+                                    {{ materiel.quantiteMat }} unités disponibles
+                                </span>
+                            </div>
+                            <div class="mb-4">
+                                <a href="{{ path('app_materiels_index') }}" class="btn btn-outline-warning rounded-pill px-4">
+                                    <i class="fas fa-arrow-left me-2"></i>Retour à la liste
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <!-- Colonne Détails -->
+                        <div class="col-md-7">
+                            <h2 class="fw-bold mb-3 text-warning">{{ materiel.nomMat }}</h2>
+                            
+                            <div class="mb-4">
+                                <h5 class="text-warning">Description</h5>
+                                <p class="text-muted">{{ materiel.descriptionMat|default('Aucune description disponible') }}</p>
+                            </div>
+                            
+                            {# Vérification si l'utilisateur a déjà réservé ce matériel #}
+                            {% set alreadyReserved = false %}
+                            {% if app.user %}
+                                {% for reservation in app.user.reservMats %}
+                                    {% if reservation.materielle.idMat  == materiel.idMat %}
+                                        {% set alreadyReserved = true %}
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                            
+                            <!-- Formulaire de réservation -->
+                            <form action="{{ path('app_reserv_mat_new') }}" method="post" id="reservationForm">
+                                <input type="hidden" name="id_mat" value="{{ materiel.idMat }}">
+                                
+                                <div class="mb-3">
+                                    <label for="quantite" class="form-label text-warning fw-semibold">Quantité</label>
+                                    <input type="number" 
+                                           id="quantite" 
+                                           name="quantite" 
+                                           class="form-control border-warning {{ alreadyReserved ? 'bg-light' : '' }}"
+                                           min="1" 
+                                           max="{{ materiel.quantiteMat }}"
+                                           value="1"
+                                           required
+                                           {{ alreadyReserved ? 'readonly' : '' }}>
+                                    <small class="text-muted">Maximum disponible : {{ materiel.quantiteMat }}</small>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="evenement" class="form-label text-warning fw-semibold">Choisir un événement :</label>
+                                    <select id="evenement" 
+                                            name="id_event" 
+                                            class="form-select border-warning {{ alreadyReserved ? 'bg-light' : '' }}" 
+                                            required
+                                            {{ alreadyReserved ? 'disabled' : '' }}>
+                                        <option value="">Sélectionnez un événement</option>
+                                        {% for event in events %}
+                                            <option value="{{ event.id }}">{{ event.nom }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                
+                                <div class="d-flex justify-content-between align-items-center mb-4">
+                                    <div>
+                                        <h5 class="text-warning">Prix total</h5>
+                                        <h4 class="fw-bold text-success" id="prixTotal">
+                                            {{ materiel.prixMat|number_format(2, '.', ',') }} TND
+                                        </h4>
+                                    </div>
+                                    
+                                    {% if alreadyReserved %}
+                                        <button type="button" class="btn btn-secondary btn-lg px-4 py-2 text-white fw-semibold" disabled>
+                                            <i class="fas fa-check-circle me-2"></i>Déjà réservé
+                                        </button>
+                                    {% else %}
+                                        <button type="submit" class="btn btn-warning btn-lg px-4 py-2 text-white fw-semibold" id="reserverBtn">
+                                            <i class="fas fa-calendar-check me-2"></i>Réserver
+                                        </button>
+                                    {% endif %}
+                                </div>
+                            </form>
+                            
+                            <!-- Message si déjà réservé -->
+                            {% if alreadyReserved %}
+                                <div class="alert alert-warning mt-3">
+                                    <i class="fas fa-exclamation-circle me-2"></i>
+                                    Vous avez déjà réservé ce matériel. Consultez vos <a href="{{ path('app_mes_reservations') }}" class="alert-link">réservations</a>.
+                                </div>
+                            {% endif %}
+                            
+                            <!-- Informations supplémentaires -->
+                            <div class="border-top pt-3">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <p class="mb-1"><i class="fas fa-box-open text-muted me-2"></i> Stock : {{ materiel.quantiteMat }}</p>
+                                        <p class="mb-1"><i class="fas fa-money-bill-wave text-muted me-2"></i> Prix unitaire : {{ materiel.prixMat|number_format(2, '.', ',') }} TND</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                         
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+ <footer class="footer-wrapper footer-layout7" data-bg-src="assets/img/bg/footer_bg_1.jpg">
+    <div class="widget-area">
+        <div class="container">
+            <div class="row justify-content-between">
+                <div class="col-md-6 col-xl-auto">
+                    <div class="widget footer-widget">
+                        <div class="th-widget-about">
+                            <div class="about-logo">
+                                <a href="index.html"><img src="assets/img/logo-white3.svg" alt="GoldenTouch"></a>
+                            </div>
+                            <p class="about-text">GoldenTouch révolutionne la planification d'événements avec des solutions tout-en-un pour des expériences inoubliables.</p>
+                            <div class="working-time">
+                                <span class="title">HORAIRES D'OUVERTURE</span>
+                                <p class="desc">Lun-Sam : 09h00 à 18h30</p>
+                            </div>
+                            <div class="th-social footer-social">
+                                <a href="https://www.facebook.com/"><i class="fab fa-facebook-f"></i></a>
+                                <a href="https://www.twitter.com/"><i class="fab fa-twitter"></i></a>
+                                <a href="https://www.linkedin.com/"><i class="fab fa-linkedin-in"></i></a>
+                                <a href="https://www.instagram.com/"><i class="fab fa-instagram"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-xl-2">
+                    <div class="widget widget_nav_menu footer-widget">
+                        <h3 class="widget_title">Liens rapides</h3>
+                        <div class="menu-all-pages-container">
+                            <ul class="menu">
+                                <li><a href="about.html">À propos</a></li>
+                                <li><a href="gallery.html">Galerie</a></li>
+                                <li><a href="testimonials.html">Témoignages</a></li>
+                                <li><a href="services.html">Nos Services</a></li>
+                                <li><a href="team.html">Notre Équipe</a></li>
+                                <li><a href="contact.html">Contact</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-xl-auto">
+                    <div class="widget footer-widget">
+                        <h3 class="widget_title">Coordonnées</h3>
+                        <div class="th-widget-about">
+                            <h4 class="footer-info-title">Téléphone</h4>
+                            <p class="footer-info"><i class="fa-sharp fa-solid fa-phone"></i><a class="text-inherit"
+                                    href="tel:+33123456789">+33 1 23 45 67 89</a></p>
+                            <h4 class="footer-info-title">Email</h4>
+                            <p class="footer-info"><i class="fas fa-envelope"></i><a class="text-inherit"
+                                    href="mailto:contact@goldentouch.com">contact{{ '@' }}goldentouch.com</a></p>
+                            <h4 class="footer-info-title">Adresse</h4>
+                            <p class="footer-info"><i class="fas fa-map-marker-alt"></i>123 Rue des Événements, 75001 Paris, France</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-xl-3">
+                    <div class="widget footer-widget">
+                        <h4 class="widget_title">Newsletter</h4>
+                        <div class="newsletter-widget">
+                            <p class="md-20">Abonnez-vous pour recevoir nos actualités et offres exclusives. Soyez les premiers informés de nos dernières prestations.</p>
+                            <div class="footer-search-contact mt-25">
+                                <form>
+                                    <input class="form-control" type="email" placeholder="Votre email">
+                                </form>
+                                <div class="footer-btn mt-10">
+                                    <button type="submit" class="th-btn style3 fw-btn">S'abonner <i
+                                            class="fa-regular fa-arrow-right"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="copyright-wrap">
+        <div class="container">
+            <p class="copyright-text">© 2023 <a href="#">GoldenTouch</a>. Tous droits réservés.</p>
+        </div>
+    </div>
+    <div class="footer-shape"><img src="assets/img/shape/footer_shape.png" alt="forme">
+    </div>
+</footer>
+
+
+
+
+
+    <div class="scroll-top">
+        <svg class="progress-circle svg-content" width="100%" height="100%" viewBox="-1 -1 102 102">
+            <path d="M50,1 a49,49 0 0,1 0,98 a49,49 0 0,1 0,-98"
+                style="transition: stroke-dashoffset 10ms linear 0s; stroke-dasharray: 307.919, 307.919; stroke-dashoffset: 307.919;">
+            </path>
+        </svg>
+    </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const quantiteInput = document.getElementById('quantite');
+    const prixUnitaire = {{ materiel.prixMat }};
+    const prixTotalElement = document.getElementById('prixTotal');
+    
+    // Calcul initial
+    updatePrixTotal();
+    
+    // Mise à jour quand la quantité change
+    quantiteInput.addEventListener('input', updatePrixTotal);
+    
+    function updatePrixTotal() {
+        const quantite = parseInt(quantiteInput.value) || 0;
+        const total = quantite * prixUnitaire;
+        prixTotalElement.textContent = total.toFixed(2) + ' TND';
+    }
+    
+    // Validation avant soumission
+    document.getElementById('reservationForm').addEventListener('submit', function(e) {
+        const quantite = parseInt(quantiteInput.value);
+        const stockDisponible = {{ materiel.quantiteMat }};
+        const evenement = document.getElementById('evenement').value;
+        
+        if (quantite > stockDisponible) {
+            e.preventDefault();
+            alert('La quantité demandée dépasse le stock disponible');
+            return false;
+        }
+        
+        if (!evenement) {
+            e.preventDefault();
+            alert('Veuillez sélectionner un événement');
+            return false;
+        }
+    });
+});
+</script>
+
+  <script src="{{ asset('Front/js/vendor/jquery-3.6.0.min.js') }}"></script>
+
+<script src="{{ asset('Front/js/slick.min.js') }}"></script>
+
+<script src="{{ asset('Front/js/bootstrap.min.js') }}"></script>
+
+<script src="{{ asset('Front/js/jquery.magnific-popup.min.js') }}"></script>
+
+<script src="{{ asset('Front/js/jquery.counterup.min.js') }}"></script>
+
+<script src="{{ asset('Front/js/imagesloaded.pkgd.min.js') }}"></script>
+<script src="{{ asset('Front/js/isotope.pkgd.min.js') }}"></script>
+
+<script src="{{ asset('Front/js/nice-select.min.js') }}"></script>
+
+<script src="{{ asset('Front/js/jquery.datetimepicker.min.js') }}"></script>
+
+<script src="{{ asset('Front/js/wow.min.js') }}"></script>
+
+<script src="{{ asset('Front/js/main.js') }}"></script>
+
+</body>
+
+</html>
+
+
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        {% if reservationLabels is not empty %}
+            const ctx = document.getElementById('reservationChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: {{ reservationLabels|json_encode|raw }},
+                    datasets: [{
+                        label: 'Réservations par mois',
+                        data: {{ reservationData|json_encode|raw }},
+                        backgroundColor: 'rgba(255, 193, 7, 0.7)',
+                        borderColor: 'rgba(255, 193, 7, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                precision: 0,
+                                stepSize: 1
+                            }
+                        }
+                    }
+                }
+            });
+        {% else %}
+            console.log("Aucune donnée de réservation disponible");
+        {% endif %}
+    });
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.delete-form').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            if (confirm('Are you sure you want to delete this event?')) {
+                const formElement = this;
+                fetch(formElement.action, {
+                    method: 'POST',
+                    body: new FormData(formElement)
+                })
+                .then(response => {
+                    if (response.ok) return response.json();
+                    throw new Error('Network error');
+                })
+                .then(data => {
+                    if (data.success) {
+                        const eventCard = formElement.closest('.col-xl-4.col-sm-6');
+                        eventCard.remove();
+
+                        // Update results count
+                        const remaining = document.querySelectorAll('.col-xl-4.col-sm-6').length;
+                        document.querySelector('.woocommerce-result-count').textContent = 
+                            `Showing ${remaining} results`;
+
+                        // Handle empty state
+                        if (remaining === 0) {
+                            document.querySelector('.row.gy-40').innerHTML = `
+                                <div class="col-12">
+                                    <div class="alert alert-info">No events found</div>
+                                </div>`;
+                        }
+                    } else {
+                        alert('Deletion failed');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Deletion failed - please try again');
+                });
+            }
+        });
+    });
+});
+</script>
