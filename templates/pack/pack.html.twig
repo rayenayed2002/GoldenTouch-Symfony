@@ -365,3 +365,57 @@
     </script>
 </body>
 </html>
+
+{% for pack in allPacks %}
+    <div class="pack-card">
+        <img class="pack-image" src="{{ pack.getPhoto() ? asset('uploads/packs/' ~ pack.getPhoto()) : asset('Front/img/placeholder.jpg') }}" alt="{{ pack.getNom() }}">
+        <div class="pack-content">
+            <h3 class="pack-title">{{ pack.nom }}</h3>
+            <div class="pack-description">{{ pack.description|length > 120 ? pack.description|slice(0, 120) ~ '...' : pack.description }}</div>
+            {% set avis = pack.avis is defined ? pack.avis : [] %}
+            {% set review_count = avis|length %}
+            {% set total_rating = 0 %}
+            {% for review in avis %}
+                {% set total_rating = total_rating + review.note %}
+            {% endfor %}
+            {% set average_rating = review_count > 0 ? (total_rating / review_count)|round(1) : 0 %}
+            <div class="star-rating" role="img" aria-label="Noté {{ average_rating }} sur 5">
+                <span>
+                    {% if review_count == 0 %}
+                        {% for i in 1..5 %}
+                            <i class="far fa-star text-warning"></i>
+                        {% endfor %}
+                        <strong class="rating">0</strong>/5
+                    {% else %}
+                        {% set full_stars = average_rating|round(0, 'floor') %}
+                        {% set has_half_star = (average_rating - full_stars) >= 0.25 and (average_rating - full_stars) < 0.75 %}
+                        {% set empty_stars = 5 - full_stars - (has_half_star ? 1 : 0) %}
+                        {% for i in 1..full_stars %}
+                            <i class="fas fa-star text-warning"></i>
+                        {% endfor %}
+                        {% if has_half_star %}
+                            <i class="fas fa-star-half-alt text-warning"></i>
+                        {% endif %}
+                        {% for i in 1..empty_stars %}
+                            <i class="far fa-star text-warning"></i>
+                        {% endfor %}
+                        <strong class="rating">{{ average_rating }}</strong>/5
+                    {% endif %}
+                </span>
+            </div>
+            <div class="pack-meta">
+                <span class="pack-capacity"><i class="fas fa-users"></i> {{ pack.capacite }} personnes</span>
+                <span class="price">{{ pack.getPrix()|number_format(2, '.', '') }}&nbsp;€</span>
+            </div>
+            <div class="pack-actions">
+                <a href="{{ path('app_pack_shop_details', {'id': pack.id}) }}" class="btn btn-outline-primary">Voir</a>
+                <a href="{{ path('app_pack_booking', {'id': pack.id}) }}" class="btn btn-primary">Réserver</a>
+            </div>
+        </div>
+    </div>
+{% endfor %}
+</div>
+</div>
+</div>
+</div>
+</div>
