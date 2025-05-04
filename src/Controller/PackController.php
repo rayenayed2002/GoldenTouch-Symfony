@@ -202,13 +202,12 @@ class PackController extends AbstractController
         if (!$user) {
             throw $this->createAccessDeniedException('You must be logged in to add an event.');
         }
-        // Create form instance with HTML5 validation disable
+    
         $form = $this->createForm(BookingType::class, null, [
             'attr' => ['novalidate' => 'novalidate']
         ]);
         $form->handleRequest($request);
-
-        // Handle form submission
+    
         if ($form->isSubmitted()) {
             if ($form->isValid()) {
                 $formData = $form->getData();
@@ -220,10 +219,21 @@ class PackController extends AbstractController
                     // Set event ID to match pack ID
                     $event = $entityManager->getReference('App\Entity\Event', $pack->getId());
                     $demande->setEvent($event);
-                    $demande->setDateDemande(new \DateTime($clock->now()->format('Y-m-d H:i:s')));
+                    
+                    // Get the date from form and ensure it's a DateTime object
+                    $eventDate = $formData['eventDate'];
+                    if (!$eventDate instanceof \DateTimeInterface) {
+                        if (is_string($eventDate)) {
+                            $eventDate = new \DateTime($eventDate);
+                        } else {
+                            throw new \InvalidArgumentException('Invalid date format');
+                        }
+                    }
+                    $demande->setDateDemande($eventDate);
+                    
                     $demande->setUser($user);
                     $demande->setStatut('EN_ATTENTE');
-
+    
                     $userMessage = $formData['message'];
                     $session = $request->getSession();
                     $toxicityResult = $this->toxicityDetectionService->detect($userMessage);
@@ -236,11 +246,10 @@ class PackController extends AbstractController
                             break;
                         }
                     }
-                    // Block toxic message at first submission
+    
                     if ($isToxic) {
                         $lastToxicMessage = $session->get('last_toxic_message');
                         if ($lastToxicMessage !== $userMessage) {
-                            // First time toxic message, ask user to correct and STOP processing
                             $session->set('last_toxic_message', $userMessage);
                             $errorMsg = 'Votre message contient des propos inappropriés. Veuillez les corriger avant de soumettre.';
                             if ($request->isXmlHttpRequest()) {
@@ -252,7 +261,6 @@ class PackController extends AbstractController
                             $this->addFlash('error', $errorMsg);
                             return $this->redirectToRoute('app_pack_booking', ['id' => $pack->getId()]);
                         } else {
-                            // User resubmitted same toxic message, auto-mask and proceed
                             $adminMessage = $this->toxicityDetectionService->maskToxicWords($userMessage, array_merge($labelsEn, $labelsFr));
                             $session->remove('last_toxic_message');
                         }
@@ -260,8 +268,7 @@ class PackController extends AbstractController
                         $adminMessage = $this->grammarCorrectionService->correct($userMessage) ?: $userMessage;
                         $session->remove('last_toxic_message');
                     }
-
-                    // Only reach this point if message is not toxic or is masked
+    
                     $notification = new NotificationsAdmin();
                     $adminId = $pack->getAdminId();
                     $adminUser = $entityManager->getRepository(\App\Entity\User::class)->find($adminId);
@@ -281,8 +288,7 @@ class PackController extends AbstractController
                     $entityManager->persist($demande);
                     $entityManager->persist($notification);
                     $entityManager->flush();
-
-                    // Handle response
+    
                     if ($request->isXmlHttpRequest()) {
                         return new JsonResponse([
                             'success' => true, 
@@ -290,11 +296,10 @@ class PackController extends AbstractController
                             'redirect' => $this->generateUrl('app_pack_booking', ['id' => $pack->getId()])
                         ]);
                     }
-
+    
                     $this->addFlash('success', 'Votre demande a été enregistrée avec succès!');
                     return $this->redirectToRoute('app_pack_booking', ['id' => $pack->getId()]);
                 } catch (\Exception $e) {
-                    // Error handling
                     if ($request->isXmlHttpRequest()) {
                         return new JsonResponse([
                             'success' => false, 
@@ -306,7 +311,6 @@ class PackController extends AbstractController
                     return $this->redirectToRoute('app_pack_booking', ['id' => $pack->getId()]);
                 }
             } else {
-                // Form invalid handling
                 if ($request->isXmlHttpRequest()) {
                     $errors = [];
                     foreach ($form->getErrors(true) as $error) {
@@ -316,18 +320,15 @@ class PackController extends AbstractController
                     return new JsonResponse(['success' => false, 'errors' => $errors]);
                 }
                 
-                // For regular form submission, errors will be displayed in template
                 $this->addFlash('warning', 'Veuillez corriger les erreurs dans le formulaire');
             }
         }
-
-        // Render form template
+    
         return $this->render('pack/booking.html.twig', [
             'pack' => $pack,
             'form' => $form->createView()
         ]);
     }
-    
 
     #[Route('/pack/show/{id}', name: 'app_pack_show')]
     public function show(Pack $pack): Response

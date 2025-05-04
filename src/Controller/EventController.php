@@ -182,39 +182,22 @@ class EventController extends AbstractController
     if (!$user) {
         throw $this->createAccessDeniedException('You must be logged in to add an event.');
     }
-    // Query 1: Events where the user is the owner
-    $qbOwner = $entityManager->createQueryBuilder() 
-        ->select('e')
-        ->from(Event::class, 'e')
-        ->leftJoin('e.paniers', 'p')
-        ->leftJoin('e.detailPayments', 'dc')
-        ->where('e.user = :userId')
-        ->andWhere('p.id IS NULL')
-        ->andWhere('dc.id IS NULL')
-        ->setParameter('userId', $user->getId());
-
-        $eventsOwner = $qbOwner->getQuery()->getResult();
-
-        // Query 2: Events for which the user has a CONFIRMÉ DemandePack
-        $qbDemande = $entityManager->createQueryBuilder()
+    // Query to get all events with pending DemandePacks for the current user
+    $qbDemande = $entityManager->createQueryBuilder()
         ->select('DISTINCT e')
         ->from(Event::class, 'e')
-        ->join('e.packs', 'pack')  // Changed to proper relationship
-        ->join('pack.demandePacks', 'dp')  // Join through Pack to DemandePack
+        ->join('e.packs', 'pack')
+        ->join('pack.demandePacks', 'dp')
         ->leftJoin('e.paniers', 'p')
         ->leftJoin('e.detailPayments', 'dc')
-        ->where('dp.user = :userId')
-        ->andWhere('dp.statut = :statutConfirme')
+        ->where('dp.statut = :statutEnAttente')
+        ->andWhere('dp.user = :user')
         ->andWhere('p.id IS NULL')
         ->andWhere('dc.id IS NULL')
-        ->setParameter('userId', $user)
-        ->setParameter('statutConfirme', 'CONFIRMÉ');
+        ->setParameter('statutEnAttente', 'EN_ATTENTE_CONFIRMATION_UTILISATEUR')
+        ->setParameter('user', $user);
 
-        $eventsDemande = $qbDemande->getQuery()->getResult();
-
-    // Merge and deduplicate events
-    $events = array_filter(array_merge($eventsOwner, $eventsDemande), fn($item) => $item instanceof Event);
-    $events = array_unique($events, SORT_REGULAR);
+    $events = $qbDemande->getQuery()->getResult();
 
     
     // Sort the merged events array manually since we are not using a query builder
