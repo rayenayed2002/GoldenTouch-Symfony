@@ -309,12 +309,56 @@
                         </div>
                         
                        
-                        <div class="actions">
-                           
-                           <button class="th-btn" onclick="window.location.href='{{ path('app_pack_booking', {'id': pack.id}) }}'">
-    Ajouter au panier
-</button>
+                        <button class="th-btn" onclick="window.location.href='{{ path('app_pack_booking', {'id': pack.id}) }}'">
+                            Ajouter au panier
+                        </button>
+                        <div style="margin-top:10px;">
+                            <button class="th-btn" id="facebook-share-btn" type="button" style="background:#4267B2;color:#fff;">
+                                <i class="fab fa-facebook-f"></i> Facebook
+                            </button>
+                            <button class="th-btn" id="twitter-share-btn" type="button" style="background:#1da1f2;color:#fff;margin-left:5px;">
+                                <i class="fab fa-twitter"></i> Twitter
+                            </button>
+                            <button class="th-btn" id="whatsapp-share-btn" type="button" style="background:#25d366;color:#fff;margin-left:5px;">
+                                <i class="fab fa-whatsapp"></i> WhatsApp
+                            </button>
+                            <button class="th-btn" id="linkedin-share-btn" type="button" style="background:#0077b5;color:#fff;margin-left:5px;">
+                                <i class="fab fa-linkedin-in"></i> LinkedIn
+                            </button>
                         </div>
+                        <script>
+                        document.addEventListener('DOMContentLoaded', function() {
+                            var absoluteUrl = '{{ url('app_pack_show', {'id': pack.id}, 'ABSOLUTE_URL') }}';
+                            var fbBtn = document.getElementById('facebook-share-btn');
+                            var twBtn = document.getElementById('twitter-share-btn');
+                            var waBtn = document.getElementById('whatsapp-share-btn');
+                            var liBtn = document.getElementById('linkedin-share-btn');
+                            if (fbBtn) {
+                                fbBtn.addEventListener('click', function() {
+                                    var fbUrl = 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(absoluteUrl);
+                                    window.open(fbUrl, '_blank', 'width=600,height=400');
+                                });
+                            }
+                            if (twBtn) {
+                                twBtn.addEventListener('click', function() {
+                                    var twUrl = 'https://twitter.com/intent/tweet?url=' + encodeURIComponent(absoluteUrl) + '&text=' + encodeURIComponent('{{ pack.nom }}');
+                                    window.open(twUrl, '_blank', 'width=600,height=400');
+                                });
+                            }
+                            if (waBtn) {
+                                waBtn.addEventListener('click', function() {
+                                    var waUrl = 'https://wa.me/?text=' + encodeURIComponent('{{ pack.nom }} ' + absoluteUrl);
+                                    window.open(waUrl, '_blank', 'width=600,height=400');
+                                });
+                            }
+                            if (liBtn) {
+                                liBtn.addEventListener('click', function() {
+                                    var liUrl = 'https://www.linkedin.com/sharing/share-offsite/?url=' + encodeURIComponent(absoluteUrl);
+                                    window.open(liUrl, '_blank', 'width=600,height=400');
+                                });
+                            }
+                        });
+                        </script>
                        
                     </div>
                 </div>
