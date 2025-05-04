@@ -298,8 +298,12 @@
 
                         <h2 class="product-title">{{pack.nom}}</h2>
                         <div class="product-rating">
-                            <div class="star-rating" role="img" aria-label="Rated 5.00 out of 5"><span style="width:100%">Rated <strong class="rating">5.00</strong> out of 5 based on <span class="rating">1</span> customer rating</span></div>
-                            <a href="#reviews" class="woocommerce-review-link">(<span class="count">3</span> customer reviews)</a>
+                            {% set reviewCount = avis|length %}
+                            {% set averageRating = reviewCount > 0 ? (avis|map(a => a.note)|reduce((carry, item) => carry + item, 0) / reviewCount) : 0 %}
+                            <div class="star-rating" role="img" aria-label="Rated {{ averageRating|number_format(2, '.', ',') }} out of 5">
+                                <span style="width:{{ (averageRating / 5 * 100)|number_format(0) }}%">Rated <strong class="rating">{{ averageRating|number_format(2, '.', ',') }}</strong> out of 5 based on <span class="rating">{{ reviewCount }}</span> customer rating{{ reviewCount == 1 ? '' : 's' }}</span>
+                            </div>
+                            <a href="#reviews" class="woocommerce-review-link">(<span class="count">{{ reviewCount }}</span> customer review{{ reviewCount == 1 ? '' : 's' }})</a>
                         </div>
                         <p class="text">{{pack.description}}</p>
                         <div class="product-meta">
