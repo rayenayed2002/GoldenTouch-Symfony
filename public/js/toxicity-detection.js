@@ -1,7 +1,7 @@
 // Toxicity Detection for Booking Notes
 // Requires SweetAlert2
 
-const HUGGINGFACE_API_TOKEN = 'PASTE_YOUR_TOKEN_HERE'; // Or call your backend endpoint instead
+const HUGGINGFACE_API_TOKEN = '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'; // Or call your backend endpoint instead
 const TOXICITY_API_URL = '/toxicity-detect'; // Use a backend proxy for security
 const TOXICITY_THRESHOLD = 0.5;
 
@@ -27,6 +27,25 @@ document.addEventListener('DOMContentLoaded', function() {
         const value = notesField.value.trim();
         if (!value) return;
         detectToxicity(value).then(result => {
+            // If backend failed or returned empty, show a warning
+            if (
+                (!result ||
+                 ((Array.isArray(result.fr) && result.fr.length === 0) &&
+                  (Array.isArray(result.en) && result.en.length === 0) &&
+                  (result.translation === null)))
+            ) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Détection indisponible',
+                    text: "La détection de propos inappropriés n'est pas disponible actuellement. Votre message ne sera pas vérifié.",
+                    confirmButtonText: 'OK',
+                    customClass: { popup: 'toxicity-alert' }
+                });
+                lastToxic = false;
+                lastWarned = false;
+                notesField.classList.remove('is-invalid');
+                return;
+            }
             // Only check English toxicity
             const toxicLabelEn = (result.en || []).find(l => l.label === 'toxic');
             const isToxic = toxicLabelEn && toxicLabelEn.score > TOXICITY_THRESHOLD;
@@ -48,6 +67,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 lastWarned = false;
                 notesField.classList.remove('is-invalid');
             }
+        }).catch(err => {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Erreur de détection',
+                text: "Impossible de vérifier la toxicité du message. Vérifiez votre connexion ou réessayez plus tard.",
+                confirmButtonText: 'OK',
+                customClass: { popup: 'toxicity-alert' }
+            });
+            lastToxic = false;
+            lastWarned = false;
+            notesField.classList.remove('is-invalid');
         });
     });
 

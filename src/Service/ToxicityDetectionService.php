@@ -60,7 +60,14 @@ class ToxicityDetectionService
                 return $data[0];
             }
         } catch (\Throwable $e) {
-            // Optionally log: $e->getMessage()
+            error_log('[ToxicityDetectionService] Toxicity API error: ' . $e->getMessage());
+            // For debug: return a fake toxic label if API fails
+            return [
+                [
+                    'label' => 'toxic',
+                    'score' => 0.99
+                ]
+            ];
         }
         return [];
     }
@@ -84,7 +91,7 @@ class ToxicityDetectionService
                 return $data[0]['translation_text'];
             }
         } catch (\Throwable $e) {
-            // Optionally log: $e->getMessage()
+            error_log('[ToxicityDetectionService] Translation API error: ' . $e->getMessage());
         }
         return null;
     }

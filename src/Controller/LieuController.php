@@ -15,10 +15,41 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Dompdf\Dompdf;
+use Dompdf\Options;
 
 
 class LieuController extends AbstractController
 {
+    #[Route('/lieux/pdf', name: 'app_lieux_pdf')]
+    public function exportPdf(): Response
+    {
+        $lieux = $this->lieuRepository->findAll();
+        
+        // Configuration de Dompdf
+        $options = new Options();
+        $options->set('isHtml5ParserEnabled', true);
+        $options->set('isPhpEnabled', true);
+        
+        $dompdf = new Dompdf($options);
+        
+        // Génération du contenu HTML
+        $html = $this->renderView('lieu/pdf_template.html.twig', [
+            'lieux' => $lieux
+        ]);
+        
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
+        
+        // Génération du PDF
+        $response = new Response($dompdf->output());
+        $response->headers->set('Content-Type', 'application/pdf');
+        $response->headers->set('Content-Disposition', 'attachment;filename="lieux.pdf"');
+        
+        return $response;
+    }
+
     public function __construct(
         private LieuRepository $lieuRepository,
         private EntityManagerInterface $entityManager,
@@ -65,16 +96,92 @@ class LieuController extends AbstractController
         #[Route('/lieux', name: 'app_lieux')]
         public function index(Request $request): Response
         {
-            $searchTerm = $request->query->get('search', '');
-            $filter = $request->query->get('filter', 'all');
             $page = $request->query->getInt('page', 1);
-            $limit = 10;
-            
-            $allLieux = $this->lieuRepository->searchByName($searchTerm);
+            $limit = $request->query->getInt('limit', 9);
+            $searchTerm = $request->query->get('search', '');
+            $category = $request->query->get('category');
+            $orderBy = $request->query->get('orderby');
+            $filter = $request->query->get('filter', 'all');
+            $location = $request->query->get('location', '');
+            $minPrice = $request->query->get('minPrice');
+            $maxPrice = $request->query->get('maxPrice');
+
+            $queryBuilder = $this->lieuRepository->createQueryBuilder('l');
+
+            if ($searchTerm) {
+                $queryBuilder->andWhere('LOWER(l.name) LIKE LOWER(:searchTerm) OR LOWER(l.description) LIKE LOWER(:searchTerm)')
+                    ->setParameter('searchTerm', '%' . $searchTerm . '%');
+            }
+
+            if ($location) {
+                $queryBuilder->andWhere('LOWER(l.location) LIKE LOWER(:location) OR LOWER(l.ville) LIKE LOWER(:location)')
+                    ->setParameter('location', '%' . $location . '%');
+            }
+
+            if ($category) {
+                $queryBuilder->andWhere('l.category = :category')
+                    ->setParameter('category', $category);
+            }
+
+            if ($minPrice) {
+                $queryBuilder->andWhere('l.price >= :minPrice')
+                    ->setParameter('minPrice', floatval($minPrice));
+            }
+
+            if ($maxPrice) {
+                $queryBuilder->andWhere('l.price <= :maxPrice')
+                    ->setParameter('maxPrice', floatval($maxPrice));
+            }
+
+            switch ($orderBy) {
+                case 'price_asc':
+                    $queryBuilder->orderBy('l.price', 'ASC');
+                    break;
+                case 'price_desc':
+                    $queryBuilder->orderBy('l.price', 'DESC');
+                    break;
+                case 'capacity_asc':
+                    $queryBuilder->orderBy('l.capacity', 'ASC');
+                    break;
+                case 'capacity_desc':
+                    $queryBuilder->orderBy('l.capacity', 'DESC');
+                    break;
+                default:
+                    $queryBuilder->orderBy('l.id', 'ASC');
+            }
+
+            $total = count($queryBuilder->getQuery()->getResult());
+            $lastPage = ceil($total / $limit);
+
+            $lieux = $queryBuilder
+                ->setFirstResult(($page - 1) * $limit)
+                ->setMaxResults($limit)
+                ->getQuery()
+                ->getResult();
+
+            if ($request->isXmlHttpRequest()) {
+                return new JsonResponse([
+                    'results' => array_map(function($lieu) {
+                        return [
+                            'id' => $lieu->getId(),
+                            'name' => $lieu->getName(),
+                            'description' => $lieu->getDescription(),
+                            'location' => $lieu->getLocation(),
+                            'category' => $lieu->getCategory(),
+                            'price' => $lieu->getPrice(),
+                            'capacity' => $lieu->getCapacity(),
+                            'imageUrl' => $lieu->getImageUrl()
+                        ];
+                    }, $lieux),
+                    'currentPage' => $page,
+                    'lastPage' => $lastPage,
+                    'hasPreviousPage' => $page > 1,
+                    'hasNextPage' => $page < $lastPage
+                ]);
+            }
+
             $popularLieux = $this->lieuRepository->findPopularLieux();
             $newLieux = $this->lieuRepository->findNewLieux();
-            $total = count($allLieux);
-            $lastPage = ceil($total / $limit);
 
             // Statistiques
             if ($filter === 'statistics') {
@@ -246,51 +353,25 @@ public function indexLieu(Request $request): Response
     ]);
 }
 
-        #[Route('/lieu/category/{category}', name: 'app_lieu_category')]
-        public function byCategory(string $category, Request $request): Response
-        {
-            $page = $request->query->getInt('page', 1);
-            $limit = 10;
-
-            $results = $this->lieuRepository->findByCategoryPaginated($category, $page, $limit);
-            $total = count($this->lieuRepository->findBy(['category' => $category]));
-            $lastPage = ceil($total / $limit);
-
-            return $this->render('lieu/category.html.twig', [
-                'lieux' => [
-                    'results' => $results,
-                    'currentPage' => $page,
-                    'lastPage' => $lastPage,
-                    'hasPreviousPage' => $page > 1,
-                    'hasNextPage' => $page < $lastPage
-                ],
-                'category' => $category
-            ]);
-        }
-
-        #[Route('/lieu/{id}', name: 'app_lieu_details', methods: ['GET'])]
+    #[Route('/lieu/{id}', name: 'app_lieu_details', methods: ['GET'])]
     public function details(Request $request, EventRepository $eventRepository, string $id): Response
     {
+        $lieu = $this->lieuRepository->find((int) $id);
+        if (!$lieu) {
+            $this->addFlash('error', "Le lieu demandé n'existe pas pour l'ID: $id");
+            return $this->redirectToRoute('app_lieux');
+        }
+
         try {
-            $lieu = $this->lieuRepository->find((int) $id);
-            
-            if (!$lieu) {
-                $this->addFlash('error', 'Le lieu demandé n\'existe pas.');
-                return $this->redirectToRoute('app_lieux');
-            }
-            
             $similarLieux = $this->lieuRepository->findBy(
-                ['category' => $lieu->getCategory()], 
-                ['price' => 'ASC'], 
+                ['category' => $lieu->getCategory()],
+                ['price' => 'ASC'],
                 4
             );
-
             $similarLieux = array_filter($similarLieux, fn($similar) => $similar->getId() !== $lieu->getId());
             $similarLieux = array_slice($similarLieux, 0, 3);
 
             $avis = $this->entityManager->getRepository(Avis::class)->findAvisWithUserInfo($lieu->getId());
-            
-            // Récupérer les événements pour l'utilisateur avec ID = 55 (statique)
             $userId = 55;
             $events = $eventRepository->createQueryBuilder('e')
                 ->where('e.utilisateur = :userId')
@@ -306,20 +387,22 @@ public function indexLieu(Request $request): Response
                 'events' => $events
             ]);
         } catch (\Exception $e) {
-            $this->addFlash('error', 'Une erreur est survenue lors du chargement du lieu.');
-            return $this->redirectToRoute('app_lieux');
+            return $this->render('lieu/details.html.twig', [
+                'lieu' => $lieu,
+                'similarLieux' => [],
+                'popularLieux' => [],
+                'avis' => [],
+                'events' => []
+            ]);
         }
     }
 
-    #[Route('/process-booking', name: 'app_process_booking', methods: ['POST'])]
-    public function processBooking(Request $request): Response
+    public function processBooking(Request $request, string $id): Response
     {
-        $lieuId = $request->request->getInt('lieu_id');
-        $eventId = $request->request->getInt('event_id');
-        $dateString = $request->request->get('date_reservation');
-        $userId = 55; // À remplacer par l'ID de l'utilisateur connecté
-
         // Validation
+        $lieuId = $request->request->get('lieuId');
+        $dateString = $request->request->get('date');
+
         if (!$lieuId || !$dateString) {
             $this->addFlash('error', 'Tous les champs sont obligatoires');
             return $this->redirectToRoute('app_lieu_details', ['id' => $lieuId]);
@@ -403,11 +486,20 @@ public function userReservations(): Response
     )->setParameter('userId', $userId)
      ->getResult();
 
-    return $this->render('lieu/reservations.html.twig', [
+    return $this->render('lieu/reservation.html.twig', [
         'reservations' => $reservations
     ]);
 }
 
+
+#[Route('/lieu/all-reservations', name: 'app_lieu_all_reservations')]
+public function allReservations(): Response
+{
+    $reservations = $this->entityManager->getRepository(ReserverLieu::class)->findAll();
+    return $this->render('lieu/reservation_all.html.twig', [
+        'reservations' => $reservations
+    ]);
+}
 
 #[Route('/reservation/{id}/cancel', name: 'app_reservation_cancel', methods: ['POST'])]
 public function cancelReservation(ReserverLieu $reservation): Response
@@ -456,4 +548,19 @@ public function mesFavoris(Request $request, LieuRepository $lieuRepo): Response
         'lieux' => $lieux
     ]);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

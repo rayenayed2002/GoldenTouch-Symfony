@@ -303,14 +303,14 @@
                                         <div class="review-item {% if review.note >= 4 %}review-positive{% elseif review.note <= 2 %}review-negative{% endif %}">
                                             <div class="review-header">
                                                 <div class="review-avatar">
-                                                    {% if review.utilisateur is defined and review.utilisateur.avatar is defined %}
-                                                        <img src="{{ review.utilisateur.avatar }}" alt="User avatar">
+                                                    {% if review.user is defined and review.user.avatar is defined %}
+                                                        <img src="{{ review.user.avatar }}" alt="User avatar">
                                                     {% else %}
-                                                        <span>{{ review.utilisateur.prenom|first }}{{ review.utilisateur.nom|first }}</span>
+                                                        <span>{{ review.user.prenom|first }}{{ review.user.nom|first }}</span>
                                                     {% endif %}
                                                 </div>
                                                 <div class="review-meta">
-                                                    <div class="review-user">{% if review.utilisateur is defined %}{{ review.utilisateur.prenom }} {{ review.utilisateur.nom }}{% else %}Anonymous{% endif %}</div>
+                                                    <div class="review-user">{% if review.user is defined %}{{ review.user.prenom }} {{ review.user.nom }}{% else %}Anonymous{% endif %}</div>
                                                     <div class="review-date">{{ review.dateCreation|date('d/m/Y H:i') }}</div>
                                                 </div>
                                             </div>

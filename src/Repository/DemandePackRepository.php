@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Repository;
-
+use App\Entity\User;
 use App\Entity\DemandePack;
 use App\Enum\StatusEnum;
 use DateInterval;
@@ -24,7 +24,7 @@ class DemandePackRepository extends ServiceEntityRepository
                          COUNT(dp.id) as purchases, 
                          COALESCE(AVG(a.note), 0) as avg_rating,
                          p.prix as price,
-                         COUNT(DISTINCT dp.utilisateur) as unique_buyers,
+                         COUNT(DISTINCT dp.user) as unique_buyers,
                          SUM(p.prix) as total_revenue')
                 ->join('dp.pack', 'p')
                 ->join('p.event', 'e')
@@ -107,7 +107,7 @@ class DemandePackRepository extends ServiceEntityRepository
                     COUNT(dp.id) as total_sales,
                     SUM(p.prix) as total_revenue,
                     AVG(p.prix) as avg_revenue_per_pack,
-                    COUNT(DISTINCT dp.utilisateur) as unique_buyers
+                    COUNT(DISTINCT dp.user) as unique_buyers
                 ')
                 ->join('dp.pack', 'p');
 
@@ -172,7 +172,7 @@ class DemandePackRepository extends ServiceEntityRepository
                     DATE(dp.dateCreation) as date,
                     COUNT(dp.id) as purchases,
                     SUM(p.prix) as revenue,
-                    COUNT(DISTINCT dp.utilisateur) as unique_buyers
+                    COUNT(DISTINCT dp.user) as unique_buyers
                 ')
                 ->join('dp.pack', 'p')
                 ->where('dp.dateCreation BETWEEN :start AND :end')

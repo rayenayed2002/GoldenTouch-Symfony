@@ -46,251 +46,204 @@
     <link rel="stylesheet" href="{{ asset('css/glassmorphism.css') }}">
 
     <style>
-        /* --- Enhanced Customize Pack Styles --- */
-        .enhanced-ui input.form-control, .enhanced-ui textarea.form-control, .enhanced-ui select.form-select {
+        /* Form Section Styles */
+        .form-section {
+            display: none;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+
+        .form-section.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Step Indicator Styles */
+        .step-indicator {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .step {
+            flex: 1;
+            text-align: center;
+            position: relative;
+        }
+
+        .step-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            color: #fff;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .step.active .step-circle {
+            background-color: #7367f0;
+            transform: scale(1.2);
+            box-shadow: 0 0 0 5px rgba(115, 103, 240, 0.2);
+        }
+
+        .step.completed .step-circle {
+            background-color: #28c76f;
+        }
+
+        .step-title {
+            font-size: 0.85rem;
+            color: #6e6b7b;
+            transition: all 0.3s ease;
+        }
+
+        .step.active .step-title {
+            color: #7367f0;
+            font-weight: 600;
+        }
+
+        .step-connector {
+            position: absolute;
+            top: 20px;
+            height: 2px;
+            background-color: #e0e0e0;
+            width: 100%;
+            left: -50%;
+            z-index: -1;
+        }
+
+        .step:first-child .step-connector {
+            display: none;
+        }
+
+        .step.completed .step-connector {
+            background-color: #28c76f;
+        }
+
+        /* Button Styles */
+        .btn {
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(115, 103, 240, 0.15);
+        }
+
+        /* Enhanced UI Styles */
+        .enhanced-ui input.form-control,
+        .enhanced-ui textarea.form-control,
+        .enhanced-ui select.form-select {
             border-radius: 12px;
             border: 1.5px solid #e0e6ed;
-            background: rgba(255,255,255,0.97);
-            box-shadow: 0 2px 8px rgba(115,103,240,0.04);
+            background: rgba(255, 255, 255, 0.97);
+            box-shadow: 0 2px 8px rgba(115, 103, 240, 0.04);
             transition: border-color 0.2s, box-shadow 0.2s;
             font-size: 1.08rem;
             padding: 0.7rem 1.1rem;
         }
-        .enhanced-ui input.form-control:focus, .enhanced-ui textarea.form-control:focus, .enhanced-ui select.form-select:focus {
+
+        .enhanced-ui input.form-control:focus,
+        .enhanced-ui textarea.form-control:focus,
+        .enhanced-ui select.form-select:focus {
             border-color: #7367f0;
-            box-shadow: 0 0 0 2px rgba(115,103,240,0.13);
+            box-shadow: 0 0 0 2px rgba(115, 103, 240, 0.13);
             background: #fff;
         }
-        .enhanced-ui .btn {
-            border-radius: 10px;
-            font-weight: 600;
-            letter-spacing: 0.03em;
-            box-shadow: 0 2px 12px rgba(115,103,240,0.07);
-        }
-        .enhanced-ui .btn-primary {
-            background: linear-gradient(90deg,#7367f0 0%,#9e95f5 100%);
+
+        /* Card Styles */
+        .card {
+            transition: all 0.3s ease;
             border: none;
-        }
-        .enhanced-ui .btn-primary:hover, .enhanced-ui .btn-primary:focus {
-            background: linear-gradient(90deg,#6c63e2 0%,#7c72e8 100%);
-            box-shadow: 0 4px 16px rgba(115,103,240,0.12);
-        }
-        .enhanced-ui .btn-secondary {
-            background: #f3f4f6;
-            color: #7367f0;
-            border: none;
-        }
-        .enhanced-ui .btn-secondary:hover, .enhanced-ui .btn-secondary:focus {
-            background: #e7e9f9;
-            color: #5346b8;
-        }
-        .enhanced-ui .form-label, .enhanced-ui label {
-            font-weight: 500;
-            color: #4f4f4f;
-        }
-        .enhanced-ui .input-group-text {
-            background: #f6f6fa;
-            border-radius: 8px 0 0 8px;
-            border: 1.5px solid #e0e6ed;
-            color: #7367f0;
-        }
-        .enhanced-ui .table {
-            border-radius: 12px;
             overflow: hidden;
-            background: rgba(255,255,255,0.98);
-            box-shadow: 0 2px 12px rgba(115,103,240,0.04);
         }
-        .enhanced-ui .table th, .enhanced-ui .table td {
-            vertical-align: middle;
-            font-size: 1.02rem;
-            padding: 0.75rem 1.1rem;
-        }
-        .enhanced-ui .table-hover tbody tr:hover {
-            background: #f7f5ff;
-        }
-        .enhanced-ui .card {
-            border-radius: 20px;
-        }
-        .enhanced-ui .glass-panel {
-            border-radius: 20px;
-        }
-        .enhanced-ui .card-header {
+
+        .card-header {
             border-bottom: none;
             background: transparent;
         }
-        .enhanced-ui .card-title {
+
+        .card-title {
             font-weight: 700;
             color: #7367f0;
         }
-        .enhanced-ui .form-floating > label {
-            color: #7367f0;
-            font-weight: 500;
-        }
-        .enhanced-ui .select2-container--default .select2-selection--single {
-            border-radius: 12px;
-            border: 1.5px solid #e0e6ed;
-            height: 48px;
-            padding: 8px 16px;
-        }
-        .enhanced-ui .select2-container--default .select2-selection--single .select2-selection__rendered {
-            color: #4f4f4f;
-            line-height: 30px;
-        }
-        .enhanced-ui .select2-container--default .select2-selection--single .select2-selection__arrow {
-            height: 46px;
-            right: 10px;
-        }
-        .enhanced-ui .form-control[readonly] {
-            background-color: #f7f7fa;
-            color: #b0b3c7;
-        }
-        .enhanced-ui h5, .enhanced-ui h6 {
-            color: #5346b8;
-        }
-        .enhanced-ui .badge {
-            font-size: 1rem;
-            border-radius: 8px;
-            padding: 0.5em 1em;
-        }
-        .enhanced-ui .table thead th {
-            background: #f7f7fa;
-            color: #7367f0;
-            font-weight: 700;
-            border-bottom: 2px solid #e0e6ed;
-        }
-        .enhanced-ui .table td .btn {
-            margin: 0 2px;
-        }
-        .enhanced-ui .select2-container {
-            width: 100% !important;
-        }
-        .enhanced-ui .input-group .form-control {
-            border-radius: 12px 0 0 12px;
-        }
-        .enhanced-ui .input-group .btn {
-            border-radius: 0 12px 12px 0;
-        }
-        @media (max-width: 767px) {
-            .enhanced-ui .card, .enhanced-ui .glass-panel {
-                border-radius: 12px;
-            }
-            .enhanced-ui .table th, .enhanced-ui .table td {
-                padding: 0.55rem 0.7rem;
-            }
-        }
-        /* --- End Enhanced Styles --- */
 
-        .glassmorphism-ui {
-            backdrop-filter: blur(10px);
-            background: rgba(255, 255, 255, 0.7);
-            border: 1px solid rgba(255, 255, 255, 0.18);
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
-            transition: all 0.3s ease;
+        /* Animation Effects */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
         }
 
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.85);
-            border-radius: 16px;
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        .slide-up {
+            animation: slideUp 0.5s ease-in-out;
         }
 
-        .glass-panel:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 35px rgba(0, 0, 0, 0.15);
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
-        .form-control, .form-select {
-            backdrop-filter: blur(4px);
-            background: rgba(255, 255, 255, 0.9);
-            border: 1px solid rgba(255, 255, 255, 0.18);
-            transition: all 0.3s ease;
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
 
-        .form-control:focus, .form-select:focus {
-            box-shadow: 0 0 0 0.25rem rgba(115, 103, 240, 0.15);
-            border-color: #7367f0;
-            background: rgba(255, 255, 255, 0.95);
-        }
-
-        .btn {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn::after {
-            content: '';
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            pointer-events: none;
-            background-image: radial-gradient(circle, #fff 10%, transparent 10.01%);
-            transform: scale(10, 10);
-            opacity: 0;
-            transition: transform .5s, opacity 1s;
-        }
-
-        .btn:active::after {
-            transform: scale(0, 0);
-            opacity: .3;
-            transition: 0s;
-        }
-
-        .table {
-            border-collapse: separate;
-            border-spacing: 0 8px;
-        }
-
-        .table tr {
-            transition: transform 0.2s ease;
-        }
-
-        .table tr:hover {
-            transform: scale(1.01);
-        }
-
-        @keyframes shimmer {
-            0% { background-position: -1000px 0; }
-            100% { background-position: 1000px 0; }
-        }
-
-        .loading {
-            animation: shimmer 2s infinite linear;
-            background: linear-gradient(to right, #f6f7f8 8%, #edeef1 18%, #f6f7f8 33%);
-            background-size: 1000px 100%;
-        }
-
-        .scroll-progress {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 3px;
-            z-index: 1000;
-            background: linear-gradient(to right, #7367f0, #9754cb);
-            transform-origin: 0 50%;
-            transition: transform 0.2s ease;
-        }
-
+        /* Responsive Adjustments */
         @media (max-width: 768px) {
-            .glass-panel {
+            .step-title {
+                font-size: 0.7rem;
+            }
+            
+            .step-circle {
+                width: 35px;
+                height: 35px;
+            }
+            
+            .card {
                 margin: 10px;
-                padding: 15px;
             }
-            
-            .row.g-3 {
-                margin: 0 5px;
-            }
-            
-            .btn {
-                width: 100%;
-                margin: 5px 0;
-            }
+        }
+
+        .selection-container {
+            scrollbar-width: thin;
+            scrollbar-color: rgba(115, 103, 240, 0.2) transparent;
+        }
+        
+        .selection-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .selection-container::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        .selection-container::-webkit-scrollbar-thumb {
+            background-color: rgba(115, 103, 240, 0.2);
+            border-radius: 3px;
+        }
+
+        .toggle-section {
+            transition: transform 0.3s ease;
+        }
+
+        .toggle-section.collapsed {
+            transform: rotate(-180deg);
+        }
+
+        .card {
+            transition: all 0.3s ease;
+        }
+
+        .selection-container .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
     </style>
 
@@ -1007,6 +960,39 @@
                 <p><strong>Catégorie :</strong> {{ originalPack.categorie }}</p>
             </div>
         </div>
+        
+        <!-- Message Section -->
+        <div class="mt-4">
+            <h5 class="mb-3">
+                <i class="ti ti-message-circle me-2"></i>
+                Message du client
+                <small class="text-muted ms-2">
+                    {% if notification is defined and notification.dateCreation is defined %}
+                        ({{ notification.dateCreation|date('d/m/Y H:i') }})
+                    {% endif %}
+                </small>
+            </h5>
+            <div class="alert alert-info position-relative p-4">
+                {% if notification is defined and notification.message is defined %}
+                    <div class="message-content">
+                        {{ notification.message|raw }}
+                    </div>
+                {% else %}
+                    <div class="text-muted">
+                        <i class="ti ti-message-off me-2"></i>
+                        Aucun message disponible
+                    </div>
+                {% endif %}
+                
+                {% if notification is defined and notification.statut is defined %}
+                    <div class="position-absolute top-0 end-0 mt-2 me-2">
+                        <span class="badge bg-{{ notification.statut == 'NON_LU' ? 'warning' : 'success' }}">
+                            {{ notification.statut == 'NON_LU' ? 'Non lu' : 'Lu' }}
+                        </span>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
     </div>
 </div>
 <!-- Notification Message Section -->
@@ -1023,110 +1009,42 @@
     </div>
 </div>
 {% endif %}
-                        <!-- Pack Details Section -->
-                        <div class="card mb-4 glass-panel shadow border-0" data-aos="fade-up" data-aos-delay="200">
-                            <div class="card-header">
-                                <h5 class="card-title mb-0 d-flex align-items-center">
-                                    <i class="ti ti-package me-2"></i>
-                                    Détails du Pack
-                                </h5>
+                        <!-- Step Indicator -->
+                        <div class="step-indicator mb-4" data-aos="fade-up">
+                            <div class="step active" data-step="1">
+                                <div class="step-circle">1</div>
+                                <div class="step-title">Matériels</div>
+                                <div class="step-connector"></div>
                             </div>
-                            <div class="card-body">
-                                <div class="row g-3">
-                                    <!-- Pack Name -->
-                                    <div class="col-md-6">
-                                        <div class="form-floating mb-3">
-                                            <input type="text" class="form-control" id="packName" name="packName" 
-                                                value="{{ originalPack ? originalPack.nom : '' }}" placeholder="Nom du Pack" required>
-                                            <label for="packName">Nom du Pack</label>
+                            <div class="step" data-step="2">
+                                <div class="step-circle">2</div>
+                                <div class="step-title">Emplacements</div>
+                                <div class="step-connector"></div>
+                                        </div>
+                            <div class="step" data-step="3">
+                                <div class="step-circle">3</div>
+                                <div class="step-title">Personnel</div>
+                                <div class="step-connector"></div>
+                                    </div>
+                            <div class="step" data-step="4">
+                                <div class="step-circle">4</div>
+                                <div class="step-title">Récapitulatif</div>
                                         </div>
                                     </div>
 
-                                    <!-- Pack Price -->
-                                    <div class="col-md-6">
-                                        <label class="form-label">Prix (€)</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text">€</span>
-                                            <input type="number" step="0.01" class="form-control" id="packPrice" name="packPrice"
-                                                value="{{ originalPack ? originalPack.prix : '' }}" required>
-                                        </div>
-                                    </div>
-
-                                    <!-- Description -->
-                                    <div class="col-12">
-                                        <div class="form-floating mb-3">
-                                            <textarea class="form-control" id="packDescription" name="packDescription" 
-                                                style="height: 100px" required>{{ originalPack ? originalPack.description : '' }}</textarea>
-                                            <label for="packDescription">Description du Pack</label>
-                                        </div>
-                                    </div>
-
-                                    <!-- Capacity & Category -->
-                                    <div class="col-md-6">
-                                        <label class="form-label">Capacité</label>
-                                        <input type="number" class="form-control" id="packCapacity" name="packCapacity"
-                                            value="{{ originalPack ? originalPack.capacite : '' }}" required>
-                                    </div>
-
-                                    <div class="col-md-6">
-                                        <label class="form-label">Catégorie</label>
-                                        <select class="form-select select2" id="packCategory" name="packCategory" required>
-                                            <option value="">Sélectionnez une catégorie</option>
-                                            <option value="Mariage" {{ originalPack and originalPack.categorie == 'Mariage' ? 'selected' : '' }}>Mariage</option>
-                                            <option value="Anniversaire" {{ originalPack and originalPack.categorie == 'Anniversaire' ? 'selected' : '' }}>Anniversaire</option>
-                                            <option value="Conférence" {{ originalPack and originalPack.categorie == 'Conférence' ? 'selected' : '' }}>Conférence</option>
-                                            <option value="Séminaire" {{ originalPack and originalPack.categorie == 'Séminaire' ? 'selected' : '' }}>Séminaire</option>
-                                            <option value="Autre" {{ originalPack and originalPack.categorie == 'Autre' ? 'selected' : '' }}>Autre</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                
-                                <!-- Save Button -->
-                                <div class="mt-4">
-                                    <button type="submit" class="btn btn-primary" id="savePack">
-                                        <i class="ti ti-device-floppy me-1"></i> Enregistrer les modifications
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Selected Items Section -->
-                        <div class="card mb-4 glass-panel shadow border-0" data-aos="fade-up" data-aos-delay="300">
-                            <div class="card-header">
-                                <h5 class="card-title"><i class="ti ti-list"></i> Éléments sélectionnés</h5>
-                            </div>
-                            <div class="card-body">
-                                <div class="table-responsive">
-                                    <table class="table" id="selectedItemsTable">
-                                        <thead>
-                                            <tr>
-                                                <th>Type</th>
-                                                <th>Nom</th>
-                                                <th>Détails</th>
-                                                <th>Actions</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="selectedItemsBody">
-                                            <tr class="no-items-row">
-                                                <td colspan="4" class="text-center">Aucun élément sélectionné</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                               
-                            </div>
-                        </div>
-
-                     <!-- Materielle Section -->
+                        <!-- Form Sections -->
+                        <div class="form-sections">
+                            <!-- Section 1: Matériels -->
+                            <div class="form-section active" id="section1">
 <div class="card mb-4 glass-panel shadow border-0" data-aos="fade-up" data-aos-delay="400">
     <div class="card-header d-flex justify-content-between align-items-center">
         <h5 class="card-title mb-0"><i class="ti ti-box"></i> Matériels</h5>
-        <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="collapse" data-bs-target="#materielsCollapse" aria-expanded="true">
+                                        <button class="btn btn-icon btn-text-secondary rounded-pill btn-sm toggle-section" data-target="materiels-selection">
             <i class="ti ti-chevron-down"></i>
         </button>
     </div>
-    <div class="card-body collapse show" id="materielsCollapse">
-        <div class="row">
+                                    <div id="materiels-selection" class="card-body">
+                                        <div class="row selection-container" style="max-height: 500px; overflow-y: auto;">
             {% for materiel in materielles %}
                 <div class="col-md-4 mb-3">
                     <div class="card h-100">
@@ -1174,17 +1092,25 @@
             </div>
         </div>
     </div>
+                                    <div class="card-footer">
+                                        <div class="d-flex justify-content-end">
+                                            <button type="button" class="btn btn-primary next-section">Suivant <i class="ti ti-arrow-right"></i></button>
 </div>
-<!-- Locations Section -->
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Section 2: Emplacements -->
+                            <div class="form-section" id="section2">
 <div class="card mb-4 glass-panel shadow border-0" data-aos="fade-up" data-aos-delay="500">
     <div class="card-header d-flex justify-content-between align-items-center">
         <h5 class="card-title mb-0"><i class="ti ti-map-pin"></i> Emplacements</h5>
-        <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="collapse" data-bs-target="#locationsCollapse" aria-expanded="true">
+                                        <button class="btn btn-icon btn-text-secondary rounded-pill btn-sm toggle-section" data-target="locations-selection">
             <i class="ti ti-chevron-down"></i>
         </button>
     </div>
-    <div class="card-body collapse show" id="locationsCollapse">
-        <div class="row">
+                                    <div id="locations-selection" class="card-body">
+                                        <div class="row selection-container" style="max-height: 500px; overflow-y: auto;">
             {% for location in locations %}
                 <div class="col-md-4 mb-3">
                     <div class="card h-100">
@@ -1222,21 +1148,29 @@
             </thead>
             <tbody></tbody>
         </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer">
+                                        <div class="d-flex justify-content-between">
+                                            <button type="button" class="btn btn-secondary prev-section"><i class="ti ti-arrow-left"></i> Précédent</button>
+                                            <button type="button" class="btn btn-primary next-section">Suivant <i class="ti ti-arrow-right"></i></button>
     </div>
 </div>
     </div>
 </div>
 
-                        <!-- Personnel Section -->
+                            <!-- Section 3: Personnel -->
+                            <div class="form-section" id="section3">
                         <div class="card mb-4 glass-panel shadow border-0" data-aos="fade-up" data-aos-delay="600">
                             <div class="card-header d-flex justify-content-between align-items-center">
                                 <h5 class="card-title mb-0"><i class="ti ti-users"></i> Personnel</h5>
-                                <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="collapse" data-bs-target="#personnelCollapse" aria-expanded="true">
+                                        <button class="btn btn-icon btn-text-secondary rounded-pill btn-sm toggle-section" data-target="personnel-selection">
                                     <i class="ti ti-chevron-down"></i>
                                 </button>
                             </div>
-                            <div class="card-body collapse show" id="personnelCollapse">
-                                <div class="row">
+                                    <div id="personnel-selection" class="card-body">
+                                        <div class="row selection-container" style="max-height: 500px; overflow-y: auto;">
                                     {% for person in personnel %}
                                         <div class="col-md-4 mb-3">
                                             <div class="card h-100">
@@ -1276,23 +1210,162 @@
                                             </thead>
                                             <tbody></tbody>
                                         </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer">
+                                        <div class="d-flex justify-content-between">
+                                            <button type="button" class="btn btn-secondary prev-section"><i class="ti ti-arrow-left"></i> Précédent</button>
+                                            <button type="button" class="btn btn-primary next-section">Suivant <i class="ti ti-arrow-right"></i></button>
+                                        </div>
+                                    </div>
                                     </div>
                                 </div>
                                
+                            <!-- Section 4: Summary -->
+                            <div class="form-section" id="section4">
+                                <div class="card mb-4 glass-panel shadow border-0" data-aos="fade-up" data-aos-delay="700">
+                                    <div class="card-header bg-primary text-white">
+                                        <h5 class="card-title mb-0"><i class="ti ti-clipboard-list"></i> Récapitulatif de la Customisation</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <!-- Client and Event Information -->
+                                        <div class="row mb-4">
+                                            <div class="col-md-6">
+                                                <div class="card h-100 border-0 shadow-sm">
+                                                    <div class="card-header bg-light">
+                                                        <h6 class="mb-0"><i class="ti ti-user"></i> Informations Client</h6>
+                                                    </div>
+                                                    <div class="card-body">
+                                                        <p><strong>Nom:</strong> {{ client.nom }} {{ client.prenom }}</p>
+                                                        <p><strong>Email:</strong> {{ client.email }}</p>
+                                                        {% if client.username is defined %}
+                                                            <p><strong>Nom d'utilisateur:</strong> {{ client.username }}</p>
+                                                        {% endif %}
+                                                        {% if client.roles is defined %}
+                                                            <p><strong>Rôle:</strong> {{ client.roles|join(', ') }}</p>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="card h-100 border-0 shadow-sm">
+                                                    <div class="card-header bg-light">
+                                                        <h6 class="mb-0"><i class="ti ti-calendar-event"></i> Informations Événement</h6>
+                                                    </div>
+                                                    <div class="card-body">
+                                                        <p><strong>Date:</strong> {{ eventDate|date('d/m/Y') }}</p>
+                                                        <p><strong>Pack Original:</strong> {{ originalPack.nom }}</p>
+                                                        <p><strong>Prix de Base:</strong> {{ originalPack.prix }}€</p>
+                                                        {% if originalPack.description is defined %}
+                                                            <p><strong>Description:</strong> {{ originalPack.description }}</p>
+                                                        {% endif %}
+                                                        {% if originalPack.categorie is defined %}
+                                                            <p><strong>Catégorie:</strong> {{ originalPack.categorie }}</p>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
                             </div>
                         </div>
 
-                        <!-- Footer Actions -->
+                                        <!-- Customization Summary -->
+                                        <div class="row">
+                                            <!-- Materials Summary -->
+                                            <div class="col-md-4 mb-4">
+                                                <div class="card border-0 shadow-sm h-100">
+                                                    <div class="card-header bg-light">
+                                                        <h6 class="mb-0"><i class="ti ti-box"></i> Matériels Sélectionnés</h6>
+                                                    </div>
+                                                    <div class="card-body">
+                                                        <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+                                                            <table class="table table-hover" id="summaryMaterielsTable">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th>Matériel</th>
+                                                                        <th>Quantité</th>
+                                                                        <th>Prix unitaire</th>
+                                                                        <th>Total</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody></tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                    <div class="card-footer bg-light">
+                                                        <strong>Total Matériels: </strong><span id="totalMateriels" class="fw-bold">0€</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Location Summary -->
+                                            <div class="col-md-4 mb-4">
+                                                <div class="card border-0 shadow-sm h-100">
+                                                    <div class="card-header bg-light">
+                                                        <h6 class="mb-0"><i class="ti ti-map-pin"></i> Emplacement Sélectionné</h6>
+                                                    </div>
+                                                    <div class="card-body">
+                                                        <div class="table-responsive">
+                                                            <table class="table table-hover" id="summaryLocationTable">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th>Nom</th>
+                                                                        <th>Prix</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody></tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Personnel Summary -->
+                                            <div class="col-md-4 mb-4">
+                                                <div class="card border-0 shadow-sm h-100">
+                                                    <div class="card-header bg-light">
+                                                        <h6 class="mb-0"><i class="ti ti-users"></i> Personnel Sélectionné</h6>
+                                                    </div>
+                                                    <div class="card-body">
+                                                        <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+                                                            <table class="table table-hover" id="summaryPersonnelTable">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th>Nom</th>
+                                                                        <th>Service</th>
+                                                                        <th>Tarif</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody></tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                    <div class="card-footer bg-light">
+                                                        <strong>Total Personnel: </strong><span id="totalPersonnel" class="fw-bold">0€</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Total Price Card -->
+                                        <div class="card bg-primary text-white mt-4">
+                                            <div class="card-body d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    <h5 class="card-title text-white mb-0">Prix Total de la Customisation</h5>
+                                                    <small class="text-white-50">Prix de base: {{ originalPack.prix }}€</small>
+                                                </div>
+                                                <h3 class="mb-0" id="totalPrice">0€</h3>
+                                            </div>
+                                        </div>
+                                    </div>
                         <div class="card-footer">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <button type="button" class="btn btn-secondary" onclick="window.location.href='{{ path('admin_notifications') }}'">
-                                    <i class="ti ti-x"></i> Annuler
-                                </button>
-                                <form id="customizeForm" action="{{ path('admin_customize_pack_update', {id: demandePack.id}) }}" method="POST" onsubmit="return false;">
-                                    <button type="submit" class="btn btn-primary">
+                                        <div class="d-flex justify-content-between">
+                                            <button type="button" class="btn btn-secondary prev-section"><i class="ti ti-arrow-left"></i> Précédent</button>
+                                            <button type="button" class="btn btn-primary" id="saveCustomization">
                                         <i class="ti ti-device-floppy"></i> Enregistrer les modifications
                                     </button>
-                                </form>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1342,18 +1415,92 @@
 
   <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize variables
+    // Variables for section navigation
+    const sections = document.querySelectorAll('.form-section');
+    const steps = document.querySelectorAll('.step');
+    let currentSection = 1;
     let selectedMaterielles = new Map();
     let selectedPersonnel = new Map();
     let selectedLocation = null;
-    const materielleAvailability = new Map();
 
-    // Initialize availability map from cards
-    document.querySelectorAll('.select-materiel').forEach(button => {
-        const available = parseInt(button.dataset.available);
-        const id = button.dataset.id;
-        materielleAvailability.set(id, available);
+    // Function to update sections and steps
+    function updateSections(newSection) {
+        // Update sections
+        sections.forEach(section => section.classList.remove('active'));
+        document.getElementById(`section${newSection}`).classList.add('active');
+
+        // Update steps
+        steps.forEach(step => {
+            const stepNum = parseInt(step.dataset.step);
+            step.classList.remove('active', 'completed');
+            if (stepNum < newSection) {
+                step.classList.add('completed');
+            } else if (stepNum === newSection) {
+                step.classList.add('active');
+            }
+        });
+
+        // Update current section
+        currentSection = newSection;
+
+        // Scroll to top of the new section
+        document.getElementById(`section${newSection}`).scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    // Next button click handler
+    document.querySelectorAll('.next-section').forEach(button => {
+        button.addEventListener('click', () => {
+            if (currentSection < 4) {
+                // Validate current section before moving to next
+                if (validateSection(currentSection)) {
+                    updateSections(currentSection + 1);
+                }
+            }
+        });
     });
+
+    // Previous button click handler
+    document.querySelectorAll('.prev-section').forEach(button => {
+        button.addEventListener('click', () => {
+            if (currentSection > 1) {
+                updateSections(currentSection - 1);
+            }
+        });
+    });
+
+    // Section toggle functionality
+    document.querySelectorAll('.toggle-section').forEach(button => {
+        button.addEventListener('click', function() {
+            const targetId = this.dataset.target;
+            const targetSection = document.getElementById(targetId);
+            const icon = this.querySelector('i');
+            
+            if (targetSection.style.display === 'none') {
+                targetSection.style.display = 'block';
+                icon.classList.remove('ti-chevron-up');
+                icon.classList.add('ti-chevron-down');
+                this.classList.remove('collapsed');
+            } else {
+                targetSection.style.display = 'none';
+                icon.classList.remove('ti-chevron-down');
+                icon.classList.add('ti-chevron-up');
+                this.classList.add('collapsed');
+            }
+        });
+    });
+
+    // Section validation
+    function validateSection(sectionNumber) {
+        if (sectionNumber === 4) {
+            // Check if at least one type of item is selected
+            if (selectedMaterielles.size === 0 && !selectedLocation && selectedPersonnel.size === 0) {
+                showToast('warning', 'Attention', 'Veuillez sélectionner au moins un élément (Matériel, Emplacement ou Personnel)');
+                return false;
+            }
+            return true;
+        }
+        return true; // Allow proceeding through other sections without validation
+    }
 
     // Helper function to show toast messages
     function showToast(icon, title, text) {
@@ -1372,7 +1519,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Handle materielle selection from cards
+    // Handle materielle selection
     document.querySelectorAll('.select-materiel').forEach(button => {
         button.addEventListener('click', function() {
             const card = this.closest('.card');
@@ -1383,25 +1530,11 @@ document.addEventListener('DOMContentLoaded', function() {
             const quantityInput = card.querySelector('.quantity-input');
             let quantity = parseInt(quantityInput.value) || 1;
 
-            // Validate quantity
-            if (quantity < 1) {
-                showToast('warning', 'Attention', 'Quantité invalide');
+            if (quantity < 1 || quantity > available) {
+                showToast('warning', 'Attention', `Quantité invalide. Maximum disponible: ${available}`);
                 return;
             }
 
-            // Check existing quantity
-            const existing = selectedMaterielles.get(id);
-            const totalRequested = (existing?.quantity || 0) + quantity;
-            
-            if (totalRequested > available) {
-                showToast('warning', 'Attention', `Quantité non disponible. Il reste ${available} unités`);
-                return;
-            }
-
-            // Update or add material
-            if (existing) {
-                existing.quantity += quantity;
-            } else {
                 selectedMaterielles.set(id, {
                     id: id,
                     name: name,
@@ -1409,13 +1542,29 @@ document.addEventListener('DOMContentLoaded', function() {
                     quantity: quantity,
                     maxAvailable: available
                 });
-            }
 
-            // Reset input and update UI
-            quantityInput.value = 1;
             updateMaterielleTable();
             calculateTotal();
             showToast('success', 'Succès', `${quantity} ${name} ajouté(s)`);
+        });
+    });
+
+    // Handle location selection
+    document.querySelectorAll('.select-location').forEach(button => {
+        button.addEventListener('click', function() {
+            const id = this.dataset.id;
+            const name = this.dataset.name;
+            const price = parseFloat(this.dataset.price);
+
+            selectedLocation = {
+                id: id,
+                name: name,
+                price: price
+            };
+
+            updateLocationTable();
+            calculateTotal();
+            showToast('success', 'Succès', `Emplacement ${name} sélectionné`);
         });
     });
 
@@ -1445,135 +1594,173 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Handle location selection
- // Handle location selection
-document.querySelectorAll('.select-location').forEach(button => {
-    button.addEventListener('click', function () {
-        const id = this.dataset.id;
-        const name = this.dataset.name;
-        const price = parseFloat(this.dataset.price);
+    // Function to update materielles table
+    function updateMaterielleTable() {
+        const tbody = document.getElementById('selectedMaterielsTable').querySelector('tbody');
+        tbody.innerHTML = '';
+        
+        selectedMaterielles.forEach((item) => {
+            const row = document.createElement('tr');
+            const total = item.price * item.quantity;
+            
+            row.innerHTML = `
+                <td>${item.name}</td>
+                <td>${item.quantity}</td>
+                <td>${item.price}€</td>
+                <td>${total}€</td>
+                <td>
+                    <button class="btn btn-sm btn-danger remove-materiel" data-id="${item.id}">
+                        <i class="ti ti-trash"></i>
+                    </button>
+                </td>
+            `;
+            
+            tbody.appendChild(row);
+        });
 
-        // Check if the same location is already selected
-        if (selectedLocation?.id === id) {
-            showToast('warning', 'Attention', 'Cet emplacement est déjà sélectionné');
-            return;
-        }
-
-        // Clear previous selection
-        selectedLocation = null;
-
-        // Create new location object
-        selectedLocation = {
-            id: id,
-            name: name,
-            price: price,
-        };
-
-        updateLocationTable();
-        calculateTotal();
-        showToast('success', 'Succès', `Emplacement ${name} sélectionné`);
-    });
-});
-
-// Update location table
-function updateLocationTable() {
-    const tbody = document.querySelector('#selectedLocationTable tbody');
-    tbody.innerHTML = '';
-
-    if (!selectedLocation) {
-        tbody.innerHTML = `
-            <tr>
-                <td colspan="3" class="text-center">Aucun emplacement sélectionné</td>
-            </tr>
-        `;
-        return;
+        // Update summary table
+        updateSummaryTables();
     }
 
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-        <td>${selectedLocation.name}</td>
-        <td>${selectedLocation.price.toFixed(2)}€</td>
-        <td>
-            <button class="btn btn-sm btn-danger delete-location" data-id="${selectedLocation.id}">
+    // Function to update location table
+function updateLocationTable() {
+        const tbody = document.getElementById('selectedLocationTable').querySelector('tbody');
+    tbody.innerHTML = '';
+
+        if (selectedLocation) {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${selectedLocation.name}</td>
+                <td>${selectedLocation.price}€</td>
+                <td>
+                    <button class="btn btn-sm btn-danger remove-location">
+                        <i class="ti ti-trash"></i>
+                    </button>
+                </td>
+            `;
+            tbody.appendChild(row);
+        }
+
+        // Update summary table
+        updateSummaryTables();
+    }
+
+    // Function to update personnel table
+    function updatePersonnelTable() {
+        const tbody = document.getElementById('selectedPersonnelTable').querySelector('tbody');
+        tbody.innerHTML = '';
+        
+        selectedPersonnel.forEach((person) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${person.name}</td>
+                <td>${person.service}</td>
+                <td>${person.price}€</td>
+                <td>
+                    <button class="btn btn-sm btn-danger remove-personnel" data-id="${person.id}">
                 <i class="ti ti-trash"></i>
             </button>
         </td>
     `;
+            tbody.appendChild(row);
+        });
 
-    // Add event listener for deletion
-    tr.querySelector('.delete-location').addEventListener('click', function () {
-        removeLocation(selectedLocation.id);
-    });
-
-    tbody.appendChild(tr);
-}
-
-// Remove location
-window.removeLocation = function (id) {
-    if (selectedLocation?.id === id) {
-        selectedLocation = null;
-        updateLocationTable();
-        calculateTotal();
-        showToast('success', 'Supprimé', 'Emplacement retiré');
+        // Update summary table
+        updateSummaryTables();
     }
-};
 
-// Calculate total price
-function calculateTotal() {
-    let total = 0;
+    // Function to update summary tables
+    function updateSummaryTables() {
+        // Update Materials Summary
+        const materielsBody = document.getElementById('summaryMaterielsTable').querySelector('tbody');
+        materielsBody.innerHTML = '';
+        let totalMateriels = 0;
 
-    // Add materials total
-    selectedMaterielles.forEach((m) => {
-        total += m.price * m.quantity;
-    });
+        selectedMaterielles.forEach((item) => {
+            const total = item.price * item.quantity;
+            totalMateriels += total;
+            
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${item.name}</td>
+                <td>${item.quantity}</td>
+                <td>${item.price}€</td>
+                <td>${total}€</td>
+            `;
+            materielsBody.appendChild(row);
+        });
+        document.getElementById('totalMateriels').textContent = `${totalMateriels}€`;
 
-    // Add location price
+        // Update Location Summary
+        const locationBody = document.getElementById('summaryLocationTable').querySelector('tbody');
+        locationBody.innerHTML = '';
+        
     if (selectedLocation) {
-        total += selectedLocation.price;
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${selectedLocation.name}</td>
+                <td>${selectedLocation.price}€</td>
+            `;
+            locationBody.appendChild(row);
+        }
+
+        // Update Personnel Summary
+        const personnelBody = document.getElementById('summaryPersonnelTable').querySelector('tbody');
+        personnelBody.innerHTML = '';
+        let totalPersonnel = 0;
+
+        selectedPersonnel.forEach((person) => {
+            totalPersonnel += person.price;
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${person.name}</td>
+                <td>${person.service}</td>
+                <td>${person.price}€</td>
+            `;
+            personnelBody.appendChild(row);
+        });
+        document.getElementById('totalPersonnel').textContent = `${totalPersonnel}€`;
+
+        // Update Total Price
+        const totalPrice = totalMateriels + (selectedLocation ? selectedLocation.price : 0) + totalPersonnel;
+        document.getElementById('totalPrice').textContent = `${totalPrice}€`;
     }
 
-    // Add personnel total
-    selectedPersonnel.forEach((p) => {
-        total += p.price;
+    // Remove item handlers
+    document.addEventListener('click', function(e) {
+        if (e.target.closest('.remove-materiel')) {
+            const id = e.target.closest('.remove-materiel').dataset.id;
+            selectedMaterielles.delete(id);
+            updateMaterielleTable();
+        } else if (e.target.closest('.remove-location')) {
+    selectedLocation = null;
+            updateLocationTable();
+        } else if (e.target.closest('.remove-personnel')) {
+            const id = e.target.closest('.remove-personnel').dataset.id;
+            selectedPersonnel.delete(id);
+            updatePersonnelTable();
+        }
     });
 
-    document.getElementById('totalPrice').textContent = total.toFixed(2) + '€';
-}
-
-// Remove location function
-window.removeLocation = function() {
-    selectedLocation = null;
-    updateLocationDisplay();
-    calculateTotal();
-};
-
-    // Form submission
-    document.getElementById('customizeForm').addEventListener('submit', function(e) {
-        e.preventDefault();
+    // Save customization
+    document.getElementById('saveCustomization').addEventListener('click', function() {
+        if (!validateSection(4)) {
+            return;
+        }
 
         const formData = {
-            id: '{{ originalPack.id }}',
-            materielles: Array.from(selectedMaterielles.values()).map(m => ({
-                id: m.id,
-                quantity: m.quantity,
-                price: m.price
-            })),
+            materielles: Array.from(selectedMaterielles.values()),
             location: selectedLocation,
-            personnel: Array.from(selectedPersonnel.values()).map(p => ({
-                id: p.id,
-                name: p.name,
-                service: p.service,
-                price: p.price
-            }))
+            personnel: Array.from(selectedPersonnel.values())
         };
 
         // Show loading state
-        const submitButton = this.querySelector('button[type="submit"]');
-        const originalText = submitButton.innerHTML;
-        submitButton.innerHTML = '<i class="ti ti-loader-2 ti-spin"></i> Enregistrement...';
-        submitButton.disabled = true;
+        const button = this;
+        const originalText = button.innerHTML;
+        button.innerHTML = '<i class="ti ti-loader-2 ti-spin"></i> Enregistrement...';
+        button.disabled = true;
 
-        fetch(this.action, {
+        fetch('{{ path("admin_customize_pack_update", {id: demandePack.id}) }}', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -1581,10 +1768,7 @@ window.removeLocation = function() {
             },
             body: JSON.stringify(formData)
         })
-        .then(response => {
-            if (!response.ok) throw new Error('Erreur serveur');
-            return response.json();
-        })
+        .then(response => response.json())
         .then(data => {
             if (data.success) {
                 Swal.fire({
@@ -1607,158 +1791,15 @@ window.removeLocation = function() {
                 text: error.message || 'Une erreur est survenue',
                 confirmButtonText: 'OK'
             });
-            console.error('Error:', error);
         })
         .finally(() => {
-            submitButton.innerHTML = originalText;
-            submitButton.disabled = false;
+            button.innerHTML = originalText;
+            button.disabled = false;
         });
     });
 
-    // Update materials table
-    function updateMaterielleTable() {
-        const tbody = document.querySelector('#selectedMaterielsTable tbody');
-        tbody.innerHTML = '';
-        
-        if (selectedMaterielles.size === 0) {
-            tbody.innerHTML = '<tr><td colspan="5" class="text-center">Aucun matériel sélectionné</td></tr>';
-            return;
-        }
-        
-        selectedMaterielles.forEach((materielle, id) => {
-            const total = materielle.price * materielle.quantity;
-            const tr = document.createElement('tr');
-            
-            tr.innerHTML = `
-                <td>${materielle.name}</td>
-                <td>
-                    <input type="number" 
-                           class="form-control quantity-update" 
-                           min="1" 
-                           max="${materielle.maxAvailable}"
-                           value="${materielle.quantity}"
-                           data-id="${id}">
-                </td>
-                <td>${materielle.price.toFixed(2)}€</td>
-                <td>${total.toFixed(2)}€</td>
-                <td>
-                    <button class="btn btn-sm btn-danger delete-material" data-id="${id}">
-                        <i class="ti ti-trash"></i>
-                    </button>
-                </td>
-            `;
-
-            // Add event listeners
-            tr.querySelector('.quantity-update').addEventListener('change', function() {
-                const newQuantity = parseInt(this.value) || 1;
-                updateMaterielleQuantity(id, newQuantity);
-            });
-
-            tr.querySelector('.delete-material').addEventListener('click', function() {
-                removeMaterielle(id);
-            });
-
-            tbody.appendChild(tr);
-        });
-    }
-
-    // Update personnel table
-    function updatePersonnelTable() {
-        const tbody = document.querySelector('#selectedPersonnelTable tbody');
-        tbody.innerHTML = '';
-        
-        selectedPersonnel.forEach((person, id) => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td>${person.name}</td>
-                <td>${person.service}</td>
-                <td>${person.price.toFixed(2)}€</td>
-                <td>
-                    <button class="btn btn-sm btn-danger delete-personnel" data-id="${id}">
-                        <i class="ti ti-trash"></i>
-                    </button>
-                </td>
-            `;
-
-            tr.querySelector('.delete-personnel').addEventListener('click', function() {
-                removePersonnel(id);
-            });
-
-            tbody.appendChild(tr);
-        });
-    }
-
-    // Update location display
-    function updateLocationDisplay() {
-        const container = document.getElementById('selectedLocation');
-        container.innerHTML = selectedLocation 
-            ? `<div class="d-flex align-items-center justify-content-between">
-                    <div>
-                        <strong>${selectedLocation.name}</strong>
-                        <div class="text-muted">${selectedLocation.price.toFixed(2)}€</div>
-                    </div>
-                    <button class="btn btn-sm btn-danger delete-location">
-                        <i class="ti ti-trash"></i>
-                    </button>
-                </div>`
-            : 'Aucun emplacement sélectionné';
-
-        if (selectedLocation) {
-            container.querySelector('.delete-location').addEventListener('click', removeLocation);
-        }
-    }
-
-    // Calculate total price
-    function calculateTotal() {
-        let total = 0;
-        
-        selectedMaterielles.forEach(m => total += m.price * m.quantity);
-        if (selectedLocation) total += selectedLocation.price;
-        selectedPersonnel.forEach(p => total += p.price);
-        
-        document.getElementById('totalPrice').textContent = total.toFixed(2) + '€';
-    }
-
-    // Global functions
-    window.updateMaterielleQuantity = function(id, quantity) {
-        const materielle = selectedMaterielles.get(id);
-        if (!materielle) return;
-
-        quantity = Math.max(1, Math.min(quantity, materielle.maxAvailable));
-        
-        if (quantity !== materielle.quantity) {
-            materielle.quantity = quantity;
-            updateMaterielleTable();
-            calculateTotal();
-        }
-    };
-
-    window.removeMaterielle = function(id) {
-        if (selectedMaterielles.delete(id)) {
-            updateMaterielleTable();
-            calculateTotal();
-            showToast('success', 'Supprimé', 'Matériel retiré');
-        }
-    };
-
-    window.removePersonnel = function(id) {
-        if (selectedPersonnel.delete(id)) {
-            updatePersonnelTable();
-            calculateTotal();
-            showToast('success', 'Supprimé', 'Personnel retiré');
-        }
-    };
-
-    window.removeLocation = function() {
-        selectedLocation = null;
-        updateLocationDisplay();
-        calculateTotal();
-        showToast('success', 'Supprimé', 'Emplacement retiré');
-    };
-
-    // Initial setup
-    calculateTotal();
-    $('.select2').select2();
+    // Initialize first section
+    updateSections(1);
 });
 </script>
 </body>

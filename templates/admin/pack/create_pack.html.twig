@@ -1,3 +1,4 @@
+use Stripe\Util\Set;
 <!DOCTYPE html>
 <html
   lang="en"
@@ -501,50 +502,7 @@
             object-fit: cover;
         }
     </style>
-<script>
-// --- Description Enhancer (Backend AJAX) ---
-document.addEventListener('DOMContentLoaded', function() {
-    const enhanceBtn = document.getElementById('enhanceDescriptionBtn');
-    const descField = document.getElementById('description');
-    const enhanceLoading = document.getElementById('enhanceLoading');
-    // Remove any previously attached event listeners to avoid duplicates
-    if (enhanceBtn._hasEnhancer) return;
-    enhanceBtn._hasEnhancer = true;
-    if (enhanceBtn && descField) {
-        enhanceBtn.addEventListener('click', function() {
-            const desc = descField.value.trim();
-            if (!desc) {
-                Swal.fire({ icon: 'warning', title: 'Description vide', text: 'Veuillez saisir une description à améliorer.' });
-                return;
-            }
-            enhanceBtn.disabled = true;
-            enhanceLoading.style.display = '';
-            fetch('/admin/pack/enhance-description', {
-                method: 'POST',
-                headers: { 'X-Requested-With': 'XMLHttpRequest' },
-                body: new URLSearchParams({ description: desc })
-            })
-            .then(res => res.json())
-            .then(result => {
-                if (result.enhanced && result.generated_text) {
-                    descField.value = result.generated_text;
-                    Swal.fire({ icon: 'success', title: 'Description améliorée !', toast: true, position: 'top-end', showConfirmButton: false, timer: 1800 });
-                } else {
-                    Swal.fire({ icon: 'error', title: 'Erreur', text: result.message || 'Aucune amélioration reçue.' });
-                }
-            })
-            .catch(() => {
-                Swal.fire({ icon: 'error', title: 'Erreur', text: 'Impossible de contacter le serveur.' });
-            })
-            .finally(() => {
-                enhanceBtn.disabled = false;
-                enhanceLoading.style.display = 'none';
-            });
-        });
-    }
-});
-// --- End Description Enhancer ---
-</script>
+
 
     <!-- Helpers -->
     <script src="{{ asset('vendor/js/helpers.js') }}"></script>
@@ -582,50 +540,7 @@ document.addEventListener('DOMContentLoaded', function() {
             font-weight: bold;
         }
     </style>
-<script>
-// --- Description Enhancer (Backend AJAX) ---
-document.addEventListener('DOMContentLoaded', function() {
-    const enhanceBtn = document.getElementById('enhanceDescriptionBtn');
-    const descField = document.getElementById('description');
-    const enhanceLoading = document.getElementById('enhanceLoading');
-    // Remove any previously attached event listeners to avoid duplicates
-    if (enhanceBtn._hasEnhancer) return;
-    enhanceBtn._hasEnhancer = true;
-    if (enhanceBtn && descField) {
-        enhanceBtn.addEventListener('click', function() {
-            const desc = descField.value.trim();
-            if (!desc) {
-                Swal.fire({ icon: 'warning', title: 'Description vide', text: 'Veuillez saisir une description à améliorer.' });
-                return;
-            }
-            enhanceBtn.disabled = true;
-            enhanceLoading.style.display = '';
-            fetch('/admin/pack/enhance-description', {
-                method: 'POST',
-                headers: { 'X-Requested-With': 'XMLHttpRequest' },
-                body: new URLSearchParams({ description: desc })
-            })
-            .then(res => res.json())
-            .then(result => {
-                if (result.enhanced && result.generated_text) {
-                    descField.value = result.generated_text;
-                    Swal.fire({ icon: 'success', title: 'Description améliorée !', toast: true, position: 'top-end', showConfirmButton: false, timer: 1800 });
-                } else {
-                    Swal.fire({ icon: 'error', title: 'Erreur', text: result.message || 'Aucune amélioration reçue.' });
-                }
-            })
-            .catch(() => {
-                Swal.fire({ icon: 'error', title: 'Erreur', text: 'Impossible de contacter le serveur.' });
-            })
-            .finally(() => {
-                enhanceBtn.disabled = false;
-                enhanceLoading.style.display = 'none';
-            });
-        });
-    }
-});
-// --- End Description Enhancer ---
-</script>
+
 </head>
 
 <body>
@@ -642,9 +557,9 @@ document.addEventListener('DOMContentLoaded', function() {
         <div class="layout-container">
             <!-- Menu -->
              <!-- Menu -->
-           <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
+          <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
                 <div class="app-brand demo">
-                    <a href="{{ path('admin_dashboard') }}" class="app-brand-link">
+                    <a href="index.html" class="app-brand-link">
                         <span class="app-brand-logo demo">
                             <svg width="32" height="22" viewBox="0 0 32 22" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path
@@ -671,13 +586,10 @@ document.addEventListener('DOMContentLoaded', function() {
                                     fill="#7367F0" />
                             </svg>
                         </span>
-                        <span class="app-brand-text demo menu-text fw-bold">Vuexy</span>
+                        <span class="app-brand-text demo menu-text fw-bold">Golden Touch</span>
                     </a>
 
-                    <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto">
-                        <i class="ti menu-toggle-icon d-none d-xl-block ti-sm align-middle"></i>
-                        <i class="ti ti-x d-block d-xl-none ti-sm align-middle"></i>
-                    </a>
+                   
                 </div>
 
                 <div class="menu-inner-shadow"></div>
@@ -693,7 +605,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     <!-- Gestion Événements -->
                     <li class="menu-item">
-                        <a href="javascript:void(0);" class="menu-link menu-toggle">
+                        <a href="{{ path('app_events_admin') }}" class="menu-link menu-toggle">
                             <i class="menu-icon tf-icons ti ti-calendar-event"></i>
                             <div data-i18n="Gestion Événements">Gestion Événements</div>
                         </a>
@@ -715,7 +627,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     <!-- Gestion Matérielle -->
                     <li class="menu-item">
-                        <a href="javascript:void(0);" class="menu-link menu-toggle">
+                        <a href="{{ path('app_materielss') }}" class="menu-link menu-toggle">
                             <i class="menu-icon tf-icons ti ti-tools"></i>
                             <div data-i18n="Gestion Matérielle">Gestion Matérielle</div>
                         </a>
@@ -737,7 +649,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     <!-- Gestion Lieu -->
                     <li class="menu-item">
-                        <a href="javascript:void(0);" class="menu-link menu-toggle">
+                        <a href="{{ path('admin_lieu_index') }}" class="menu-link menu-toggle">
                             <i class="menu-icon tf-icons ti ti-map-pin"></i>
                             <div data-i18n="Gestion Lieu">Gestion Lieu</div>
                         </a>
@@ -759,7 +671,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     <!-- Gestion Personnels -->
                     <li class="menu-item">
-                        <a href="javascript:void(0);" class="menu-link menu-toggle">
+                        <a href="{{ path('app_perso_index') }}" class="menu-link menu-toggle">
                             <i class="menu-icon tf-icons ti ti-users"></i>
                             <div data-i18n="Gestion Personnels">Gestion Personnels</div>
                         </a>
@@ -781,7 +693,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     <!-- Gestion Commandes -->
                     <li class="menu-item">
-                        <a href="javascript:void(0);" class="menu-link menu-toggle">
+                        <a href="{{ path('app_my_Commandes_admin') }}" class="menu-link menu-toggle">
                             <i class="menu-icon tf-icons ti ti-shopping-cart"></i>
                             <div data-i18n="Gestion Commandes">Gestion Commandes</div>
                         </a>
@@ -1995,50 +1907,7 @@ document.addEventListener('DOMContentLoaded', function() {
             font-size: 12px;
         }
     </style>
-<script>
-// --- Description Enhancer (Backend AJAX) ---
-document.addEventListener('DOMContentLoaded', function() {
-    const enhanceBtn = document.getElementById('enhanceDescriptionBtn');
-    const descField = document.getElementById('description');
-    const enhanceLoading = document.getElementById('enhanceLoading');
-    // Remove any previously attached event listeners to avoid duplicates
-    if (enhanceBtn._hasEnhancer) return;
-    enhanceBtn._hasEnhancer = true;
-    if (enhanceBtn && descField) {
-        enhanceBtn.addEventListener('click', function() {
-            const desc = descField.value.trim();
-            if (!desc) {
-                Swal.fire({ icon: 'warning', title: 'Description vide', text: 'Veuillez saisir une description à améliorer.' });
-                return;
-            }
-            enhanceBtn.disabled = true;
-            enhanceLoading.style.display = '';
-            fetch('/admin/pack/enhance-description', {
-                method: 'POST',
-                headers: { 'X-Requested-With': 'XMLHttpRequest' },
-                body: new URLSearchParams({ description: desc })
-            })
-            .then(res => res.json())
-            .then(result => {
-                if (result.enhanced && result.generated_text) {
-                    descField.value = result.generated_text;
-                    Swal.fire({ icon: 'success', title: 'Description améliorée !', toast: true, position: 'top-end', showConfirmButton: false, timer: 1800 });
-                } else {
-                    Swal.fire({ icon: 'error', title: 'Erreur', text: result.message || 'Aucune amélioration reçue.' });
-                }
-            })
-            .catch(() => {
-                Swal.fire({ icon: 'error', title: 'Erreur', text: 'Impossible de contacter le serveur.' });
-            })
-            .finally(() => {
-                enhanceBtn.disabled = false;
-                enhanceLoading.style.display = 'none';
-            });
-        });
-    }
-});
-// --- End Description Enhancer ---
-</script>
+
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>

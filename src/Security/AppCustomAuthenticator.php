@@ -23,7 +23,6 @@ class AppCustomAuthenticator extends AbstractLoginFormAuthenticator
 
     public function __construct(private UrlGeneratorInterface $urlGenerator)
     {
-
     }
 
     public function authenticate(Request $request): Passport
@@ -47,9 +46,13 @@ class AppCustomAuthenticator extends AbstractLoginFormAuthenticator
             return new RedirectResponse($targetPath);
         }
 
-        // For example:
-         return new RedirectResponse($this->urlGenerator->generate('app_add_event'));
-       // throw new \Exception('TODO: provide a valid redirect inside '.__FILE__);
+        $user = $token->getUser();
+        if (in_array('ROLE_ADMIN', $user->getRoles(), true)) {
+            return new RedirectResponse($this->urlGenerator->generate('admin_pack_index'));
+        }
+        
+        // Default redirect for all other users (including ROLE_USER)
+        return new RedirectResponse($this->urlGenerator->generate('app_pack_index'));
     }
 
     protected function getLoginUrl(Request $request): string

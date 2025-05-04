@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
 use App\Repository\ReserverLieuRepository;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ReserverLieuRepository::class)]
 #[ORM\Table(name: 'reserver_lieu')]
@@ -80,6 +81,8 @@ class ReserverLieu
     }
 
     #[ORM\Column(type: 'datetime', nullable: false)]
+    #[Assert\NotBlank(message: 'La date de réservation est obligatoire.')]
+    #[Assert\GreaterThanOrEqual('today', message: 'La date de réservation doit être aujourd\'hui ou dans le futur.')]
     private ?\DateTimeInterface $date_reservation = null;
 
     public function getDate_reservation(): ?\DateTimeInterface
@@ -94,6 +97,8 @@ class ReserverLieu
     }
 
     #[ORM\Column(type: 'string', nullable: true)]
+    #[Assert\NotBlank(message: 'Le statut est obligatoire.')]
+    #[Assert\Choice(choices: ['pending', 'confirmed', 'cancelled'], message: 'Le statut doit être valide (pending, confirmed, cancelled).')]
     private ?string $status = null;
 
     public function getStatus(): ?string

@@ -5,7 +5,7 @@ namespace App\Controller;
 use App\Entity\Avis;
 use App\Entity\Pack;
 use App\Entity\DemandePack;
-use App\Entity\Utilisateur;
+use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -37,19 +37,24 @@ class AvisController extends AbstractController
             throw $this->createNotFoundException('Pack not found');
         }
 
-        // Force user ID to 25 for testing
-        $userId = 25;
-        $user = $entityManager->getRepository(Utilisateur::class)->find($userId);
-        
+        // Use the currently logged-in user
+        $securityUser = $this->getUser();
+        if (!$securityUser) {
+            $this->addFlash('error', 'Vous devez être connecté pour laisser un avis.');
+            return $this->redirectToRoute('app_pack_shop_details', ['id' => $packId]);
+        }
+        // Find the corresponding User entity by email
+        $user = $entityManager->getRepository(\App\Entity\User::class)
+            ->findOneBy(['email' => $securityUser->getEmail()]);
         if (!$user) {
-            $this->addFlash('error', 'User not found');
+            $this->addFlash('error', 'User introuvable.');
             return $this->redirectToRoute('app_pack_shop_details', ['id' => $packId]);
         }
 
-        // Check if this user (ID 25) has purchased the pack
+        // Check if this user has purchased the pack
         $demandePack = $entityManager->getRepository(DemandePack::class)->findOneBy([
             'pack' => $pack,
-            'utilisateur' => $user,
+            'user' => $user,
             'statut' => 'CONFIRMÉ'
         ]);
 
@@ -61,23 +66,44 @@ class AvisController extends AbstractController
         // Create new Avis
         $avis = new Avis();
         $avis->setPack($pack);
+        $avis->setUser($user);
         $avis->setNote((int) $request->request->get('rating', 5));
         $avis->setCommentaire($request->request->get('comment'));
         $avis->setDateCreation(new \DateTime());
 
         // Server-side toxicity detection (same as booking)
+        $session = $request->getSession();
         $toxicityResult = $this->toxicityDetectionService->detect($avis->getCommentaire() ?? '');
         $labelsEn = $toxicityResult['en'] ?? [];
+        $labelsFr = $toxicityResult['fr'] ?? [];
         $isToxic = false;
-        foreach ($labelsEn as $label) {
+        foreach (array_merge($labelsEn, $labelsFr) as $label) {
             if ($label['label'] === 'toxic' && $label['score'] > 0.5) {
                 $isToxic = true;
                 break;
             }
         }
         if ($isToxic) {
-            $this->addFlash('error', 'Votre commentaire contient des propos inappropriés (toxiques). Veuillez le reformuler.');
-            return $this->redirectToRoute('app_pack_shop_details', ['id' => $packId]);
+            $lastToxicReview = $session->get('last_toxic_review');
+            if ($lastToxicReview !== $avis->getCommentaire()) {
+                // First time toxic review, ask user to correct
+                $session->set('last_toxic_review', $avis->getCommentaire());
+                $this->addFlash('error', 'Votre commentaire contient des propos inappropriés (toxiques). Veuillez le reformuler.');
+                return $this->redirectToRoute('app_pack_shop_details', [
+                    'id' => $packId,
+                    'comment' => $avis->getCommentaire(),
+                    'rating' => $request->request->get('rating', 5),
+                    'error_commentaire' => 'Votre commentaire contient des propos inappropriés (toxiques). Veuillez le reformuler.'
+                ]);
+            
+            } else {
+                // User insisted, mask the review
+                $masked = $this->toxicityDetectionService->maskToxicWords($avis->getCommentaire(), array_merge($labelsEn, $labelsFr));
+                $avis->setCommentaire($masked);
+                $session->remove('last_toxic_review');
+            }
+        } else {
+            $session->remove('last_toxic_review');
         }
         // AI Sentiment Analysis via Hugging Face (directly from comment)
         $sentiment = $reviewSentimentService->analyze($avis->getCommentaire() ?? '');
@@ -88,8 +114,7 @@ class AvisController extends AbstractController
         }
         
         // Set both the ID and the User object to ensure it's saved
-        $avis->setIdUtilisateur($userId);
-        $avis->setUtilisateur($user);
+        $avis->setUser($user);
         
         // Validate the entity
         $violations = $validator->validate($avis);

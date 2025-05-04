@@ -89,16 +89,57 @@ class LieuRepository extends ServiceEntityRepository
         ], $result);
     }
 
-    public function findAllPaginated(int $page = 1, int $limit = 10): array
+    public function findAllPaginated(int $page = 1, int $limit = 10, string $searchTerm = '', ?string $category = null, ?string $orderBy = null): array
     {
         $offset = ($page - 1) * $limit;
+        $qb = $this->createQueryBuilder('l');
 
-        return $this->createQueryBuilder('l')
-            ->orderBy('l.id', 'ASC')
-            ->setFirstResult($offset)
-            ->setMaxResults($limit)
-            ->getQuery()
-            ->getResult();
+        if ($searchTerm) {
+            $qb->andWhere('l.name LIKE :search OR l.description LIKE :search OR l.location LIKE :search')
+               ->setParameter('search', '%' . $searchTerm . '%');
+        }
+
+        if ($category) {
+            $qb->andWhere('l.category = :category')
+               ->setParameter('category', $category);
+        }
+
+        switch ($orderBy) {
+            case 'price_asc':
+                $qb->orderBy('l.price', 'ASC');
+                break;
+            case 'price_desc':
+                $qb->orderBy('l.price', 'DESC');
+                break;
+            case 'capacity_asc':
+                $qb->orderBy('l.capacity', 'ASC');
+                break;
+            case 'capacity_desc':
+                $qb->orderBy('l.capacity', 'DESC');
+                break;
+            default:
+                $qb->orderBy('l.id', 'ASC');
+        }
+
+        $query = $qb->getQuery();
+
+        $total = count($query->getResult());
+        $pages = ceil($total / $limit);
+
+        $results = $qb->setFirstResult($offset)
+                      ->setMaxResults($limit)
+                      ->getQuery()
+                      ->getResult();
+
+        return [
+            'results' => $results,
+            'total' => $total,
+            'pages' => $pages,
+            'currentPage' => $page,
+            'limit' => $limit,
+            'hasPreviousPage' => $page > 1,
+            'hasNextPage' => $page < $pages
+        ];
     }
     public function searchByName(string $searchTerm): array
     {
@@ -238,17 +279,5 @@ class LieuRepository extends ServiceEntityRepository
     return $stats;
 }
 
-public function getMonthlyStats(): array
-{
-    return $this->getEntityManager()->getConnection()->executeQuery('
-        SELECT 
-            DATE_FORMAT(CURRENT_DATE(), "%Y-%m") as month,
-            COUNT(*) as locations_added,
-            (SELECT COUNT(*) FROM lieu WHERE DATE_FORMAT(created_at, "%Y-%m") = DATE_FORMAT(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH), "%Y-%m")) as prev_month_count,
-            (SELECT AVG(price) FROM lieu) as avg_price
-        FROM lieu
-        WHERE DATE_FORMAT(created_at, "%Y-%m") = DATE_FORMAT(CURRENT_DATE(), "%Y-%m")
-    ')->fetchAssociative();
-}
 
 }

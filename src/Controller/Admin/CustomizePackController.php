@@ -12,6 +12,7 @@ use App\Entity\ReservationPerso;
 use App\Entity\ReservationPersonnel;
 use App\Entity\ReservationMaterielle;
 use App\Entity\ReservationLieu;
+use App\Entity\Utilisateur;
 use App\Repository\PackRepository;
 use App\Repository\DemandePackRepository;
 use App\Repository\EventRepository;
@@ -32,6 +33,7 @@ use Symfony\Bundle\SecurityBundle\Security;
 use App\Service\EmailServicePackReady;
 
 #[Route('/admin/customize-pack', name: 'admin_customize_pack_')]
+#[IsGranted('ROLE_ADMIN')]
 class CustomizePackController extends AbstractController
 {
     private EntityManagerInterface $entityManager;
@@ -78,8 +80,10 @@ class CustomizePackController extends AbstractController
             throw $this->createNotFoundException('Demande pack not found');
         }
         
+        // Get the notification for this demande pack
+        $notification = $this->notificationsAdminRepository->findOneBy(['demandePack' => $demandePack]);
+        
         // Mark the notification as read
-        $notification = $this->notificationsAdminRepository->findOneBy(['demandePack' => $id]);
         if ($notification && $notification->getStatut() === 'NON_LU') {
             $notification->setStatut('LU');
             $this->entityManager->flush();
@@ -93,7 +97,7 @@ class CustomizePackController extends AbstractController
         }
 
         // Get the client information
-        $client = $this->utilisateurRepository->find($demandePack->getUtilisateurId());
+        $client = $demandePack->getUser();
         
         // Get all available materielle with their quantities
         $materielles = $this->materielleRepository->findAll();
@@ -110,9 +114,9 @@ class CustomizePackController extends AbstractController
             $eventDate = $demandePack->getEvent()->getDate();
         }
         
-        // Fetch the currently logged-in admin if available (fallback to 1)
+        // Fetch the currently logged-in admin
         $admin = $this->getUser();
-        $adminId = ($admin && method_exists($admin, 'getId')) ? $admin->getId() : 1;
+        $adminId = ($admin && method_exists($admin, 'getId')) ? $admin->getId() : null;
         $latestNotifications = $this->notificationsAdminRepository->createQueryBuilder('n')
             ->andWhere('n.admin = :adminId')
             ->setParameter('adminId', $adminId)
@@ -130,9 +134,9 @@ class CustomizePackController extends AbstractController
             'personnel' => $personnel,
             'locations' => $locations,
             'eventDate' => $eventDate,
-            'notification' => $notification, // Pass the notification entity directly
             'latestNotifications' => $latestNotifications,
-            'unreadNotificationsCount' => $unreadNotificationsCount
+            'unreadNotificationsCount' => $unreadNotificationsCount,
+            'notification' => $notification
         ]);
     }
 
@@ -151,7 +155,7 @@ class CustomizePackController extends AbstractController
         $event = $demandePack->getPack()->getEvent();
         if (!$event) {
             $event = new Event();
-            $event->setUtilisateur($this->utilisateurRepository->find($demandePack->getUtilisateurId()));
+            $event->setUtilisateur($demandePack->getUser());
             $event->setStatut('CUSTOMIZED');
             $event->setDateDebut(new \DateTime());
             $event->setDateFin(new \DateTime());
@@ -192,7 +196,28 @@ class CustomizePackController extends AbstractController
                     $reservation->setMaterielle($materielle);
                     $reservation->setEvent($event);
                     $reservation->setQuantite($materielleData['quantity']);
-                    $reservation->setUtilisateur($this->utilisateurRepository->find($demandePack->getUtilisateurId()));
+                    $user = $demandePack->getUser();
+                    if ($user) {
+                        $utilisateur = $this->utilisateurRepository->findOneBy(['email' => $user->getEmail()]);
+                        if (!$utilisateur) {
+                            $utilisateur = new Utilisateur();
+                            $utilisateur->setEmail($user->getEmail());
+                            $utilisateur->setNom($user->getNom());
+                            $utilisateur->setPrenom($user->getPrenom());
+                            $utilisateur->setPassword($user->getPassword());
+                            $utilisateur->setRole('ROLE_USER');
+                            // Generate a random hash
+                            $utilisateur->setHash(random_bytes(32));
+                            // Generate a random salt
+                            $utilisateur->setSalt(random_bytes(32));
+                            $this->entityManager->persist($utilisateur);
+                            $this->entityManager->flush();
+                        }
+                        $reservation->setUtilisateur($utilisateur);
+                        $this->entityManager->persist($reservation);
+                    } else {
+                        throw new \Exception('Utilisateur non trouvé pour la réservation de matériel');
+                    }
                     $this->entityManager->persist($reservation);
                 }
             }
@@ -244,7 +269,7 @@ class CustomizePackController extends AbstractController
         $this->entityManager->flush();
 
         // Send notification email to client
-        $client = $this->utilisateurRepository->find($demandePack->getUtilisateurId());
+        $client = $demandePack->getUser();
         $packName = $demandePack->getPack() ? $demandePack->getPack()->getNom() : 'Votre pack';
         $recipientEmail = $client ? $client->getEmail() : null;
         if ($client && $recipientEmail) {
