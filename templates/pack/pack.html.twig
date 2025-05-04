@@ -192,7 +192,7 @@
                             <ul>
                                 {% for cat in categories %}
                                     {% set count = 0 %}
-                                    {% for pack in packs %}
+                                    {% for pack in allPacks %}
                                         {% if pack.categorie == cat.categorie %}
                                             {% set count = count + 1 %}
                                         {% endif %}

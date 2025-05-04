@@ -139,9 +139,9 @@ class PackController extends AbstractController
             'selectedCategory' => $category,
             'minPrice' => $minPrice,
             'maxPrice' => $maxPrice,
-            'searchTerm' => $searchTerm,
             'sortOptions' => $sortOptions,
-            'currentSort' => $currentSort
+            'currentSort' => $currentSort,
+            'allPacks' => $this->packRepository->findAll(),
         ]);
     }
     
