@@ -199,7 +199,21 @@ class EventController extends AbstractController
 
     $events = $qbDemande->getQuery()->getResult();
 
-    
+    // Attach demande_pack date to each event
+    $eventDates = [];
+    foreach ($events as $event) {
+        $demandePack = null;
+        foreach ($event->getPacks() as $pack) {
+            foreach ($pack->getDemandePacks() as $dp) {
+                if ($dp->getEvent() && $dp->getEvent()->getId() === $event->getId()) {
+                    $demandePack = $dp;
+                    break 2;
+                }
+            }
+        }
+        $eventDates[$event->getId()] = $demandePack ? $demandePack->getDateDemande() : null;
+    }
+
     // Sort the merged events array manually since we are not using a query builder
     usort($events, function($a, $b) use ($orderBy, $sortDirection) {
         switch ($orderBy) {
@@ -228,6 +242,11 @@ class EventController extends AbstractController
     $totalPages = ceil($totalItems / $pageSize);
     $offset = $pageSize * ($currentPage - 1);
     $eventsPage = array_slice($events, $offset, $pageSize);
+
+    // Attach demande_pack date to each event in $eventsPage
+    foreach ($eventsPage as $event) {
+        $event->demandePackDate = $eventDates[$event->getId()] ?? null;
+    }
 
 
         
