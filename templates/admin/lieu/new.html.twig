@@ -39,7 +39,7 @@
     <link rel="stylesheet" href="{{ asset('vendor/libs/sweetalert2/sweetalert2.css') }}" />
     
     <!-- TinyMCE -->
-    <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+    <script src="https://cdn.tiny.cloud/1/sh6tva8fxf0v18kl59xoulsmtml096mkg3htycjgvev3nzl5/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
     
     <!-- Page CSS -->
     <link rel="stylesheet" href="{{ asset('vendor/css/pages/cards-advance.css') }}" />
@@ -524,7 +524,7 @@
     <div class="layout-wrapper layout-content-navbar">
         <div class="layout-container">
             <!-- Menu -->
-           <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
+            <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
                 <div class="app-brand demo">
                     <a href="index.html" class="app-brand-link">
                         <span class="app-brand-logo demo">
@@ -563,7 +563,7 @@
 
                 <ul class="menu-inner py-1">
                     <!-- Packs -->
-                    <li class="menu-item ">
+                    <li class="menu-item">
                         <a href="{{ path('admin_pack_index') }}" class="menu-link">
                             <i class="menu-icon tf-icons ti ti-package"></i>
                             <div data-i18n="Packs">Packs</div>
@@ -571,8 +571,8 @@
                     </li>
 
                     <!-- Gestion Événements -->
-                    <li class="menu-item ">
-                        <a href="{{ path('app_events_admin') }}" class="menu-link ">
+                    <li class="menu-item">
+                        <a href="{{ path('app_events_admin') }}" class="menu-link menu-toggle">
                             <i class="menu-icon tf-icons ti ti-calendar-event"></i>
                             <div data-i18n="Gestion Événements">Gestion Événements</div>
                         </a>
@@ -593,36 +593,74 @@
                     </li>
 
                     <!-- Gestion Matérielle -->
-                    
-
- <li class="menu-item  ">
-                        <a href="{{ path('app_materielss') }}" class="menu-link">
-                            <i class="menu-icon tf-icons ti ti-package"></i>
-                            <div data-i18n="Packs">Gestion Matérielle</div>
+                    <li class="menu-item">
+                        <a href="{{ path('app_materielss') }}" class="menu-link menu-toggle">
+                            <i class="menu-icon tf-icons ti ti-tools"></i>
+                            <div data-i18n="Gestion Matérielle">Gestion Matérielle</div>
                         </a>
+                        <ul class="menu-sub">
+                            <li class="menu-item">
+                                <a href="ajouter-materiel.html" class="menu-link">
+                                    <i class="menu-icon tf-icons ti ti-circle"></i>
+                                    <div data-i18n="Ajouter Matériel">Ajouter Matériel</div>
+                                </a>
+                            </li>
+                            <li class="menu-item">
+                                <a href="liste-materiel.html" class="menu-link">
+                                    <i class="menu-icon tf-icons ti ti-circle"></i>
+                                    <div data-i18n="Liste Matériel">Liste Matériel</div>
+                                </a>
+                            </li>
+                        </ul>
                     </li>
-                    <!-- Gestion Lieu -->
-                    
 
-                         <li class="menu-item active">
-                        <a href="{{ path('admin_lieu_index') }}" class="menu-link">
-                            <i class="menu-icon tf-icons ti ti-package"></i>
-                            <div data-i18n="Packs">Gestion Lieux</div>
+                    <!-- Gestion Lieu -->
+                    <li class="menu-item active">
+                        <a href="{{ path('admin_lieu_index') }}" class="menu-link menu-toggle">
+                            <i class="menu-icon tf-icons ti ti-map-pin"></i>
+                            <div data-i18n="Gestion Lieu">Gestion Lieu</div>
                         </a>
+                        <ul class="menu-sub">
+                            <li class="menu-item">
+                                <a href="ajouter-lieu.html" class="menu-link">
+                                    <i class="menu-icon tf-icons ti ti-circle"></i>
+                                    <div data-i18n="Ajouter Lieu">Ajouter Lieu</div>
+                                </a>
+                            </li>
+                            <li class="menu-item">
+                                <a href="liste-lieux.html" class="menu-link">
+                                    <i class="menu-icon tf-icons ti ti-circle"></i>
+                                    <div data-i18n="Liste Lieux">Liste Lieux</div>
+                                </a>
+                            </li>
+                        </ul>
                     </li>
 
                     <!-- Gestion Personnels -->
-                     <li class="menu-item  ">
-                        <a href="{{ path('app_perso_index') }}" class="menu-link">
-                            <i class="menu-icon tf-icons ti ti-package"></i>
-                            <div data-i18n="Packs">Gestion Personnels</div>
+                    <li class="menu-item">
+                        <a href="{{ path('app_perso_index') }}" class="menu-link menu-toggle">
+                            <i class="menu-icon tf-icons ti ti-users"></i>
+                            <div data-i18n="Gestion Personnels">Gestion Personnels</div>
                         </a>
+                        <ul class="menu-sub">
+                            <li class="menu-item">
+                                <a href="ajouter-personnel.html" class="menu-link">
+                                    <i class="menu-icon tf-icons ti ti-circle"></i>
+                                    <div data-i18n="Ajouter Personnel">Ajouter Personnel</div>
+                                </a>
+                            </li>
+                            <li class="menu-item">
+                                <a href="liste-personnels.html" class="menu-link">
+                                    <i class="menu-icon tf-icons ti ti-circle"></i>
+                                    <div data-i18n="Liste Personnels">Liste Personnels</div>
+                                </a>
+                            </li>
+                        </ul>
                     </li>
-
 
                     <!-- Gestion Commandes -->
                     <li class="menu-item">
-                        <a href="{{ path('app_my_Commandes_admin') }}" class="menu-link ">
+                        <a href="{{ path('app_my_Commandes_admin') }}" class="menu-link menu-toggle">
                             <i class="menu-icon tf-icons ti ti-shopping-cart"></i>
                             <div data-i18n="Gestion Commandes">Gestion Commandes</div>
                         </a>
@@ -799,12 +837,6 @@
                                                         <div class="form-floating mb-3">
                                                             <input type="text" class="form-control" id="ville" name="ville" placeholder="City">
                                                             <label for="ville">City</label>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-12">
-                                                        <div class="form-floating mb-3">
-                                                            <textarea id="description" name="description" class="form-control" style="height: 200px;"></textarea>
-                                                            <label for="description">Description</label>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -1129,12 +1161,14 @@
             // Handle next button clicks
             document.querySelectorAll('.next-step').forEach(button => {
                 button.addEventListener('click', function() {
+                    // Synchroniser TinyMCE avant validation
+                    if (typeof tinymce !== 'undefined') {
+                        tinymce.triggerSave();
+                    }
                     const nextStep = parseInt(this.dataset.next);
-                    
                     if (validateStep(currentStep)) {
                         currentStep = nextStep;
                         showStep(currentStep);
-                        
                         // Update review information when going to step 4
                         if (nextStep === 4) {
                             updateReviewInfo();
@@ -1392,13 +1426,15 @@
             
             // Form submission handler
             $('#createLieuForm').on('submit', function(e) {
+                // Synchroniser TinyMCE avant validation
+                if (typeof tinymce !== 'undefined') {
+                    tinymce.triggerSave();
+                }
                 e.preventDefault();
-                
                 if (!validateStep(currentStep)) {
                     showErrors(['Please fill in all required fields.']);
                     return;
                 }
-                
                 const formData = new FormData(this);
                 
                 // Add upload path information to ensure images go to the correct directory

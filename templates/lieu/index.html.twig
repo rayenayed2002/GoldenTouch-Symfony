@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="csrf-token" content="{{ csrf_token('favoris_token') }}">
     <title>GoldenTouch - Nos Lieux</title>
 
     <!-- Google Fonts -->
@@ -19,10 +20,19 @@
 
     <style>
     <style>
-    /* Styles pour la recherche avancée */
+    /* Variables globales */
     :root {
         --theme-color: #FFC107;
         --theme-color-rgb: 255,193,7;
+        --theme-color-light: #FFE082;
+        --theme-color-dark: #FFA000;
+        --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+        --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+        --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+        --transition-base: all 0.3s ease;
+        --border-radius-sm: 8px;
+        --border-radius-md: 16px;
+        --border-radius-lg: 24px;
     }
     .search-form {
         background: #fffbe7;
@@ -99,57 +109,85 @@
     <style>
         /* Styles pour les cartes de lieux */
         .lieu-card {
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: var(--transition-base);
             margin-bottom: 30px;
-            background: rgba(255, 255, 255, 0.85);
+            background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
             backdrop-filter: blur(12px);
-            border-radius: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+            border-radius: var(--border-radius-md);
+            border: 1px solid rgba(var(--theme-color-rgb), 0.1);
+            box-shadow: var(--shadow-md);
             overflow: hidden;
+            position: relative;
+            z-index: 1;
         }
         .lieu-card:hover {
-            transform: translateY(-8px) scale(1.02);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.12);
-            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--theme-color-light);
+        }
+        .lieu-card:hover .lieu-image {
+            transform: scale(1.05);
         }
         .lieu-image {
             height: 250px;
             object-fit: cover;
-            border-radius: 10px 10px 0 0;
+            border-radius: var(--border-radius-md) var(--border-radius-md) 0 0;
             width: 100%;
+            transition: var(--transition-base);
         }
         .lieu-content {
-            padding: 25px;
+            padding: 1.5rem;
+            background: linear-gradient(180deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,1) 100%);
         }
         .lieu-title {
             font-size: 1.5rem;
-            margin-bottom: 15px;
+            margin-bottom: 1rem;
             color: #1C1C1C;
+            font-weight: 600;
+            line-height: 1.3;
+        }
+        .lieu-title a {
+            color: inherit;
+            text-decoration: none;
+            transition: var(--transition-base);
+        }
+        .lieu-title a:hover {
+            color: var(--theme-color-dark);
         }
         .lieu-description {
             color: #666;
-            margin-bottom: 20px;
+            margin: 0.75rem 0 1.25rem;
             line-height: 1.6;
             display: -webkit-box;
             -webkit-line-clamp: 3;
             -webkit-box-orient: vertical;
             overflow: hidden;
+            font-size: 0.95rem;
+            opacity: 0.9;
         }
         .lieu-meta {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 1px solid #eee;
+            margin-top: 1.25rem;
+            padding-top: 1.25rem;
+            border-top: 1px solid rgba(var(--theme-color-rgb), 0.1);
+            position: relative;
         }
         .lieu-capacity {
-            background: #f8f9fa;
-            padding: 5px 15px;
-            border-radius: 20px;
+            background: rgba(var(--theme-color-rgb), 0.05);
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius-sm);
             font-size: 0.9rem;
-            color: #666;
+            color: var(--theme-color-dark);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: var(--transition-base);
+        }
+        .lieu-capacity:hover {
+            background: rgba(var(--theme-color-rgb), 0.1);
+            transform: translateY(-2px);
         }
         
 
@@ -179,6 +217,150 @@
             color: var(--theme-color);
         }
     </style>
+
+    <style>
+        /* Styles pour la nouvelle barre de recherche */
+        .search-container {
+            background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .search-wrapper {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            padding-left: 3.5rem;
+            font-size: 1.1rem;
+            border: 2px solid #e9ecef;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #FFC107;
+            box-shadow: 0 0 0 3px rgba(255,193,7,0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1.2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+            font-size: 1.2rem;
+        }
+
+        .search-input:focus + .search-icon {
+            color: #FFC107;
+        }
+
+        .sort-wrapper {
+            margin-top: 1rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .sort-select {
+            padding: 0.5rem 1rem;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            background-color: #fff;
+            color: #495057;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .sort-select:focus {
+            outline: none;
+            border-color: #FFC107;
+            box-shadow: 0 0 0 2px rgba(255,193,7,0.1);
+        }
+
+        .sort-label {
+            color: #6c757d;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            .search-container {
+                padding: 1.5rem;
+            }
+            
+            .search-input {
+                font-size: 1rem;
+                padding: 0.8rem 1.2rem;
+                padding-left: 3rem;
+            }
+
+            .search-icon {
+                left: 1rem;
+                font-size: 1rem;
+            }
+
+            .sort-wrapper {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+        }
+    </style>
+
+    <style>
+        .social-share-buttons {
+            display: flex;
+            gap: 0.3rem;
+            margin-left: 0.5rem;
+        }
+
+        .social-share {
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .social-share:hover {
+            transform: scale(1.1);
+        }
+
+        .social-share i {
+            font-size: 0.8rem;
+        }
+
+        .social-share.facebook:hover {
+            background: #1877f2;
+            color: white;
+        }
+
+        .social-share.twitter:hover {
+            background: #1da1f2;
+            color: white;
+        }
+
+        .social-share.whatsapp:hover {
+            background: #25d366;
+            color: white;
+        }
+    </style>
 </head>
 
 <body>
@@ -187,74 +369,140 @@
     <script>
     document.addEventListener('DOMContentLoaded', function() {
         const searchInput = document.getElementById('searchInput');
-        const categorySelect = document.getElementById('categorySelect');
-        const orderbySelect = document.getElementById('orderbySelect'); 
-        const locationInput = document.getElementById('locationInput');
-        const minPriceInput = document.getElementById('minPriceInput');
-        const maxPriceInput = document.getElementById('maxPriceInput');
+        const orderbySelect = document.getElementById('orderbySelect');
+        const priceRange = document.getElementById('priceRange');
+        const priceValue = document.getElementById('priceValue');
         const lieuContainer = document.querySelector('.row.gy-40');
         const defaultImage = '{{ asset("Front/img/placeholder.jpg") }}';
         let debounceTimer;
-
+    
+        priceRange.addEventListener('input', function() {
+            priceValue.textContent = this.value + '€';
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(performSearch, 300);
+        });
+    
         function performSearch() {
             const searchCriteria = {
                 search: searchInput.value.trim(),
-                category: categorySelect.value,
                 orderby: orderbySelect.value,
-                location: locationInput ? locationInput.value.trim() : '',
-                minPrice: minPriceInput ? minPriceInput.value : '',
-                maxPrice: maxPriceInput ? maxPriceInput.value : ''
+                maxPrice: priceRange.value
             };
-
+    
+            // Supprimer les paramètres vides
+            Object.keys(searchCriteria).forEach(key => {
+                if (!searchCriteria[key]) {
+                    delete searchCriteria[key];
+                }
+            });
+    
             lieuContainer.innerHTML = '<div class="col-12 text-center py-5"><i class="fas fa-spinner fa-spin fa-2x"></i><p>Recherche en cours...</p></div>';
-
+    
             fetch('{{ path("app_lieux") }}?' + new URLSearchParams(searchCriteria), {
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest'
                 }
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
             .then(data => {
                 let html = '';
                 if (data.results && data.results.length > 0) {
                     data.results.forEach(lieu => {
                         html += `
-                            <div class="col-lg-4 col-md-6">
-                                <div class="lieu-card">
-                                    <img src="${lieu.imageUrl || defaultImage}" class="lieu-image" alt="${lieu.name}">
-                                    <div class="lieu-content">
-                                        <h3 class="lieu-title">${lieu.name}</h3>
-                                        <div class="lieu-location"><i class="fas fa-map-marker-alt"></i> ${lieu.location}</div>
-                                        <span class="lieu-category">${lieu.category}</span>
-                                        <p class="lieu-description">${lieu.description}</p>
-                                        <div class="lieu-meta">
-                                            <span class="lieu-price">${lieu.price} €</span>
-                                            <span class="lieu-capacity"><i class="fas fa-users"></i> ${lieu.capacity}</span>
+                            <div class="col-xl-4 col-sm-6">
+                                <div class="th-product">
+                                    <div class="product-img">
+                                        <img src="${lieu.imageUrl ? '${window.location.origin}/' + lieu.imageUrl.replace('uploads/', '') : defaultImage}" 
+                                             alt="${lieu.name}" 
+                                             class="img-fluid">
+                                        <div class="actions">
+                                            <a href="/lieu/${lieu.id}" class="icon-btn" title="Voir les détails"><i class="far fa-eye"></i></a>
+                                            <a href="/lieu/${lieu.id}/calendar" class="icon-btn" title="Voir le calendrier"><i class="far fa-calendar-alt"></i></a>
+                                            <a href="#" class="icon-btn toggle-favori" data-lieu-id="${lieu.id}" title="Ajouter aux favoris"><i class="far fa-heart"></i></a>
                                         </div>
-                                        <a href="/lieu/${lieu.id}" class="btn btn-primary mt-3">Voir détails</a>
+                                    </div>
+                                    <div class="product-content">
+                                        <h3 class="product-title"><a href="/lieu/${lieu.id}">${lieu.name}</a></h3>
+                                        <div class="lieu-location">
+                                            <i class="fas fa-map-marker-alt"></i>
+                                            <span>${lieu.location}${lieu.ville ? ', ' + lieu.ville : ''}</span>
+                                        </div>
+                                        <p class="lieu-description">${lieu.description || 'Aucune description disponible'}</p>
+                                        <div class="product-meta">
+                                            <span class="price">${lieu.price} €</span>
+                                            <span class="lieu-capacity"><i class="fas fa-users"></i> ${lieu.capacity} personnes</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         `;
                     });
                 } else {
-                    html = '<div class="col-12 text-center"><p>Aucun résultat trouvé</p></div>';
+                    html = '<div class="col-12 text-center"><div class="alert alert-info">Aucun lieu trouvé pour les critères sélectionnés.</div></div>';
                 }
                 lieuContainer.innerHTML = html;
             })
             .catch(error => {
                 console.error('Erreur:', error);
-                resultsContainer.innerHTML = '<div class="col-12 text-center"><p>Une erreur est survenue lors de la recherche</p></div>';
+                lieuContainer.innerHTML = '<div class="col-12 text-center"><div class="alert alert-danger">Une erreur est survenue lors de la recherche. Veuillez réessayer.</div></div>';
             });
         }
 
+        // Gestion des événements avec debounce
         searchInput.addEventListener('input', function() {
-            clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(performSearch, 300);
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(performSearch, 300);
         });
 
-        categorySelect.addEventListener('change', performSearch);
         orderbySelect.addEventListener('change', performSearch);
+
+        // Gestion des favoris
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('.toggle-favori')) {
+                e.preventDefault();
+                const lieuId = e.target.closest('.toggle-favori').dataset.lieuId;
+                const heartIcon = e.target.closest('.toggle-favori').querySelector('i');
+                const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                
+                fetch(`/favoris/toggle/${lieuId}`, {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': token
+                    },
+                    credentials: 'same-origin'
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        if (response.status === 401) {
+                            window.location.href = '{{ path('app_login') }}';
+                            throw new Error('Veuillez vous connecter pour gérer vos favoris');
+                        }
+                        throw new Error('Erreur réseau');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        heartIcon.classList.toggle('far');
+                        heartIcon.classList.toggle('fas');
+                        heartIcon.classList.toggle('text-danger');
+                    } else {
+                        throw new Error(data.error || 'Erreur lors de la gestion des favoris');
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur:', error);
+                    alert(error.message || 'Une erreur est survenue lors de la gestion des favoris');
+                });
+            }
+        });
     });
     </script>
 
@@ -279,6 +527,38 @@
         {% endif %}
     </a>
 </li>
+
+    <!-- Pagination -->
+    {% if lieux.results is defined %}
+    <div class="container mt-4 mb-5">
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+                {% if lieux.hasPreviousPage %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ path('app_lieux', app.request.query.all|merge({'page': lieux.currentPage - 1})) }}" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                {% endif %}
+                
+                {% for i in max(1, lieux.currentPage - 2)..min(lieux.lastPage, lieux.currentPage + 2) %}
+                    <li class="page-item {{ lieux.currentPage == i ? 'active' : '' }}">
+                        <a class="page-link" href="{{ path('app_lieux', app.request.query.all|merge({'page': i})) }}">{{ i }}</a>
+                    </li>
+                {% endfor %}
+                
+                {% if lieux.hasNextPage %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ path('app_lieux', app.request.query.all|merge({'page': lieux.currentPage + 1})) }}" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+    {% endif %}
+
     <div class="container my-3" style="text-align:right;">
         <div class="btn-group">
             {% if currentFilter != 'statistics' %}
@@ -540,32 +820,35 @@
     {% endif %}
 </div>
 {% else %}
+    <!-- Barre de recherche améliorée -->
+    <div class="search-container">
+        <div class="search-wrapper">
+            <input type="text" 
+                   id="searchInput" 
+                   class="search-input" 
+                   placeholder="Rechercher un lieu par nom, description ou localisation...">
+            <i class="fas fa-search search-icon"></i>
+        </div>
+        <div class="sort-wrapper">
+            <span class="sort-label">Trier par :</span>
+            <select name="orderby" class="sort-select" id="orderbySelect">
+                <option value="menu_order" selected>Par défaut</option>
+                <option value="price_asc">Prix croissant</option>
+                <option value="price_desc">Prix décroissant</option>
+                <option value="capacity_asc">Capacité croissante</option>
+                <option value="capacity_desc">Capacité décroissante</option>
+            </select>
+            <div class="price-filter">
+                <label class="sort-label">Prix:</label>
+                <input type="range" id="priceRange" min="0" max="10000" step="100" value="10000" class="price-slider">
+                <span id="priceValue">10000€</span>
+            </div>
+        </div>
+    </div>
+
     <!-- Lieu List Section -->
     <section class="space-top space-extra-bottom">
         <div class="container">
-            <!-- Barre de recherche simplifiée -->
-            <div class="search-form mb-4">
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <input type="text" id="searchInput" class="form-control" placeholder="Rechercher un lieu...">
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <select id="categorySelect" class="form-control">
-                                <option value="">Toutes catégories</option>
-                                <option value="Salle de fête">Salle de fête</option>
-                                <option value="Espace extérieur">Espace extérieur</option>
-                                <option value="Salle de conférence">Salle de conférence</option>
-                                <option value="Restaurant">Restaurant</option>
-                                <option value="Autre">Autre</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
             <!-- Lieu Grid -->
             <div class="row">
                 <div class="col-12">
@@ -574,16 +857,7 @@
                             <div class="col-md">
                                 <p class="woocommerce-result-count">Affichage de {{ lieux.results|length }} lieux</p>
                             </div>
-                            <div class="col-md-auto">
-                                <form class="woocommerce-ordering" method="get">
-                                    <select name="orderby" class="orderby" id="orderbySelect" aria-label="Lieu order">
-                                        <option value="menu_order" selected="selected">Trier par défaut</option>
-                                        <option value="popularity">Trier par popularité</option>
-                                        <option value="price">Trier par prix: croissant</option>
-                                        <option value="price-desc">Trier par prix: décroissant</option>
-                                    </select>
-                                </form>
-                            </div>
+                            
                         </div>
                     </div>
                     
@@ -594,9 +868,9 @@
                                 <div class="th-product">
                                     <div class="product-img">
                                         {% if lieu.imageUrl %}
-                                            <img src="uploads/lieux/{{ lieu.imageUrl }}" alt="{{ lieu.name }}">
+                                            <img src="{{ asset(lieu.imageUrl|replace({'uploads/': ''}) ) }}" alt="{{ lieu.name }}" class="img-fluid">
                                         {% else %}
-                                            <img src="{{ asset('Front/img/placeholder.jpg') }}" alt="Lieu Image">
+                                            <img src="{{ asset('Front/img/placeholder.jpg') }}" alt="Lieu Image" class="img-fluid">
                                         {% endif %}
                                         <div class="actions">
                                             <a href="{{ path('app_lieu_details', {'id': lieu.id}) }}" class="icon-btn" title="Voir les détails"><i class="far fa-eye"></i></a>
@@ -669,75 +943,45 @@
     <script src="{{ asset('Front/js/slick.min.js') }}"></script>
     <script src="{{ asset('Front/js/main.js') }}"></script>
 
-    <!-- Script pour la recherche en temps réel -->
-    <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const searchInput = document.getElementById('searchInput');
-    const categorySelect = document.getElementById('categorySelect');
-    const orderbySelect = document.getElementById('orderbySelect');
-    const lieuContainer = document.querySelector('.row.gy-40');
-    const defaultImage = '{{ asset("Front/img/placeholder.jpg") }}';
-    let debounceTimer;
-
-    function performSearch() {
-        const searchCriteria = {
-            name: searchInput.value.trim(),
-            category: categorySelect.value,
-            orderby: orderbySelect.value
-        };
-        lieuContainer.innerHTML = '<div class="col-12 text-center py-5"><i class="fas fa-spinner fa-spin fa-2x"></i><p>Recherche en cours...</p></div>';
-        fetch('{{ path("app_lieu_search_autocomplete") }}?' + new URLSearchParams(searchCriteria), {
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if(data.length > 0) {
-                lieuContainer.innerHTML = data.map(lieu => `
-                    <div class="col-xl-4 col-sm-6">
-                        <div class="lieu-card">
-                            <div class="product-img">
-                                <img src="${lieu.image ? 'uploads/lieux/' + lieu.image : defaultImage}" alt="${lieu.name}" class="lieu-image">
-                                <div class="actions">
-                                    <a href="${lieu.url}" class="icon-btn" title="Voir les détails"><i class="far fa-eye"></i></a>
-                                    <a href="#" class="icon-btn toggle-favori" data-lieu-id="${lieu.id}" title="Ajouter aux favoris"><i class="far fa-heart"></i></a>
-                                </div>
-                            </div>
-                            <div class="lieu-content">
-                                ${lieu.category ? <span class=\"lieu-category\">${lieu.category}</span> : ''}
-                                <h3 class="lieu-title"><a href="${lieu.url}">${lieu.name}</a></h3>
-                                <div class="lieu-location">
-                                    <i class="fas fa-map-marker-alt"></i>
-                                    <span>${lieu.location || ''}</span>
-                                </div>
-                                <p class="lieu-description">${lieu.description || 'Aucune description disponible'}</p>
-                                <div class="lieu-meta">
-                                    <span class="price">${lieu.price} €</span>
-                                    <span class="lieu-capacity"><i class="fas fa-users"></i> ${lieu.capacity} personnes</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `).join('');
-            } else {
-                lieuContainer.innerHTML = '<div class="col-12 text-center py-5"><div class="alert alert-info">Aucun lieu trouvé.</div></div>';
-            }
-        })
-        .catch(() => {
-            lieuContainer.innerHTML = '<div class="col-12 text-center py-5"><div class="alert alert-danger">Erreur lors de la recherche.</div></div>';
-        });
+    <!-- Style pour la recherche en temps réel -->
+    <style>
+    .price-filter {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-left: 1rem;
     }
 
-    searchInput.addEventListener('input', function() {
-        clearTimeout(debounceTimer);
-        debounceTimer = setTimeout(performSearch, 400);
-    });
-    categorySelect.addEventListener('change', performSearch);
-    orderbySelect.addEventListener('change', performSearch);
-});
-</script>
+    .price-slider {
+        width: 200px;
+        height: 8px;
+        -webkit-appearance: none;
+        background: #e9ecef;
+        border-radius: 4px;
+        outline: none;
+    }
 
+    .price-slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 18px;
+        height: 18px;
+        background: #FFC107;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+
+    .price-slider::-webkit-slider-thumb:hover {
+        background: #FFD54F;
+    }
+
+    #priceValue {
+        min-width: 80px;
+        font-size: 0.9rem;
+        color: #495057;
+    }
+    </style>
     <script>
     document.addEventListener('DOMContentLoaded', function() {
         const searchInput = document.getElementById('searchInput');

@@ -351,6 +351,13 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 });
+
+function printCard() {
+    var cardFooter = document.querySelector('.card-footer');
+    if (cardFooter) {
+        cardFooter.style.marginBottom = '2mm';
+    }
+}
 </script>
 {% endblock %}
 

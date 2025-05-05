@@ -14,7 +14,8 @@ use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-
+// Add this at the top of your controller file
+use App\Repository\ReserverLieuRepository;
 #[Route('/admin/lieu', name: 'admin_lieu_')]
 class LieuController extends AbstractController
 {
@@ -415,92 +416,215 @@ public function index(): Response
     }
 
     private function handleLieuImage(Lieu $lieu, $file = null, ?string $selectedServerImage = null): void
-{
-    $projectDir = $this->getParameter('kernel.project_dir');
-    $fullUploadPath = $projectDir . '/public/uploads/lieux/Images';
-    $webPath = '/uploads/lieux/Images';
+    {
+        $projectDir = $this->getParameter('kernel.project_dir');
+        $fullUploadPath = $projectDir . '/public/uploads/lieux/Images';
+        $webPath = '/uploads/lieux/Images';
 
-    if ($file && $file instanceof UploadedFile && $file->isValid()) {
-        if ($lieu->getImageUrl()) {
-            $oldImagePath = $projectDir . '/public' . $lieu->getImageUrl();
-            if (file_exists($oldImagePath)) {
-                unlink($oldImagePath);
+        if ($file && $file instanceof UploadedFile && $file->isValid()) {
+            if ($lieu->getImageUrl()) {
+                $oldImagePath = $projectDir . '/public' . $lieu->getImageUrl();
+                if (file_exists($oldImagePath)) {
+                    unlink($oldImagePath);
+                }
             }
-        }
 
-        if (!file_exists($fullUploadPath)) {
-            mkdir($fullUploadPath, 0777, true);
-        }
+            if (!file_exists($fullUploadPath)) {
+                mkdir($fullUploadPath, 0777, true);
+            }
 
-        $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
-        $safeFilename = preg_replace('/[^A-Za-z0-9_-]/', '', $originalFilename);
-        $newFilename = $safeFilename . '-' . uniqid() . '.' . $file->guessExtension();
+            $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+            $safeFilename = preg_replace('/[^A-Za-z0-9_-]/', '', $originalFilename);
+            $newFilename = $safeFilename . '-' . uniqid() . '.' . $file->guessExtension();
 
-        $file->move($fullUploadPath, $newFilename);
-        $lieu->setImageUrl($webPath . '/' . $newFilename); // Saves as "/uploads/lieux/Images/filename.jpg"
-    }
-    elseif ($selectedServerImage) {
-        $filename = basename($selectedServerImage);
-        $fullServerPath = $fullUploadPath . '/' . $filename;
-
-        if (file_exists($fullServerPath)) {
-            $lieu->setImageUrl($webPath . '/' . $filename);
+            $file->move($fullUploadPath, $newFilename);
+            $lieu->setImageUrl($webPath . '/' . $newFilename);
         }
     }
-}
 
+    #[Route('/upload-image', name: 'upload_image', methods: ['POST'])]
+    public function uploadImage(Request $request): JsonResponse
+    {
+        try {
+            $file = $request->files->get('file');
+            
+            if (!$file) {
+                return $this->json([
+                    'success' => false,
+                    'message' => 'Aucun fichier n\'a été envoyé'
+                ], 400);
+            }
 
+            $projectDir = $this->getParameter('kernel.project_dir');
+            $fullUploadPath = $projectDir . '/public/uploads/lieux/editor';
+            $webPath = '/uploads/lieux/editor';
 
+            if (!file_exists($fullUploadPath)) {
+                mkdir($fullUploadPath, 0777, true);
+            }
 
-// Dans LieuController.php
+            $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+            $safeFilename = preg_replace('/[^A-Za-z0-9_-]/', '', $originalFilename);
+            $newFilename = $safeFilename . '-' . uniqid() . '.' . $file->guessExtension();
 
-#[Route('/stats', name: 'stats', methods: ['GET'])]
-public function stats(LieuRepository $lieuRepository, \App\Repository\ReserverLieuRepository $reserverLieuRepository): Response
-{
-    // Statistiques des réservations
-    $monthlyReservations = $lieuRepository->getMonthlyReservations();
+            $file->move($fullUploadPath, $newFilename);
+
+            return $this->json([
+                'success' => true,
+                'location' => $webPath . '/' . $newFilename
+            ]);
+        } catch (\Exception $e) {
+            return $this->json([
+                'success' => false,
+                'message' => 'Erreur lors de l\'upload de l\'image: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    #[Route('/stats', name: 'stats', methods: ['GET'])]
+    public function stats(LieuRepository $lieuRepository, ReserverLieuRepository $reserverLieuRepository): Response
+    {
+        $topLieux = $lieuRepository->getTopLieux();
+        $categoryDistribution = $lieuRepository->getCategoryDistribution();
+        $locationStats = $lieuRepository->getLocationStats();
+        $lieuxCeMois = $reserverLieuRepository->countThisMonthReservations();
+        $mostReservedLieuThisMonth = $reserverLieuRepository->getMostReservedLieuThisMonth();
+        $monthlyReservations = $reserverLieuRepository->getMonthlyReservations();
+        $monthlyRevenue = $reserverLieuRepository->getMonthlyRevenue();
     
-    // Statistiques des revenus
-    $monthlyRevenue = $lieuRepository->getMonthlyRevenue();
+        return $this->render('admin/lieu/stat.html.twig', [
+            'topLieux' => $topLieux,
+            'categoryDistribution' => $categoryDistribution,
+            'locationStats' => $locationStats,
+            'lieuxCeMois' => $lieuxCeMois,
+            'mostReservedLieuThisMonth' => $mostReservedLieuThisMonth,
+            'monthlyReservations' => $monthlyReservations,
+            'monthlyRevenue' => $monthlyRevenue
+        ]);
+    }
+
+  
+
+    #[Route('/stats/revenue-data', name: 'revenue_data', methods: ['GET'])]
+    public function getRevenueData(LieuRepository $lieuRepository): JsonResponse
+    {
+        $data = $lieuRepository->getMonthlyRevenue();
+        return $this->json($data);
+    }
+
     
-    // Lieux les plus populaires
-    $topLieux = $lieuRepository->getTopLieux();
-    
-    // Répartition par catégorie
-    $categoryDistribution = $lieuRepository->getCategoryDistribution();
-    
-    // Statistiques globales
-    $locationStats = $lieuRepository->getLocationStats();
-    
-    // Nombre de réservations de lieux ce mois
-    $lieuxCeMois = $reserverLieuRepository->countThisMonthReservations();
-    $mostReservedLieuThisMonth = $reserverLieuRepository->getMostReservedLieuThisMonth();
 
-    return $this->render('admin/lieu/stat.html.twig', [
-        'monthlyReservations' => $monthlyReservations,
-        'monthlyRevenue' => $monthlyRevenue,
-        'topLieux' => $topLieux,
-        'categoryDistribution' => $categoryDistribution,
-        'locationStats' => $locationStats,
-        'lieuxCeMois' => $lieuxCeMois,
-        'mostReservedLieuThisMonth' => $mostReservedLieuThisMonth,
-    ]);
-}
+    #[Route('/revenue-report', name: 'revenue_report', methods: ['GET'])]
+    public function revenueReport(LieuRepository $lieuRepository, \App\Repository\ReserverLieuRepository $reserverLieuRepository): Response
+    {
+        $lieux = $lieuRepository->findAll();
+        $totalRevenue = 0;
+        $revenueByLieu = [];
 
-#[Route('/stats/reservations-data', name: 'reservations_data', methods: ['GET'])]
-public function getReservationsData(LieuRepository $lieuRepository): JsonResponse
-{
-    $data = $lieuRepository->getMonthlyReservations();
-    return $this->json($data);
-}
+        foreach ($lieux as $lieu) {
+            $reservations = $reserverLieuRepository->findBy(['lieu' => $lieu, 'status' => 'confirmé']);
+            $lieuRevenue = 0;
+            
+            foreach ($reservations as $reservation) {
+                $lieuRevenue += $lieu->getPrice();
+            }
+            
+            $revenueByLieu[$lieu->getId()] = [
+                'name' => $lieu->getName(),
+                'revenue' => $lieuRevenue
+            ];
+            
+            $totalRevenue += $lieuRevenue;
+        }
 
-#[Route('/stats/revenue-data', name: 'revenue_data', methods: ['GET'])]
-public function getRevenueData(LieuRepository $lieuRepository): JsonResponse
-{
-    $data = $lieuRepository->getMonthlyRevenue();
-    return $this->json($data);
-}
+        return $this->render('admin/lieu/revenue_report.html.twig', [
+            'lieux' => $lieux,
+            'revenueByLieu' => $revenueByLieu,
+            'totalRevenue' => $totalRevenue
+        ]);
+    }
 
+    #[Route('/search', name: 'search', methods: ['GET'])]
+    public function search(Request $request): JsonResponse
+    {
+        try {
+            $query = $request->query->get('query');
+            $ville = $request->query->get('ville');
+            $capacity = $request->query->get('capacity');
+            $category = $request->query->get('category');
+            $minPrice = $request->query->get('minPrice');
+            $maxPrice = $request->query->get('maxPrice');
+            $minCapacity = $request->query->get('minCapacity');
+            $villeFilter = $request->query->get('villeFilter');
 
+            $queryBuilder = $this->lieuRepository->createQueryBuilder('l');
 
+            if ($query) {
+                $queryBuilder->andWhere('l.name LIKE :query OR l.description LIKE :query')
+                    ->setParameter('query', '%' . $query . '%');
+            }
+
+            if ($ville) {
+                $queryBuilder->andWhere('l.ville LIKE :ville')
+                    ->setParameter('ville', '%' . $ville . '%');
+            }
+
+            if ($capacity) {
+                $queryBuilder->andWhere('l.capacity = :capacity')
+                    ->setParameter('capacity', (int)$capacity);
+            }
+
+            if ($category) {
+                $queryBuilder->andWhere('l.category = :category')
+                    ->setParameter('category', $category);
+            }
+
+            if ($minPrice) {
+                $queryBuilder->andWhere('l.price >= :minPrice')
+                    ->setParameter('minPrice', (float)$minPrice);
+            }
+
+            if ($maxPrice) {
+                $queryBuilder->andWhere('l.price <= :maxPrice')
+                    ->setParameter('maxPrice', (float)$maxPrice);
+            }
+
+            if ($minCapacity) {
+                $queryBuilder->andWhere('l.capacity >= :minCapacity')
+                    ->setParameter('minCapacity', (int)$minCapacity);
+            }
+
+            if ($villeFilter) {
+                $queryBuilder->andWhere('l.ville LIKE :villeFilter')
+                    ->setParameter('villeFilter', '%' . $villeFilter . '%');
+            }
+
+            $lieux = $queryBuilder->getQuery()->getResult();
+
+            $results = array_map(function($lieu) {
+                return [
+                    'id' => $lieu->getId(),
+                    'name' => $lieu->getName(),
+                    'description' => $lieu->getDescription(),
+                    'ville' => $lieu->getVille(),
+                    'capacity' => $lieu->getCapacity(),
+                    'price' => $lieu->getPrice(),
+                    'imageUrl' => $lieu->getImageUrl(),
+                    'location' => $lieu->getLocation(),
+                    'category' => $lieu->getCategory()
+                ];
+            }, $lieux);
+
+            return new JsonResponse([
+                'success' => true,
+                'results' => $results
+            ]);
+
+        } catch (\Exception $e) {
+            return new JsonResponse([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
 }

@@ -1,0 +1,56 @@
+{% set defaultText = text|default('Découvrez notre site') %}
+{% set defaultUrl = url|default(app.request.uri) %}
+
+<div class="social-share-buttons">
+    <a href="https://www.facebook.com/sharer/sharer.php?u={{ absolute_url(defaultUrl) }}" 
+       class="btn btn-sm btn-outline-primary social-share" 
+       target="_blank"
+       title="Partager sur Facebook">
+        <i class="fab fa-facebook-f"></i>
+    </a>
+    <a href="https://twitter.com/intent/tweet?url={{ absolute_url(defaultUrl) }}&text={{ defaultText }}" 
+       class="btn btn-sm btn-outline-info social-share" 
+       target="_blank"
+       title="Partager sur Twitter">
+        <i class="fab fa-twitter"></i>
+    </a>
+    <a href="https://wa.me/?text={{ defaultText }} - {{ absolute_url(defaultUrl) }}" 
+       class="btn btn-sm btn-outline-success social-share" 
+       target="_blank"
+       title="Partager sur WhatsApp">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+    <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ absolute_url(defaultUrl) }}&title={{ defaultText }}" 
+       class="btn btn-sm btn-outline-primary social-share" 
+       target="_blank"
+       title="Partager sur LinkedIn">
+        <i class="fab fa-linkedin-in"></i>
+    </a>
+</div>
+
+<style>
+    .social-share-buttons {
+        display: flex;
+        gap: 0.5rem;
+        justify-content: center;
+        margin: 1rem 0;
+    }
+
+    .social-share {
+        width: 35px;
+        height: 35px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        transition: all 0.3s ease;
+    }
+
+    .social-share:hover {
+        transform: scale(1.1);
+    }
+
+    .social-share i {
+        font-size: 0.9rem;
+    }
+</style> 

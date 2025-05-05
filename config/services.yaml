@@ -80,3 +80,7 @@ services:
             $googleClientId: '%env(GOOGLE_CLIENT_ID)%'
             $googleClientSecret: '%env(GOOGLE_CLIENT_SECRET)%'
             $googleRedirectUri: '%env(GOOGLE_REDIRECT_URI)%'
+
+    # Explicitly configure the Twig extension
+    App\Twig\SlugExtension:
+        tags: ['twig.extension']
