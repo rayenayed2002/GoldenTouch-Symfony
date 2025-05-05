@@ -9,6 +9,8 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Validator\Constraints as Assert;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
@@ -272,8 +274,40 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         
         return $this;
     }
+    #[ORM\OneToMany(targetEntity: ReservMat::class, mappedBy: 'user')]
+    private Collection $reservMats;
 
+    public function __construct()
+    {
+        $this->reservMats = new ArrayCollection();
+    }
+/**
+ * @return Collection<int, ReservMat>
+ */
+public function getReservMats(): Collection
+{
+    return $this->reservMats;
+}
 
+public function addReservMat(ReservMat $reservMat): static
+{
+    if (!$this->reservMats->contains($reservMat)) {
+        $this->reservMats->add($reservMat);
+        $reservMat->setUser($this);
+    }
 
+    return $this;
+}
 
+public function removeReservMat(ReservMat $reservMat): static
+{
+    if ($this->reservMats->removeElement($reservMat)) {
+        // set the owning side to null (unless already changed)
+        if ($reservMat->getUser() === $this) {
+            $reservMat->setUser(null);
+        }
+    }
+
+    return $this;
+}
 }

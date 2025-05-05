@@ -126,26 +126,33 @@
   </li>
 
   <!-- Gestion Matérielle -->
-  <li class="menu-item">
+  <li class="menu-item active ">
     <a href="javascript:void(0);" class="menu-link menu-toggle">
       <i class="menu-icon tf-icons ti ti-tools"></i>
       <div data-i18n="Gestion Matérielle">Gestion Matérielle</div>
     </a>
     <ul class="menu-sub">
       <li class="menu-item">
-        <a href="ajouter-materiel.html" class="menu-link">
+<a href="{{ path('app_materiels_new') }}" class="menu-link">
           <i class="menu-icon tf-icons ti ti-circle"></i>
           <div data-i18n="Ajouter Matériel">Ajouter Matériel</div>
         </a>
       </li>
-      <li class="menu-item">
-        <a href="liste-materiel.html" class="menu-link">
+      <li class="menu-item active">
+<a href="{{ path('app_materielss') }}" class="menu-link">
           <i class="menu-icon tf-icons ti ti-circle"></i>
           <div data-i18n="Liste Matériel">Liste Matériel</div>
         </a>
       </li>
+      <li class="menu-item ">
+<a href="{{ path('app_reservations') }}" class="menu-link">
+          <i class="menu-icon tf-icons ti ti-circle"></i>
+          <div data-i18n="Liste Reservation">Liste Matériel</div>
+        </a>
+      </li>
     </ul>
   </li>
+
 
   <!-- Gestion Lieu -->
   <li class="menu-item">

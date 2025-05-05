@@ -1,21 +1,46 @@
-{% for materiel in materiels %}
-<div class="card mb-3">
-    <div class="row g-0">
-        <div class="col-md-4">
-            <img src="{{ asset('uploads/materiel/' ~ materiel.photoMat) }}" class="img-fluid rounded-start" alt="{{ materiel.nomMat }}">
-        </div>
-        <div class="col-md-8">
-            <div class="card-body">
-                <h5 class="card-title">{{ materiel.nomMat }}</h5>
-                <p class="card-text">{{ materiel.descriptionMat }}</p>
-                <p class="card-text">
-                    <small class="text-muted">Quantité: {{ materiel.quantiteMat }} | Prix: {{ materiel.prixMat }} DT</small>
-                </p>
-                <a href="{{ path('app_materiels_show', { id: materiel.idMat }) }}" class="btn btn-primary">Voir plus</a>
+<div class="row gy-40">
+    {% for materiel in materiels %}
+        <div class="col-xl-4 col-sm-6">
+            <div class="th-product event-card">
+                <div class="product-img position-relative">
+                    {% if materiel.photoMat %}
+                        <img src="{{ asset('uploads/materiels/' ~ materiel.photoMat) }}" class="img-fluid" alt="{{ materiel.nomMat }}">
+                    {% else %}
+                        <img src="assets/img/placeholder.jpg" class="img-fluid" alt="No image">
+                    {% endif %}
+
+                    {% if materiel.quantiteMat == 0 %}
+                        <span class="badge bg-danger position-absolute top-0 start-0 m-2">Hors Stock</span>
+                    {% endif %}
+
+                    <div class="product-actions">
+                        <a href="{{ path('app_materiels_show_Details', {'id': materiel.idMat}) }}" class="action-btn reserve-btn" title="Réserver">
+                            <i class="far fa-calendar-check"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="product-content">
+                    <h3 class="product-title">
+                        <a href="{{ path('app_materiels_show_Details', {'id': materiel.idMat}) }}" class="text-decoration-none">
+                            {{ materiel.nomMat }}
+                        </a>
+                    </h3>
+                    <p class="product-description mb-2">
+                        {{ materiel.descriptionMat|default('No description available')|slice(0, 80) }}...
+                    </p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="price">{{ materiel.prixMat|number_format(2, '.', ',') }} TND</span>
+                        <span class="event-category">
+                            {{ materiel.quantiteMat }} unités
+                        </span>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
+    {% else %}
+        <div class="col-12">
+            <div class="alert alert-info">No materials found</div>
+        </div>
+    {% endfor %}
 </div>
-{% else %}
-<p class="text-muted">Aucun matériel trouvé.</p>
-{% endfor %}
