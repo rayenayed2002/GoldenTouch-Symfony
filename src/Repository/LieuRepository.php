@@ -15,78 +15,45 @@ class LieuRepository extends ServiceEntityRepository
         parent::__construct($registry, Lieu::class);
     }
 
-    public function getMonthlyReservations(): array
+  
+    public function findByMonthlyReservations(): array
     {
-        $conn = $this->getEntityManager()->getConnection();
-        $sql = '
-            SELECT DATE_FORMAT(r.date_reservation, "%Y-%m") as month,
-                   COUNT(*) as total
-            FROM reserver_lieu r
-            GROUP BY month
-            ORDER BY month ASC
-            LIMIT 6
-        ';
-        $result = $conn->executeQuery($sql)->fetchAllAssociative();
-        return array_map(fn($row) => [
-            'month' => $row['month'],
-            'total' => (int)$row['total']
-        ], $result);
-    }
+        $qb = $this->createQueryBuilder('l')
+            ->select(
+                'COUNT(r.id) as count',
+                'MONTH(r.date_reservation) as month',
+                'YEAR(r.date_reservation) as year'
+            )
+            ->join('App\\Entity\\ReserverLieu', 'r', 'WITH', 'r.lieu_id = l.id')
+            ->where('r.date_reservation >= :startDate')
+            ->setParameter('startDate', new \DateTime('-6 months'))
+            ->groupBy('year, month')
+            ->orderBy('year', 'ASC')
+            ->addOrderBy('month', 'ASC');
 
-    public function getMonthlyRevenue(): array
-    {
-        $conn = $this->getEntityManager()->getConnection();
-        $sql = '
-            SELECT DATE_FORMAT(r.date_reservation, "%Y-%m") as month,
-                   SUM(l.price) as revenue
-            FROM reserver_lieu r
-            JOIN lieu l ON r.lieu_id = l.id
-            GROUP BY month
-            ORDER BY month ASC
-            LIMIT 6
-        ';
-        $result = $conn->executeQuery($sql)->fetchAllAssociative();
-        return array_map(fn($row) => [
-            'month' => $row['month'],
-            'revenue' => (float)$row['revenue']
-        ], $result);
+        return $qb->getQuery()->getResult();
     }
 
     public function getTopLieux(): array
     {
-        $conn = $this->getEntityManager()->getConnection();
-        $sql = '
-            SELECT l.name, COUNT(r.id) as reservations,
-                   (COUNT(r.id) * 100.0 / (
-                       SELECT COUNT(*) FROM reserver_lieu
-                   )) as occupancy
-            FROM lieu l
-            LEFT JOIN reserver_lieu r ON l.id = r.lieu_id
-            GROUP BY l.id, l.name
-            ORDER BY reservations DESC
-            LIMIT 5
-        ';
-        $result = $conn->executeQuery($sql)->fetchAllAssociative();
-        return array_map(fn($row) => [
-            'name' => $row['name'],
-            'reservations' => (int)$row['reservations'],
-            'occupancy' => round((float)$row['occupancy'], 1)
-        ], $result);
+        $qb = $this->createQueryBuilder('l')
+            ->select('l.name, COUNT(r.id) as reservations, AVG(l.capacity) as occupancy')
+            ->leftJoin('l.reservations', 'r')
+            ->groupBy('l.id')
+            ->orderBy('reservations', 'DESC')
+            ->setMaxResults(5);
+
+        return $qb->getQuery()->getResult();
     }
 
     public function getCategoryDistribution(): array
     {
-        $conn = $this->getEntityManager()->getConnection();
-        $sql = '
-            SELECT category, COUNT(*) as total
-            FROM lieu
-            GROUP BY category
-        ';
-        $result = $conn->executeQuery($sql)->fetchAllAssociative();
-        return array_map(fn($row) => [
-            'category' => $row['category'],
-            'total' => (int)$row['total']
-        ], $result);
+        $qb = $this->createQueryBuilder('l')
+            ->select('l.category, COUNT(l.id) as count')
+            ->groupBy('l.category')
+            ->orderBy('count', 'DESC');
+
+        return $qb->getQuery()->getResult();
     }
 
     public function findAllPaginated(int $page = 1, int $limit = 10, string $searchTerm = '', ?string $category = null, ?string $orderBy = null): array
@@ -154,7 +121,6 @@ class LieuRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
-
 
     public function findPopularLieux(int $limit = 3): array
     {
@@ -248,36 +214,119 @@ class LieuRepository extends ServiceEntityRepository
         ];
     }
     public function getLocationStats(): array
+    {
+        $conn = $this->getEntityManager()->getConnection();
+        $sql = '
+            SELECT COUNT(*) as total_locations, SUM(capacity) as total_capacity, AVG(price) as avg_price
+            FROM lieu
+        ';
+        $result = $conn->executeQuery($sql)->fetchAssociative();
+        
+        // Récupérer les lieux les plus chers
+        $sqlMostExpensive = '
+            SELECT id, name, price
+            FROM lieu
+            ORDER BY price DESC
+            LIMIT 5
+        ';
+        $mostExpensive = $conn->executeQuery($sqlMostExpensive)->fetchAllAssociative();
+        
+        return [
+            'total_locations' => (int)($result['total_locations'] ?? 0),
+            'total_capacity' => (int)($result['total_capacity'] ?? 0),
+            'avg_price' => (float)($result['avg_price'] ?? 0),
+            'most_expensive' => $mostExpensive
+        ];
+    }
+
+    public function getTrendingLieux(int $limit = 5): array
+    {
+        $conn = $this->getEntityManager()->getConnection();
+        $sql = '
+            SELECT l.*, 
+                   COUNT(r.id) as reservation_count,
+                   AVG(a.rating) as average_rating,
+                   COUNT(DISTINCT r.user_id) as unique_users
+            FROM lieu l
+            LEFT JOIN reserver_lieu r ON l.id = r.lieu_id
+            LEFT JOIN avis a ON l.id = a.lieu_id
+            WHERE r.date_reservation >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+            GROUP BY l.id
+            ORDER BY reservation_count DESC, average_rating DESC
+            LIMIT :limit
+        ';
+        
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue('limit', $limit, \PDO::PARAM_INT);
+        $result = $stmt->executeQuery()->fetchAllAssociative();
+        
+        return array_map(fn($row) => [
+            'id' => $row['id'],
+            'name' => $row['name'],
+            'reservation_count' => (int)$row['reservation_count'],
+            'average_rating' => round((float)$row['average_rating'], 1),
+            'unique_users' => (int)$row['unique_users']
+        ], $result);
+    }
+
+    public function getPriceTrends(): array
+    {
+        $conn = $this->getEntityManager()->getConnection();
+        $sql = '
+            SELECT 
+                DATE_FORMAT(r.date_reservation, "%Y-%m") as month,
+                AVG(l.price) as average_price,
+                MIN(l.price) as min_price,
+                MAX(l.price) as max_price
+            FROM reserver_lieu r
+            JOIN lieu l ON r.lieu_id = l.id
+            GROUP BY month
+            ORDER BY month DESC
+            LIMIT 6
+        ';
+        return $conn->executeQuery($sql)->fetchAllAssociative();
+    }
+
+    public function getCategoryTrends(): array
+    {
+        $conn = $this->getEntityManager()->getConnection();
+        $sql = '
+            SELECT 
+                l.category,
+                COUNT(r.id) as reservation_count,
+                AVG(l.price) as average_price,
+                COUNT(DISTINCT r.user_id) as unique_users
+            FROM lieu l
+            LEFT JOIN reserver_lieu r ON l.id = r.lieu_id
+            WHERE r.date_reservation >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+            GROUP BY l.category
+            ORDER BY reservation_count DESC
+        ';
+        return $conn->executeQuery($sql)->fetchAllAssociative();
+    }
+
+    public function getMonthlyReservations(): array
 {
-    $conn = $this->getEntityManager()->getConnection();
-
-    // Statistiques globales
-    $stats = $conn->executeQuery('
-        SELECT 
-            COUNT(*) as total_locations,
-            AVG(price) as avg_price,
-            SUM(capacity) as total_capacity
-        FROM lieu
-    ')->fetchAssociative();
-
-    // Répartition par catégorie
-    $stats['by_category'] = $conn->executeQuery('
-        SELECT category, COUNT(*) as count 
-        FROM lieu 
-        GROUP BY category
-        ORDER BY count DESC
-    ')->fetchAllAssociative();
-
-    // Top 5 des lieux les plus chers
-    $stats['most_expensive'] = $conn->executeQuery('
-        SELECT name, price 
-        FROM lieu 
-        ORDER BY price DESC 
-        LIMIT 5
-    ')->fetchAllAssociative();
-
-    return $stats;
+    return $this->createQueryBuilder('r')
+        ->select('MONTH(r.dateReservation) as month', 'COUNT(r.id) as total')
+        ->where('r.dateReservation >= :startDate')
+        ->setParameter('startDate', new \DateTime('-6 months'))
+        ->groupBy('month')
+        ->orderBy('month', 'ASC')
+        ->getQuery()
+        ->getResult();
 }
 
-
+public function getMonthlyRevenue(): array
+{
+    return $this->createQueryBuilder('r')
+        ->select('MONTH(r.dateReservation) as month', 'SUM(l.price) as revenue')
+        ->join('r.lieu', 'l')
+        ->where('r.dateReservation >= :startDate')
+        ->setParameter('startDate', new \DateTime('-6 months'))
+        ->groupBy('month')
+        ->orderBy('month', 'ASC')
+        ->getQuery()
+        ->getResult();
+}
 }

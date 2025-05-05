@@ -39,7 +39,7 @@
     <link rel="stylesheet" href="{{ asset('vendor/libs/sweetalert2/sweetalert2.css') }}" />
     
     <!-- TinyMCE -->
-    <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+    <script src="https://cdn.tiny.cloud/1/sh6tva8fxf0v18kl59xoulsmtml096mkg3htycjgvev3nzl5/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
     
     <!-- Page CSS -->
     <link rel="stylesheet" href="{{ asset('vendor/css/pages/cards-advance.css') }}" />
@@ -839,12 +839,6 @@
                                                             <label for="ville">City</label>
                                                         </div>
                                                     </div>
-                                                    <div class="col-12">
-                                                        <div class="form-floating mb-3">
-                                                            <textarea id="description" name="description" class="form-control" style="height: 200px;"></textarea>
-                                                            <label for="description">Description</label>
-                                                        </div>
-                                                    </div>
                                                 </div>
                                                 <div class="d-flex justify-content-between mt-3">
                                                     <button type="button" class="btn btn-label-secondary prev-step" data-prev="1">
@@ -1167,12 +1161,14 @@
             // Handle next button clicks
             document.querySelectorAll('.next-step').forEach(button => {
                 button.addEventListener('click', function() {
+                    // Synchroniser TinyMCE avant validation
+                    if (typeof tinymce !== 'undefined') {
+                        tinymce.triggerSave();
+                    }
                     const nextStep = parseInt(this.dataset.next);
-                    
                     if (validateStep(currentStep)) {
                         currentStep = nextStep;
                         showStep(currentStep);
-                        
                         // Update review information when going to step 4
                         if (nextStep === 4) {
                             updateReviewInfo();
@@ -1430,13 +1426,15 @@
             
             // Form submission handler
             $('#createLieuForm').on('submit', function(e) {
+                // Synchroniser TinyMCE avant validation
+                if (typeof tinymce !== 'undefined') {
+                    tinymce.triggerSave();
+                }
                 e.preventDefault();
-                
                 if (!validateStep(currentStep)) {
                     showErrors(['Please fill in all required fields.']);
                     return;
                 }
-                
                 const formData = new FormData(this);
                 
                 // Add upload path information to ensure images go to the correct directory

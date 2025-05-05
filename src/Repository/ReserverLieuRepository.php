@@ -44,10 +44,7 @@ class ReserverLieuRepository extends ServiceEntityRepository
             ->andWhere('r.user_id = :val')
             ->setParameter('val', $userId)
             ->orderBy('r.date_reservation', 'DESC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
+            ->getQuery();
     }
 
     /**
@@ -93,5 +90,46 @@ class ReserverLieuRepository extends ServiceEntityRepository
             }
         }
         return null;
+    }
+    // src/Repository/ReserverLieuRepository.php
+    public function getMonthlyReservations(): array
+    {
+        $conn = $this->getEntityManager()->getConnection();
+        
+        $sql = '
+            SELECT 
+                MONTH(r.date_reservation) as month,
+                YEAR(r.date_reservation) as year,
+                COUNT(r.id) as total
+            FROM reserver_lieu r
+            WHERE r.date_reservation >= :startDate
+            GROUP BY year, month
+            ORDER BY year ASC, month ASC
+        ';
+        
+        return $conn->executeQuery($sql, [
+            'startDate' => (new \DateTime('-6 months'))->format('Y-m-d')
+        ])->fetchAllAssociative();
+    }
+    
+    public function getMonthlyRevenue(): array
+    {
+        $conn = $this->getEntityManager()->getConnection();
+        
+        $sql = '
+            SELECT 
+                MONTH(r.date_reservation) as month,
+                YEAR(r.date_reservation) as year,
+                SUM(l.price) as revenue
+            FROM reserver_lieu r
+            JOIN lieu l ON r.lieu_id = l.id
+            WHERE r.date_reservation >= :startDate
+            GROUP BY year, month
+            ORDER BY year ASC, month ASC
+        ';
+        
+        return $conn->executeQuery($sql, [
+            'startDate' => (new \DateTime('-6 months'))->format('Y-m-d')
+        ])->fetchAllAssociative();
     }
 }

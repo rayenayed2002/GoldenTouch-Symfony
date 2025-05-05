@@ -30,6 +30,18 @@ class ReserverLieuController extends AbstractController
         }
         
         try {
+            // Vérifier si le lieu est déjà réservé pour cette date
+            $existingReservation = $entityManager->getRepository(ReserverLieu::class)
+                ->findOneBy([
+                    'lieu' => $lieuId,
+                    'date_reservation' => new \DateTime($dateReservation)
+                ]);
+            
+            if ($existingReservation) {
+                $this->addFlash('error', 'Ce lieu est déjà réservé pour cette date');
+                return $this->redirectToRoute('app_lieu_details', ['id' => $lieuId]);
+            }
+            
             // Créer une nouvelle instance de ReserverLieu
             $reservation = new ReserverLieu();
             
@@ -41,12 +53,19 @@ class ReserverLieuController extends AbstractController
                 throw new \Exception('Lieu ou événement non trouvé');
             }
             
+            // Vérifier si l'événement appartient à l'utilisateur
+            if ($event->getUser()->getId() != $userId) {
+                $this->addFlash('error', 'Vous ne pouvez pas réserver un lieu pour un événement qui ne vous appartient pas');
+                return $this->redirectToRoute('app_lieu_details', ['id' => $lieuId]);
+            }
+            
             // Configurer la réservation
             $reservation->setLieu($lieu);
             $reservation->setEvent($event);
             $reservation->setEvent_id($eventId);
             $reservation->setDate_reservation(new \DateTime($dateReservation));
-            $reservation->setStatus($request->request->get('status', 'pending'));
+            $reservation->setStatus('pending');
+            $reservation->setCreated_at(new \DateTime());
             
             // Persister et sauvegarder la réservation
             $entityManager->persist($reservation);
@@ -60,5 +79,5 @@ class ReserverLieuController extends AbstractController
         // Rediriger vers la page de détails du lieu
         return $this->redirectToRoute('app_lieu_details', ['id' => $lieuId]);
     }
-    }
+}
 ?>

@@ -177,7 +177,114 @@
             transform: translateY(-5px);
             box-shadow: 0 10px 25px rgba(0,0,0,0.1);
         }
+        .social-share-buttons {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            flex-wrap: wrap;
+        }
 
+        .social-share {
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            border: 1px solid;
+        }
+
+        .social-share:hover {
+            transform: scale(1.1);
+            color: white;
+        }
+
+        .social-share.btn-outline-primary:hover {
+            background-color: #1877f2; /* Facebook blue */
+            border-color: #1877f2;
+        }
+
+        .social-share.btn-outline-info:hover {
+            background-color: #1da1f2; /* Twitter blue */
+            border-color: #1da1f2;
+        }
+
+        .social-share.btn-outline-success:hover {
+            background-color: #25d366; /* WhatsApp green */
+            border-color: #25d366;
+        }
+
+        .social-share.btn-outline-secondary:hover {
+            background-color: #6c757d;
+            border-color: #6c757d;
+        }
+
+        .social-share.btn-outline-dark:hover {
+            background-color: #212529;
+            border-color: #212529;
+        }
+
+        .social-share i {
+            font-size: 0.9rem;
+        }
+
+        .social-share-section {
+            border-top: 1px solid #eee;
+            padding-top: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .social-share-buttons {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .social-share {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            padding: 0;
+        }
+
+        .social-share:hover {
+            transform: scale(1.1);
+            color: white;
+        }
+
+        .social-share.btn-outline-primary:hover {
+            background-color: #1877f2; /* Facebook blue */
+            border-color: #1877f2;
+        }
+
+        .social-share.btn-outline-info:hover {
+            background-color: #1da1f2; /* Twitter blue */
+            border-color: #1da1f2;
+        }
+
+        .social-share.btn-outline-success:hover {
+            background-color: #25d366; /* WhatsApp green */
+            border-color: #25d366;
+        }
+
+        .social-share.btn-outline-secondary:hover {
+            background-color: #6c757d;
+            border-color: #6c757d;
+        }
+
+        .social-share.btn-outline-dark:hover {
+            background-color: #212529;
+            border-color: #212529;
+        }
+
+        .social-share i {
+            font-size: 1rem;
+        }
     </style>
 </head>
 
@@ -303,9 +410,56 @@
                     <!-- Lieu Header with Image -->
                     <div class="lieu-header position-relative mb-30">
                         <div class="lieu-engagement position-absolute top-0 end-0 m-3 z-index-1">
-                            <button class="btn btn-icon btn-label-secondary me-1" onclick="shareLieu()">
-                                <i class="ti ti-share"></i>
-                            </button>
+                            <div class="social-share-buttons">
+                                <!-- Facebook -->
+                                <a href="https://www.facebook.com/sharer/sharer.php?u={{ absolute_url(path('app_lieu_details', {'id': lieu.id})) }}" 
+                                   class="btn btn-sm btn-outline-primary social-share" 
+                                   target="_blank"
+                                   title="Partager sur Facebook"
+                                   onclick="window.open(this.href, 'facebook-share', 'width=580,height=296');return false;">
+                                    <i class="fab fa-facebook-f"></i>
+                                </a>
+                                
+                                <!-- Twitter -->
+                                <a href="https://twitter.com/intent/tweet?url={{ absolute_url(path('app_lieu_details', {'id': lieu.id})) }}&text=Découvrez {{ lieu.name|url_encode }} - Un lieu exceptionnel pour vos événements" 
+                                   class="btn btn-sm btn-outline-info social-share" 
+                                   target="_blank"
+                                   title="Partager sur Twitter"
+                                   onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                                    <i class="fab fa-twitter"></i>
+                                </a>
+                                
+                                <!-- WhatsApp -->
+                                <a href="https://wa.me/?text=Découvrez {{ lieu.name|url_encode }} - {{ absolute_url(path('app_lieu_details', {'id': lieu.id})) }}" 
+                                   class="btn btn-sm btn-outline-success social-share" 
+                                   target="_blank"
+                                   title="Partager sur WhatsApp">
+                                    <i class="fab fa-whatsapp"></i>
+                                </a>
+                                
+                                <!-- LinkedIn -->
+                                <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ absolute_url(path('app_lieu_details', {'id': lieu.id})) }}&title={{ lieu.name|url_encode }}&summary={{ lieu.description|slice(0, 200)|url_encode }}" 
+                                   class="btn btn-sm btn-outline-primary social-share" 
+                                   target="_blank"
+                                   title="Partager sur LinkedIn"
+                                   onclick="window.open(this.href, 'linkedin-share', 'width=600,height=494');return false;">
+                                    <i class="fab fa-linkedin-in"></i>
+                                </a>
+
+                                <!-- Email -->
+                                <a href="mailto:?subject={{ lieu.name|url_encode }}&body=Découvrez ce lieu exceptionnel : {{ absolute_url(path('app_lieu_details', {'id': lieu.id})) }}" 
+                                   class="btn btn-sm btn-outline-secondary social-share" 
+                                   title="Partager par email">
+                                    <i class="fas fa-envelope"></i>
+                                </a>
+
+                                <!-- Copy Link -->
+                                <button class="btn btn-sm btn-outline-dark social-share" 
+                                        title="Copier le lien"
+                                        onclick="copyToClipboard('{{ absolute_url(path('app_lieu_details', {'id': lieu.id})) }}')">
+                                    <i class="fas fa-link"></i>
+                                </button>
+                            </div>
                             <button class="btn btn-icon btn-label-danger" onclick="toggleFavorite(this)">
                                 <i class="ti ti-heart"></i>
                             </button>
@@ -390,6 +544,61 @@
                             <p class="lieu-description">
                                 {{ lieu.description|default('Aucune description disponible pour ce lieu.')|nl2br }}
                             </p>
+                            
+                            <!-- Boutons de partage social -->
+                            <div class="social-share-section mt-4">
+                                <h4 class="mb-3">Partager ce lieu</h4>
+                                <div class="social-share-buttons">
+                                    <!-- Facebook -->
+                                    <a href="https://www.facebook.com/sharer/sharer.php?u={{ absolute_url(path('app_lieu_details', {'id': lieu.id})) }}" 
+                                       class="btn btn-outline-primary social-share" 
+                                       target="_blank"
+                                       onclick="window.open(this.href, 'facebook-share', 'width=580,height=296');return false;"
+                                       title="Partager sur Facebook">
+                                        <i class="fab fa-facebook-f"></i>
+                                    </a>
+                                    
+                                    <!-- Twitter -->
+                                    <a href="https://twitter.com/intent/tweet?url={{ absolute_url(path('app_lieu_details', {'id': lieu.id})) }}&text=Découvrez {{ lieu.name|url_encode }} - Un lieu exceptionnel pour vos événements" 
+                                       class="btn btn-outline-info social-share" 
+                                       target="_blank"
+                                       onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;"
+                                       title="Partager sur Twitter">
+                                        <i class="fab fa-twitter"></i>
+                                    </a>
+                                    
+                                    <!-- WhatsApp -->
+                                    <a href="https://wa.me/?text=Découvrez {{ lieu.name|url_encode }} - {{ absolute_url(path('app_lieu_details', {'id': lieu.id})) }}" 
+                                       class="btn btn-outline-success social-share" 
+                                       target="_blank"
+                                       title="Partager sur WhatsApp">
+                                        <i class="fab fa-whatsapp"></i>
+                                    </a>
+                                    
+                                    <!-- LinkedIn -->
+                                    <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ absolute_url(path('app_lieu_details', {'id': lieu.id})) }}&title={{ lieu.name|url_encode }}&summary={{ lieu.description|slice(0, 200)|url_encode }}" 
+                                       class="btn btn-outline-primary social-share" 
+                                       target="_blank"
+                                       onclick="window.open(this.href, 'linkedin-share', 'width=600,height=494');return false;"
+                                       title="Partager sur LinkedIn">
+                                        <i class="fab fa-linkedin-in"></i>
+                                    </a>
+
+                                    <!-- Email -->
+                                    <a href="mailto:?subject={{ lieu.name|url_encode }}&body=Découvrez ce lieu exceptionnel : {{ absolute_url(path('app_lieu_details', {'id': lieu.id})) }}" 
+                                       class="btn btn-outline-secondary social-share" 
+                                       title="Partager par email">
+                                        <i class="fas fa-envelope"></i>
+                                    </a>
+
+                                    <!-- Copy Link -->
+                                    <button class="btn btn-outline-dark social-share" 
+                                            onclick="copyToClipboard('{{ absolute_url(path('app_lieu_details', {'id': lieu.id})) }}')"
+                                            title="Copier le lien">
+                                        <i class="fas fa-link"></i>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -508,7 +717,7 @@
                     </div>
                 </div>
 
-                <!-- Right Column: Booking, QR Code and Similar Lieux -->
+                <!-- Right Column: Booking and Similar Lieux -->
                 <div class="col-lg-4">
                    <!-- Booking Card -->
 <div class="booking-card mb-30" id="bookingSection">
@@ -528,27 +737,26 @@
 
     <form id="bookingForm" method="POST" action="{{ path('app_reserver_lieu') }}" novalidate>
         <input type="hidden" name="lieu_id" value="{{ lieu.id }}">
-        <input type="hidden" name="event_id" value="55"> <!-- ID statique de l'événement -->
-        <input type="hidden" name="user_id" value="25"> <!-- ID statique de l'utilisateur -->
+        <input type="hidden" name="user_id" value="{{ app.user.id }}">
         
         <div class="mb-3">
-            <label class="form-label">Date de réservation</label>
-            <input type="date" class="form-control" name="date_reservation" required>
-            {% if errors.date_reservation is defined %}
-              <div class="invalid-feedback d-block">{{ errors.date_reservation|first }}</div>
+            <label class="form-label">Événement</label>
+            <select class="form-control" name="event_id" required>
+                <option value="">Sélectionnez un événement</option>
+                {% for event in events %}
+                    <option value="{{ event.id }}">{{ event.nom }} - {{ event.date|date('d/m/Y') }}</option>
+                {% endfor %}
+            </select>
+            {% if errors.event_id is defined %}
+              <div class="invalid-feedback d-block">{{ errors.event_id|first }}</div>
             {% endif %}
-            <div class="invalid-feedback">Veuillez sélectionner une date valide</div>
         </div>
         
         <div class="mb-3">
-            <label class="form-label">Statut</label>
-            <select class="form-control" name="status">
-                <option value="pending">En attente</option>
-                <option value="confirmed">Confirmée</option>
-                <option value="cancelled">Annulée</option>
-            </select>
-            {% if errors.status is defined %}
-              <div class="invalid-feedback d-block">{{ errors.status|first }}</div>
+            <label class="form-label">Date de réservation</label>
+            <input type="date" class="form-control" name="date_reservation" required min="{{ "now"|date("Y-m-d") }}">
+            {% if errors.date_reservation is defined %}
+              <div class="invalid-feedback d-block">{{ errors.date_reservation|first }}</div>
             {% endif %}
         </div>
         
@@ -557,16 +765,6 @@
         </button>
     </form>
 </div>
-
-</div>
-
-                    <!-- QR Code Card -->
-                    <div class="card mb-30">
-                        <div class="card-header bg-primary text-white">
-                            </div>
-                            </a>
-                        </div>
-                    </div>
 
                     <!-- Similar Lieux -->
                     {% if similarLieux|length > 0 %}
@@ -825,11 +1023,16 @@ document.getElementById('bookingForm').addEventListener('reset', function() {
                 navigator.share({
                     title: '{{ lieu.name }}',
                     text: 'Découvrez ce magnifique lieu pour vos événements',
-                    url: window.location.href
+                    url: '{{ absolute_url(path('app_lieu_details', {'id': lieu.id})) }}'
+                }).then(() => {
+                    console.log('Partage réussi');
+                }).catch((error) => {
+                    console.log('Erreur de partage:', error);
                 });
             } else {
-                // Fallback for browsers that don't support Web Share API
-                alert('Partagez ce lien : ' + window.location.href);
+                // Fallback pour les navigateurs qui ne supportent pas l'API Web Share
+                const shareButtons = document.querySelector('.social-share-buttons');
+                shareButtons.style.display = 'flex';
             }
         }
 
@@ -1046,5 +1249,54 @@ document.addEventListener('DOMContentLoaded', function() {
                 fetchRates();
             });
         </script>
+
+    <script>
+    // Fonction pour copier le lien dans le presse-papiers
+    function copyToClipboard(text) {
+        navigator.clipboard.writeText(text).then(function() {
+            // Afficher une notification de succès
+            const notification = document.createElement('div');
+            notification.className = 'alert alert-success position-fixed top-0 end-0 m-3';
+            notification.style.zIndex = '9999';
+            notification.innerHTML = '<i class="fas fa-check-circle me-2"></i>Lien copié dans le presse-papiers!';
+            document.body.appendChild(notification);
+            
+            // Supprimer la notification après 3 secondes
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }).catch(function(err) {
+            console.error('Erreur lors de la copie: ', err);
+        });
+    }
+
+    // Ajouter le bouton de partage natif pour les appareils mobiles
+    document.addEventListener('DOMContentLoaded', function() {
+        if (navigator.share) {
+            const shareButtons = document.querySelector('.social-share-buttons');
+            const nativeShareButton = document.createElement('button');
+            nativeShareButton.className = 'btn btn-outline-primary social-share';
+            nativeShareButton.innerHTML = '<i class="fas fa-share-alt"></i>';
+            nativeShareButton.onclick = function() {
+                navigator.share({
+                    title: '{{ lieu.name }}',
+                    text: 'Découvrez ce magnifique lieu pour vos événements',
+                    url: '{{ absolute_url(path('app_lieu_details', {'id': lieu.id})) }}'
+                }).catch(console.error);
+            };
+            shareButtons.insertBefore(nativeShareButton, shareButtons.firstChild);
+        }
+    });
+    </script>
+
+    <script>
+    function shareContent(title, text, url) {
+        // ... existing code ...
+    }
+    </script>
+
+    <style>
+    // ... existing code ...
+    </style>
 </body>
 </html>

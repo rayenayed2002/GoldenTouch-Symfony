@@ -9,17 +9,30 @@ use App\Form\ReservationType;
 use App\Repository\ReservationRepository;
 use App\Repository\LieuRepository;
 use App\Repository\EventRepository;
+use App\Repository\ReserverLieuRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Knp\Component\Pager\PaginatorInterface;
 
 /**
  * @Route("/reservation")
  */
 class ReservationController extends AbstractController
 {
+    private $entityManager;
+    private $reserverLieuRepository;
+
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        ReserverLieuRepository $reserverLieuRepository
+    ) {
+        $this->entityManager = $entityManager;
+        $this->reserverLieuRepository = $reserverLieuRepository;
+    }
+
     /**
      * @Route("/", name="app_reservation_index", methods={"GET"})
      */
@@ -57,7 +70,7 @@ class ReservationController extends AbstractController
         }
         
         // Get available events for the dropdown
-        $events = $eventRepository->findBy(['user_id' => $userId]);
+        $events = $eventRepository->findBy(['user' => $userId]);
         
         // Create the form
         $form = $this->createForm(ReservationType::class, $reservation, [
@@ -177,7 +190,7 @@ class ReservationController extends AbstractController
         $userId = 25;
         
         // Get available events for the dropdown
-        $events = $eventRepository->findBy(['user_id' => $userId]);
+        $events = $eventRepository->findBy(['user' => $userId]);
         
         $form = $this->createForm(ReservationType::class, $reservation, [
             'events' => $events
@@ -223,5 +236,41 @@ class ReservationController extends AbstractController
         }
 
         return $this->redirectToRoute('app_reservation_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+    #[Route('/mes-reservations', name: 'app_user_reservations')]
+    public function indexUserReservations(Request $request, PaginatorInterface $paginator): Response
+    {
+        // ID utilisateur statique (à remplacer par l'utilisateur connecté)
+        $userId = 25;
+
+        // Récupérer les réservations avec pagination
+        $query = $this->reserverLieuRepository->findByUserId($userId);
+
+        $reservations = $paginator->paginate(
+            $query,
+            $request->query->getInt('page', 1),
+            10 // Nombre d'éléments par page
+        );
+
+        return $this->render('lieu/reservations.html.twig', [
+            'reservations' => $reservations,
+            'currentPage' => $request->query->getInt('page', 1),
+            'pages' => ceil($reservations->getTotalItemCount() / 10)
+        ]);
+    }
+
+    #[Route('/reservation/{id}/cancel', name: 'app_reservation_cancel', methods: ['POST'])]
+    public function cancelReservation(ReserverLieu $reservation): Response
+    {
+        if ($reservation->getStatus() === 'pending') {
+            $this->entityManager->remove($reservation);
+            $this->entityManager->flush();
+            $this->addFlash('success', 'Réservation annulée avec succès');
+        } else {
+            $this->addFlash('error', 'Impossible d\'annuler cette réservation');
+        }
+        
+        return $this->redirectToRoute('app_user_reservations');
     }
 }
