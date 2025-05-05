@@ -8,7 +8,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use App\Enum\CategorieEvent;
+use App\Enum\CategoryEnum;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -44,7 +44,7 @@ class EventType extends AbstractType
         ])
             
             ->add('categorie', EnumType::class, [
-                'class' => CategorieEvent::class,
+                'class' => CategoryEnum::class,
                 'label' => 'Catégorie de l\'événement',
                 'constraints' => [
                     new Assert\NotBlank([
