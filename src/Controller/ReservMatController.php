@@ -180,44 +180,54 @@ final class ReservMatController extends AbstractController
         return $this->redirectToRoute('app_mes_reservations');
     }
     #[Route('/reservation/{id}', name: 'app_reservation_show', methods: ['GET'])]
-public function show(ReservMat $reservation): Response
-{
-    if (!$reservation) {
-        throw $this->createNotFoundException('Réservation non trouvée');
-    }
-
-    $qrContent = sprintf(
-        "Réservation #%d\nMatériel: %s\nQuantité: %d\nStatut: %s",
-        $reservation->getIdReserv(),
-        $reservation->getMaterielle()->getNomMat(),
-        $reservation->getQuantite(),
-        $reservation->getStatut()
-    );
-
-    $qrCode = Builder::create()
-    ->writer(new PngWriter())
-    ->data($qrContent)
-    ->encoding(new Encoding('UTF-8'))
-    ->errorCorrectionLevel(new ErrorCorrectionLevelHigh())  // Note the 'new' keyword
-    ->size(300)
-    ->margin(20)
-    ->roundBlockSizeMode(new RoundBlockSizeModeMargin())  // Note the 'new' keyword
-    ->build();
-    // Vérification du statut
-    if ($reservation->getStatut() === 'non confirmé') {
-        return $this->render('materiels/details_res.html.twig', [
-            'reservation' => $reservation,
-           
-        ]);
-    } else {
-        // Pour les statuts "confirmé" ou "annulé"
+    public function show(ReservMat $reservation): Response
+    {
+        if (!$reservation) {
+            throw $this->createNotFoundException('Réservation non trouvée');
+        }
+    
+        // Generate QR code only if reservation is confirmed or cancelled
+        $qrCode = null;
+        if (in_array($reservation->getStatut(), ['confirmée', 'annulée'])) {
+            try {
+                $qrContent = sprintf(
+                    "Réservation #%d\nMatériel: %s\nQuantité: %d\nStatut: %s",
+                    $reservation->getIdReserv(),
+                    $reservation->getMaterielle()->getNomMat(),
+                    $reservation->getQuantite(),
+                    $reservation->getStatut()
+                );
+    
+                $qrCode = Builder::create()
+                    ->writer(new PngWriter())
+                    ->data($qrContent)
+                    ->encoding(new Encoding('UTF-8'))
+                    ->errorCorrectionLevel(new ErrorCorrectionLevelHigh())
+                    ->size(300)
+                    ->margin(20)
+                    ->roundBlockSizeMode(new RoundBlockSizeModeMargin())
+                    ->build();
+    
+            } catch (\Exception $e) {
+                // Log error but don't break the page
+                $this->addFlash('warning', 'Erreur lors de la génération du QR Code');
+            }
+        }
+    
+        // Vérification du statut
+        if ($reservation->getStatut() === 'non confirmé') {
+            return $this->render('materiels/details_res.html.twig', [
+                'reservation' => $reservation,
+            ]);
+        }
+    
         return $this->render('materiels/DetailsSimple.html.twig', [
             'reservation' => $reservation,
-            'qrCode' => $qrCode->getDataUri(),
-            'qrCodeBase64' => base64_encode($qrCode->getString())
+            'qrCode' => $qrCode ? $qrCode->getDataUri() : null,
+            'qrCodeBase64' => $qrCode ? base64_encode($qrCode->getString()) : null
         ]);
     }
-}
+
     #[Route('/reservation/{id}/edit', name: 'app_reservation_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, ReservMat $reservation, EntityManagerInterface $entityManager): Response
     {

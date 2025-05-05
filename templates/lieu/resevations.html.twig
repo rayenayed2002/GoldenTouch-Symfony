@@ -32,7 +32,7 @@
                     {% for reservation in reservations %}
                         <tr>
                             <td>
-                                <a href="{{ path('app_lieu_details', {id: reservation.lieu.id}) }}">
+                                <a href="{{ path('app_lieu_details', {'id': reservation.lieu.id}) }}" class="text-decoration-none">
                                     {{ reservation.lieu.name }}
                                 </a>
                             </td>
@@ -49,7 +49,7 @@
                             <td>
                                 {% if reservation.status == 'pending' %}
                                 <form method="post" 
-                                      action="{{ path('app_reservation_cancel', {id: reservation.id}) }}" 
+                                      action="{{ path('app_reservation_cancel', {'id': reservation.id}) }}" 
                                       onsubmit="return confirm('Annuler cette réservation ?')">
                                     <button type="submit" class="btn btn-sm btn-danger">
                                         <i class="fas fa-times"></i>

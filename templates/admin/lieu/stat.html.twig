@@ -93,7 +93,6 @@
                                 </div>
                             </div>
                         </div>
-
                         <!-- Revenus mensuels -->
                         <div class="col-md-6 mb-4">
                             <div class="card h-100">
@@ -206,7 +205,7 @@ document.addEventListener('DOMContentLoaded', function() {
         data: {
             labels: {{ categoryDistribution|map(item => item.category)|json_encode|raw }},
             datasets: [{
-                data: {{ categoryDistribution|map(item => item.total)|json_encode|raw }},
+                data: {{ categoryDistribution|map(item => item.count)|json_encode|raw }},
                 backgroundColor: [
                     colors.primary,
                     colors.success,

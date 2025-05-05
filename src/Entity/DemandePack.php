@@ -38,9 +38,8 @@ class DemandePack
     private ?Event $event = null;
 
     #[ORM\Column(
-        type: "datetime", 
-        name: "date_demande", 
-        options: ["default" => "CURRENT_TIMESTAMP"]
+        type: "date", 
+        name: "date_demande"
     )]
     private \DateTimeInterface $dateDemande;
 
@@ -106,13 +105,13 @@ class DemandePack
     }
 
     public function getDateDemande(): \DateTimeInterface
-    {
-        return $this->dateDemande;
-    }
+{
+    return $this->dateDemande;
+}
 
-    public function setDateDemande(\DateTimeInterface $dateDemande): self
-    {
-        $this->dateDemande = $dateDemande;
-        return $this;
-    }
+public function setDateDemande(\DateTimeInterface $dateDemande): self
+{
+    $this->dateDemande = $dateDemande;
+    return $this;
+}
 }

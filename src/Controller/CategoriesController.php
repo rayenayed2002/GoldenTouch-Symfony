@@ -42,7 +42,7 @@ final class CategoriesController extends AbstractController
         ]);
     }
 
-    #[Route('/{id_cat}', name: 'app_categorie_delete', methods: ['POST'])]
+    #[Route('/khjehbf/{id_cat}', name: 'app_categorie_delete', methods: ['POST'])]
     public function delete(
         Request $request, 
         Categorie $categorie, 
