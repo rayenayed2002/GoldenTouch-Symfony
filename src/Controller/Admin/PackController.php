@@ -713,7 +713,7 @@ class PackController extends AbstractController
         }
     }
 
-    #[Route('/{id}/edit', name: 'edit', methods: ['GET'])]
+    #[Route('/{id}/edit', name: 'edit', methods: ['GET', 'POST'])]
     public function edit(Pack $pack, Request $request): JsonResponse
     {
         $user = $this->getUser();
