@@ -159,25 +159,25 @@
                        <div class="col-md-auto">
     <div class="sorting-container">
         <span class="sort-label">Trier par:</span>
-        <div class="custom-select-wrapper">
-            <form class="woocommerce-ordering" method="get">
-                <input type="hidden" name="page" value="1">
-                <select name="orderby" class="custom-select" aria-label="Sort order" onchange="this.form.submit()">
-                    <option value="date" data-sort="desc" {{ app.request.query.get('orderby') == 'date' and app.request.query.get('sort') != 'asc' ? 'selected' }}>Date (Plus ancien)</option>
-                    <option value="date" data-sort="asc" {{ app.request.query.get('orderby') == 'date' and app.request.query.get('sort') == 'asc' ? 'selected' }}>Date (Plus récent)</option>
-                    <option value="name" data-sort="asc" {{ app.request.query.get('orderby') == 'name' and app.request.query.get('sort') == 'asc' ? 'selected' }}>Nom (A-Z)</option>
-                    <option value="name" data-sort="desc" {{ app.request.query.get('orderby') == 'name' and app.request.query.get('sort') == 'desc' ? 'selected' }}>Nom (Z-A)</option>
-                    <option value="category" data-sort="asc" {{ app.request.query.get('orderby') == 'category' and app.request.query.get('sort') == 'asc' ? 'selected' }}>Catégorie (Z-A)</option>
-                    <option value="category" data-sort="desc" {{ app.request.query.get('orderby') == 'category' and app.request.query.get('sort') == 'desc' ? 'selected' }}>Catégorie (A-Z)</option>
-                </select>
-                <input type="hidden" name="sort" id="sortDirection" value="{{ app.request.query.get('sort', 'desc') }}">
-                {% for key, value in app.request.query.all %}
-                    {% if key not in ['orderby', 'page', 'sort'] %}
-                        <input type="hidden" name="{{ key }}" value="{{ value }}">
-                    {% endif %}
-                {% endfor %}
-            </form>
-        </div>
+ <div class="custom-select-wrapper">
+    <form class="woocommerce-ordering" method="get">
+        <input type="hidden" name="page" value="1">
+        <select name="orderby" class="custom-select" aria-label="Sort order" onchange="this.form.submit()">
+            <option value="date" {{ app.request.query.get('orderby') == 'date' and app.request.query.get('sort') == 'DESC' ? 'selected' }}>Date (Plus récent)</option>
+            <option value="date" {{ app.request.query.get('orderby') == 'date' and app.request.query.get('sort') == 'ASC' ? 'selected' }}>Date (Plus ancien)</option>
+            <option value="name" {{ app.request.query.get('orderby') == 'name' and app.request.query.get('sort') == 'ASC' ? 'selected' }}>Nom (A-Z)</option>
+            <option value="name" {{ app.request.query.get('orderby') == 'name' and app.request.query.get('sort') == 'DESC' ? 'selected' }}>Nom (Z-A)</option>
+            <option value="category" {{ app.request.query.get('orderby') == 'category' and app.request.query.get('sort') == 'ASC' ? 'selected' }}>Catégorie (A-Z)</option>
+            <option value="category" {{ app.request.query.get('orderby') == 'category' and app.request.query.get('sort') == 'DESC' ? 'selected' }}>Catégorie (Z-A)</option>
+        </select>
+        <input type="hidden" name="sort" id="sortDirection" value="{{ app.request.query.get('sort', 'DESC') }}">
+        {% for key, value in app.request.query.all %}
+            {% if key not in ['orderby', 'page', 'sort'] %}
+                <input type="hidden" name="{{ key }}" value="{{ value }}">
+            {% endif %}
+        {% endfor %}
+    </form>
+</div>
     </div>
 </div>
                     </div>
@@ -260,15 +260,25 @@
 {% block javascripts %}
     {{ parent() }}
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const sortSelect = document.querySelector('select[name="orderby"]');
-            const sortDirectionInput = document.getElementById('sortDirection');
-            
-            sortSelect.addEventListener('change', function() {
-                const selectedOption = this.options[this.selectedIndex];
-                sortDirectionInput.value = selectedOption.dataset.sort;
-                this.form.submit();
-            });
-        });
+ document.addEventListener('DOMContentLoaded', function() {
+    const sortSelect = document.querySelector('select[name="orderby"]');
+    const sortDirectionInput = document.getElementById('sortDirection');
+    
+    sortSelect.addEventListener('change', function() {
+        // Get the selected option text to determine the sort direction
+        const selectedText = this.options[this.selectedIndex].text;
+        
+        // Set sort direction based on the option text
+        if (selectedText.includes('(Plus récent)') || 
+            selectedText.includes('(A-Z)') || 
+            selectedText.includes('(Plus ancien)')) {
+            sortDirectionInput.value = selectedText.includes('(Plus ancien)') ? 'ASC' : 'DESC';
+        } else if (selectedText.includes('(Z-A)')) {
+            sortDirectionInput.value = 'DESC';
+        }
+        
+        this.form.submit();
+    });
+});
     </script>
 {% endblock %}

@@ -864,19 +864,22 @@ class PackController extends AbstractController
     }
 
     #[Route('/{id}', name: 'delete', methods: ['DELETE'])]
-    public function delete(Pack $pack, Request $request): JsonResponse
+    public function delete(Pack $pack): JsonResponse
     {
-        $user = $this->getUser();
-        if (!$user) {
-            return $this->redirectToRoute('app_login', [
-                '_target_path' => $request->getRequestUri()
+        try {
+            $this->entityManager->remove($pack);
+            $this->entityManager->flush();
+
+            return $this->json([
+                'success' => true,
+                'message' => 'Pack supprimé avec succès',
             ]);
+        } catch (\Exception $e) {
+            return $this->json([
+                'success' => false,
+                'message' => 'Erreur lors de la suppression du pack: ' . $e->getMessage(),
+            ], 500);
         }
-        // ... pack deletion logic ...
-        return $this->json([
-            'success' => true,
-            'message' => 'Pack deleted successfully',
-        ]);
     }
 
     private function updatePackFromRequest(Pack $pack, Request $request): void
