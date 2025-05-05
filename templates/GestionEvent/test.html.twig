@@ -209,15 +209,21 @@
                     </div>
                 </div>
     
-                <div class="product-content">
-                    <h3 class="product-title">{{ event.nom }}</h3>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <span class="price">{{ event.date|date('d M Y') }}</span>
-                        <span class="event-category">
-                            {{ categoryLabels[event.categorie.value] ?? 'Général' }}
-                        </span>
-                    </div>
-                </div>
+           <div class="product-content">
+        <h3 class="product-title">{{ event.nom }}</h3>
+        <div class="d-flex justify-content-between align-items-center">
+            <span class="price">
+                {% if event.isPack %}
+                   {{ event.displayDate|date('d M Y') }}
+                {% else %}
+                    {{ event.displayDate|date('d M Y') }}
+                {% endif %}
+            </span>
+            <span class="event-category">
+                {{ categoryLabels[event.categorie.value] ?? 'Général' }}
+            </span>
+        </div>
+    </div>
             </div>
         </a>
     </div>

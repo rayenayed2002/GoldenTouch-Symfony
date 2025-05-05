@@ -219,16 +219,20 @@ class EventController extends AbstractController
         // Attach demande_pack date to each event
         $eventDates = [];
         foreach ($events as $event) {
-            $demandePack = null;
+            $demandePackDate = null;
             foreach ($event->getPacks() as $pack) {
                 foreach ($pack->getDemandePacks() as $dp) {
                     if ($dp->getEvent() && $dp->getEvent()->getId() === $event->getId()) {
-                        $demandePack = $dp;
+                        $demandePackDate = $dp->getDateDemande();
                         break 2;
                     }
                 }
             }
-            $eventDates[$event->getId()] = $demandePack ? $demandePack->getDateDemande() : null;
+            $eventDates[$event->getId()] = [
+                'date' => $event->getDate(),
+                'demandePackDate' => $demandePackDate,
+                'isPack' => $event->getType() === 'PACK'
+            ];
         }
 
         // Sort the merged events array manually since we are not using a query builder
@@ -262,7 +266,9 @@ class EventController extends AbstractController
 
         // Attach demande_pack date to each event in $eventsPage
         foreach ($eventsPage as $event) {
-            $event->demandePackDate = $eventDates[$event->getId()] ?? null;
+            $event->displayDate = $eventDates[$event->getId()]['demandePackDate'] 
+                ?? $eventDates[$event->getId()]['date'];
+            $event->isPack = $eventDates[$event->getId()]['isPack'];
         }
 
         // Category labels
