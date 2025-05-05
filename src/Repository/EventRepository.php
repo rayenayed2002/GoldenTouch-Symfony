@@ -5,7 +5,7 @@ namespace App\Repository;
 use App\Entity\Event;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-use App\Enum\CategorieEvent;  // Ensure this is the correct path
+use App\Enum\CategoryEnum;  // Ensure this is the correct path
 
 
 /**
@@ -126,7 +126,7 @@ class EventRepository extends ServiceEntityRepository
     private function getMatchingCategories(string $searchTerm): array
     {
         $categories = [];
-        foreach (CategorieEvent::cases() as $category) {
+        foreach (CategoryEnum::cases() as $category) {
             if (stripos($category->value, $searchTerm) !== false) {
                 $categories[] = $category;
             }

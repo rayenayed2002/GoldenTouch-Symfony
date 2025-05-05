@@ -15,7 +15,7 @@ class Categorie
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    private ?int $id_cat = null;
+    private ?int $id_cat = null; 
 
     public function getId_cat(): ?int
     {

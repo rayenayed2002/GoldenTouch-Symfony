@@ -5,7 +5,7 @@ use Doctrine\Common\Annotations\Annotation\Target;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\EnumType]
-enum CategorieEvent: string
+enum CategoryEnum: string
 {
     case MARIAGE = 'MARIAGE';
     case ANNIVERSAIRE = 'ANNIVERSAIRE';

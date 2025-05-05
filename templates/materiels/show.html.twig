@@ -751,22 +751,71 @@
           </nav>
 
           <!-- / Navbar -->
-   <!-- Content wrapper -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <div class="content-wrapper">
     <!-- Content -->
     <div class="container-xxl flex-grow-1 container-p-y">
 
        
   
-{% block title %}Ajouter un matériel{% endblock %}
 
 {% block body %}
 <div class="container mt-4">
     <h1 class="text-center mb-4">Ajouter un matériel</h1>
 
+    {# Messages flash ici #}
+    {% for message in app.flashes('error') %}
+        <div class="alert alert-danger text-center">
+            {{ message }}
+        </div>
+    {% endfor %}
+
+   
+
     {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate', 'enctype': 'multipart/form-data'}}) }}
-    
-    
 
     <div class="row g-3">
         <!-- Nom -->
@@ -887,85 +936,34 @@
 
     </div>
 </div>
-
-
-        <!-- Featured Pack Section -->
-        <div class="featured-pack-section mt-5">
-            <div class="card">
-                <div class="card-header">
-                    <h4 class="mb-0"><i class="ti ti-award text-warning me-2"></i>Pack en Vedette</h4>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-8">
-                            <div class="featured-pack-stats">
-                                <h5 class="mb-4">Pourquoi ce pack est tendance</h5>
-                                
-                                <!-- Statistics Bars -->
-                                <div class="statistics-wrapper mb-4">
-                                    <div class="statistic-item mb-3">
-                                        <div class="d-flex justify-content-between mb-1">
-                                            <span>Popularité</span>
-                                            <span class="text-primary">43%</span>
-                                        </div>
-                                        <div class="progress" style="height: 8px">
-                                            <div class="progress-bar" role="progressbar" style="width: 43%" aria-valuenow="43" aria-valuemin="0" aria-valuemax="100"></div>
-                                        </div>
-                                    </div>
-
-                                    <div class="statistic-item mb-3">
-                                        <div class="d-flex justify-content-between mb-1">
-                                            <span>Évaluation des utilisateurs</span>
-                                            <span class="text-primary">55%</span>
-                                        </div>
-                                        <div class="progress" style="height: 8px">
-                                            <div class="progress-bar" role="progressbar" style="width: 55%" aria-valuenow="55" aria-valuemin="0" aria-valuemax="100"></div>
-                                        </div>
-                                    </div>
-
-                                    <div class="statistic-item">
-                                        <div class="d-flex justify-content-between mb-1">
-                                            <span>Réservations récentes</span>
-                                            <span class="text-primary">43%</span>
-                                        </div>
-                                        <div class="progress" style="height: 8px">
-                                            <div class="progress-bar" role="progressbar" style="width: 43%" aria-valuenow="43" aria-valuemin="0" aria-valuemax="100"></div>
-                                        </div>
-                                    </div>
-                                </div> <!-- Fin .statistics-wrapper -->
-                            </div> <!-- Fin .featured-pack-stats -->
-                        </div> <!-- Fin .col-md-8 -->
-                    </div> <!-- Fin .row -->
-                </div> <!-- Fin .card-body -->
-            </div> <!-- Fin .card -->
-        </div> <!-- Fin .featured-pack-section -->
-    </div> <!-- Fin .container-xxl -->
-</div> <!-- Fin .content-wrapper -->
-
-
-                          <!-- Action Buttons -->
-                          <div class="action-buttons mt-4">
-                            <button type="button" class="btn btn-primary me-2">
-                              <i class="ti ti-eye me-1"></i> Voir les détails
-                            </button>
-                            <button type="button" class="btn btn-outline-primary">
-                              <i class="ti ti-calendar me-1"></i> Réserver maintenant
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+<div class="modal fade" id="aiModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Suggestions de l'IA</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <!-- / Content -->
-          </div>
-          <!-- / Content wrapper -->
+            <div class="modal-body" id="ai-suggestions">
+                <div class="text-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Chargement...</span>
+                    </div>
+                    <p>L'IA génère des suggestions...</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                <button type="button" id="apply-suggestions" class="btn btn-primary">Appliquer les suggestions</button>
+            </div>
         </div>
-        <!-- / Layout container -->
-      </div>
+    </div>
+</div>
 
+
+       
+
+
+               
       <!-- Overlay -->
       <div class="layout-overlay layout-menu-toggle"></div>
 
@@ -975,6 +973,7 @@
     <!-- / Layout wrapper -->
 
 <!-- Core JS -->
+  
 <script src="{{ asset('/vendor/libs/jquery/jquery.js') }}"></script>
 <script src="{{ asset('/vendor/libs/popper/popper.js') }}"></script>
 <script src="{{ asset('/vendor/js/bootstrap.js') }}"></script>
