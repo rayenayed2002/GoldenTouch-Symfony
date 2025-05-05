@@ -748,6 +748,18 @@
     <!-- Content -->
     <div class="container-xxl flex-grow-1 container-p-y">
         <h4 class="fw-bold py-3 mb-4">Materiels</h4>
+        <div class="d-flex mb-4 gap-2">
+    <a href="{{ path('app_materiels_new') }}" class="btn btn-success">
+        <i class="ti ti-plus me-1"></i> Ajouter un matériel
+    </a>
+    <a href="{{ path('app_reservations') }}" class="btn btn-info">
+        <i class="ti ti-list me-1"></i> Liste des réservations
+    </a>
+    <a href="{{ path('statistique_materiels') }}" class="btn btn-primary">
+        <i class="ti ti-chart-bar me-1"></i> Voir les statistiques
+    </a>
+</div>
+
 
         <!-- Barre de recherche -->
         <div class="row mb-4">
