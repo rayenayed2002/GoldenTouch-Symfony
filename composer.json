@@ -17,6 +17,7 @@
         "dompdf/dompdf": "^3.1",
         "endroid/qr-code": "^4.8",
         "endroid/qr-code-bundle": "^4.0",
+        "google/apiclient": "^2.18",
         "gregwar/captcha-bundle": "^2.3",
         "knplabs/knp-paginator-bundle": "^6.8",
         "knplabs/knp-snappy-bundle": "^1.9",

@@ -18,8 +18,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
-
-#[Route('/reservation/perso')]
+#[Route('/reservationn/perso')]
 class ReservationPersoController extends AbstractController
 {
     #[Route('/', name: 'app_reservation_perso_index', methods: ['GET'])]

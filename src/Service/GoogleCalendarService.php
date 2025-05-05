@@ -2,7 +2,7 @@
 
 namespace App\Service;
 
-use Google\Client;
+use Google\Client ;  // This is the correct import
 use Google\Service\Calendar;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
