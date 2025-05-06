@@ -159,7 +159,7 @@ Explorez l’application selon votre rôle attribué.
 
 **ESPRIT - École Supérieure Privée d'Ingénierie et de Technologies**
 
-![ESPRIT Logo](images/esprit_logo.png)
+![Logo ESPRIT](uploads/Logo_ESPRIT_Ariana.jpg)
 
 
 ## 📄 License
