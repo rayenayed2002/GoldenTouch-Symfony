@@ -136,6 +136,29 @@ Explore the application based on your assigned role.
 
 ---
 
+---
+
+## 👥 Contributors
+
+| Name              | GitHub Profile                                               |
+|-------------------|--------------------------------------------------------------|
+| [Souhe Lekhlifi](https://github.com/souhekh)         | 🔗 |
+| [Rayen Ayed](https://github.com/rayenayed2002)       | 🔗 |
+| [Nassim Maaoui](https://github.com/iborntowin)       | 🔗 |
+| [Malik Gachar](https://github.com/MalikGACHAR)       | 🔗 |
+| [Khalil Limem](https://github.com/Khalil-Lm)         | 🔗 |
+| [Fatma Boubakri](https://github.com/Boubakrifatma)   | 🔗 |
+| **Coach:** [Ghada Benkhalifa](https://github.com/BenKhalifaGHADA) | 🧑‍🏫 |
+
+---
+
+## 🏫 School
+
+**ESPRIT - École Supérieure Privée d'Ingénierie et de Technologies**
+
+![ESPRIT Logo](images/esprit_logo.png)
+
+
 ## 📄 License
 
 This project is licensed under a **proprietary license**.  
