@@ -155,10 +155,9 @@ class CustomizePackController extends AbstractController
         $event = $demandePack->getPack()->getEvent();
         if (!$event) {
             $event = new Event();
-            $event->setUtilisateur($demandePack->getUser());
-            $event->setStatut('CUSTOMIZED');
-            $event->setDateDebut(new \DateTime());
-            $event->setDateFin(new \DateTime());
+            $event->setUser($demandePack->getUser());
+            $event->setType('CUSTOMIZED');
+            $event->setDate(new \DateTime());
             $this->entityManager->persist($event);
             $demandePack->getPack()->setEvent($event);
             // Flush immédiatement pour obtenir un ID d'événement valide
@@ -198,22 +197,7 @@ class CustomizePackController extends AbstractController
                     $reservation->setQuantite($materielleData['quantity']);
                     $user = $demandePack->getUser();
                     if ($user) {
-                        $utilisateur = $this->utilisateurRepository->findOneBy(['email' => $user->getEmail()]);
-                        if (!$utilisateur) {
-                            $utilisateur = new Utilisateur();
-                            $utilisateur->setEmail($user->getEmail());
-                            $utilisateur->setNom($user->getNom());
-                            $utilisateur->setPrenom($user->getPrenom());
-                            $utilisateur->setPassword($user->getPassword());
-                            $utilisateur->setRole('ROLE_USER');
-                            // Generate a random hash
-                            $utilisateur->setHash(random_bytes(32));
-                            // Generate a random salt
-                            $utilisateur->setSalt(random_bytes(32));
-                            $this->entityManager->persist($utilisateur);
-                            $this->entityManager->flush();
-                        }
-                        $reservation->setUtilisateur($utilisateur);
+                        $reservation->setUser($user);
                         $this->entityManager->persist($reservation);
                     } else {
                         throw new \Exception('Utilisateur non trouvé pour la réservation de matériel');

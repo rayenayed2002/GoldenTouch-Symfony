@@ -555,7 +555,6 @@
               </div>
             </div>
             <div class="quick-actions"><div class="btn-group shadow">
-              <button type='button' class='btn btn-primary btn-sm' onclick='editPack(${pack.id})'><i class='ti ti-edit'></i></button>
               <button type='button' class='btn btn-primary btn-sm' onclick='viewPackDetails(${pack.id})'><i class='ti ti-eye'></i></button>
               <button type='button' class='btn btn-danger btn-sm' onclick='deletePack(${pack.id})'><i class='ti ti-trash'></i></button>
             </div></div>
@@ -578,7 +577,6 @@
           <td>${pack.duree}h</td>
           <td>${pack.endDate ? (new Date(pack.endDate)).toLocaleDateString('fr-FR') : ''}</td>
           <td><div class='d-flex gap-2'>
-            <button type='button' class='btn btn-sm btn-icon btn-primary' onclick='editPack(${pack.id})' data-bs-toggle='tooltip' data-bs-placement='top' title='Modifier'><i class='ti ti-edit'></i></button>
             <button type='button' class='btn btn-sm btn-icon btn-danger' onclick='deletePack(${pack.id})' data-bs-toggle='tooltip' data-bs-placement='top' title='Supprimer'><i class='ti ti-trash'></i></button>
           </div></td>
         </tr>`;
@@ -1118,9 +1116,7 @@ document.getElementById('refresh-inspiration-btn').addEventListener('click', loa
                                         
                                         <div class="quick-actions">
                                             <div class="btn-group shadow">
-                                                <button type="button" class="btn btn-primary btn-sm" onclick="editPack({{ pack.id }})">
-                                                    <i class="ti ti-edit"></i>
-                                                </button>
+                                                
                                                 <button type="button" class="btn btn-primary btn-sm" onclick="viewPackDetails({{ pack.id }})">
                                                     <i class="ti ti-eye"></i>
                                                 </button>
@@ -1199,13 +1195,7 @@ document.getElementById('refresh-inspiration-btn').addEventListener('click', loa
                                             <td>{{ pack.endDate ? pack.endDate|date('d/m/Y') : '' }}</td>
                                             <td>
                                                 <div class="d-flex gap-2">
-                                                    <button type="button" class="btn btn-sm btn-icon btn-primary" 
-                                                            onclick="editPack({{ pack.id }})"
-                                                            data-bs-toggle="tooltip" 
-                                                            data-bs-placement="top" 
-                                                            title="Modifier">
-                                                        <i class="ti ti-edit"></i>
-                                                    </button>
+                                                    
                                                     <button type="button" class="btn btn-sm btn-icon btn-danger"
                                                             onclick="deletePack({{ pack.id }})"
                                                             data-bs-toggle="tooltip"

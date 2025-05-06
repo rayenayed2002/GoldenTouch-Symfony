@@ -2,16 +2,142 @@
 
 namespace App\Controller;
 
+use App\Entity\Pack;
+use App\Entity\Avis;
+use App\Entity\DemandePack; 
+use App\Entity\NotificationsAdmin; 
+use App\Repository\PackRepository;
+use App\Repository\AvisRepository;
+use App\Repository\UtilisateurRepository;
+use App\Repository\DemandePackRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Form\DemandePackType;
+use App\Form\BookingType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Clock\ClockInterface;
+use App\Service\GrammarCorrectionService;
+
+use App\Repository\NotificationsAdminRepository;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 class FrontController extends AbstractController
 {
+    public function __construct(
+        private PackRepository $packRepository,
+        private AvisRepository $avisRepository,
+        private EntityManagerInterface $entityManager,
+        private UtilisateurRepository $utilisateurRepository,
+        private GrammarCorrectionService $grammarCorrectionService,
+        private \App\Service\ToxicityDetectionService $toxicityDetectionService
+    ) {}
+
     #[Route('/', name: 'front_index')]
-    public function index(): Response
+    public function index(Request $request, \Knp\Component\Pager\PaginatorInterface $paginator): Response
     {
-        return $this->render('Front/index.html');
+        $page = $request->query->getInt('page', 1);
+        $limit = 6;
+        $searchTerm = $request->query->get('q');
+        $category = $request->query->get('category', 'all');
+        $minPrice = $request->query->get('minPrice');
+        $maxPrice = $request->query->get('maxPrice');
+        $user = $this->getUser();
+        if (!$user) {
+            throw $this->createAccessDeniedException('You must be logged in to add an event.');
+        }
+        // Create base query
+        $queryBuilder = $this->packRepository->createQueryBuilder('p')
+            ->leftJoin('p.event', 'e');
+
+        // Apply sorting
+        $orderby = $request->query->get('orderby', 'menu_order');
+        if ($orderby === 'price') {
+            $queryBuilder->orderBy('p.prix', 'ASC');
+        } elseif ($orderby === 'price-desc') {
+            $queryBuilder->orderBy('p.prix', 'DESC');
+        }
+
+        // Apply filters
+        if ($searchTerm) {
+            $queryBuilder->andWhere('e.nom LIKE :searchTerm OR p.description LIKE :searchTerm')
+                        ->setParameter('searchTerm', '%'.$searchTerm.'%');
+        }
+
+        if ($category && $category !== 'all') {
+            $queryBuilder->andWhere('e.categorie = :category')
+                        ->setParameter('category', $category);
+        }
+
+        if ($minPrice !== null && $minPrice !== '') {
+            $queryBuilder->andWhere('p.prix >= :minPrice')
+                        ->setParameter('minPrice', $minPrice);
+        }
+
+        if ($maxPrice !== null && $maxPrice !== '') {
+            $queryBuilder->andWhere('p.prix <= :maxPrice')
+                        ->setParameter('maxPrice', $maxPrice);
+        }
+
+        $query = $queryBuilder->getQuery();
+
+        // Paginate results
+        $packs = $paginator->paginate(
+            $query,
+            $page,
+            $limit
+        );
+
+        $categories = $this->packRepository->findAllCategories();
+
+        if ($request->isXmlHttpRequest()) {
+            return $this->render('pack/_pack_list.html.twig', [
+                'packs' => $packs,
+                'selectedCategory' => $category,
+                'minPrice' => $minPrice,
+                'maxPrice' => $maxPrice
+            ]);
+        }
+
+        $sortOptions = [
+            ['value' => 'menu_order', 'label' => 'Tri par défaut'],
+            ['value' => 'price', 'label' => 'Trier par prix : croissant'],
+            ['value' => 'price-desc', 'label' => 'Trier par prix : décroissant'],
+        ];
+        $currentSort = $request->query->get('orderby', 'menu_order');
+
+        return $this->render('pack/pack.html.twig', [
+            'packs' => $packs,
+            'categories' => $categories,
+            'selectedCategory' => $category,
+            'minPrice' => $minPrice,
+            'maxPrice' => $maxPrice,
+            'sortOptions' => $sortOptions,
+            'currentSort' => $currentSort,
+            'allPacks' => $this->packRepository->findAll(),
+        ]);
+    }
+    
+    #[Route('/pack/{id}', name: 'app_pack_details')]
+    public function details(Pack $pack): Response
+    {
+        $similarPacks = $this->packRepository->findBy(
+            ['event' => $pack->getEvent()], 
+            ['prix' => 'ASC'], 
+            3
+        );
+
+        $avis = $this->entityManager->getRepository(Avis::class)->findAvisWithUserInfo($pack->getId());
+
+        return $this->render('pack/details.html.twig', [
+            'pack' => $pack,
+            'similarPacks' => $similarPacks,
+            'trendingPacks' => $this->packRepository->findBy([], ['prix' => 'DESC'], 3),
+            'avis' => $avis
+        ]);
     }
 
     #[Route('/about', name: 'front_about')]

@@ -28,7 +28,7 @@ class AdminUserController extends AbstractController
         $this->qrCodeBuilder = $qrCodeBuilder;
     }
 
-    #[Route('/', name: 'admin_user_index', methods: ['GET'])]
+    #[Route('/a', name: 'admin_user_index', methods: ['GET'])]
     public function index(UserRepository $userRepository): Response
     {
         $users = $userRepository->findAll();
