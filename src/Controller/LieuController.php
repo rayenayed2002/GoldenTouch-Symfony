@@ -19,6 +19,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Dompdf\Dompdf;
 use Dompdf\Options;
 use App\Entity\User;
+use Knp\Component\Pager\PaginatorInterface;
 
 
 class LieuController extends AbstractController
@@ -381,7 +382,7 @@ class LieuController extends AbstractController
         $this->entityManager->flush();
 
         $this->addFlash('success', 'Réservation confirmée!');
-        return $this->redirectToRoute('app_user_reservations');
+        return $this->redirectToRoute('app_lieu_user_reservations');
     }
 
     public function advancedSearch(array $criteria): array
@@ -419,24 +420,33 @@ class LieuController extends AbstractController
             ->getResult();
     }
 
-    #[Route('/mes-reservations', name: 'app_user_reservations')]
-    public function userReservations(): Response
+    #[Route('/lieu/mes-reservations', name: 'app_lieu_user_reservations')]
+    public function userReservations(Request $request, PaginatorInterface $paginator): Response
     {
-        // ID utilisateur statique (à remplacer par l'utilisateur connecté)
-        $userId = 25;
-        
-        // Récupérer les réservations avec jointure sur Lieu
-        $reservations = $this->entityManager->createQuery(
-            'SELECT r, l 
-             FROM App\Entity\ReserverLieu r 
-             JOIN App\Entity\Lieu l WITH r.lieuId = l.id 
-             WHERE r.user_id = :userId 
-             ORDER BY r.date_reservation DESC'
-        )->setParameter('userId', $userId)
-         ->getResult();
+        $user = $this->getUser();
+        if (!$user) {
+            throw $this->createAccessDeniedException('Vous devez être connecté pour voir vos réservations.');
+        }
 
-        return $this->render('lieu/reservation.html.twig', [
-            'reservations' => $reservations
+        $queryBuilder = $this->entityManager->createQueryBuilder()
+            ->select('r, l, e')
+            ->from('App\\Entity\\ReserverLieu', 'r')
+            ->join('r.lieu', 'l')
+            ->join('r.event', 'e')
+            ->where('e.user = :user')
+            ->setParameter('user', $user)
+            ->orderBy('r.date_reservation', 'DESC');
+
+        $reservations = $paginator->paginate(
+            $queryBuilder,
+            $request->query->getInt('page', 1),
+            6 // Nombre d'éléments par page
+        );
+
+        return $this->render('lieu/reservations.html.twig', [
+            'reservations' => $reservations,
+            'currentPage' => $request->query->getInt('page', 1),
+            'pages' => ceil($reservations->getTotalItemCount() / 6)
         ]);
     }
 
@@ -460,7 +470,7 @@ class LieuController extends AbstractController
             $this->addFlash('error', 'Impossible d\'annuler cette réservation');
         }
         
-        return $this->redirectToRoute('app_user_reservations');
+        return $this->redirectToRoute('app_lieu_user_reservations');
     }
 
     #[Route('/lieu/{id}/toggle-favori', name: 'app_lieu_toggle_favori', methods: ['POST'])]
