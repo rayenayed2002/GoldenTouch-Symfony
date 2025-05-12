@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Reservation;
 use App\Entity\ReservationLieu;
+use App\Controller\ReserverLieu;
 use App\Entity\Event;
 use App\Form\ReservationType;
 use App\Repository\ReservationRepository;
@@ -261,7 +262,7 @@ class ReservationController extends AbstractController
     }
 
     #[Route('/reservation/{id}/cancel', name: 'app_reservation_cancel', methods: ['POST'])]
-    public function cancelReservation(ReserverLieu $reservation): Response
+    public function cancelReservation(ReservationLieu $reservation): Response
     {
         if ($reservation->getStatus() === 'pending') {
             $this->entityManager->remove($reservation);

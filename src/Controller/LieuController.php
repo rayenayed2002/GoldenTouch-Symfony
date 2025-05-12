@@ -326,7 +326,7 @@ class LieuController extends AbstractController
         ]);
     }
 
-    #[Route('/lieu/{id}', name: 'app_lieu_details')]
+    #[Route('/lieu/detail/{id}', name: 'app_lieu_details')]
     public function show(Lieu $lieu, EventRepository $eventRepository): Response
     {
         $similarLieux = $this->lieuRepository->findBy(

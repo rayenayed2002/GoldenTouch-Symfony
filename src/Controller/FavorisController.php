@@ -34,7 +34,7 @@ class FavorisController extends AbstractController
         $this->csrfTokenManager = $csrfTokenManager;
     }
 
-    #[Route('/', name: 'app_favoris_index')]
+    #[Route('/a', name: 'app_favoris_index')]
     public function index(): Response
     {
         $user = $this->security->getUser();
