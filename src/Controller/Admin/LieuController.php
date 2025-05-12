@@ -17,23 +17,62 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 // Add this at the top of your controller file
 use App\Repository\ReserverLieuRepository;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use App\Repository\UserRepository;
 #[Route('/admin/lieu', name: 'admin_lieu_')]
 class LieuController extends AbstractController
 {
     private $entityManager;
     private $lieuRepository;
     private $validator;
+    private $reserverLieuRepository;
+    private $userRepository;
 
     public function __construct(
         EntityManagerInterface $entityManager,
         LieuRepository $lieuRepository,
-        ValidatorInterface $validator
+        ValidatorInterface $validator,
+        ReserverLieuRepository $reserverLieuRepository,
+        UserRepository $userRepository
     ) {
         $this->entityManager = $entityManager;
         $this->lieuRepository = $lieuRepository;
         $this->validator = $validator;
+        $this->reserverLieuRepository = $reserverLieuRepository;
+        $this->userRepository = $userRepository;
     }
     // Dans LieuController.php
+
+    #[Route('/users', name: 'users', methods: ['GET'])]
+    public function users(): Response
+    {
+        $users = $this->userRepository->findAll();
+        return $this->render('admin/lieu/users.html.twig', [
+            'users' => $users
+        ]);
+    }
+
+    #[Route('/user/{userId}/reservations', name: 'reservations_by_user', methods: ['GET'])]
+    public function userReservations(int $userId): Response
+    {
+        $user = $this->userRepository->find($userId);
+        
+        if (!$user) {
+            throw $this->createNotFoundException('Utilisateur non trouvé');
+        }
+        
+        $reservations = $this->reserverLieuRepository->findBy(['event' => $user]);
+        
+        foreach ($reservations as $reservation) {
+            if ($reservation->getLieu()) {
+                $reservation->lieuId = $reservation->getLieu();
+            }
+        }
+        
+        return $this->render('admin/lieu/user_reservations.html.twig', [
+            'user' => $user,
+            'reservations' => $reservations
+        ]);
+    }
 
     #[Route('/{id}/reservations', name: 'reservations', methods: ['GET'])]
     public function reservations(int $id): Response
