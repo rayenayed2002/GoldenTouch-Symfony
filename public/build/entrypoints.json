@@ -1,0 +1,11 @@
+{
+  "entrypoints": {
+    "app": {
+      "js": [
+        "/build/runtime.js",
+        "/build/vendors-node_modules_aos_dist_aos_js-node_modules_gsap_index_js-node_modules_sweetalert2_dist-51a58f.js",
+        "/build/app.js"
+      ]
+    }
+  }
+}

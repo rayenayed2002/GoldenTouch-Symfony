@@ -1,0 +1,1235 @@
+<!doctype html>
+<html class="no-js" lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="csrf-token" content="{{ csrf_token('favoris_token') }}">
+    <title>GoldenTouch - Nos Lieux</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Radio+Canada:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- All CSS Files -->
+    <link rel="stylesheet" href="{{ asset('Front/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('Front/css/fontawesome.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('Front/css/magnific-popup.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('Front/css/slick.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('Front/css/style.css') }}">
+
+    <style>
+    <style>
+    /* Variables globales */
+    :root {
+        --theme-color: #FFC107;
+        --theme-color-rgb: 255,193,7;
+        --theme-color-light: #FFE082;
+        --theme-color-dark: #FFA000;
+        --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+        --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+        --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+        --transition-base: all 0.3s ease;
+        --border-radius-sm: 8px;
+        --border-radius-md: 16px;
+        --border-radius-lg: 24px;
+    }
+    .search-form {
+        background: #fffbe7;
+        padding: 24px 28px;
+        border-radius: 18px;
+        box-shadow: 0 4px 18px rgba(255,193,7,0.08), 0 1.5px 6px rgba(0,0,0,0.03);
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        align-items: center;
+        margin-bottom: 30px;
+        border: 1.5px solid #ffe082;
+    }
+    .search-form .form-group {
+        margin-bottom: 0;
+        flex: 1 1 220px;
+    }
+    .search-form .form-control {
+        border-radius: 30px;
+        border: 1.5px solid #ffe082;
+        padding: 12px 20px;
+        font-size: 1rem;
+        transition: border-color 0.3s, box-shadow 0.3s;
+        background: #fff;
+        color: #333;
+        box-shadow: none;
+    }
+    .search-form .form-control:focus {
+        border-color: #FFC107;
+        box-shadow: 0 0 0 2px rgba(255,193,7,0.15);
+        outline: none;
+    }
+    .search-form button, .search-form .btn {
+        background: linear-gradient(90deg, #FFC107 60%, #FFD54F 100%);
+        color: #fff;
+        border: none;
+        border-radius: 30px;
+        padding: 12px 32px;
+        font-weight: 600;
+        font-size: 1rem;
+        transition: background 0.2s, box-shadow 0.2s;
+        box-shadow: 0 2px 8px rgba(255,193,7,0.10);
+        cursor: pointer;
+    }
+    .search-form button:hover, .search-form .btn:hover {
+        background: linear-gradient(90deg, #FFD54F 60%, #FFC107 100%);
+        color: #fff;
+        box-shadow: 0 4px 16px rgba(255,193,7,0.18);
+    }
+    .search-form .input-group {
+        border-radius: 30px;
+        overflow: hidden;
+        box-shadow: none;
+    }
+    .search-form .input-group .form-control {
+        border-right: none;
+    }
+    .search-form .input-group-append .btn {
+        border-radius: 0 30px 30px 0;
+        margin-left: -1px;
+    }
+    @media (max-width: 768px) {
+        .search-form {
+            flex-direction: column;
+            gap: 12px;
+            padding: 16px 10px;
+        }
+        .search-form .form-group, .search-form button {
+            width: 100%;
+        }
+    }
+    </style>
+
+    <style>
+        /* Styles pour les cartes de lieux */
+        .lieu-card {
+            transition: var(--transition-base);
+            margin-bottom: 30px;
+            background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+            backdrop-filter: blur(12px);
+            border-radius: var(--border-radius-md);
+            border: 1px solid rgba(var(--theme-color-rgb), 0.1);
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+            position: relative;
+            z-index: 1;
+        }
+        .lieu-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--theme-color-light);
+        }
+        .lieu-card:hover .lieu-image {
+            transform: scale(1.05);
+        }
+        .lieu-image {
+            height: 250px;
+            object-fit: cover;
+            border-radius: var(--border-radius-md) var(--border-radius-md) 0 0;
+            width: 100%;
+            transition: var(--transition-base);
+        }
+        .lieu-content {
+            padding: 1.5rem;
+            background: linear-gradient(180deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,1) 100%);
+        }
+        .lieu-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #1C1C1C;
+            font-weight: 600;
+            line-height: 1.3;
+        }
+        .lieu-title a {
+            color: inherit;
+            text-decoration: none;
+            transition: var(--transition-base);
+        }
+        .lieu-title a:hover {
+            color: var(--theme-color-dark);
+        }
+        .lieu-description {
+            color: #666;
+            margin: 0.75rem 0 1.25rem;
+            line-height: 1.6;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            font-size: 0.95rem;
+            opacity: 0.9;
+        }
+        .lieu-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1.25rem;
+            padding-top: 1.25rem;
+            border-top: 1px solid rgba(var(--theme-color-rgb), 0.1);
+            position: relative;
+        }
+        .lieu-capacity {
+            background: rgba(var(--theme-color-rgb), 0.05);
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius-sm);
+            font-size: 0.9rem;
+            color: var(--theme-color-dark);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: var(--transition-base);
+        }
+        .lieu-capacity:hover {
+            background: rgba(var(--theme-color-rgb), 0.1);
+            transform: translateY(-2px);
+        }
+        
+
+        
+        /* Autres styles */
+        .lieu-location {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        .lieu-category {
+            display: inline-block;
+            background: #f0f7ff;
+            color: #0066cc;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-bottom: 10px;
+        }
+        .pagination .page-item.active .page-link {
+            background-color: var(--theme-color);
+            border-color: var(--theme-color);
+        }
+        .pagination .page-link {
+            color: var(--theme-color);
+        }
+    </style>
+
+    <style>
+        /* Styles pour la nouvelle barre de recherche */
+        .search-container {
+            background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .search-wrapper {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            padding-left: 3.5rem;
+            font-size: 1.1rem;
+            border: 2px solid #e9ecef;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #FFC107;
+            box-shadow: 0 0 0 3px rgba(255,193,7,0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1.2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+            font-size: 1.2rem;
+        }
+
+        .search-input:focus + .search-icon {
+            color: #FFC107;
+        }
+
+        .sort-wrapper {
+            margin-top: 1rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .sort-select {
+            padding: 0.5rem 1rem;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            background-color: #fff;
+            color: #495057;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .sort-select:focus {
+            outline: none;
+            border-color: #FFC107;
+            box-shadow: 0 0 0 2px rgba(255,193,7,0.1);
+        }
+
+        .sort-label {
+            color: #6c757d;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            .search-container {
+                padding: 1.5rem;
+            }
+            
+            .search-input {
+                font-size: 1rem;
+                padding: 0.8rem 1.2rem;
+                padding-left: 3rem;
+            }
+
+            .search-icon {
+                left: 1rem;
+                font-size: 1rem;
+            }
+
+            .sort-wrapper {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+        }
+    </style>
+
+    <style>
+        .social-share-buttons {
+            display: flex;
+            gap: 0.3rem;
+            margin-left: 0.5rem;
+        }
+
+        .social-share {
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .social-share:hover {
+            transform: scale(1.1);
+        }
+
+        .social-share i {
+            font-size: 0.8rem;
+        }
+
+        .social-share.facebook:hover {
+            background: #1877f2;
+            color: white;
+        }
+
+        .social-share.twitter:hover {
+            background: #1da1f2;
+            color: white;
+        }
+
+        .social-share.whatsapp:hover {
+            background: #25d366;
+            color: white;
+        }
+    </style>
+
+    <style>
+        .price-filter {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-left: 1rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+        }
+
+        .price-slider {
+            width: 250px;
+            height: 6px;
+            -webkit-appearance: none;
+            background: linear-gradient(to right, #FFC107 0%, #FFE082 100%);
+            border-radius: 10px;
+            outline: none;
+            opacity: 0.9;
+            transition: opacity 0.2s;
+        }
+
+        .price-slider:hover {
+            opacity: 1;
+        }
+
+        .price-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #FFC107;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .price-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.1);
+            background: #FFD54F;
+        }
+
+        .price-slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: #FFC107;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .price-slider::-moz-range-thumb:hover {
+            transform: scale(1.1);
+            background: #FFD54F;
+        }
+
+        .price-slider::-webkit-slider-runnable-track {
+            height: 6px;
+            border-radius: 10px;
+            background: #e9ecef;
+        }
+
+        .price-slider::-moz-range-track {
+            height: 6px;
+            border-radius: 10px;
+            background: #e9ecef;
+        }
+
+        #priceValue {
+            min-width: 100px;
+            font-size: 1rem;
+            color: #495057;
+            font-weight: 500;
+            background: #fff;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            text-align: center;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .sort-label {
+            font-weight: 500;
+            color: #495057;
+            font-size: 0.95rem;
+            margin-bottom: 0;
+            white-space: nowrap;
+        }
+
+        @media (max-width: 768px) {
+            .price-filter {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 1rem;
+                padding: 0.8rem;
+            }
+
+            .price-slider {
+                width: 100%;
+            }
+
+            #priceValue {
+                align-self: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    {% include 'Front/partials/header.html.twig' %}
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('searchInput');
+        const orderbySelect = document.getElementById('orderbySelect');
+        const priceRange = document.getElementById('priceRange');
+        const priceValue = document.getElementById('priceValue');
+        const lieuContainer = document.querySelector('.row.gy-40');
+        const defaultImage = '{{ asset("Front/img/placeholder.jpg") }}';
+        let debounceTimer;
+    
+        priceRange.addEventListener('input', function() {
+            priceValue.textContent = this.value + '€';
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(performSearch, 300);
+        });
+    
+        function performSearch() {
+            const searchCriteria = {
+                search: searchInput.value.trim(),
+                orderby: orderbySelect.value,
+                maxPrice: priceRange.value
+            };
+    
+            // Supprimer les paramètres vides
+            Object.keys(searchCriteria).forEach(key => {
+                if (!searchCriteria[key]) {
+                    delete searchCriteria[key];
+                }
+            });
+    
+            lieuContainer.innerHTML = '<div class="col-12 text-center py-5"><i class="fas fa-spinner fa-spin fa-2x"></i><p>Recherche en cours...</p></div>';
+    
+            fetch('{{ path("app_lieux") }}?' + new URLSearchParams(searchCriteria), {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                let html = '';
+                if (data.results && data.results.length > 0) {
+                    data.results.forEach(lieu => {
+                        html += `
+                            <div class="col-xl-4 col-sm-6">
+                                <div class="th-product">
+                                    <div class="product-img">
+                                        <img src="${lieu.imageUrl ? '${window.location.origin}/' + lieu.imageUrl.replace('uploads/', '') : defaultImage}" 
+                                             alt="${lieu.name}" 
+                                             class="img-fluid">
+                                        <div class="actions">
+                                            <a href="/lieu/${lieu.id}" class="icon-btn" title="Voir les détails"><i class="far fa-eye"></i></a>
+                                            <a href="/lieu/${lieu.id}/calendar" class="icon-btn" title="Voir le calendrier"><i class="far fa-calendar-alt"></i></a>
+                                            <a href="#" class="icon-btn toggle-favori" data-lieu-id="${lieu.id}" title="Ajouter aux favoris"><i class="far fa-heart"></i></a>
+                                        </div>
+                                    </div>
+                                    <div class="product-content">
+                                        <h3 class="product-title"><a href="/lieu/${lieu.id}">${lieu.name}</a></h3>
+                                        <div class="lieu-location">
+                                            <i class="fas fa-map-marker-alt"></i>
+                                            <span>${lieu.location}${lieu.ville ? ', ' + lieu.ville : ''}</span>
+                                        </div>
+                                        <p class="lieu-description">${lieu.description || 'Aucune description disponible'}</p>
+                                        <div class="product-meta">
+                                            <span class="price">${lieu.price} €</span>
+                                            <span class="lieu-capacity"><i class="fas fa-users"></i> ${lieu.capacity} personnes</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                } else {
+                    html = '<div class="col-12 text-center"><div class="alert alert-info">Aucun lieu trouvé pour les critères sélectionnés.</div></div>';
+                }
+                lieuContainer.innerHTML = html;
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                lieuContainer.innerHTML = '<div class="col-12 text-center"><div class="alert alert-danger">Une erreur est survenue lors de la recherche. Veuillez réessayer.</div></div>';
+            });
+        }
+
+        // Gestion des événements avec debounce
+        searchInput.addEventListener('input', function() {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(performSearch, 300);
+        });
+
+        orderbySelect.addEventListener('change', performSearch);
+
+        // Gestion des favoris
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('.toggle-favori')) {
+                e.preventDefault();
+                const lieuId = e.target.closest('.toggle-favori').dataset.lieuId;
+                const heartIcon = e.target.closest('.toggle-favori').querySelector('i');
+                const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                
+                fetch(`/favoris/toggle/${lieuId}`, {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': token
+                    },
+                    credentials: 'same-origin'
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        if (response.status === 401) {
+                            window.location.href = '{{ path('app_login') }}';
+                            throw new Error('Veuillez vous connecter pour gérer vos favoris');
+                        }
+                        throw new Error('Erreur réseau');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        heartIcon.classList.toggle('far');
+                        heartIcon.classList.toggle('fas');
+                        heartIcon.classList.toggle('text-danger');
+                    } else {
+                        throw new Error(data.error || 'Erreur lors de la gestion des favoris');
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur:', error);
+                    alert(error.message || 'Une erreur est survenue lors de la gestion des favoris');
+                });
+            }
+        });
+    });
+    </script>
+
+    <!-- Page Title -->
+    <div class="breadcumb-wrapper" data-bg-src="{{ asset('Front/img/breadcumb/breadcumb-bg.jpg') }}" style="padding: 15px 0;">
+        <div class="container">
+            <div class="breadcumb-content" style="padding: 10px 0;">
+                <h1 class="breadcumb-title" style="font-size: 1.5rem; margin-bottom: 5px;">Nos Lieux</h1>
+                <ul class="breadcumb-menu" style="font-size: 0.9rem;">
+                    <li><a href="{{ path('front_index') }}">Accueil</a></li>
+                    <li><a href="{{ path('app_lieux') }}">Lieux</a></li>
+
+                </ul>
+            </div>
+        </div>
+    </div>
+    <li class="nav-item">
+    <a class="nav-link" href="{{ path('app_mes_favoris') }}">
+        <i class="fas fa-heart"></i> Mes favoris
+        {% if app.session.get('favoris', [])|length > 0 %}
+            <span class="badge bg-danger">{{ app.session.get('favoris', [])|length }}</span>
+        {% endif %}
+    </a>
+</li>
+
+    <!-- Pagination -->
+    {% if lieux.results is defined %}
+    <div class="container mt-4 mb-5">
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+                {% if lieux.hasPreviousPage %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ path('app_lieux', app.request.query.all|merge({'page': lieux.currentPage - 1})) }}" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                {% endif %}
+                
+                {% for i in max(1, lieux.currentPage - 2)..min(lieux.lastPage, lieux.currentPage + 2) %}
+                    <li class="page-item {{ lieux.currentPage == i ? 'active' : '' }}">
+                        <a class="page-link" href="{{ path('app_lieux', app.request.query.all|merge({'page': i})) }}">{{ i }}</a>
+                    </li>
+                {% endfor %}
+                
+                {% if lieux.hasNextPage %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ path('app_lieux', app.request.query.all|merge({'page': lieux.currentPage + 1})) }}" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+    {% endif %}
+
+    <div class="container my-3" style="text-align:right;">
+        <div class="btn-group">
+            {% if currentFilter != 'statistics' %}
+                <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({'filter':'statistics'})) }}" class="btn btn-warning"><i class="fas fa-chart-bar"></i> Statistique</a>
+                <a href="{{ path('app_lieux_pdf') }}" class="btn btn-primary"><i class="fas fa-file-pdf"></i> Exporter PDF</a>
+            {% else %}
+                <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({'filter':null})) }}" class="btn btn-secondary"><i class="fas fa-list"></i> Retour à la liste</a>
+            {% endif %}
+        </div>
+    </div>
+    
+    {% if currentFilter == 'statistics' %}
+<div class="container my-5">
+    <h2 class="mb-4">Statistiques des Lieux</h2>
+    <div class="row">
+        <!-- Statistiques générales -->
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Vue d'ensemble</h5>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div>
+                            <h6 class="mb-0">Total des lieux</h6>
+                            <h2 class="mb-0">{{ lieux.total }}</h2>
+                        </div>
+                        <i class="fas fa-building fa-2x text-primary"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Réservations -->
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Réservations</h5>
+                    <canvas id="reservationsChart"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Revenus -->
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Revenus mensuels</h5>
+                    <canvas id="revenueChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mt-4">
+        <!-- Top des lieux -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Top 5 des lieux les plus réservés</h5>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Lieu</th>
+                                    <th>Réservations</th>
+                                    <th>Taux d'occupation</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for lieu in topLieux|default([]) %}
+                                <tr>
+                                    <td>{{ lieu.name }}</td>
+                                    <td>{{ lieu.reservations }}</td>
+                                    <td>{{ lieu.occupancy }}%</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Graphique par catégorie -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Répartition par catégorie</h5>
+                    <canvas id="categoryChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Données pour les graphiques (à remplacer par des données dynamiques)
+    const reservationsData = {
+        labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin'],
+        datasets: [{
+            label: 'Réservations',
+            data: [12, 19, 3, 5, 2, 3],
+            borderColor: '#FFC107',
+            tension: 0.1
+        }]
+    };
+    
+    const revenueData = {
+        labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin'],
+        datasets: [{
+            label: 'Revenus (€)',
+            data: [1200, 1900, 300, 500, 200, 300],
+            backgroundColor: '#FFC107',
+        }]
+    };
+    
+    const categoryData = {
+        labels: ['Salle de fête', 'Espace extérieur', 'Salle de conférence', 'Restaurant', 'Autre'],
+        datasets: [{
+            data: [30, 20, 25, 15, 10],
+            backgroundColor: ['#FFC107', '#FF9800', '#F57C00', '#FFB74D', '#FFE082']
+        }]
+    };
+    
+    // Configuration des graphiques
+    new Chart('reservationsChart', {
+        type: 'line',
+        data: reservationsData,
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: false }
+            }
+        }
+    });
+    
+    new Chart('revenueChart', {
+        type: 'bar',
+        data: revenueData,
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: false }
+            }
+        }
+    });
+    
+    new Chart('categoryChart', {
+        type: 'doughnut',
+        data: categoryData,
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+</script>
+
+{% elseif currentFilter == 'reservations' %}
+<div class="container my-5">
+    <h1 class="mb-4">Mes Réservations</h1>
+    
+    {% if lieux.results|length > 0 %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>Lieu</th>
+                        <th>Date</th>
+                        <th>Statut</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for reservation in lieux.results %}
+                    <tr>
+                        <td>
+                            {% if reservation.lieu %}
+                                <a href="{{ path('app_lieu_details', {id: reservation.lieu.id}) }}">
+                                    {{ reservation.lieu.name }}
+                                </a>
+                            {% else %}
+                                Lieu #{{ reservation.lieuId }}
+                            {% endif %}
+                        </td>
+                        <td>{{ reservation.dateReservation|date('d/m/Y H:i') }}</td>
+                        <td>
+                            <span class="badge 
+                                {% if reservation.status == 'confirmed' %}bg-success
+                                {% elseif reservation.status == 'pending' %}bg-warning
+                                {% else %}bg-danger
+                                {% endif %}">
+                                {{ reservation.status }}
+                            </span>
+                        </td>
+                        <td>
+                            {% if reservation.status == 'pending' %}
+                            <form method="post" 
+                                  action="{{ path('app_reservation_cancel', {id: reservation.id}) }}" 
+                                  onsubmit="return confirm('Annuler cette réservation ?')">
+                                <button type="submit" class="btn btn-sm btn-danger">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="actions">
+    <a href="{{ path('app_lieu_details', {'id': lieu.id}) }}" class="icon-btn" title="Voir les détails"><i class="far fa-eye"></i></a>
+    <a href="{{ path('app_lieu_calendar', {'id': lieu.id}) }}" class="icon-btn" title="Voir le calendrier"><i class="far fa-calendar-alt"></i></a>
+    <a href="#" class="icon-btn toggle-favori" title="Ajouter aux favoris" data-lieu-id="{{ lieu.id }}"><i class="far fa-heart{% if lieu.id in app.session.get('favoris', []) %} fas text-danger{% endif %}"></i></a>
+    <a href="https://calendar.google.com/calendar/render?action=TEMPLATE&text={{ lieu.name|url_encode }}&dates={{ lieu.dateReservation|date('Ymd\THis') }}/{{ lieu.dateReservation|date_modify('+1 hour')|date('Ymd\THis') }}&details=Réservation du lieu: {{ lieu.name|url_encode }}" target="_blank" class="icon-btn" title="Ajouter à Google Calendar"><i class="fab fa-google"></i></a>
+</div>
+        
+        
+        {# Pagination #}
+        {% if lieux.lastPage > 1 %}
+            <nav class="mt-4">
+                <ul class="pagination justify-content-center">
+                    {% if lieux.hasPreviousPage %}
+                        <li class="page-item">
+                            <a class="page-link" 
+                               href="{{ path('app_lieu_user_reservations', {page: lieux.currentPage - 1}) }}">
+                                &laquo; Précédent
+                            </a>
+                        </li>
+                    {% endif %}
+                    
+                    {% for i in 1..lieux.lastPage %}
+                        <li class="page-item {% if i == lieux.currentPage %}active{% endif %}">
+                            <a class="page-link" 
+                               href="{{ path('app_lieu_user_reservations', {page: i}) }}">{{ i }}</a>
+                        </li>
+                    {% endfor %}
+                    
+                    {% if lieux.hasNextPage %}
+                        <li class="page-item">
+                            <a class="page-link" 
+                               href="{{ path('app_lieu_user_reservations', {page: lieux.currentPage + 1}) }}">
+                                Suivant &raquo;
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        {% endif %}
+    {% else %}
+        <div class="alert alert-info">
+            Vous n'avez aucune réservation pour le moment.
+        </div>
+    {% endif %}
+</div>
+{% else %}
+    <!-- Barre de recherche améliorée -->
+    <div class="search-container">
+        <div class="search-wrapper">
+            <input type="text" 
+                   id="searchInput" 
+                   class="search-input" 
+                   placeholder="Rechercher un lieu par nom, description ou localisation...">
+            <i class="fas fa-search search-icon"></i>
+        </div>
+        <div class="sort-wrapper">
+            <span class="sort-label">Trier par :</span>
+            <select name="orderby" class="sort-select" id="orderbySelect">
+                <option value="menu_order" selected>Par défaut</option>
+                <option value="price_asc">Prix croissant</option>
+                <option value="price_desc">Prix décroissant</option>
+                <option value="capacity_asc">Capacité croissante</option>
+                <option value="capacity_desc">Capacité décroissante</option>
+            </select>
+            <div class="price-filter">
+                <label class="sort-label">Prix:</label>
+                <input type="range" id="priceRange" min="0" max="10000" step="100" value="10000" class="price-slider">
+                <span id="priceValue">10000€</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lieu List Section -->
+    <section class="space-top space-extra-bottom">
+        <div class="container">
+            <!-- Lieu Grid -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="th-sort-bar">
+                        <div class="row justify-content-between align-items-center">
+                            <div class="col-md">
+                                <p class="woocommerce-result-count">Affichage de {{ lieux.results|length }} lieux</p>
+                            </div>
+                            
+                        </div>
+                    </div>
+                    
+                    {% if lieux.results|length > 0 %}
+                        <div class="row gy-40">
+                            {% for lieu in lieux.results.results %}
+                            <div class="col-xl-4 col-sm-6">
+                                <div class="th-product">
+                                    <div class="product-img">
+                                        {% if lieu.imageUrl %}
+                                            <img src="{{ asset('uploads/lieux/Images/' ~ lieu.imageUrl|replace({'/Images/': '', 'Images/': ''})) }}" alt="{{ lieu.name }}" class="img-fluid">
+                                        {% else %}
+                                            <img src="{{ asset('Front/img/placeholder.jpg') }}" alt="Lieu Image" class="img-fluid">
+                                        {% endif %}
+                                        <div class="actions">
+                                            <a href="{{ path('app_lieu_details', {'id': lieu.id}) }}" class="icon-btn" title="Voir les détails"><i class="far fa-eye"></i></a>
+                                            <a href="{{ path('app_lieu_calendar', {'id': lieu.id}) }}" class="icon-btn" title="Voir le calendrier"><i class="far fa-calendar-alt"></i></a>
+                                            <a href="#" class="icon-btn toggle-favori" data-lieu-id="{{ lieu.id }}" title="Ajouter aux favoris"><i class="far fa-heart"></i></a>
+                                        </div>
+                                    </div>
+                                    <div class="product-content">
+                                        {% if lieu.category %}
+                                            <div class="star-rating" role="img" aria-label="Category: {{ lieu.category }}">
+                                                <span>{{ lieu.category }}</span>
+                                            </div>
+                                        {% endif %}
+                                        <h3 class="product-title"><a href="{{ path('app_lieu_details', {'id': lieu.id}) }}">{{ lieu.name }}</a></h3>
+                                        <div class="lieu-location">
+                                            <i class="fas fa-map-marker-alt"></i>
+                                            <span>{{ lieu.location }}{% if lieu.ville %}, {{ lieu.ville }}{% endif %}</span>
+                                        </div>
+                                        <p class="lieu-description">{{ lieu.description|default('Aucune description disponible') }}</p>
+                                        <div class="product-meta">
+                                            <span class="price">{{ lieu.price }} €</span>
+                                            <span class="lieu-capacity"><i class="fas fa-users"></i> {{ lieu.capacity }} personnes</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        
+                        <!-- Pagination -->
+                        <div class="th-pagination text-center pt-50">
+                            <ul>
+                                {% if lieux.hasPreviousPage %}
+                                    <li><a href="{{ path('app_lieu_index', {'page': lieux.currentPage - 1, 'filter': currentFilter, 'search': searchTerm ?? ''}) }}"><i class="far fa-arrow-left"></i></a></li>
+                                {% endif %}
+                                
+                                {% for i in 1..lieux.lastPage %}
+                                    <li class="{% if i == lieux.currentPage %}active{% endif %}">
+                                        <a class="page-link" 
+                                           href="{{ path('app_lieu_index', {'page': i, 'filter': currentFilter, 'search': searchTerm ?? ''}) }}">{{ i }}</a>
+                                    </li>
+                                {% endfor %}
+                                
+                                {% if lieux.hasNextPage %}
+                                    <li><a href="{{ path('app_lieu_index', {'page': lieux.currentPage + 1, 'filter': currentFilter, 'search': searchTerm ?? ''}) }}"><i class="far fa-arrow-right"></i></a></li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info">Aucun lieu trouvé.</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
+{% endif %}
+
+    {% include 'Front/partials/footer.html.twig' %}
+
+    <!-- Scroll Top -->
+    <div class="scroll-top">
+        <svg class="progress-circle svg-content" width="100%" height="100%" viewBox="-1 -1 102 102">
+            <path d="M50,1 a49,49 0 0,1 0,98 a49,49 0 0,1 0,-98" style="transition: stroke-dashoffset 10ms linear 0s; stroke-dasharray: 307.919, 307.919; stroke-dashoffset: 307.919;"></path>
+        </svg>
+    </div>
+
+    <!-- All JavaScript Files -->
+    <script src="{{ asset('Front/js/jquery-3.6.0.min.js') }}"></script>
+    <script src="{{ asset('Front/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ asset('Front/js/jquery.magnific-popup.min.js') }}"></script>
+    <script src="{{ asset('Front/js/slick.min.js') }}"></script>
+    <script src="{{ asset('Front/js/main.js') }}"></script>
+
+    <!-- Style pour la recherche en temps réel -->
+    <style>
+    .price-filter {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        margin-left: 1rem;
+        padding: 1rem;
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        border: 1px solid rgba(0, 0, 0, 0.08);
+    }
+
+    .price-slider {
+        width: 250px;
+        height: 6px;
+        -webkit-appearance: none;
+        background: linear-gradient(to right, #FFC107 0%, #FFE082 100%);
+        border-radius: 10px;
+        outline: none;
+        opacity: 0.9;
+        transition: opacity 0.2s;
+    }
+
+    .price-slider:hover {
+        opacity: 1;
+    }
+
+    .price-slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 20px;
+        height: 20px;
+        background: #FFC107;
+        border: 2px solid #fff;
+        border-radius: 50%;
+        cursor: pointer;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        transition: all 0.3s ease;
+    }
+
+    .price-slider::-webkit-slider-thumb:hover {
+        transform: scale(1.1);
+        background: #FFD54F;
+    }
+
+    .price-slider::-moz-range-thumb {
+        width: 20px;
+        height: 20px;
+        background: #FFC107;
+        border: 2px solid #fff;
+        border-radius: 50%;
+        cursor: pointer;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        transition: all 0.3s ease;
+    }
+
+    .price-slider::-moz-range-thumb:hover {
+        transform: scale(1.1);
+        background: #FFD54F;
+    }
+
+    .price-slider::-webkit-slider-runnable-track {
+        height: 6px;
+        border-radius: 10px;
+        background: #e9ecef;
+    }
+
+    .price-slider::-moz-range-track {
+        height: 6px;
+        border-radius: 10px;
+        background: #e9ecef;
+    }
+
+    #priceValue {
+        min-width: 100px;
+        font-size: 1rem;
+        color: #495057;
+        font-weight: 500;
+        background: #fff;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        text-align: center;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .sort-label {
+        font-weight: 500;
+        color: #495057;
+        font-size: 0.95rem;
+        margin-bottom: 0;
+        white-space: nowrap;
+    }
+
+    @media (max-width: 768px) {
+        .price-filter {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 1rem;
+            padding: 0.8rem;
+        }
+
+        .price-slider {
+            width: 100%;
+        }
+
+        #priceValue {
+            align-self: center;
+        }
+    }
+    </style>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('searchInput');
+        const searchResults = document.getElementById('searchResults');
+        let debounceTimer;
+    
+        searchInput.addEventListener('input', function() {
+            clearTimeout(debounceTimer);
+            const query = this.value.trim();
+    
+            // Afficher l'indicateur de chargement
+            searchResults.style.display = 'block';
+            searchResults.innerHTML = '<div class="search-loading"><i class="fas fa-spinner fa-spin"></i> Recherche en cours...</div>';
+    
+            debounceTimer = setTimeout(() => {
+                if (query.length > 0) {
+                    // Effectuer la requête AJAX
+                    fetch(/lieu/search?q=${encodeURIComponent(query)}, {
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => response.text())
+                    .then(html => {
+                        const container = document.querySelector('.row.gy-40');
+                        if (container) {
+                            container.innerHTML = html;
+                        }
+                        searchResults.style.display = 'none';
+                    })
+                    .catch(error => {
+                        searchResults.innerHTML = '<div class="no-results">Une erreur est survenue lors de la recherche.</div>';
+                        console.error('Erreur:', error);
+                    });
+                } else {
+                    searchResults.style.display = 'none';
+                    // Recharger tous les lieux
+                    fetch('/lieu/search', {
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => response.text())
+                    .then(html => {
+                        const container = document.querySelector('.row.gy-40');
+                        if (container) {
+                            container.innerHTML = html;
+                        }
+                    });
+                }
+            }, 300);
+        });
+    
+        // Fermer les résultats de recherche lors du clic en dehors
+        document.addEventListener('click', function(e) {
+            if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+                searchResults.style.display = 'none';
+            }
+        });
+    });
+    </script>
+</body>
+</html>

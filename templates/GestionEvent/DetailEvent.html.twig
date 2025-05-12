@@ -1,0 +1,409 @@
+
+
+
+{% extends 'front.html.twig' %}
+
+{% block title %}Custom Page Title{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+<style>
+body {
+    background-color: #f8f7fa;
+}
+
+/* Event Card Style */
+.th-product {
+    background-color: #ffffff;
+    border: 2px solid gold;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    margin: 10px;
+    padding: 10px;
+    height: 100%; /* Helps cards be uniform height */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    cursor: pointer;
+
+}
+
+/* Image wrapper to control sizing and spacing */
+.product-img {
+    overflow: hidden;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+/* Image style - same height and zoom on hover */
+.product-img img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+    border-radius: 8px;
+    display: block;
+}
+
+/* Zoom effect on hover */
+.th-product:hover .product-img img {
+    transform: scale(1.05);
+}
+
+/* Card hover effect */
+.th-product:hover {
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+    transform: translateY(-5px);
+}
+
+  .th-product .product-img::before {
+        content: none !important;
+        background-color: transparent !important;
+        opacity: 0 !important;
+        transform: none !important;
+        transition: none !important;
+        visibility: visible !important;
+    }
+    
+    /* Disable hover state */
+    .th-product:hover .product-img::before {
+        opacity: 0 !important;
+        visibility: hidden !important;
+    }
+    
+    /* Remove any other hover effects */
+    .th-product:hover {
+        transform: none !important;
+        box-shadow: none !important;
+    }
+        #cartIcon.dragover {
+        transform: scale(1.1);
+        color: #4CAF50;
+    }
+    .event-card {
+        cursor: grab;
+        transition: transform 0.2s;
+    }
+    
+    .event-card:active {
+        cursor: grabbing;
+    }
+.mb-40.mb-xl-0 {
+    width: 100%;
+    height: 100%; /* Prend toute la hauteur disponible */
+    overflow: hidden; /* Cache le débordement */
+    display: block; /* Retire le flex */
+}
+
+.mb-40.mb-xl-0 img {
+    width: 100%;
+    height: 100%; /* Prend toute la hauteur du conteneur */
+    object-fit: cover; /* Couvre l'espace sans déformation */
+    min-height: 400px; /* Hauteur minimale pour les petits écrans */
+}
+    </style>
+{% endblock %}
+
+{% block content %}
+
+<section class="space">
+<div class="container">
+    <div class="row gy-4 mb-3 mb-xl-5">
+        <div class="col-xl-6">
+<div class="mb-40 mb-xl-0">
+    {% if event.photo %}
+    <img src="{{ asset('uploads/packs/' ~ event.photo) }}" alt="{{ event.nom }}">
+    {% else %}
+    <img src="{{ asset('assets/img/event/default_event.jpg') }}" alt="Image par défaut">
+    {% endif %}
+</div>
+        </div>
+        <div class="col-xl-6 ps-3 ps-xl-5">
+            <div class="team-about">
+                <p class="team-about_desig">{{ event.type }}</p>
+                <h2 class="team-about_title">{{ event.nom }}</h2>
+                <div class="team-info">
+                    <ul>
+                        <li><b>Catégorie :</b> <span>{{ event.categorie.value }}</span></li>
+                        <li><b>Date :</b> <span>{{ event.date|date('j F Y') }}</span></li>
+                                {% for reservation in event.reservationsLieu %}
+                                        {% set lieu = reservation.lieu %}
+                        <li><b>Lieu :</b> <span>{{ lieu.name ?? 'À déterminer' }}</span></li>
+
+      {% else %}
+                        <li><b>Lieu :</b> <span> À déterminer</span></li>
+
+   {% endfor %}
+
+
+                            
+
+                        
+                    </ul>
+                </div>
+                <div class="d-flex gap-3 mt-4">
+                    <!-- Bouton Édition -->
+                    <button type="button" 
+                            class="btn btn-warning" 
+                            style="background-color: #FFD700; border-color: #FFD700;"
+                            data-bs-toggle="modal" 
+                            data-bs-target="#editEventModal">
+                        <i class="fas fa-edit me-2"></i>Modifier
+                    </button>
+
+                    <!-- Formulaire Suppression -->
+                    <form method="POST" action="{{ path('app_event_delete', {'id': event.id}) }}">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ event.id) }}">
+                        <button type="submit" 
+                                class="btn btn-danger" 
+                                onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet événement ?')">
+                            <i class="fas fa-trash me-2"></i>Supprimer
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal d'Édition -->
+    <div class="modal fade" id="editEventModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <form method="POST" 
+                      action="{{ path('app_event_edit', {'id': event.id}) }}" 
+                      enctype="multipart/form-data">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Modifier l'événement</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" name="_token" value="{{ csrf_token('edit-event') }}">
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Nom</label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   name="nom" 
+                                   value="{{ event.nom }}"
+                                   required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Date</label>
+                            <input type="datetime-local" 
+                                   class="form-control" 
+                                   name="date" 
+                                   value="{{ event.date|date('Y-m-d\\TH:i') }}"
+                                   required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Catégorie</label>
+                            <select class="form-select" name="categorie" required>
+                                {% for categorie in categorie_options %}
+                                    <option value="{{ categorie.value }}" 
+                                        {{ event.categorie.value == categorie.value ? 'selected' }}>
+                                        {{ categorie.value }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Photo</label>
+                            <input type="file" 
+                                   class="form-control" 
+                                   name="photo" 
+                                   accept="image/*">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                        <button type="submit" class="btn btn-warning">Enregistrer</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+        <!-- Tableaux -->
+        <div class="row gy-4">
+            <!-- Matériels -->
+            <div class="col-xl-12">
+                <div class="card mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">Matériels Requis</h5>
+                        <a href="#" class="btn btn-sm" style="background-color: #FFD700; color: #000;">Gérer Matériels</a>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Matériel</th>
+                                        <th>Quantité</th>
+                                        <th>Prix Unitaire</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for reservation in event.reservationsMaterielles %}
+                                        {% set materielle = reservation.materielle %}
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    {% if materielle.photoMat %}
+                                                    <img src="{{ asset('uploads/packs/' ~ materielle.photoMat) }}" 
+                                                         alt="{{ materielle.nomMat }}" 
+                                                         width="40" 
+                                                         class="rounded me-2">
+                                                    {% endif %}
+                                                    {{ materielle.nomMat }}
+                                                </div>
+                                            </td>
+                                            <td>{{ reservation.quantite }}</td>
+                                            <td>{{ materielle.prixMat|format_currency('EUR') }}</td>
+                                        </tr>
+                                    {% else %}
+                                        <tr>
+                                            <td colspan="3" class="text-center">Aucun matériel requis</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Personnel -->
+            <div class="col-xl-12">
+                <div class="card mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">Personnel Assigné</h5>
+                        <a href="#" class="btn btn-sm" style="background-color: #FFD700; color: #000;">Gérer Personnel</a>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Membre</th>
+                                        <th>Service</th>
+                                        <th>Taux Horaire</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for personnel in event.personnels %}
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                {% if personnel.imageUrl %}
+                                                <img src="{{ asset('uploads/packs/' ~ personnel.imageUrl) }}" 
+                                                     alt="{{ personnel.nomP }}" 
+                                                     width="40" 
+                                                     class="rounded me-2">
+                                                {% endif %}
+                                                {{ personnel.prenomP }} {{ personnel.nomP }}
+                                            </div>
+                                        </td>
+                                        <td>{{ personnel.serviceP }}</td>
+                                        <td>{{ personnel.tarifP|format_currency('EUR') }}</td>
+                                    </tr>
+                                    {% else %}
+                                    <tr>
+                                        <td colspan="3" class="text-center">Aucun personnel assigné</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lieu -->
+            <div class="col-xl-12">
+                <div class="card mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">Détails du Lieu</h5>
+                        <a href="#" class="btn btn-sm" style="background-color: #FFD700; color: #000;">Gérer Lieu</a>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Nom</th>
+                                        <th>Capacité</th>
+                                        <th>Localisation</th>
+                                        <th>Prix</th>
+                                        <th>Date Réservation</th>
+                                        <th>Statut</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for reservation in event.reservationsLieu %}
+                                        {% set lieu = reservation.lieu %}
+                                        <tr>
+                                            <td>{{ lieu.name }}</td>
+                                            <td>{{ lieu.capacity }}</td>
+                                            <td>{{ lieu.location }}, {{ lieu.ville }}</td>
+                                            <td>{{ lieu.price|format_currency('EUR') }}</td>
+                                            <td>{{ reservation.date_reservation|date('d/m/Y H:i') }}</td>
+                                            <td>{{ reservation.status|default('Confirmé') }}</td>
+                                        </tr>
+                                    {% else %}
+                                        <tr>
+                                            <td colspan="6" class="text-center">Aucun lieu spécifié</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+   {% block javascripts %}
+    {{ parent() }}
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/fr.js"></script>
+{% endblock %}
+
+{% block inline_scripts %}
+{{ parent() }}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    flatpickr('.date-picker', {
+        locale: "fr",
+        minDate: "today",
+        dateFormat: "d/m/Y",
+        disableMobile: true
+    });
+});
+
+ function previewImage(event) {
+        const input = event.target;
+        const preview = document.getElementById('photo_preview');
+
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+            };
+
+            reader.readAsDataURL(input.files[0]);
+        } else {
+            preview.src = '#';
+            preview.style.display = 'none';
+        }
+    }
+</script>
+{% endblock %}

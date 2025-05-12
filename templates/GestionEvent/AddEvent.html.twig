@@ -1,0 +1,354 @@
+{% extends 'front.html.twig' %}
+
+{% block title %}Custom Page Title{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <style>
+        .flatpickr-calendar {
+            z-index: 99999 !important;
+            margin-top: 5px;
+        }
+        .generate-btn {
+            margin-bottom: 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .generate-btn:hover {
+            background-color: #45a049;
+        }
+        #descriptionField {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .magic-btn {
+            background: linear-gradient(45deg, #FFD700, #D4AF37);
+            color: #fff;
+            font-weight: bold;
+            padding: 12px 18px;
+            font-size: 16px;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
+            transition: transform 0.2s;
+            text-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+        }
+
+        .magic-btn:hover {
+            background: linear-gradient(45deg, #D4AF37, #FFD700);
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.9);
+        }
+
+        /* Gold Sparkles - Always moving */
+        .magic-btn::before,
+        .magic-btn::after {
+            content: '';
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #FFD700;
+            border-radius: 50%;
+            filter: blur(1px);
+            animation: goldSparkle 2s infinite, floatMovement 3s infinite;
+        }
+
+        .magic-btn::before {
+            top: 10%;
+            left: 15%;
+            animation-delay: 0s, 0.5s;
+        }
+
+        .magic-btn::after {
+            bottom: 10%;
+            right: 15%;
+            animation-delay: 0.3s, 0s;
+        }
+
+        /* Third sparkle */
+        .magic-btn span::before {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: #FFD700;
+            border-radius: 50%;
+            filter: blur(1px);
+            animation: goldSparkle 1.8s infinite, floatDiagonal 3.5s infinite;
+            top: 30%;
+            right: 20%;
+        }
+
+        @keyframes goldSparkle {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.5); opacity: 0.7; box-shadow: 0 0 10px #FFD700; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes floatMovement {
+            0% { transform: translateY(0) translateX(0); }
+            25% { transform: translateY(-5px) translateX(3px); }
+            50% { transform: translateY(0) translateX(5px); }
+            75% { transform: translateY(3px) translateX(-2px); }
+            100% { transform: translateY(0) translateX(0); }
+        }
+
+        @keyframes floatDiagonal {
+            0% { transform: translate(0, 0); }
+            25% { transform: translate(5px, -5px); }
+            50% { transform: translate(5px, 5px); }
+            75% { transform: translate(-5px, 5px); }
+            100% { transform: translate(0, 0); }
+        }
+        input[type="text"],
+input[type="date"],
+input[type="file"],
+select,
+textarea {
+    border: 2px solid #FFD700 !important;
+    border-radius: 4px;
+    transition: box-shadow 0.3s, border-color 0.3s;
+}
+
+/* On focus, make it glow gold */
+input[type="text"]:focus,
+input[type="date"]:focus,
+input[type="file"]:focus,
+select:focus,
+textarea:focus {
+    box-shadow: 0 0 8px rgba(255, 215, 0, 0.8);
+    border-color: #FFA500;
+    outline: none;
+}
+.custom-file-upload {
+    position: relative;
+    display: inline-block;
+}
+
+.upload-label {
+    display: inline-block;
+    padding: 10px 20px;
+    background: linear-gradient(45deg, #FFD700, #D4AF37);
+    color: white;
+    font-weight: bold;
+    border-radius: 25px;
+    cursor: pointer; /* Ensures hand cursor */
+    transition: background 0.3s, transform 0.2s;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
+    text-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
+}
+
+
+.upload-label:hover {
+    background: linear-gradient(45deg, #D4AF37, #FFD700);
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
+}
+
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="position-relative space">
+    <div class="container">
+        <div class="ai-description-wrapper mb-4">
+            <textarea id="descriptionField" placeholder="Décrivez votre événement..."></textarea>
+            <div class="d-flex justify-content-center">
+                <button id="generateBtn" class="generate-btn magic-btn mt-2">Générer avec AI<span></span></button>
+            </div>
+        </div>
+
+        
+       {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+
+        <div class="row">
+        <!-- Nom -->
+            <div class="form-group col-12">
+                {{ form_label(form.nom) }}
+                {{ form_widget(form.nom) }}
+  
+        {{ form_errors(form.nom) }}
+   </div>
+            <!-- Catégorie -->
+            <div class="form-group col-12">
+                {{ form_label(form.categorie) }}
+                {{ form_widget(form.categorie) }}
+                {{ form_errors(form.categorie) }}
+            </div>
+
+            <!-- Date -->
+            <div class="form-group col-12">
+                {{ form_label(form.date) }}
+                <div class="input-group">
+                    {{ form_widget(form.date, {'attr': {'class': 'form-control date-picker'}}) }}
+                    <span class="input-group-text">
+                        <i class="fa-regular fa-calendar"></i>
+                    </span>
+                </div>
+                {{ form_errors(form.date) }}
+            </div>
+
+            <!-- Photo -->
+    <!-- Photo Section - Modified -->
+<!-- Photo Section -->
+<!-- Photo Section -->
+<div class="form-group col-12">
+    <div class="file-upload-wrapper text-center">
+        <div class="custom-file-upload">
+            <label class="upload-label">
+                Choisir une photo
+                <!-- Use Symfony's file input but hide it visually -->
+                {{ form_widget(form.photo, {
+                    'attr': {
+                        'class': 'upload-input',
+                        'style': 'opacity: 0; position: absolute; left: 0; top: 0; width: 100%; height: 100%; cursor: pointer;',
+                        'onchange': 'previewImage(event)'
+                    }
+                }) }}
+            </label>
+        </div>
+        {{ form_errors(form.photo) }}
+        <img
+            id="photo_preview"
+            src="{{ asset('uploads/packs/Images/logo2.png') }}"
+            alt="Aperçu de la photo"
+            class="d-block mx-auto preview-image"
+            style="width: 150px; height: 150px; object-fit: cover; margin-top: 10px; display: none; border-radius: 8px;"
+        />
+    </div>
+</div>
+
+            <!-- Submit Button -->
+            <div class="form-btn col-12 mt-4">
+                {{ form_widget(form.save, {
+                    'label': 'Créer l\'événement',
+                    'attr': {
+                        'class': 'th-btn fw-btn',
+                    }
+                }) }}
+                <i class="fa-regular fa-arrow-right"></i>
+            </div>
+        </div>
+        {{ form_end(form) }}
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/fr.js"></script>
+{% endblock %}
+
+{% block inline_scripts %}
+{{ parent() }}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    flatpickr('.date-picker', {
+        locale: "fr",
+        minDate: "today",
+        dateFormat: "d/m/Y",
+        disableMobile: true
+    });
+
+    // Handle generate button click
+    document.getElementById('generateBtn').addEventListener('click', function() {
+        const description = document.getElementById('descriptionField').value.trim();
+        
+        if (!description) {
+            alert('Veuillez entrer une description.');
+            return;
+        }
+        
+        generateEvent(description);
+    });
+});
+
+function previewImage(event) {
+    const input = event.target;
+    const preview = document.getElementById('photo_preview');
+
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+
+        reader.onload = function(e) {
+            preview.src = e.target.result;
+            preview.style.display = 'block';
+        };
+
+        reader.readAsDataURL(input.files[0]);
+    } else {
+        preview.src = '#';
+        preview.style.display = 'none';
+    }
+}
+
+async function generateEvent(description) {
+    try {
+const response = await fetch('/ajouter-evenement', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({ description: description })
+        });
+
+        const data = await response.json();
+        
+        if (data.error) {
+            alert('Erreur: ' + data.error);
+            return;
+        }
+
+        // Update form fields with the generated data
+        if (data.name) {
+            document.getElementById('{{ form.nom.vars.id }}').value = data.name;
+        }
+        
+     if (data.category) {
+    const select = document.getElementById('{{ form.categorie.vars.id }}');
+    const options = Array.from(select.options);
+    
+    const matchedOption = options.find(opt => opt.text.toLowerCase() === data.category.toLowerCase() || opt.value.toLowerCase() === data.category.toLowerCase());
+
+    if (matchedOption) {
+        select.value = matchedOption.value;
+    } else {
+        alert("La catégorie générée ne correspond à aucune option disponible : " + data.category);
+    }
+}
+
+        
+        if (data.date) {
+            // Format date for flatpickr (assuming it comes in MM/dd/yyyy format)
+            const [month, day, year] = data.date.split('/');
+            const formattedDate = `${day}/${month}/${year}`;
+            document.getElementById('{{ form.date.vars.id }}').value = formattedDate;
+            
+            // If using flatpickr with an instance, you might need to:
+            // flatpickrInstance.setDate(formattedDate);
+        }
+        
+        // Set the default image
+        document.getElementById('photo_preview').src = "{{ asset('Images/birthday.jpg') }}";
+        document.getElementById('photo_preview').style.display = 'block';
+        
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Une erreur est survenue lors de la génération de l\'événement.');
+    }
+}
+</script>
+{% endblock %}

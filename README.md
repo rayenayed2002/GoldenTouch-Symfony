@@ -1,88 +1,168 @@
-# User-Crud-Symfony5
-Users CRUD using SB admin template with login, register and roles requires php: >=7.2.5/Symfony 5.4
-## features 
-### Languages and frameworks
-* PHP >=7.2.5
-* MySQL (MariaDB)
-* HTML / CSS
-* Javascript (Aos, Glightbox, Isotope, Validate, Purecounter, swipper, Waypoints, Bootstrap)
-* Bootstrap (v5)
-* Google fonts (Open Sans)
-* Font awesome 5
-### Entities
-* User
-### Pages
-* home
-* user profile
-* login
-* registration
-* admin section and dashboard
+# 🎉 GoldenTouch Planificateur d'Événements
 
+GoldenTouch est une application complète de planification d'événements développée avec **Symfony 6.4**. Elle facilite la collaboration fluide entre les **clients**, **personnels** et **administrateurs** pour organiser et gérer efficacement des événements.
 
-## To initialize the project 
-* clone the repository: `git clone https://github.com/malekkadri/User-Crud-Symfony5.git`
-* Install all packages : `composer install`
-* set up a `.env.local` file from `.env` with:
-    * MySQL credentials, server address, server port, database name
-    * MAILER_DSN info to send emails (i use Mailhog for dev and a SMTP server for prod)
-* Create new database: `symfony console doctrine:database:create`
-* Build the migration: `symfony console make:migration`
-* Export into MySQL: `symfony console doctrine:migrations:migrate`
-* Install CKEditor : `symfony console ckeditor:install`
-* Install CKEditor assets : `symfony console assets:install public`
-* Install Elfinder (file browser for CKEditor) : `symfony console elfinder:install`
-* Change to PRODUCTION in `.env.local` (APP_ENV=prod)
-* Empty cache : `symfony console cache:clear`
-* Register a first account (/register) then change its role to ["ROLE_ADMIN"] in database
-* Login with this admin account and connect to admin dashboard (/login)
-* ... then start to create new categories and new articles
-* Tags will be automaticaly created as you write them (SELECT2 JQuery plugin)
+---
 
-# Google OAuth Integration
+## 📚 Table des Matières
 
-This project has been configured to allow users to log in using their Google accounts.
+- [✨ Fonctionnalités](#-fonctionnalités)  
+- [🛠️ Installation](#-installation)  
+- [🚀 Utilisation](#-utilisation)  
+- [👥 Rôles Utilisateurs](#-rôles-utilisateurs)  
+- [🧰 Technologies Utilisées](#-technologies-utilisées)  
+- [🤝 Contribution](#-contribution)  
+- [👥 Contributeurs](#-contributeurs)  
+- [🏫 École](#-école)  
+- [📄 Licence](#-licence)  
 
-## Setup Instructions
+---
 
-1. Register a new application in the Google Developer Console:
-   - Go to https://console.developers.google.com/
-   - Create a new project
-   - Navigate to "APIs & Services" > "Credentials"
-   - Click "Create Credentials" > "OAuth client ID"
-   - Choose "Web application" as the application type
-   - Add your application name
-   - Add authorized redirect URIs:
-     - For development: `http://localhost:8000/connect/google/check`
-     - For production: `https://your-domain.com/connect/google/check`
-   - Click "Create"
-   - Note your Client ID and Client Secret
+## ✨ Fonctionnalités
 
-2. Configure environment variables:
-   - Open the `.env` file
-   - Update the following variables:
-     ```
-     OAUTH_GOOGLE_CLIENT_ID=your_client_id
-     OAUTH_GOOGLE_CLIENT_SECRET=your_client_secret
-     ```
+✅ Création d'événements avec gestion des matériaux, lieux et personnel  
+✅ Gestion des réservations et des forfaits  
+✅ Panier avec intégration de paiement via Stripe  
+✅ Génération automatique de factures  
+✅ Système de planification du personnel  
+✅ Tableau de bord administrateur complet  
+✅ Système de retours et d’avis clients  
+✅ ✨ Intégration de Gemini AI pour génération automatique de détails  
+✅ ☁️ Prévisions météo pour les dates d'événements  
+✅ 🎫 Génération de QR codes & codes-barres pour billets et matériaux  
+✅ 🗓️ Synchronisation avec Google Calendar  
+✅ 📧 Notifications par email  
+✅ 🗺️ Intégration de cartes pour les lieux  
+✅ 🔍 Recherche et filtrage avancés  
+✅ 🚫 Modération de contenu via l’API Bad Words  
 
-3. (Optional) Clear cache and restart server:
+---
+
+## 🛠️ Installation
+
+### Prérequis
+
+- PHP >= 8.1  
+- Composer  
+- Symfony CLI (optionnel mais recommandé)  
+- MySQL ou PostgreSQL  
+
+### Étapes
+
+```bash
+# 1. Cloner le dépôt
+git clone https://github.com/rayenayed2002/GoldenTouch-Symfony.git
+cd GoldenTouch-Symfony
+
+# 2. Installer les dépendances PHP
+composer install
+
+# 3. Copier et configurer les variables d’environnement
+cp .env.example .env
+# Modifier .env avec votre configuration DB et vos clés API
+
+# 4. Créer la base de données
+php bin/console doctrine:database:create
+php bin/console doctrine:migrations:migrate
+
+# 5. Lancer le serveur
+symfony server:start
+
+```
+
+---
+
+## 🚀 Utilisation
+
+Accédez à l’application sur: [http://localhost:8000](http://localhost:8000)
+
+Vous pouvez vous inscrire et vous connecter en tant que :
+
+- **Client**
+- **Personnel**
+- **Administrateur**
+
+Explorez l’application selon votre rôle attribué.
+
+---
+
+## 👥 Rôles Utilisateurs
+
+### 👤 Client
+
+- Créer et gérer des événements  
+- Ajouter des lieux, matériaux, et personnel  
+- Voir les forfaits et réservations 
+- Laisser des avis
+- Paiement via Stripe
+
+### 👨‍🔧 Personnel
+
+- Consulter les événements et plannings assignés 
+
+### 👨‍💼 Administrator
+
+- Gérer toutes les entités (événements, forfaits, matériaux, etc.) 
+- Modérer le contenu et superviser les utilisateurs
+
+---
+
+## 🧰 Technologies Utilisées
+
+| Category        | Technology                                                       |
+|----------------|-------------------------------------------------------------------|
+| **Framework**   | Symfony 6.4                                                      |
+| **Langages**   | PHP, JavaScript                                                  |
+| **Frontend**    | Twig, Stimulus                                                   |
+| **Base de Données**    | Doctrine ORM                                                     |
+| **APIs**        | Gemini AI, Stripe, Google Calendar, Weather, Maps, Bad Words API |
+| **Outils Divers** | QR/Barcode Generators, Email Notifications, Advanced Search      |
+
+---
+
+## 🤝 contribution
+
+1. Forkez le dépôt  
+2. Créez une branche pour votre fonctionnalité : 
+   ```bash
+   git checkout -b feature/my-feature
    ```
-   php bin/console cache:clear
+3. Validez vos modifications : 
+   ```bash
+   git commit -m "Add my feature"
    ```
+4. Poussez vers votre branche :  
+   ```bash
+   git push origin feature/my-feature
+   ```
+5. Ouvrez une pull request ✅
 
-## How It Works
+---
 
-The Google login button is displayed on the login page. When users click on it:
+---
 
-1. They are redirected to Google's login page
-2. After logging in, Google redirects back to our application
-3. The application verifies the user's information
-4. If the user is logging in for the first time, a new account is created
-5. If the user already exists (matched by email or Google ID), they're logged in to their existing account
+## 👥 Contributeurs
 
-## Technical Details
+| Nom              | Profile  Github                                            |
+|-------------------|--------------------------------------------------------------|
+| [Souhe Lekhlifi](https://github.com/souhekh)         | 🔗 |
+| [Rayen Ayed](https://github.com/rayenayed2002)       | 🔗 |
+| [Nassim Maaoui](https://github.com/iborntowin)       | 🔗 |
+| [Malik Gachar](https://github.com/MalikGACHAR)       | 🔗 |
+| [Khalil Limem](https://github.com/Khalil-Lm)         | 🔗 |
+| [Fatma Boubakri](https://github.com/Boubakrifatma)   | 🔗 |
+| **Coach:** [Ghada Benkhalifa](https://github.com/BenKhalifaGHADA) | 🔗 |
 
-- We use the `knpuniversity/oauth2-client-bundle` package for OAuth integration
-- Google login is implemented as an additional authenticator in the security system
-- The User entity has a `googleId` field to store the Google user ID
-- Users can log in with either their username/password or their Google account
+---
+
+## 🏫 École
+
+**ESPRIT - École Supérieure Privée d'Ingénierie et de Technologies**
+
+![Logo ESPRIT](public/uploads/esprit.jpg)
+
+
+## 📄 License
+
+Ce projet est soumis à une licence propriétaire.
+Veuillez contacter l’auteur pour plus d’informations.

@@ -1,0 +1,8 @@
+{
+  "build/app.js": "/build/app.js",
+  "build/runtime.js": "/build/runtime.js",
+  "build/vendors-node_modules_aos_dist_aos_js-node_modules_gsap_index_js-node_modules_sweetalert2_dist-51a58f.js": "/build/vendors-node_modules_aos_dist_aos_js-node_modules_gsap_index_js-node_modules_sweetalert2_dist-51a58f.js",
+  "build/styles/dashboard.css": "/build/styles/dashboard.8dc825f3.css",
+  "build/styles/admin-dashboard.css": "/build/styles/admin-dashboard.a6dcc1fa.css",
+  "build/styles/app.css": "/build/styles/app.e47067cd.css"
+}

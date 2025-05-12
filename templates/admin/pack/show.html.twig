@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en" class="light-style layout-navbar-fixed layout-menu-fixed" dir="ltr" data-theme="theme-default">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+    <title>Pack Details - Admin Dashboard</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{{ asset('img/favicon/favicon.ico') }}" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="{{ asset('vendor/fonts/fontawesome.css') }}" />
+    <link rel="stylesheet" href="{{ asset('vendor/fonts/tabler-icons.css') }}" />
+
+    <!-- Core CSS -->
+    <link rel="stylesheet" href="{{ asset('vendor/css/rtl/core.css') }}" />
+    <link rel="stylesheet" href="{{ asset('vendor/css/rtl/theme-default.css') }}" />
+    <link rel="stylesheet" href="{{ asset('css/demo.css') }}" />
+
+    <!-- Vendors CSS -->
+    <link rel="stylesheet" href="{{ asset('vendor/libs/perfect-scrollbar/perfect-scrollbar.css') }}" />
+    <link rel="stylesheet" href="{{ asset('vendor/libs/node-waves/node-waves.css') }}" />
+    <link rel="stylesheet" href="{{ asset('vendor/libs/swiper/swiper.css') }}" />
+    <link rel="stylesheet" href="{{ asset('vendor/libs/sweetalert2/sweetalert2.css') }}" />
+    
+    <style>
+        .pack-header {
+            position: relative;
+            background-size: cover;
+            background-position: center;
+            height: 300px;
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+        
+        .pack-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.7));
+        }
+        
+        .pack-header-content {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 2rem;
+            color: white;
+        }
+        
+        .pack-stat-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .pack-stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .pack-description {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #6e6b7b;
+        }
+        
+        .event-details {
+            background: #f8f8f8;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+        }
+        
+        .timeline-item {
+            position: relative;
+            padding-left: 3rem;
+            margin-bottom: 2rem;
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #e0e0e0;
+        }
+        
+        .timeline-point {
+            position: absolute;
+            left: -6px;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #7367f0;
+            border: 2px solid white;
+        }
+        
+        /* Form Elements */
+        .form-control, .form-select {
+            transition: all 0.3s ease;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            border: 2px solid #e2e8f0;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+        }
+
+        .form-control.is-invalid, .form-select.is-invalid {
+            border-color: #ef4444;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+            animation: shake 0.5s ease-in-out;
+        }
+
+        .invalid-feedback {
+            color: #dc2626;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .form-control.is-invalid ~ .invalid-feedback,
+        .form-select.is-invalid ~ .invalid-feedback {
+            display: block;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Error Icon for Select Elements */
+        .form-select.is-invalid {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc2626'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc2626' stroke='none'/%3e%3c/svg%3e"),
+            linear-gradient(to bottom, #f8f9fa, #f8f9fa);
+            background-repeat: no-repeat, repeat;
+            background-position: right 0.5rem center, center right 2.25rem;
+            background-size: 16px 12px, 16px 12px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Layout wrapper -->
+    <div class="layout-wrapper layout-content-navbar">
+        <div class="layout-container">
+            <!-- Menu -->
+            <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
+                <div class="app-brand demo">
+                    <a href="index.html" class="app-brand-link">
+                        <span class="app-brand-logo demo">
+                            <svg width="32" height="22" viewBox="0 0 32 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    fill-rule="evenodd"
+                                    clip-rule="evenodd"
+                                    d="M0.00172773 0V6.85398C0.00172773 6.85398 -0.133178 9.01207 1.98092 10.8388L13.6912 21.9964L19.7809 21.9181L18.8042 9.88248L16.4951 7.17289L9.23799 0H0.00172773Z"
+                                    fill="#7367F0" />
+                                <path
+                                    opacity="0.06"
+                                    fill-rule="evenodd"
+                                    clip-rule="evenodd"
+                                    d="M7.69824 16.4364L12.5199 3.23696L16.5541 7.25596L7.69824 16.4364Z"
+                                    fill="#161616" />
+                                <path
+                                    opacity="0.06"
+                                    fill-rule="evenodd"
+                                    clip-rule="evenodd"
+                                    d="M8.07751 15.9175L13.9419 4.63989L16.5849 7.28475L8.07751 15.9175Z"
+                                    fill="#161616" />
+                                <path
+                                    fill-rule="evenodd"
+                                    clip-rule="evenodd"
+                                    d="M7.77295 16.3566L23.6563 0H32V6.88383C32 6.88383 31.8262 9.17836 30.6591 10.4057L19.7824 22H13.6938L7.77295 16.3566Z"
+                                    fill="#7367F0" />
+                            </svg>
+                        </span>
+                        <span class="app-brand-text demo menu-text fw-bold">Golden Touch</span>
+                    </a>
+
+                   
+                </div>
+
+                <div class="menu-inner-shadow"></div>
+
+                <ul class="menu-inner py-1">
+                    <!-- Packs -->
+                    <li class="menu-item active ">
+                        <a href="{{ path('admin_pack_index') }}" class="menu-link">
+                            <i class="menu-icon tf-icons ti ti-package"></i>
+                            <div data-i18n="Packs">Packs</div>
+                        </a>
+                    </li>
+
+                    <!-- Gestion Événements -->
+                    <li class="menu-item ">
+                        <a href="{{ path('app_events_admin') }}" class="menu-link ">
+                            <i class="menu-icon tf-icons ti ti-calendar-event"></i>
+                            <div data-i18n="Gestion Événements">Gestion Événements</div>
+                        </a>
+                        <ul class="menu-sub">
+                            <li class="menu-item">
+                                <a href="{{ path('app_add_event') }}" class="menu-link">
+                                    <i class="menu-icon tf-icons ti ti-circle"></i>
+                                    <div data-i18n="Ajouter Événement">Ajouter Événement</div>
+                                </a>
+                            </li>
+                            <li class="menu-item">
+                                <a href="liste-evenements.html" class="menu-link">
+                                    <i class="menu-icon tf-icons ti ti-circle"></i>
+                                    <div data-i18n="Liste Événements">Liste Événements</div>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <!-- Gestion Matérielle -->
+                    
+
+ <li class="menu-item  ">
+                        <a href="{{ path('app_materielss') }}" class="menu-link">
+                            <i class="menu-icon tf-icons ti ti-package"></i>
+                            <div data-i18n="Packs">Gestion Matérielle</div>
+                        </a>
+                    </li>
+                    <!-- Gestion Lieu -->
+                    
+
+                         <li class="menu-item ">
+                        <a href="{{ path('admin_lieu_index') }}" class="menu-link">
+                            <i class="menu-icon tf-icons ti ti-package"></i>
+                            <div data-i18n="Packs">Gestion Lieux</div>
+                        </a>
+                    </li>
+
+                    <!-- Gestion Personnels -->
+                     <li class="menu-item  ">
+                        <a href="{{ path('app_perso_index') }}" class="menu-link">
+                            <i class="menu-icon tf-icons ti ti-package"></i>
+                            <div data-i18n="Packs">Gestion Personnels</div>
+                        </a>
+                    </li>
+
+
+                    <!-- Gestion Commandes -->
+                    <li class="menu-item">
+                        <a href="{{ path('app_my_Commandes_admin') }}" class="menu-link ">
+                            <i class="menu-icon tf-icons ti ti-shopping-cart"></i>
+                            <div data-i18n="Gestion Commandes">Gestion Commandes</div>
+                        </a>
+                        <ul class="menu-sub">
+                            <li class="menu-item">
+                                <a href="panier.html" class="menu-link">
+                                    <i class="menu-icon tf-icons ti ti-circle"></i>
+                                    <div data-i18n="Panier">Panier</div>
+                                    <div class="badge bg-label-primary rounded-pill ms-auto">3</div>
+                                </a>
+                            </li>
+                            <li class="menu-item">
+                                <a href="liste-commandes.html" class="menu-link">
+                                    <i class="menu-icon tf-icons ti ti-circle"></i>
+                                    <div data-i18n="Liste Commandes">Liste Commandes</div>
+                                </a>
+                            </li>
+                            <li class="menu-item">
+                                <a href="liste-reclamations.html" class="menu-link">
+                                    <i class="menu-icon tf-icons ti ti-circle"></i>
+                                    <div data-i18n="Liste Réclamations">Liste Réclamations</div>
+                                    <div class="badge bg-label-warning rounded-pill ms-auto">2</div>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <!-- Divider -->
+                    <li class="menu-header small text-uppercase">
+                        <span class="menu-header-text">Compte</span>
+                    </li>
+
+                    <!-- Compte -->
+                    <li class="menu-item">
+                        <a href="compte.html" class="menu-link">
+                            <i class="menu-icon tf-icons ti ti-user"></i>
+                            <div data-i18n="Mon Compte">Mon Compte</div>
+                        </a>
+                    </li>
+
+                    <!-- Déconnexion -->
+                    <li class="menu-item">
+                        <a href="deconnexion.html" class="menu-link">
+                            <i class="menu-icon tf-icons ti ti-logout"></i>
+                            <div data-i18n="Déconnexion">Déconnexion</div>
+                        </a>
+                    </li>
+                </ul>
+            </aside>
+            <!-- / Menu -->
+
+            <!-- Layout container -->
+            <div class="layout-page">
+                <!-- Content wrapper -->
+                <div class="content-wrapper">
+                    <!-- Content -->
+                    <div class="container-xxl flex-grow-1 container-p-y">
+                        <!-- Breadcrumb -->
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <div>
+                                <h4 class="fw-bold mb-2">Pack Details</h4>
+                                <nav aria-label="breadcrumb">
+                                    <ol class="breadcrumb">
+                                        <li class="breadcrumb-item"><a href="{{ path('admin_pack_index') }}">Packs</a></li>
+                                        <li class="breadcrumb-item active" aria-current="page">Details</li>
+                                    </ol>
+                                </nav>
+                            </div>
+                            <div>
+                                <button type="button" class="btn btn-primary me-2" onclick="editPack({{ pack.id }})">
+                                    <i class="ti ti-edit me-1"></i> Edit Pack
+                                </button>
+                                <button type="button" class="btn btn-danger" onclick="deletePack({{ pack.id }})">
+                                    <i class="ti ti-trash me-1"></i> Delete Pack
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Pack Header -->
+                        <div class="pack-header mb-4" style="background-image: url('{{ asset('uploads/packs/' ~ pack.event.photo) }}')">
+                            <div class="pack-header-content">
+                                <h2 class="mb-2">{{ pack.event.nom }}</h2>
+                                <div class="d-flex gap-3">
+                                    <div class="d-flex align-items-center">
+                                        <i class="ti ti-calendar me-2"></i>
+                                        <span>{{ pack.endDate ? pack.endDate|date('M d, Y') : 'No End Date' }}</span>
+                                    </div>
+                                    <div class="d-flex align-items-center">
+                                        <i class="ti ti-users me-2"></i>
+                                        <span>{{ pack.capacite }} spots</span>
+                                    </div>
+                                    <div class="d-flex align-items-center">
+                                        <i class="ti ti-clock me-2"></i>
+                                        <span>{{ pack.duree }} hours</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <!-- Pack Stats -->
+                            <div class="col-12 col-xl-4 mb-4">
+                                <div class="row">
+                                    <div class="col-12 col-sm-6 col-xl-12 mb-4">
+                                        <div class="card pack-stat-card">
+                                            <div class="card-body">
+                                                <div class="d-flex align-items-center justify-content-between">
+                                                    <div>
+                                                        <h5 class="mb-1">Price</h5>
+                                                        <h2 class="mb-0 text-primary">${{ pack.prix }}</h2>
+                                                    </div>
+                                                    <div class="avatar avatar-lg">
+                                                        <div class="avatar-initial bg-label-primary rounded">
+                                                            <i class="ti ti-currency-dollar fs-3"></i>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-12 col-sm-6 col-xl-12 mb-4">
+                                        <div class="card pack-stat-card">
+                                            <div class="card-body">
+                                                <div class="d-flex align-items-center justify-content-between">
+                                                    <div>
+                                                        <h5 class="mb-1">Capacity</h5>
+                                                        <h2 class="mb-0 text-success">{{ pack.capacite }} spots</h2>
+                                                    </div>
+                                                    <div class="avatar avatar-lg">
+                                                        <div class="avatar-initial bg-label-success rounded">
+                                                            <i class="ti ti-users fs-3"></i>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-12">
+                                        <div class="card pack-stat-card">
+                                            <div class="card-body">
+                                                <div class="d-flex align-items-center justify-content-between">
+                                                    <div>
+                                                        <h5 class="mb-1">Duration</h5>
+                                                        <h2 class="mb-0 text-info">{{ pack.duree }} hours</h2>
+                                                    </div>
+                                                    <div class="avatar avatar-lg">
+                                                        <div class="avatar-initial bg-label-info rounded">
+                                                            <i class="ti ti-clock fs-3"></i>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Pack Details -->
+                            <div class="col-12 col-xl-8">
+                                <div class="card mb-4">
+                                    <div class="card-header">
+                                        <h5 class="mb-0">Pack Description</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <p class="pack-description">{{ pack.description }}</p>
+                                    </div>
+                                </div>
+
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="mb-0">Event Details</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="event-details">
+                                            <div class="timeline-item">
+                                                <div class="timeline-point"></div>
+                                                <h6 class="mb-1">Event Name</h6>
+                                                <p class="mb-0">{{ pack.event.nom }}</p>
+                                            </div>
+                                            
+                                            <div class="timeline-item">
+                                                <div class="timeline-point"></div>
+                                                <h6 class="mb-1">Category</h6>
+                                                <p class="mb-0">{{ pack.event.categorie.value }}</p>
+                                            </div>
+                                            
+                                            <div class="timeline-item">
+                                                <div class="timeline-point"></div>
+                                                <h6 class="mb-1">End Date</h6>
+                                                <p class="mb-0">{{ pack.endDate ? pack.endDate|date('F d, Y') : 'No End Date Set' }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Pack Modal -->
+    <div class="modal fade" id="editPackModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editPackModalLabel">Edit Pack</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editPackForm" class="needs-validation" novalidate>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="event" class="form-label">Event</label>
+                                {{ form_widget(editForm.event, {'attr': {'class': 'form-select', 'id': 'event', 'required': 'required'}}) }}
+                                <div class="invalid-feedback">Please select an event.</div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="prix" class="form-label">Price</label>
+                                {{ form_widget(editForm.prix, {'attr': {'class': 'form-control', 'id': 'prix', 'required': 'required', 'min': '0', 'step': '0.01'}}) }}
+                                <div class="invalid-feedback">Please provide a valid price.</div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="capacite" class="form-label">Capacity</label>
+                                {{ form_widget(editForm.capacite, {'attr': {'class': 'form-control', 'id': 'capacite', 'required': 'required', 'min': '1'}}) }}
+                                <div class="invalid-feedback">Please provide a valid capacity.</div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="duree" class="form-label">Duration</label>
+                                {{ form_widget(editForm.duree, {'attr': {'class': 'form-control', 'id': 'duree', 'required': 'required', 'min': '1'}}) }}
+                                <div class="invalid-feedback">Please provide a valid duration.</div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            {{ form_widget(editForm.description, {'attr': {'class': 'form-control', 'rows': '4', 'id': 'description', 'required': 'required'}}) }}
+                            <div class="invalid-feedback">Please provide a description.</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="endDate" class="form-label">End Date</label>
+                            {{ form_widget(editForm.endDate, {'attr': {'class': 'form-control', 'id': 'endDate'}}) }}
+                            <div class="invalid-feedback">Please provide a valid date.</div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary" onclick="submitEditForm()">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Core JS -->
+    <script src="{{ asset('vendor/libs/jquery/jquery.js') }}"></script>
+    <script src="{{ asset('vendor/libs/popper/popper.js') }}"></script>
+    <script src="{{ asset('vendor/js/bootstrap.js') }}"></script>
+    <script src="{{ asset('vendor/libs/perfect-scrollbar/perfect-scrollbar.js') }}"></script>
+    <script src="{{ asset('vendor/libs/node-waves/node-waves.js') }}"></script>
+    <script src="{{ asset('vendor/libs/hammer/hammer.js') }}"></script>
+    <script src="{{ asset('vendor/js/menu.js') }}"></script>
+    <script src="{{ asset('vendor/libs/sweetalert2/sweetalert2.js') }}"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add validation error styling
+            document.querySelectorAll('.form-control, .form-select').forEach(function(input) {
+                input.addEventListener('invalid', function(e) {
+                    e.preventDefault();
+                    this.classList.add('is-invalid');
+                    
+                    // Add shake animation
+                    this.style.animation = 'shake 0.5s ease-in-out';
+                    setTimeout(() => {
+                        this.style.animation = '';
+                    }, 500);
+                });
+                
+                input.addEventListener('input', function() {
+                    this.classList.remove('is-invalid');
+                });
+            });
+
+            // Handle form submission
+            document.getElementById('editPackForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Check if form is valid
+                const form = this;
+                let isValid = true;
+                
+                // Validate each required field
+                form.querySelectorAll('[required]').forEach(function(input) {
+                    if (!input.checkValidity()) {
+                        input.classList.add('is-invalid');
+                        input.style.animation = 'shake 0.5s ease-in-out';
+                        setTimeout(() => {
+                            input.style.animation = '';
+                        }, 500);
+                        isValid = false;
+                    }
+                });
+                
+                // Validate endDate if provided
+                const endDateInput = form.querySelector('input[name="pack[endDate]"]');
+                if (endDateInput && endDateInput.value) {
+                    const endDate = new Date(endDateInput.value);
+                    if (isNaN(endDate.getTime())) {
+                        endDateInput.classList.add('is-invalid');
+                        isValid = false;
+                    }
+                }
+                
+                if (!isValid) {
+                    // Show error message with SweetAlert
+                    Swal.fire({
+                        title: 'Erreur!',
+                        text: 'Veuillez corriger les erreurs dans le formulaire.',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                    return;
+                }
+
+                const formData = new FormData(this);
+
+                fetch(this.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    credentials: 'same-origin'
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        // Show success message with SweetAlert
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Succès !',
+                            text: 'Pack modifié avec succès !',
+                            showConfirmButton: false,
+                            timer: 1500,
+                            customClass: {
+                                popup: 'swal2-popup-custom'
+                            }
+                        }).then(() => {
+                            // Refresh the page
+                            location.reload();
+                        });
+                    } else {
+                        throw new Error(data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    // Show error message with SweetAlert
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Erreur !',
+                        text: 'Une erreur est survenue lors de la modification du pack.',
+                        showConfirmButton: false,
+                        timer: 1500,
+                        customClass: {
+                            popup: 'swal2-popup-custom'
+                        }
+                    });
+                });
+            });
+        });
+
+        // Edit pack function
+        function editPack(id) {
+            fetch(`{{ path('admin_pack_edit', {'id': 'ID'}) }}`.replace('ID', id))
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const pack = data.pack;
+                        document.getElementById('editPackModalLabel').textContent = 'Edit Pack';
+                        
+                        // Show modal
+                        const modal = new bootstrap.Modal(document.getElementById('editPackModal'));
+                        modal.show();
+                        
+                        // Populate form fields after modal is shown
+                        modal._element.addEventListener('shown.bs.modal', function() {
+                            document.querySelector('select[name="pack[event]"]').value = pack.event.id;
+                            document.querySelector('input[name="pack[prix]"]').value = pack.prix;
+                            document.querySelector('input[name="pack[capacite]"]').value = pack.capacite;
+                            document.querySelector('input[name="pack[duree]"]').value = pack.duree;
+                            document.querySelector('textarea[name="pack[description]"]').value = pack.description;
+                            document.querySelector('input[name="pack[endDate]"]').value = pack.endDate;
+                        });
+                    } else {
+                        throw new Error(data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    // Show error message with SweetAlert
+                    Swal.fire({
+                        title: 'Erreur!',
+                        text: 'Une erreur est survenue lors de la récupération des données du pack.',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                });
+        }
+
+        // Delete pack function
+        function deletePack(id) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, delete it!',
+                customClass: {
+                    confirmButton: 'btn btn-primary me-3',
+                    cancelButton: 'btn btn-label-secondary'
+                },
+                buttonsStyling: false
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch(`{{ path('admin_pack_delete', {'id': 'PACK_ID'}) }}`.replace('PACK_ID', id), {
+                        method: 'DELETE'
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Deleted!',
+                                text: data.message,
+                                showConfirmButton: false,
+                                timer: 1500
+                            }).then(() => {
+                                window.location.href = '{{ path('admin_pack_index') }}';
+                            });
+                        } else {
+                            throw new Error(data.message);
+                        }
+                    })
+                    .catch(error => {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error!',
+                            text: error.message,
+                            confirmButtonText: 'OK'
+                        });
+                    });
+                }
+            });
+        }
+
+        // Form validation
+        function validateForm() {
+            const form = document.getElementById('editPackForm');
+            let isValid = true;
+            
+            // Clear previous errors
+            form.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+            
+            // Validate required fields
+            form.querySelectorAll('[required]').forEach(input => {
+                if (!input.value.trim()) {
+                    input.classList.add('is-invalid');
+                    isValid = false;
+                }
+            });
+            
+            // Validate price
+            const prix = form.querySelector('input[name="pack[prix]"]');
+            if (prix) {
+                const priceValue = parseFloat(prix.value);
+                if (isNaN(priceValue) || priceValue < 0) {
+                    prix.classList.add('is-invalid');
+                    isValid = false;
+                }
+            }
+            
+            // Validate capacity
+            const capacite = form.querySelector('input[name="pack[capacite]"]');
+            if (capacite) {
+                const capacityValue = parseInt(capacite.value);
+                if (isNaN(capacityValue) || capacityValue < 1) {
+                    capacite.classList.add('is-invalid');
+                    isValid = false;
+                }
+            }
+            
+            // Validate duration
+            const duree = form.querySelector('input[name="pack[duree]"]');
+            if (duree) {
+                const durationValue = parseInt(duree.value);
+                if (isNaN(durationValue) || durationValue < 1) {
+                    duree.classList.add('is-invalid');
+                    isValid = false;
+                }
+            }
+            
+            return isValid;
+        }
+
+        // Submit edit form
+        function submitEditForm() {
+            if (!validateForm()) {
+                return;
+            }
+
+            const form = document.getElementById('editPackForm');
+            const formData = new FormData(form);
+            
+            // Convert FormData to JSON
+            const jsonData = {
+                event: formData.get('pack[event]'),
+                description: formData.get('pack[description]'),
+                prix: formData.get('pack[prix]'),
+                capacite: formData.get('pack[capacite]'),
+                duree: formData.get('pack[duree]'),
+                endDate: formData.get('pack[endDate]')
+            };
+            
+            fetch(`{{ path('admin_pack_update', {'id': 'ID'}) }}`.replace('ID', {{ pack.id }}), {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify(jsonData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Show success message
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Succès !',
+                        text: 'Pack modifié avec succès !',
+                        showConfirmButton: false,
+                        timer: 1500,
+                        customClass: {
+                            popup: 'swal2-popup-custom'
+                        }
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                } else {
+                    throw new Error(data.message);
+                }
+            })
+            .catch(error => {
+                // Show error message
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erreur !',
+                    text: 'Une erreur est survenue lors de la modification du pack.',
+                    showConfirmButton: false,
+                    timer: 1500,
+                    customClass: {
+                        popup: 'swal2-popup-custom'
+                    }
+                });
+            });
+        }
+
+        // Add form validation on submit
+        document.getElementById('editPackForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            submitEditForm();
+        });
+    </script>
+</body>
+</html>

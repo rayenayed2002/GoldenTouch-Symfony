@@ -1,0 +1,228 @@
+{% extends 'Front.html.twig' %}
+
+{% block title %}Mes Lieux Favoris{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="favoris-header mb-4">
+        <h1 class="favoris-title">
+            <i class="fas fa-heart text-danger"></i>
+            Mes Lieux Favoris
+        </h1>
+        <p class="text-muted">{{ favoris|length }} lieu(x) dans vos favoris</p>
+    </div>
+
+    {% if favoris is empty %}
+        <div class="empty-favoris text-center py-5">
+            <i class="far fa-heart fa-3x mb-3 text-muted"></i>
+            <h3>Aucun favori pour le moment</h3>
+            <p class="text-muted">Explorez nos lieux et ajoutez-les à vos favoris !</p>
+            <a href="{{ path('app_lieux') }}" class="btn btn-primary mt-3">
+                <i class="fas fa-search"></i> Découvrir les lieux
+            </a>
+        </div>
+    {% else %}
+        <div class="row g-4">
+            {% for favori in favoris %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="card favori-card h-100">
+                        <div class="position-relative">
+                            {% if favori.lieu.imageUrl %}
+                                <img  src="{{ asset('uploads/lieux/Images/' ~ favori.lieu.imageUrl|replace({'/Images/': '', 'Images/': ''})) }}"
+                                     class="card-img-top" 
+                                     alt="{{ favori.lieu.name }}"
+                                     style="height: 200px; object-fit: cover;">
+                            {% else %}
+                                <img src="{{ asset('Front/img/placeholder.jpg') }}" 
+                                     class="card-img-top" 
+                                     alt="Image par défaut"
+                                     style="height: 200px; object-fit: cover;">
+                            {% endif %}
+                            <button class="btn-remove-favori" 
+                                    data-lieu-id="{{ favori.lieu.id }}"
+                                    title="Retirer des favoris">
+                                <i class="fas fa-heart"></i>
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">{{ favori.lieu.name }}</h5>
+                            <p class="card-text text-muted mb-2">
+                                <i class="fas fa-map-marker-alt"></i>
+                                {{ favori.lieu.location }}
+                            </p>
+                            <p class="card-text">{{ favori.lieu.description|slice(0, 100) }}...</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="price">{{ favori.lieu.price }} €</span>
+                                <div class="d-flex gap-2">
+                                    <a href="https://www.facebook.com/sharer/sharer.php?u={{ absolute_url(path('app_lieu_details', {'id': favori.lieu.id})) }}" 
+                                       class="btn btn-sm btn-outline-primary social-share" 
+                                       target="_blank"
+                                       title="Partager sur Facebook">
+                                        <i class="fab fa-facebook-f"></i>
+                                    </a>
+                                    <a href="https://twitter.com/intent/tweet?url={{ absolute_url(path('app_lieu_details', {'id': favori.lieu.id})) }}&text=Découvrez {{ favori.lieu.name }}" 
+                                       class="btn btn-sm btn-outline-info social-share" 
+                                       target="_blank"
+                                       title="Partager sur Twitter">
+                                        <i class="fab fa-twitter"></i>
+                                    </a>
+                                    <a href="https://wa.me/?text=Découvrez {{ favori.lieu.name }} - {{ absolute_url(path('app_lieu_details', {'id': favori.lieu.id})) }}" 
+                                       class="btn btn-sm btn-outline-success social-share" 
+                                       target="_blank"
+                                       title="Partager sur WhatsApp">
+                                        <i class="fab fa-whatsapp"></i>
+                                    </a>
+                                    <a href="{{ path('app_lieu_details', {'id': favori.lieu.id}) }}" 
+                                       class="btn btn-sm btn-outline-primary">
+                                        Voir détails
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+
+<style>
+    .favoris-header {
+        text-align: center;
+        padding: 2rem 0;
+        background: linear-gradient(135deg, #fff8e1 0%, #fff 100%);
+        border-radius: 15px;
+        margin-bottom: 2rem;
+    }
+
+    .favoris-title {
+        color: #333;
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .favori-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: none;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    .favori-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+
+    .btn-remove-favori {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: white;
+        border: none;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .btn-remove-favori i {
+        color: #dc3545;
+        font-size: 1.2rem;
+    }
+
+    .btn-remove-favori:hover {
+        background: #dc3545;
+    }
+
+    .btn-remove-favori:hover i {
+        color: white;
+    }
+
+    .price {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #FFC107;
+    }
+
+    .social-share {
+        width: 35px;
+        height: 35px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        transition: all 0.3s ease;
+    }
+
+    .social-share:hover {
+        transform: scale(1.1);
+    }
+
+    .social-share i {
+        font-size: 0.9rem;
+    }
+
+    .empty-favoris {
+        background: #fff;
+        padding: 3rem;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const removeButtons = document.querySelectorAll('.btn-remove-favori');
+    
+    removeButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const lieuId = this.dataset.lieuId;
+            const card = this.closest('.col-md-6');
+            
+            fetch(`/favoris/toggle/${lieuId}`, {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erreur réseau');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    card.style.opacity = '0';
+                    setTimeout(() => {
+                        card.remove();
+                        // Mettre à jour le compteur
+                        const counter = document.querySelector('.text-muted');
+                        const currentCount = parseInt(counter.textContent);
+                        counter.textContent = `${currentCount - 1} lieu(x) dans vos favoris`;
+                        
+                        // Si plus de favoris, afficher le message vide
+                        if (currentCount - 1 === 0) {
+                            location.reload();
+                        }
+                    }, 300);
+                } else {
+                    throw new Error('Erreur lors de la suppression du favori');
+                }
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                alert('Une erreur est survenue lors de la suppression du favori. Veuillez réessayer.');
+            });
+        });
+    });
+});
+</script>
+{% endblock %} 

@@ -1,0 +1,781 @@
+<!doctype html>
+<html class="no-js" lang="zxx">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>GoldenTouch - {{ pack.nom }}</title>
+    <meta name="author" content="Taxiar">
+    <meta name="description" content="Taxiar - Online Taxi Service HTML Template">
+    <meta name="keywords" content="Taxiar - Online Taxi Service HTML Template">
+    <meta name="robots" content="INDEX,FOLLOW">
+
+    <!-- Mobile Specific Metas -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Favicons - Place favicon.ico in the root directory -->
+    <!-- Favicons - Place favicon.ico in the root directory -->
+    <link rel="apple-touch-icon" sizes="57x57" href="{{ asset('Front/img/favicons/apple-icon-57x57.png') }}">
+    <link rel="apple-touch-icon" sizes="60x60" href="{{ asset('Front/img/favicons/apple-icon-60x60.png') }}">
+    <link rel="apple-touch-icon" sizes="72x72" href="{{ asset('Front/img/favicons/apple-icon-72x72.png') }}">
+    <link rel="apple-touch-icon" sizes="76x76" href="{{ asset('Front/img/favicons/apple-icon-76x76.png') }}">
+    <link rel="apple-touch-icon" sizes="114x114" href="{{ asset('Front/img/favicons/apple-icon-114x114.png') }}">
+    <link rel="apple-touch-icon" sizes="120x120" href="{{ asset('Front/img/favicons/apple-icon-120x120.png') }}">
+    <link rel="apple-touch-icon" sizes="144x144" href="{{ asset('Front/img/favicons/apple-icon-144x144.png') }}">
+    <link rel="apple-touch-icon" sizes="152x152" href="{{ asset('Front/img/favicons/apple-icon-152x152.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('Front/img/favicons/apple-icon-180x180.png') }}">
+    <link rel="icon" type="image/png" sizes="192x192" href="{{ asset('Front/img/favicons/android-icon-192x192.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('Front/img/favicons/favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="96x96" href="{{ asset('Front/img/favicons/favicon-96x96.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('Front/img/favicons/favicon-16x16.png') }}">
+    <link rel="manifest" href="{{ asset('Front/img/favicons/manifest.json') }}">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="{{ asset('Front/img/favicons/ms-icon-144x144.png') }}">
+    <meta name="theme-color" content="#ffffff">
+    <!--==============================
+	  Google Fonts
+	============================== -->
+       <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Radio+Canada:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!--==============================
+	    All CSS File
+	============================== -->
+    <link rel="stylesheet" href="{{ asset('Front/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('Front/css/fontawesome.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('Front/css/magnific-popup.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('Front/css/slick.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('Front/css/jquery.datetimepicker.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('Front/css/style.css') }}">
+    <link rel="stylesheet" href="{{ asset('Front/css/review-validation.css') }}">
+    <link rel="stylesheet" href="{{ asset('Front/css/avatar-cool.css') }}">
+
+</head>
+
+<body class="">
+
+
+    <!--[if lte IE 9]>
+    	<p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
+  <![endif]-->
+
+
+
+    <!--********************************
+   		Code Start From Here 
+	******************************** -->
+
+         <!--==============================
+    preloader
+  ============================== -->
+    
+
+
+    <!--==============================
+    Mobile Menu
+  ============================== -->
+    <div class="th-menu-wrapper">
+        <div class="th-menu-area text-center">
+            <button class="th-menu-toggle "><i class="fal fa-times"></i></button>
+            <div class="mobile-logo">
+                <a href="index.html"><img src="{{ asset('Front/img/logo.svg') }}" alt="Taxiar"></a>
+            </div>
+            <div class="th-mobile-menu">
+                <ul>
+                    <li class="menu-item-has-children">
+                        <a href="index.html">Home</a>
+                        <ul class="sub-menu">
+                            <li><a href="index.html">Home One </a></li>
+                            <li><a href="index-2.html">Home Two </a></li>
+                            <li><a href="index-3.html">Home Three </a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="about.html">About Us</a>
+                    </li>
+                    <li class="menu-item-has-children">
+                        <a href="#">Service</a>
+                        <ul class="sub-menu">
+                            <li><a href="service.html">Service</a></li>
+                            <li><a href="service-details.html">Service Details</a></li>
+                        </ul>
+                    </li>
+                    <li class="menu-item-has-children">
+                        <a href="#">Blog</a>
+                        <ul class="sub-menu">
+                            <li><a href="blog.html">Blog</a></li>
+                            <li><a href="blog-details.html">Blog Details</a></li>
+                        </ul>
+                    </li>
+                    <li class="menu-item-has-children">
+                        <a href="#">Pages</a>
+                        <ul class="sub-menu">
+                            <li class="menu-item-has-children"><a href="#">Shop</a>
+                                <ul class="sub-menu">
+                                    <li><a href="shop.html">Shop</a></li>
+                                    <li><a href="shop-details.html">Shop Details</a></li>
+                                    <li><a href="cart.html">Cart Page</a></li>
+                                    <li><a href="checkout.html">Checkout</a></li>
+                                    <li><a href="wishlist.html">Wishlist</a></li>
+                                </ul>
+                            </li>
+                            <li><a href="team.html">Driver</a></li>
+                            <li><a href="team-details.html">Driver Details</a></li>
+                            <li><a href="taxi.html">Taxi</a></li>
+                            <li><a href="taxi-details.html">Taxi Details</a></li>
+                            <li><a href="booking.html">Booking Ride</a></li>
+                            <li><a href="faq.html">Faq</a></li>
+                            <li><a href="error.html">Error</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="contact.html">Contact</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!--==============================
+    Sidemenu
+============================== -->
+    <div class="sidemenu-wrapper shopping-cart d-none d-lg-block  ">
+        <div class="sidemenu-content">
+            <button class="closeButton sideMenuCls"><i class="far fa-times"></i></button>
+            <div class="widget">
+                <h3 class="widget_title">Pack Details</h3>
+                <div class="widget_content">
+                    <ul class="pack-details-list">
+                        <li class="pack-detail-item">
+                            <span class="detail-label">Description:</span>
+                            <span class="detail-value">{{ pack.description ?? 'N/A' }}</span>
+                        </li>
+                        <li class="pack-detail-item">
+                            <span class="detail-label">Price:</span>
+                            <span class="detail-value">{{ pack.prix }} TND</span>
+                        </li>
+                        <li class="pack-detail-item">
+                            <span class="detail-label">Capacity:</span>
+                            <span class="detail-value">{{ pack.capacite }}</span>
+                        </li>
+                        <li class="pack-detail-item">
+                            <span class="detail-label">Duration:</span>
+                            <span class="detail-value">{{ pack.duree }} days</span>
+                        </li>
+                        <li class="pack-detail-item">
+                            <span class="detail-label">End Date:</span>
+                            <span class="detail-value">{{ pack.endDate ? pack.endDate|date('Y-m-d') : 'N/A' }}</span>
+                        </li>
+                        <li class="pack-detail-item">
+                            <span class="detail-label">Event:</span>
+                            <span class="detail-value">{{ pack.getNom() ?? 'N/A' }}</span>
+                        </li>
+                        {% if avis is empty %}
+                            <li class="woocommerce-mini-cart-item mini_cart_item">
+                                <span>Il n'y a pas de commentaire</span>
+                            </li>
+                        {% else %}
+                            {% for avis in avis %}
+                                <li class="woocommerce-mini-cart-item mini_cart_item">
+                                    <span class="comment-author">{{ avis.user.getFullName() }}</span>
+                                    <span class="comment-date">{{ avis.dateCreation|date('d F, Y') }}</span>
+                                    <span class="comment-rating">Rated {{ avis.note }} out of 5</span>
+                                    <p class="comment-text">{{ avis.commentaire }}</p>
+                                </li>
+                            {% endfor %}
+                        {% endif %}
+                    </ul>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--==============================
+    Sidemenu
+============================== -->
+    <div class="sidemenu-wrapper d-none d-lg-block  ">
+        <div class="sidemenu-content bg-title">
+            <button class="closeButton sideMenuCls"><i class="far fa-times"></i></button>
+            <div class="widget footer-widget">
+                <h3 class="widget_title">About Company</h3>
+                <div class="th-widget-about">
+                    <p class="footer-text">Centric aplications productize before front end vortals visualize front end is results and value added</p>
+                    <h4 class="footer-info-title">WE ARE AVAILABLE</h4>
+                    <p class="footer-text">Mon-Sat: 09.00 am to 6.30 pm</p>
+                    <a href="contact.html" class="th-btn style3"><span class="btn-text">Contact Us</span></a>
+                </div>
+            </div>
+            <div class="widget footer-widget">
+                <h3 class="widget_title">Recent Posts</h3>
+                <div class="recent-post-wrap">
+                    <div class="recent-post">
+                        <div class="media-img">
+                            <a href="blog-details.html"><img src="{{ asset('Front/img/blog/recent-post-1-2.jpg') }}" alt="Blog Image"></a>
+                        </div>
+                        <div class="media-body">
+                            <div class="recent-post-meta">
+                                <a href="blog.html"><i class="far fa-calendar-days"></i>22th May, 2023</a>
+                            </div>
+                            <h4 class="post-title"><a class="text-inherit" href="blog-details.html">How To Start Car Engine Faster</a></h4>
+                            <a class="line-btn" href="blog.html">Read More<i class="fa-regular fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                    <div class="recent-post">
+                        <div class="media-img">
+                            <a href="blog-details.html"><img src="{{ asset('Front/img/blog/recent-post-1-3.jpg') }}" alt="Blog Image"></a>
+                        </div>
+                        <div class="media-body">
+                            <div class="recent-post-meta">
+                                <a href="blog.html"><i class="far fa-calendar-days"></i>25th May, 2023</a>
+                            </div>
+                            <h4 class="post-title"><a class="text-inherit" href="blog-details.html">How to start car engine slowly</a></h4>
+                            <a class="line-btn" href="blog.html">Read More<i class="fa-regular fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="widget footer-widget">
+                <h4 class="widget_title">Get Newsletter</h4>
+                <div class="newsletter-widget">
+                    <p class="md-20">Sign up today for hints, tips & latest car overview and news</p>
+                    <form class="newsletter-form">
+                        <input class="form-control" type="email" placeholder="Email Address" required="">
+                        <button type="submit" class="newsletter-btn"><i class="fas fa-envelope"></i></button>
+                    </form>
+                    <div class="th-social  style2">
+                        <a target="_blank" href="https://facebook.com/"><i class="fab fa-facebook-f"></i></a>
+                        <a target="_blank" href="https://twitter.com/"><i class="fab fa-twitter"></i></a>
+                        <a target="_blank" href="https://instagram.com/"><i class="fab fa-instagram"></i></a>
+                        <a target="_blank" href="https://linkedin.com/"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="popup-search-box d-none d-lg-block">
+        <button class="searchClose"><i class="fal fa-times"></i></button>
+        <form action="#">
+            <input type="text" placeholder="What are you looking for">
+            <button type="submit"><i class="fal fa-search"></i></button>
+        </form>
+    </div>
+
+    <!--==============================
+ 		Header Area
+==============================-->
+     {% include 'Front/partials/header.html.twig' %}
+    </header>
+    <!--==============================
+    Breadcumb
+============================== -->
+    <div class="breadcumb-wrapper" data-bg-src="{{ asset('uploads/packs/' ~ pack.photo) }}" alt="{{ pack.nom }}" data-overlay="title" data-opacity="4">
+        <div class="container z-index-common">
+            <h1 class="breadcumb-title">{{pack.nom}}</h1>
+            <ul class="breadcumb-menu">
+                <li><a href="{{ path('app_packs') }}">Accueil</a></li>
+                <li><a href="{{ path('app_pack_index') }}">Packs</a></li>
+                <li>{{ pack.nom }}</li>
+            </ul>
+        </div>
+    </div>
+    <!--==============================
+    Product Details
+    ==============================-->
+    <section class="th-product-wrapper product-details space-top space-extra-bottom">
+        <div class="container">
+            <div class="row gx-60">
+                <div class="col-lg-6">
+                    <div class="product-big-img">
+                        <div class="img"><img src="{{ asset('uploads/packs/' ~ pack.photo|default('default.jpg')) }}" alt="{{ pack.nom }}"></div>
+                    </div>
+                </div>
+                <div class="col-lg-6 align-self-center">
+                    <div class="product-about">
+                        <p class="price">
+  ${{ pack.prix }}
+  <del>${{ (pack.prix * 1.15)|number_format(2, '.', ',') }}</del>
+</p>
+
+                        <h2 class="product-title">{{pack.nom}}</h2>
+                        <div class="product-rating">
+                            {% set reviewCount = avis|length %}
+                            {% set averageRating = reviewCount > 0 ? (avis|map(a => a.note)|reduce((carry, item) => carry + item, 0) / reviewCount) : 0 %}
+                            <div class="star-rating" role="img" aria-label="Rated {{ averageRating|number_format(2, '.', ',') }} out of 5">
+                                <span style="width:{{ (averageRating / 5 * 100)|number_format(0) }}%">Rated <strong class="rating">{{ averageRating|number_format(2, '.', ',') }}</strong> out of 5 based on <span class="rating">{{ reviewCount }}</span> customer rating{{ reviewCount == 1 ? '' : 's' }}</span>
+                            </div>
+                            <a href="#reviews" class="woocommerce-review-link">(<span class="count">{{ reviewCount }}</span> customer review{{ reviewCount == 1 ? '' : 's' }})</a>
+                        </div>
+                        <p class="text">{{pack.description}}</p>
+                        <div class="product-meta">
+                            <span class="sku_wrapper">Capacity: <span class="sku">{{pack.capacite}}</span></span>
+                            <span class="posted_in">Duration: <span>{{pack.duree}} days</span></span>
+                            <span class="tagged_as">End Date: <span>{{pack.endDate|date('Y-m-d')}}</span></span>
+                        </div>
+                        
+                       
+                        <button class="th-btn" onclick="window.location.href='{{ path('app_pack_booking', {'id': pack.id}) }}'">
+                            Ajouter au panier
+                        </button>
+                        <div style="margin-top:10px;">
+                            <button class="th-btn" id="facebook-share-btn" type="button" style="background:#4267B2;color:#fff;">
+                                <i class="fab fa-facebook-f"></i> Facebook
+                            </button>
+                            <button class="th-btn" id="twitter-share-btn" type="button" style="background:#1da1f2;color:#fff;margin-left:5px;">
+                                <i class="fab fa-twitter"></i> Twitter
+                            </button>
+                            <button class="th-btn" id="whatsapp-share-btn" type="button" style="background:#25d366;color:#fff;margin-left:5px;">
+                                <i class="fab fa-whatsapp"></i> WhatsApp
+                            </button>
+                            <button class="th-btn" id="linkedin-share-btn" type="button" style="background:#0077b5;color:#fff;margin-left:5px;">
+                                <i class="fab fa-linkedin-in"></i> LinkedIn
+                            </button>
+                        </div>
+                        <script>
+                        document.addEventListener('DOMContentLoaded', function() {
+                            var absoluteUrl = '{{ url('app_pack_show', {'id': pack.id}, 'ABSOLUTE_URL') }}';
+                            var fbBtn = document.getElementById('facebook-share-btn');
+                            var twBtn = document.getElementById('twitter-share-btn');
+                            var waBtn = document.getElementById('whatsapp-share-btn');
+                            var liBtn = document.getElementById('linkedin-share-btn');
+                            if (fbBtn) {
+                                fbBtn.addEventListener('click', function() {
+                                    var fbUrl = 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(absoluteUrl);
+                                    window.open(fbUrl, '_blank', 'width=600,height=400');
+                                });
+                            }
+                            if (twBtn) {
+                                twBtn.addEventListener('click', function() {
+                                    var twUrl = 'https://twitter.com/intent/tweet?url=' + encodeURIComponent(absoluteUrl) + '&text=' + encodeURIComponent('{{ pack.nom }}');
+                                    window.open(twUrl, '_blank', 'width=600,height=400');
+                                });
+                            }
+                            if (waBtn) {
+                                waBtn.addEventListener('click', function() {
+                                    var waUrl = 'https://wa.me/?text=' + encodeURIComponent('{{ pack.nom }} ' + absoluteUrl);
+                                    window.open(waUrl, '_blank', 'width=600,height=400');
+                                });
+                            }
+                            if (liBtn) {
+                                liBtn.addEventListener('click', function() {
+                                    var liUrl = 'https://www.linkedin.com/sharing/share-offsite/?url=' + encodeURIComponent(absoluteUrl);
+                                    window.open(liUrl, '_blank', 'width=600,height=400');
+                                });
+                            }
+                        });
+                        </script>
+                       
+                    </div>
+                </div>
+            </div>
+            <ul class="nav product-tab-style1" id="productTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link th-btn" id="description-tab" data-bs-toggle="tab" href="#description" role="tab" aria-controls="description" aria-selected="false">description</a>
+                </li>
+                <li class="nav-item" role="presentation">
+<a class="nav-link th-btn active" id="reviews-tab" data-bs-toggle="tab" href="#reviews" role="tab" aria-controls="reviews" aria-selected="true">Avis</a>                </li>
+            </ul>
+            <div class="tab-content" id="productTabContent">
+                <div class="tab-pane fade" id="description" role="tabpanel" aria-labelledby="description-tab">
+                    <p class="text">{{pack.description}}</p>      </div>
+
+
+                <div class="tab-pane fade show active" id="reviews" role="tabpanel" aria-labelledby="reviews-tab">
+    <div class="woocommerce-Reviews">
+        <div class="th-comments-wrap">
+            <ul class="comment-list">
+                {% if pack.avis is empty %}
+                    <li class="review th-comment-item">
+                        <div class="th-post-comment">
+                            <div class="comment-content">
+                                <p class="text">There are no reviews yet.</p>
+                            </div>
+                        </div>
+                    </li>
+                {% else %}
+                    {% for avis in pack.avis %}
+                        <li class="review th-comment-item">
+                            <div class="th-post-comment">
+                                <div class="comment-avater">
+                                    {% if avis.user is not null %}
+                                        {% if avis.user.client is defined and avis.user.client == 'CA' %}
+                                            <div class="avatar-cool position-relative">
+                                                <img src="https://ui-avatars.com/api/?name=CA&background=4e73df&color=fff&size=64&rounded=true&bold=true" alt="CA">
+                                                <span class="status-dot"></span>
+                                            </div>
+                                        {% else %}
+                                            <div class="avatar-cool position-relative">
+                                                <img src="https://ui-avatars.com/api/?name={{ (avis.user.getLastName() ~ ' ' ~ avis.user.getFirstName())|url_encode }}&background=4e73df&color=fff&size=64&rounded=true&bold=true" alt="{{ avis.user.getLastName() }} {{ avis.user.getFirstName() }}">
+                                                <span class="status-dot"></span>
+                                            </div>
+                                        {% endif %}
+                                    {% else %}
+                                        <div class="avatar-cool position-relative">
+                                            <img src="{{ asset('Front/img/blog/comment-author-1.jpg') }}" alt="Utilisateur Supprimé">
+                                            <span class="status-dot status-dot-offline"></span>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div class="comment-content">
+                                    <h4 class="name">
+                                        {% if avis.user is not null %}
+                                            {{ avis.user.getLastName() }} {{ avis.user.getFirstName() }}
+                                        {% else %}
+                                            Utilisateur Supprimé
+                                        {% endif %}
+                                    </h4>
+                                    <span class="commented-on">
+                                        <i class="fal fa-calendar-alt"></i>
+                                        {{ avis.dateCreation|date('d M, Y') }}
+                                    </span>
+                                    <div class="star-rating" role="img" aria-label="Rated {{ avis.note }} out of 5">
+                                        <span style="width:{{ (avis.note/5)*100 }}%">
+                                            Rated <strong class="rating">{{ avis.note }}</strong> out of 5
+                                        </span>
+                                    </div>
+                                    <p class="text">{{ avis.commentaire }}</p>
+                                </div>
+                            </div>
+                        </li>
+                    {% endfor %}
+                {% endif %}
+            </ul>
+        </div>
+        
+        <!-- Comment Form -->
+       
+    {% set hasPurchased = false %}
+    {% for demande in demandePacks %}
+        {% if demande.pack.id == pack.id and demande.statut == 'CONFIRMÉ' %}
+            {% set hasPurchased = true %}
+        {% endif %}
+    {% endfor %}
+
+    {% if hasPurchased %}
+    <div class="th-comment-form">
+        <div class="form-title">
+            <h3 class="blog-inner-title">Ajouter un avis</h3>
+        </div>
+        <form action="{{ path('app_avis_add', {'packId': pack.id}) }}" method="POST" class="review-form" novalidate>
+            <div class="row">
+                <div class="form-group rating-select d-flex align-items-center">
+                    <label>Votre note</label>
+                    <p class="stars">
+                        <span>
+                            {% for i in 1..5 %}
+                                <a class="star-{{ i }} {% if (app.request.query.get('rating', 5)|default(5)) >= i %}active{% endif %}" 
+                                   href="#" 
+                                   data-value="{{ i }}">{{ i }}</a>
+                            {% endfor %}
+                        </span>
+                        <input type="hidden" name="rating" id="rating-value" value="{{ app.request.query.get('rating', 5)|default(5) }}" class="form-control">
+                    </p>
+                    {% if app.request.query.get('error_note') is not empty %}
+                        <div class="invalid-feedback d-block">{{ app.request.query.get('error_note') }}</div>
+                    {% endif %}
+                </div>
+                <div class="col-12 form-group">
+                    <textarea name="comment" placeholder="Write your review here..." 
+                              class="form-control {% if app.request.query.get('error_commentaire') is not empty %}is-invalid{% endif %}">{{ app.request.query.get('comment', '') }}</textarea>
+                    {% if app.request.query.get('error_commentaire') is not empty %}
+                        <div class="invalid-feedback">{{ app.request.query.get('error_commentaire') }}</div>
+                    {% endif %}
+                </div>
+               
+                <div class="col-12 form-group mb-0">
+                    <button type="submit" class="th-btn">Publier l'avis</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    {% else %}
+        <div class="alert alert-info">
+            <p><i class="fas fa-info-circle"></i> Pour laisser un avis, vous devez d'abord acheter ce pack et avoir une commande avec le statut "CONFIRMÉ".</p>
+            <a href="{{ path('app_pack_booking', {'id': pack.id}) }}" class="th-btn mt-3">Acheter ce pack</a>
+        </div>
+    {% endif %}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Star rating functionality
+        const stars = document.querySelectorAll('.stars a');
+        const ratingInput = document.getElementById('rating-value');
+        
+        stars.forEach(star => {
+            star.addEventListener('click', function(e) {
+                e.preventDefault();
+                const value = parseInt(this.getAttribute('data-value'));
+                ratingInput.value = value;
+                
+                // Update star display
+                stars.forEach(s => {
+                    const sValue = parseInt(s.getAttribute('data-value'));
+                    if (sValue <= value) {
+                        s.classList.add('active');
+                    } else {
+                        s.classList.remove('active');
+                    }
+                });
+            });
+            
+            // Hover effect
+            star.addEventListener('mouseover', function() {
+                const value = parseInt(this.getAttribute('data-value'));
+                stars.forEach(s => {
+                    const sValue = parseInt(s.getAttribute('data-value'));
+                    if (sValue <= value) {
+                        s.classList.add('hover');
+                    } else {
+                        s.classList.remove('hover');
+                    }
+                });
+            });
+            
+            star.addEventListener('mouseout', function() {
+                stars.forEach(s => {
+                    s.classList.remove('hover');
+                });
+            });
+        });
+    });
+</script>
+</div>
+            <!--==============================
+        Related Product  
+        ==============================-->
+            <div class="space-extra-top mb-30">
+                <div class="title-area text-center">
+                   <h2 class="sec-title">Packs similaires</h2>
+                   <p class="sec-text">Découvrez d'autres packs de la même catégorie</p>
+                </div>
+                <div class="row th-carousel" data-slide-show="4" data-lg-slide-show="3" data-md-slide-show="2" data-sm-slide-show="2" data-xs-slide-show="1" data-arrows="true">
+                    {% if relatedPacks is not empty %}
+                        {% for relatedPack in relatedPacks %}
+                            <div class="col-xl-3 col-lg-4 col-sm-6">
+                                <div class="th-product">
+                                    <div class="product-img">
+                                        <img src="{{ asset('uploads/packs/' ~ relatedPack.photo|default('default.jpg')) }}" alt="{{ relatedPack.nom }}">
+                                        <div class="actions">
+                                            <a href="{{ path('app_pack_shop_details', {'id': relatedPack.id}) }}" class="icon-btn"><i class="far fa-eye"></i></a>
+                                            <a href="{{ path('app_pack_booking', {'id': relatedPack.id}) }}" class="icon-btn"><i class="far fa-cart-plus"></i></a>
+                                            <a href="#" class="icon-btn"><i class="far fa-heart"></i></a>
+                                        </div>
+                                    </div>
+                                    <div class="product-content">
+                                        <h3 class="product-title"><a href="{{ path('app_pack_shop_details', {'id': relatedPack.id}) }}">{{ relatedPack.nom }}</a></h3>
+                                        <div class="product-meta">
+                                            <span class="price">{{ relatedPack.prix }} TND</span>
+                                            <span class="category">{{ relatedPack.categorie }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="col-12 text-center">
+                            <p>Aucun autre pack dans cette catégorie.</p>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="row th-carousel" data-slide-show="4" data-lg-slide-show="3" data-md-slide-show="2" data-sm-slide-show="2" data-xs-slide-show="1" data-arrows="true">
+                    {% for similarPack in similarPacks|default([]) %}
+                        {% if similarPack.id != pack.id and similarPack.categorie == pack.categorie %}
+                            <div class="col-xl-3 col-lg-4 col-sm-6">
+                                <div class="th-product">
+                                    <div class="product-img">
+                                        <img src="{{ asset('uploads/packs/' ~ similarPack.photo|default('default.jpg')) }}" alt="{{ similarPack.nom }}">
+                                        <div class="actions">
+                                            <a href="{{ path('app_pack_details', {'id': similarPack.id}) }}" class="icon-btn"><i class="far fa-eye"></i></a>
+                                            <a href="{{ path('app_pack_booking', {'id': similarPack.id}) }}" class="icon-btn"><i class="far fa-calendar-plus"></i></a>
+                                        </div>
+                                    </div>
+                                    <div class="product-content">
+                                        <h3 class="product-title"><a href="{{ path('app_pack_details', {'id': similarPack.id}) }}">{{ similarPack.nom }}</a></h3>
+                                        <div class="product-meta">
+                                            <span class="price">{{ similarPack.prix }} TND</span>
+                                            <span class="category">{{ similarPack.categorie }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <div class="col-12 text-center">
+                            <p>Aucun pack similaire disponible pour le moment.</p>
+                        </div>
+                    {% endfor %}
+
+                   
+
+                   
+
+                   
+
+                    
+                </div>
+            </div>
+        </div>
+    </section>
+    <!--==============================
+			Footer Area
+	==============================-->
+   
+
+ <footer class="footer-wrapper footer-layout7" data-bg-src="{{ asset('Front/img/bg/footer_bg_1.jpg') }}">
+    <div class="widget-area">
+        <div class="container">
+            <div class="row justify-content-between">
+                <div class="col-md-6 col-xl-auto">
+                    <div class="widget footer-widget">
+                        <div class="th-widget-about">
+                            <div class="about-logo">
+                                <a href="index.html"><img src="{{ asset('Front/img/logo-white3.svg') }}" alt="GoldenTouch"></a>
+                            </div>
+                            <p class="about-text">GoldenTouch révolutionne la planification d'événements avec des solutions tout-en-un pour des expériences inoubliables.</p>
+                            <div class="working-time">
+                                <span class="title">HORAIRES D'OUVERTURE</span>
+                                <p class="desc">Lun-Sam : 09h00 à 18h30</p>
+                            </div>
+                            <div class="th-social footer-social">
+                                <a href="https://www.facebook.com/"><i class="fab fa-facebook-f"></i></a>
+                                <a href="https://www.twitter.com/"><i class="fab fa-twitter"></i></a>
+                                <a href="https://www.linkedin.com/"><i class="fab fa-linkedin-in"></i></a>
+                                <a href="https://www.instagram.com/"><i class="fab fa-instagram"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-xl-2">
+                    <div class="widget widget_nav_menu footer-widget">
+                        <h3 class="widget_title">Liens rapides</h3>
+                        <div class="menu-all-pages-container">
+                            <ul class="menu">
+                                <li><a href="about.html">À propos</a></li>
+                                <li><a href="gallery.html">Galerie</a></li>
+                                <li><a href="testimonials.html">Témoignages</a></li>
+                                <li><a href="services.html">Nos Services</a></li>
+                                <li><a href="team.html">Notre Équipe</a></li>
+                                <li><a href="contact.html">Contact</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-xl-auto">
+                    <div class="widget footer-widget">
+                        <h3 class="widget_title">Coordonnées</h3>
+                        <div class="th-widget-about">
+                            <h4 class="footer-info-title">Téléphone</h4>
+                            <p class="footer-info"><i class="fa-sharp fa-solid fa-phone"></i><a class="text-inherit"
+                                    href="tel:+33123456789">+33 1 23 45 67 89</a></p>
+                            <h4 class="footer-info-title">Email</h4>
+                            <p class="footer-info"><i class="fas fa-envelope"></i><a class="text-inherit"
+                                    href="mailto:contact@goldentouch.com">contact{{ '@' }}goldentouch.com</a></p>
+                            <h4 class="footer-info-title">Adresse</h4>
+                            <p class="footer-info"><i class="fas fa-map-marker-alt"></i>123 Rue des Événements, 75001 Paris, France</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-xl-3">
+                    <div class="widget footer-widget">
+                        <h4 class="widget_title">Newsletter</h4>
+                        <div class="newsletter-widget">
+                            <p class="md-20">Abonnez-vous pour recevoir nos actualités et offres exclusives. Soyez les premiers informés de nos dernières prestations.</p>
+                            <div class="footer-search-contact mt-25">
+                                <form>
+                                    <input class="form-control" type="email" placeholder="Votre email">
+                                </form>
+                                <div class="footer-btn mt-10">
+                                    <button type="submit" class="th-btn style3 fw-btn">S'abonner <i
+                                            class="fa-regular fa-arrow-right"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="copyright-wrap">
+        <div class="container">
+            <p class="copyright-text"> 2023 <a href="#">GoldenTouch</a>. Tous droits réservés.</p>
+        </div>
+    </div>
+    <div class="footer-shape"><img src="assets/img/shape/footer_shape.png" alt="forme">
+    </div>
+</footer>
+
+
+    <!--********************************
+			Code End  Here 
+	******************************** -->
+
+    <!-- Scroll To Top -->
+    <div class="scroll-top">
+        <svg class="progress-circle svg-content" width="100%" height="100%" viewBox="-1 -1 102 102">
+            <path d="M50,1 a49,49 0 0,1 0,98 a49,49 0 0,1 0,-98" style="transition: stroke-dashoffset 10ms linear 0s; stroke-dasharray: 307.919, 307.919; stroke-dashoffset: 307.919;">
+            </path>
+        </svg>
+    </div>
+
+
+
+    <!--==============================
+    All Js File
+============================== -->
+    <!-- Jquery -->
+     <script src="{{ asset('Front/js/vendor/jquery-3.6.0.min.js') }}"></script>
+    <script src="{{ asset('Front/js/slick.min.js') }}"></script>
+    <script src="{{ asset('Front/js/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('Front/js/jquery.magnific-popup.min.js') }}"></script>
+    <script src="{{ asset('Front/js/jquery.counterup.min.js') }}"></script>
+    <script src="{{ asset('Front/js/imagesloaded.pkgd.min.js') }}"></script>
+    <script src="{{ asset('Front/js/isotope.pkgd.min.js') }}"></script>
+    <script src="{{ asset('Front/js/nice-select.min.js') }}"></script>
+    <script src="{{ asset('Front/js/jquery.datetimepicker.min.js') }}"></script>
+    <script src="{{ asset('Front/js/wow.min.js') }}"></script>
+    <script src="{{ asset('Front/js/main.js') }}"></script>
+</body>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Star rating functionality
+        const stars = document.querySelectorAll('.stars a');
+        const ratingInput = document.getElementById('rating-value');
+        
+        stars.forEach(star => {
+            star.addEventListener('click', function(e) {
+                e.preventDefault();
+                const value = parseInt(this.getAttribute('data-value'));
+                ratingInput.value = value;
+                
+                // Update star display
+                stars.forEach(s => {
+                    const sValue = parseInt(s.getAttribute('data-value'));
+                    if (sValue <= value) {
+                        s.classList.add('active');
+                    } else {
+                        s.classList.remove('active');
+                    }
+                });
+            });
+            
+            // Hover effect
+            star.addEventListener('mouseover', function() {
+                const value = parseInt(this.getAttribute('data-value'));
+                stars.forEach(s => {
+                    const sValue = parseInt(s.getAttribute('data-value'));
+                    if (sValue <= value) {
+                        s.classList.add('hover');
+                    } else {
+                        s.classList.remove('hover');
+                    }
+                });
+            });
+            
+            star.addEventListener('mouseout', function() {
+                stars.forEach(s => {
+                    s.classList.remove('hover');
+                });
+            });
+        });
+    });
+</script>
+</html>

@@ -1,0 +1,1332 @@
+<!doctype html>
+<html class="no-js" lang="zxx">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>GoldenTouch - Détails du Lieu {{ lieu.name }}</title>
+    <meta name="author" content="GoldenTouch">
+    <meta name="description" content="Détails du lieu {{ lieu.name }}">
+    <meta name="keywords" content="lieu, événement, location, salle">
+    <meta name="robots" content="INDEX,FOLLOW">
+
+    <!-- Mobile Specific Metas -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="57x57" href="{{ asset('Front/img/favicons/apple-icon-57x57.png') }}">
+    <link rel="apple-touch-icon" sizes="60x60" href="{{ asset('Front/img/favicons/apple-icon-60x60.png') }}">
+    <link rel="apple-touch-icon" sizes="72x72" href="{{ asset('Front/img/favicons/apple-icon-72x72.png') }}">
+    <link rel="apple-touch-icon" sizes="76x76" href="{{ asset('Front/img/favicons/apple-icon-76x76.png') }}">
+    <link rel="apple-touch-icon" sizes="114x114" href="{{ asset('Front/img/favicons/apple-icon-114x114.png') }}">
+    <link rel="apple-touch-icon" sizes="120x120" href="{{ asset('Front/img/favicons/apple-icon-120x120.png') }}">
+    <link rel="apple-touch-icon" sizes="144x144" href="{{ asset('Front/img/favicons/apple-icon-144x144.png') }}">
+    <link rel="apple-touch-icon" sizes="152x152" href="{{ asset('Front/img/favicons/apple-icon-152x152.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('Front/img/favicons/apple-icon-180x180.png') }}">
+    <link rel="icon" type="image/png" sizes="192x192" href="{{ asset('Front/img/favicons/android-icon-192x192.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('Front/img/favicons/favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="96x96" href="{{ asset('Front/img/favicons/favicon-96x96.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('Front/img/favicons/favicon-16x16.png') }}">
+    <link rel="manifest" href="{{ asset('Front/img/favicons/manifest.json') }}">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="{{ asset('Front/img/favicons/ms-icon-144x144.png') }}">
+    <meta name="theme-color" content="#ffffff">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Radio+Canada:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- All CSS File -->
+    <link rel="stylesheet" href="{{ asset('Front/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('Front/css/fontawesome.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('Front/css/magnific-popup.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('Front/css/slick.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('Front/css/jquery.datetimepicker.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('Front/css/style.css') }}">
+
+    <style>
+        /* Variables CSS */
+        :root {
+            --primary-color: #FFC107;
+            --primary-light: #FFE082;
+            --primary-dark: #FFA000;
+            --text-color: #333333;
+            --text-light: #666666;
+            --border-radius: 8px;
+            --transition: all 0.3s ease;
+            --shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        /* Styles généraux */
+        .section-title {
+            position: relative;
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            color: var(--text-color);
+        }
+
+        .section-title:after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 50px;
+            height: 3px;
+            background: var(--primary-color);
+        }
+
+        /* Card styles */
+        .card {
+            border: none;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 25px;
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+
+        .card-body {
+            padding: 25px;
+        }
+
+        /* Image principale */
+        .lieu-cover-image {
+            width: 100%;
+            height: 500px;
+            object-fit: cover;
+            border-radius: var(--border-radius) var(--border-radius) 0 0;
+        }
+
+        /* Quick Info Cards */
+        .feature-box {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+        }
+
+        .feature-box-icon {
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 193, 7, 0.1);
+            border-radius: 50%;
+            color: var(--primary-color);
+            font-size: 20px;
+        }
+
+        /* Boutons et actions */
+        .btn {
+            padding: 10px 25px;
+            border-radius: 25px;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .btn-light {
+            background: #fff;
+            border: 1px solid #e0e0e0;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            border: none;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Formulaire de réservation */
+        .booking-card {
+            background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+            border-radius: var(--border-radius);
+            padding: 30px;
+        .lieu-header-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            padding: 30px;
+            color: white;
+        }
+        .lieu-title {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        .lieu-meta {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .lieu-description {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #6B7280;
+        }
+        .feature-box {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .feature-box-icon {
+            font-size: 24px;
+            margin-right: 15px;
+            color: var(--theme-color);
+        }
+        .similar-lieu-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 8px;
+            transition: all 0.3s;
+            background: #F9FAFB;
+        }
+        .similar-lieu-item:hover {
+            background-color: rgba(115, 103, 240, 0.1);
+            text-decoration: none;
+        }
+        .similar-lieu-image {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            object-fit: cover;
+            margin-right: 15px;
+        }
+        .review-item {
+            background: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .review-user {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        .review-date {
+            font-size: 14px;
+            color: #6B7280;
+        }
+        .star-rating {
+            color: #FFC107;
+            margin: 10px 0;
+        }
+        .gallery-thumbnail {
+            cursor: pointer;
+            transition: transform 0.3s;
+            border-radius: 8px;
+        }
+        .gallery-thumbnail:hover {
+            transform: scale(1.05);
+        }
+        #map {
+            height: 300px;
+            width: 100%;
+            border-radius: 8px;
+        }
+        .booking-card {
+            background: #fff;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        .booking-card .form-control {
+            height: 50px;
+            border-radius: 8px;
+        }
+        .booking-card textarea.form-control {
+            height: auto;
+        }
+        .section-title {
+            font-size: 28px;
+            margin-bottom: 30px;
+            position: relative;
+            padding-bottom: 15px;
+        }
+        .section-title:after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 60px;
+            height: 3px;
+            background: var(--theme-color);
+        }
+        .th-product {
+            background: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+        }
+        .th-product:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        .social-share-buttons {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .social-share {
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            border: 1px solid;
+        }
+
+        .social-share:hover {
+            transform: scale(1.1);
+            color: white;
+        }
+
+        .social-share.btn-outline-primary:hover {
+            background-color: #1877f2; /* Facebook blue */
+            border-color: #1877f2;
+        }
+
+        .social-share.btn-outline-info:hover {
+            background-color: #1da1f2; /* Twitter blue */
+            border-color: #1da1f2;
+        }
+
+        .social-share.btn-outline-success:hover {
+            background-color: #25d366; /* WhatsApp green */
+            border-color: #25d366;
+        }
+
+        .social-share.btn-outline-secondary:hover {
+            background-color: #6c757d;
+            border-color: #6c757d;
+        }
+
+        .social-share.btn-outline-dark:hover {
+            background-color: #212529;
+            border-color: #212529;
+        }
+
+        .social-share i {
+            font-size: 0.9rem;
+        }
+
+        .social-share-section {
+            border-top: 1px solid #eee;
+            padding-top: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .social-share-buttons {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .social-share {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            padding: 0;
+        }
+
+        .social-share:hover {
+            transform: scale(1.1);
+            color: white;
+        }
+
+        .social-share.btn-outline-primary:hover {
+            background-color: #1877f2; /* Facebook blue */
+            border-color: #1877f2;
+        }
+
+        .social-share.btn-outline-info:hover {
+            background-color: #1da1f2; /* Twitter blue */
+            border-color: #1da1f2;
+        }
+
+        .social-share.btn-outline-success:hover {
+            background-color: #25d366; /* WhatsApp green */
+            border-color: #25d366;
+        }
+
+        .social-share.btn-outline-secondary:hover {
+            background-color: #6c757d;
+            border-color: #6c757d;
+        }
+
+        .social-share.btn-outline-dark:hover {
+            background-color: #212529;
+            border-color: #212529;
+        }
+
+        .social-share i {
+            font-size: 1rem;
+        }
+    </style>
+</head>
+
+<body class="">
+
+    <!--[if lte IE 9]>
+        <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
+    <![endif]-->
+
+    
+    <!-- Mobile Menu -->
+    <div class="th-menu-wrapper">
+        <div class="th-menu-area text-center">
+            <button class="th-menu-toggle"><i class="fal fa-times"></i></button>
+            <div class="mobile-logo">
+                <a href="index.html"><img src="{{ asset('Front/img/logo-white3.svg') }}" alt="GoldenTouch"></a>
+            </div>
+            <div class="th-mobile-menu">
+                <ul>
+                    <li><a href="{{ path('app_lieu_index') }}">Lieux</a></li>
+               
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+        {% include 'Front/partials/header.html.twig' %}
+
+
+    <!-- Breadcrumb -->
+    <div class="breadcumb-wrapper" data-bg-src="{{ asset('uploads/lieux/' ~ lieu.imageUrl|default('default.jpg')) }}">
+        <div class="container z-index-common">
+            <h1 class="breadcumb-title">{{ lieu.name }}</h1>
+            <ul class="breadcumb-menu">
+                <li><a href="{{ path('front_index') }}">Accueil</a></li>
+                <li><a href="{{ path('app_lieu_index') }}">Lieux</a></li>
+                <li>{{ lieu.name }}</li>
+                <li>
+                    <a href="{{ path('app_lieu_user_reservations') }}" class="btn btn-light btn-sm">
+                        <i class="fas fa-calendar-alt me-2"></i>Mes Réservations
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Lieu Details -->
+    <section class="th-product-wrapper product-details space-top space-extra-bottom">
+        <div class="container">
+            <div class="row gx-60">
+                <div class="col-lg-8">
+                    <!-- Lieu Header with Image -->
+                    <div class="lieu-header position-relative mb-30">
+                        <div class="lieu-engagement position-absolute top-0 end-0 m-3 z-index-1">
+                            <div class="social-share-buttons">
+                                <!-- Facebook -->
+                                <a href="https://www.facebook.com/sharer/sharer.php?u={{ absolute_url(path('app_lieu_details', {'id': lieu.id})) }}" 
+                                   class="btn btn-sm btn-outline-primary social-share" 
+                                   target="_blank"
+                                   title="Partager sur Facebook"
+                                   onclick="window.open(this.href, 'facebook-share', 'width=580,height=296');return false;">
+                                    <i class="fab fa-facebook-f"></i>
+                                </a>
+                                
+                                <!-- Twitter -->
+                                <a href="https://twitter.com/intent/tweet?url={{ absolute_url(path('app_lieu_details', {'id': lieu.id})) }}&text=Découvrez {{ lieu.name|url_encode }} - Un lieu exceptionnel pour vos événements" 
+                                   class="btn btn-sm btn-outline-info social-share" 
+                                   target="_blank"
+                                   title="Partager sur Twitter"
+                                   onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                                    <i class="fab fa-twitter"></i>
+                                </a>
+                                
+                                <!-- WhatsApp -->
+                                <a href="https://wa.me/?text=Découvrez {{ lieu.name|url_encode }} - {{ absolute_url(path('app_lieu_details', {'id': lieu.id})) }}" 
+                                   class="btn btn-sm btn-outline-success social-share" 
+                                   target="_blank"
+                                   title="Partager sur WhatsApp">
+                                    <i class="fab fa-whatsapp"></i>
+                                </a>
+                                
+                                <!-- LinkedIn -->
+                                <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ absolute_url(path('app_lieu_details', {'id': lieu.id})) }}&title={{ lieu.name|url_encode }}&summary={{ lieu.description|slice(0, 200)|url_encode }}" 
+                                   class="btn btn-sm btn-outline-primary social-share" 
+                                   target="_blank"
+                                   title="Partager sur LinkedIn"
+                                   onclick="window.open(this.href, 'linkedin-share', 'width=600,height=494');return false;">
+                                    <i class="fab fa-linkedin-in"></i>
+                                </a>
+
+                                <!-- Email -->
+                                <a href="mailto:?subject={{ lieu.name|url_encode }}&body=Découvrez ce lieu exceptionnel : {{ absolute_url(path('app_lieu_details', {'id': lieu.id})) }}" 
+                                   class="btn btn-sm btn-outline-secondary social-share" 
+                                   title="Partager par email">
+                                    <i class="fas fa-envelope"></i>
+                                </a>
+
+                                <!-- Copy Link -->
+                                <button class="btn btn-sm btn-outline-dark social-share" 
+                                        title="Copier le lien"
+                                        onclick="copyToClipboard('{{ absolute_url(path('app_lieu_details', {'id': lieu.id})) }}')">
+                                    <i class="fas fa-link"></i>
+                                </button>
+                            </div>
+                            <button class="btn btn-icon btn-label-danger" onclick="toggleFavorite(this)">
+                                <i class="ti ti-heart"></i>
+                            </button>
+                        </div>
+                        <img src="{{ asset(lieu.imageUrl|default('default.jpg')) }}" 
+                             class="lieu-cover-image" 
+                             alt="{{ lieu.name }}">
+                        <div class="lieu-header-overlay">
+                            <h1 class="lieu-title">{{ lieu.name }}</h1>
+                            <div class="lieu-meta">
+                                <span class="badge bg-primary">{{ lieu.category|default('Non spécifié') }}</span>
+                                {% if lieu.price < 1000 %}
+                                    <span class="badge bg-success">Économique</span>
+                                {% endif %}
+                                {% if lieu.capacity > 500 %}
+                                    <span class="badge bg-warning">Grande capacité</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Info Cards -->
+                    <div class="row mb-30">
+                        <div class="col-md-4 mb-3">
+                            <div class="card bg-label-primary h-100">
+                                <div class="card-body">
+                                    <div class="feature-box">
+                                        <div class="feature-box-icon">
+                                            <i class="fas fa-euro-sign"></i>
+                                        </div>
+                                        <div>
+                                            <h5 class="mb-1">Prix</h5>
+                                            <div style="display: flex; align-items: center; gap: 10px;">
+                                                <span id="lieu-price" data-base-price="{{ lieu.price }}">{{ lieu.price }} €</span>
+                                                <select id="currency-selector" class="form-select form-select-sm" style="width: auto; display: inline-block;">
+                                                    <option value="EUR">€ Euro</option>
+                                                    <option value="TND">TND Dinar</option>
+                                                    <option value="USD">$ Dollar</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="card bg-label-success h-100">
+                                <div class="card-body">
+                                    <div class="feature-box">
+                                        <div class="feature-box-icon">
+                                            <i class="fas fa-users"></i>
+                                        </div>
+                                        <div>
+                                            <h5 class="mb-1">Capacité</h5>
+                                            <p class="mb-0">{{ lieu.capacity }} personnes</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="card bg-label-info h-100">
+                                <div class="card-body">
+                                    <div class="feature-box">
+                                        <div class="feature-box-icon">
+                                            <i class="fas fa-map-marker-alt"></i>
+                                        </div>
+                                        <div>
+                                            <h5 class="mb-1">Localisation</h5>
+                                            <p class="mb-0">{{ lieu.location }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="card mb-30">
+                        <div class="card-body">
+                            <h3 class="section-title">Description</h3>
+                            <p class="lieu-description">
+                                {{ lieu.description|default('Aucune description disponible pour ce lieu.')|nl2br }}
+                            </p>
+                            
+                            <!-- Boutons de partage social -->
+                            <div class="social-share-section mt-4">
+                                <h4 class="mb-3">Partager ce lieu</h4>
+                                <div class="social-share-buttons">
+                                    <!-- Facebook -->
+                                    <a href="https://www.facebook.com/sharer/sharer.php?u={{ absolute_url(path('app_lieu_details', {'id': lieu.id})) }}" 
+                                       class="btn btn-outline-primary social-share" 
+                                       target="_blank"
+                                       onclick="window.open(this.href, 'facebook-share', 'width=580,height=296');return false;"
+                                       title="Partager sur Facebook">
+                                        <i class="fab fa-facebook-f"></i>
+                                    </a>
+                                    
+                                    <!-- Twitter -->
+                                    <a href="https://twitter.com/intent/tweet?url={{ absolute_url(path('app_lieu_details', {'id': lieu.id})) }}&text=Découvrez {{ lieu.name|url_encode }} - Un lieu exceptionnel pour vos événements" 
+                                       class="btn btn-outline-info social-share" 
+                                       target="_blank"
+                                       onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;"
+                                       title="Partager sur Twitter">
+                                        <i class="fab fa-twitter"></i>
+                                    </a>
+                                    
+                                    <!-- WhatsApp -->
+                                    <a href="https://wa.me/?text=Découvrez {{ lieu.name|url_encode }} - {{ absolute_url(path('app_lieu_details', {'id': lieu.id})) }}" 
+                                       class="btn btn-outline-success social-share" 
+                                       target="_blank"
+                                       title="Partager sur WhatsApp">
+                                        <i class="fab fa-whatsapp"></i>
+                                    </a>
+                                    
+                                    <!-- LinkedIn -->
+                                    <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ absolute_url(path('app_lieu_details', {'id': lieu.id})) }}&title={{ lieu.name|url_encode }}&summary={{ lieu.description|slice(0, 200)|url_encode }}" 
+                                       class="btn btn-outline-primary social-share" 
+                                       target="_blank"
+                                       onclick="window.open(this.href, 'linkedin-share', 'width=600,height=494');return false;"
+                                       title="Partager sur LinkedIn">
+                                        <i class="fab fa-linkedin-in"></i>
+                                    </a>
+
+                                    <!-- Email -->
+                                    <a href="mailto:?subject={{ lieu.name|url_encode }}&body=Découvrez ce lieu exceptionnel : {{ absolute_url(path('app_lieu_details', {'id': lieu.id})) }}" 
+                                       class="btn btn-outline-secondary social-share" 
+                                       title="Partager par email">
+                                        <i class="fas fa-envelope"></i>
+                                    </a>
+
+                                    <!-- Copy Link -->
+                                    <button class="btn btn-outline-dark social-share" 
+                                            onclick="copyToClipboard('{{ absolute_url(path('app_lieu_details', {'id': lieu.id})) }}')"
+                                            title="Copier le lien">
+                                        <i class="fas fa-link"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Features -->
+                    <div class="card mb-30">
+                        <div class="card-body">
+                            <h3 class="section-title">Équipements & Services</h3>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="feature-box">
+                                        <i class="fas fa-check feature-box-icon"></i>
+                                        <span>Salle climatisée</span>
+                                    </div>
+                                    <div class="feature-box">
+                                        <i class="fas fa-check feature-box-icon"></i>
+                                        <span>Parking privé</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="feature-box">
+                                        <i class="fas fa-check feature-box-icon"></i>
+                                        <span>Cuisine équipée</span>
+                                    </div>
+                                    <div class="feature-box">
+                                        <i class="fas fa-check feature-box-icon"></i>
+                                        <span>Accès handicapé</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Gallery -->
+                    <div class="card mb-30">
+                        <div class="card-body">
+                            <h3 class="section-title">Galerie</h3>
+                            <div class="row g-3">
+                                {% for i in 1..4 %}
+                                <div class="col-6 col-md-3">
+                                    <img src="{{ asset('uploads/lieux/gallery-' ~ i ~ '.jpg') }}" 
+                                         class="img-fluid rounded gallery-thumbnail" 
+                                         alt="Gallery image {{ i }}"
+                                         onclick="openGalleryModal({{ i }})">
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Map -->
+                    <!-- Leaflet CSS -->
+                    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="anonymous" />
+                    
+                    <!-- Leaflet JavaScript -->
+                    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="anonymous"></script>
+                    
+                    <style>
+                    #map { height: 400px; width: 100%; border-radius: 8px; margin-bottom: 30px; }
+                    </style>
+                    <div class="card mb-30">
+                        <div class="card-body">
+                            <h3 class="section-title">Localisation</h3>
+                            <div id="map"></div>
+                        </div>
+                    </div>
+
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function() {
+                            var coordinates = '{{ lieu.location }}'.split(',').map(Number);
+                            var lat = coordinates[1];
+                            var lng = coordinates[0];
+                            
+                            var map = L.map('map').setView([lat, lng], 13);
+                            
+                            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                                attribution: '© OpenStreetMap contributors'
+                            }).addTo(map);
+
+                            var marker = L.marker([lat, lng]).addTo(map)
+                                .bindPopup('{{ lieu.name }}')
+                                .openPopup();
+                        });
+                    </script>
+                    <!-- Reviews -->
+                    <div class="card">
+                        <div class="card-body">
+                            <h3 class="section-title">Avis</h3>
+                            {% if avis|length > 0 %}
+                                {% for avi in avis %}
+                                    <div class="review-item">
+                                        <div class="d-flex justify-content-between">
+                                            <div>
+                                                <h6 class="review-user">{{ avi.userName }}</h6>
+                                                <span class="review-date">{{ avi.createdAt|date('d/m/Y H:i') }}</span>
+                                            </div>
+                                            <div class="star-rating">
+                                                {% for i in 1..5 %}
+                                                    {% if i <= avi.rating %}
+                                                        <i class="fas fa-star"></i>
+                                                    {% else %}
+                                                        <i class="far fa-star"></i>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                        <p class="mt-2 mb-0">{{ avi.comment }}</p>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                <div class="text-center py-4">
+                                    <i class="fas fa-comment-slash fs-3 mb-2 text-muted"></i>
+                                    <p class="mb-0">Aucun avis pour ce lieu pour le moment.</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Booking and Similar Lieux -->
+                <div class="col-lg-4">
+                   <!-- Booking Card -->
+<div class="booking-card mb-30" id="bookingSection">
+    <h3 class="section-title">Réserver ce lieu</h3>
+
+    {% for flash_message in app.flashes('success') %}
+        <div class="alert alert-success mb-3">
+            {{ flash_message }}
+        </div>
+    {% endfor %}
+    
+    {% for flash_message in app.flashes('error') %}
+        <div class="alert alert-danger mb-3">
+            {{ flash_message }}
+        </div>
+    {% endfor %}
+
+    <form id="bookingForm" method="POST" action="{{ path('app_reserver_lieu') }}" novalidate>
+        <input type="hidden" name="lieu_id" value="{{ lieu.id }}">
+        <input type="hidden" name="user_id" value="{{ app.user.id }}">
+        
+        <div class="mb-3">
+            <label class="form-label">Événement</label>
+            <select class="form-control" name="event_id" required>
+                <option value="">Sélectionnez un événement</option>
+                {% for event in events %}
+                    <option value="{{ event.id }}">{{ event.nom }} - {{ event.date|date('d/m/Y') }}</option>
+                {% endfor %}
+            </select>
+            {% if errors.event_id is defined %}
+              <div class="invalid-feedback d-block">{{ errors.event_id|first }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="mb-3">
+            <label class="form-label">Date de réservation</label>
+            <input type="date" class="form-control" name="date_reservation" required min="{{ "now"|date("Y-m-d") }}">
+            {% if errors.date_reservation is defined %}
+              <div class="invalid-feedback d-block">{{ errors.date_reservation|first }}</div>
+            {% endif %}
+        </div>
+        
+        <button type="submit" class="th-btn w-100" id="submitBtn">
+            <i class="fas fa-calendar-plus me-2"></i> Réserver maintenant
+        </button>
+    </form>
+</div>
+
+                    <!-- Similar Lieux -->
+                    {% if similarLieux|length > 0 %}
+                        <div class="card">
+                            <div class="card-body">
+                                <h3 class="section-title">Lieux similaires</h3>
+                                {% for similar in similarLieux %}
+                                    <a href="{{ path('app_lieu_details', {'id': similar.id}) }}" class="similar-lieu-item">
+                                        <img src="{{ asset('uploads/lieux/' ~ similar.imageUrl|default('default.jpg')) }}" 
+                                             class="similar-lieu-image" 
+                                             alt="{{ similar.name }}">
+                                        <div>
+                                            <h6 class="mb-1">{{ similar.name }}</h6>
+                                            <p class="mb-0 text-primary">{{ similar.price }} €</p>
+                                        </div>
+                                    </a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Modal -->
+    <div class="modal fade" id="galleryModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <img id="modalImage" src="" class="img-fluid" alt="">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Review Modal -->
+    <div class="modal fade" id="reviewModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Ajouter un avis</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="reviewForm">
+                        <div class="mb-3">
+                            <label class="form-label">Note</label>
+                            <div class="star-rating">
+                                <i class="far fa-star rating-star" data-value="1"></i>
+                                <i class="far fa-star rating-star" data-value="2"></i>
+                                <i class="far fa-star rating-star" data-value="3"></i>
+                                <i class="far fa-star rating-star" data-value="4"></i>
+                                <i class="far fa-star rating-star" data-value="5"></i>
+                                <input type="hidden" name="rating" id="ratingInput" value="0">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Commentaire</label>
+                            <textarea class="form-control" rows="4" placeholder="Décrivez votre expérience..."></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="th-btn style2" data-bs-dismiss="modal">Annuler</button>
+                    <button type="button" class="th-btn" onclick="submitReview()">Soumettre</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer-wrapper footer-layout7" data-bg-src="{{ asset('Front/img/bg/footer_bg_1.jpg') }}">
+        <div class="widget-area">
+            <div class="container">
+                <div class="row justify-content-between">
+                    <div class="col-md-6 col-xl-auto">
+                        <div class="widget footer-widget">
+                            <div class="th-widget-about">
+                                <div class="about-logo">
+                                    <a href="index.html"><img src="{{ asset('Front/img/logo-white3.svg') }}" alt="GoldenTouch"></a>
+                                </div>
+                                <p class="about-text">GoldenTouch révolutionne la planification d'événements avec des solutions tout-en-un pour des expériences inoubliables.</p>
+                                <div class="working-time">
+                                    <span class="title">HORAIRES D'OUVERTURE</span>
+                                    <p class="desc">Lun-Sam : 09h00 à 18h30</p>
+                                </div>
+                                <div class="th-social footer-social">
+                                    <a href="https://www.facebook.com/"><i class="fab fa-facebook-f"></i></a>
+                                    <a href="https://www.twitter.com/"><i class="fab fa-twitter"></i></a>
+                                    <a href="https://www.linkedin.com/"><i class="fab fa-linkedin-in"></i></a>
+                                    <a href="https://www.instagram.com/"><i class="fab fa-instagram"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-xl-2">
+                        <div class="widget widget_nav_menu footer-widget">
+                            <h3 class="widget_title">Liens rapides</h3>
+                            <div class="menu-all-pages-container">
+                                <ul class="menu">
+                                    <li><a href="about.html">À propos</a></li>
+                                    <li><a href="{{ path('app_lieu_index') }}">Lieux</a></li>
+                                    <li><a href="contact.html">Contact</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-xl-auto">
+                        <div class="widget footer-widget">
+                            <h3 class="widget_title">Coordonnées</h3>
+                            <div class="th-widget-about">
+                                <h4 class="footer-info-title">Téléphone</h4>
+                                <p class="footer-info"><i class="fa-sharp fa-solid fa-phone"></i><a class="text-inherit"
+                                        href="tel:+33123456789">+33 1 23 45 67 89</a></p>
+                                <h4 class="footer-info-title">Email</h4>
+                                <p class="footer-info"><i class="fas fa-envelope"></i><a class="text-inherit"
+                                        href="mailto:contact@goldentouch.com">contact{{ '@' }}goldentouch.com</a></p>
+                                <h4 class="footer-info-title">Adresse</h4>
+                                <p class="footer-info"><i class="fas fa-map-marker-alt"></i>123 Rue des Événements, 75001 Paris, France</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-xl-3">
+                        <div class="widget footer-widget">
+                            <h4 class="widget_title">Newsletter</h4>
+                            <div class="newsletter-widget">
+                                <p class="md-20">Abonnez-vous pour recevoir nos actualités et offres exclusives.</p>
+                                <div class="footer-search-contact mt-25">
+                                    <form>
+                                        <input class="form-control" type="email" placeholder="Votre email">
+                                    </form>
+                                    <div class="footer-btn mt-10">
+                                        <button type="submit" class="th-btn style3 fw-btn">S'abonner <i
+                                                class="fa-regular fa-arrow-right"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="copyright-wrap">
+            <div class="container">
+                <p class="copyright-text">© 2023 <a href="#">GoldenTouch</a>. Tous droits réservés.</p>
+            </div>
+        </div>
+        <div class="footer-shape"><img src="{{ asset('Front/img/shape/footer_shape.png') }}" alt="forme"></div>
+    </footer>
+
+    <!-- Scroll To Top -->
+    <div class="scroll-top">
+        <svg class="progress-circle svg-content" width="100%" height="100%" viewBox="-1 -1 102 102">
+            <path d="M50,1 a49,49 0 0,1 0,98 a49,49 0 0,1 0,-98" style="transition: stroke-dashoffset 10ms linear 0s; stroke-dasharray: 307.919, 307.919; stroke-dashoffset: 307.919;"></path>
+        </svg>
+    </div>
+
+    <!-- All Js File -->
+    <script src="{{ asset('Front/js/vendor/jquery-3.6.0.min.js') }}"></script>
+    <script src="{{ asset('Front/js/slick.min.js') }}"></script>
+    <script src="{{ asset('Front/js/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('Front/js/jquery.magnific-popup.min.js') }}"></script>
+    <script src="{{ asset('Front/js/jquery.counterup.min.js') }}"></script>
+    <script src="{{ asset('Front/js/imagesloaded.pkgd.min.js') }}"></script>
+    <script src="{{ asset('Front/js/isotope.pkgd.min.js') }}"></script>
+    <script src="{{ asset('Front/js/nice-select.min.js') }}"></script>
+    <script src="{{ asset('Front/js/jquery.datetimepicker.min.js') }}"></script>
+    <script src="{{ asset('Front/js/wow.min.js') }}"></script>
+    <script src="{{ asset('Front/js/main.js') }}"></script>
+
+    <!-- Google Maps API -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap" async defer></script>
+
+    <script>
+    // Custom form validation
+function validateDate(input) {
+    const selectedDate = new Date(input.value);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    if (selectedDate < today) {
+        input.setCustomValidity('La date ne peut pas être dans le passé');
+        input.classList.add('is-invalid');
+    } else {
+        input.setCustomValidity('');
+        input.classList.remove('is-invalid');
+    }
+}
+
+function validateCapacity(input, maxCapacity) {
+    const value = parseInt(input.value);
+    
+    if (isNaN(value) {
+        input.setCustomValidity('Veuillez entrer un nombre valide');
+        input.classList.add('is-invalid');
+    } else if (value < 1 || value > maxCapacity) {
+        input.setCustomValidity(`Le nombre doit être entre 1 et ${maxCapacity}`);
+        input.classList.add('is-invalid');
+    } else {
+        input.setCustomValidity('');
+        input.classList.remove('is-invalid');
+    }
+}
+
+// Form submission handling
+document.getElementById('bookingForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const form = e.target;
+    const submitBtn = form.querySelector('#submitBtn');
+    
+    // Désactiver le bouton pendant le traitement
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Traitement...';
+    
+    // Soumettre le formulaire
+    form.submit();
+});
+
+// Reset validation on form reset
+document.getElementById('bookingForm').addEventListener('reset', function() {
+    this.classList.remove('was-validated');
+    const inputs = this.querySelectorAll('.is-invalid');
+    inputs.forEach(input => input.classList.remove('is-invalid'));
+});
+        // Initialize map
+        function initMap() {
+            // Replace with actual coordinates from your Lieu entity
+            const location = { lat: 36.8065, lng: 10.1815 }; // Example: Tunis coordinates
+            const map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 15,
+                center: location,
+            });
+            new google.maps.Marker({
+                position: location,
+                map: map,
+                title: "{{ lieu.name }}"
+            });
+        }
+
+        // Gallery modal
+        function openGalleryModal(imageNumber) {
+            const modalImage = document.getElementById('modalImage');
+            modalImage.src = "{{ asset('uploads/lieux/gallery-') }}" + imageNumber + ".jpg";
+            const modal = new bootstrap.Modal(document.getElementById('galleryModal'));
+            modal.show();
+        }
+
+        // Share lieu
+        function shareLieu() {
+            if (navigator.share) {
+                navigator.share({
+                    title: '{{ lieu.name }}',
+                    text: 'Découvrez ce magnifique lieu pour vos événements',
+                    url: '{{ absolute_url(path('app_lieu_details', {'id': lieu.id})) }}'
+                }).then(() => {
+                    console.log('Partage réussi');
+                }).catch((error) => {
+                    console.log('Erreur de partage:', error);
+                });
+            } else {
+                // Fallback pour les navigateurs qui ne supportent pas l'API Web Share
+                const shareButtons = document.querySelector('.social-share-buttons');
+                shareButtons.style.display = 'flex';
+            }
+        }
+
+        // Toggle favorite
+        function toggleFavorite(button) {
+            const icon = button.querySelector('i');
+            if (icon.classList.contains('fa-heart')) {
+                icon.classList.remove('fa-heart');
+                icon.classList.add('fa-heart');
+                button.classList.remove('btn-label-danger');
+                button.classList.add('btn-danger');
+            } else {
+                icon.classList.remove('fa-heart');
+                icon.classList.add('fa-heart');
+                button.classList.remove('btn-danger');
+                button.classList.add('btn-label-danger');
+            }
+        }
+
+       // Handle booking form submission
+document.getElementById('bookingForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    // Validate form
+    const dateInput = this.querySelector('input[name="date"]');
+    const peopleInput = this.querySelector('input[name="people"]');
+    const eventTypeInput = this.querySelector('select[name="event_type"]');
+    
+    if (!dateInput.value) {
+        alert('Veuillez sélectionner une date');
+        return;
+    }
+    
+    if (!peopleInput.value || peopleInput.value < 1 || peopleInput.value > {{ lieu.capacity }}) {
+        alert('Veuillez entrer un nombre valide de personnes (1-{{ lieu.capacity }})');
+        return;
+    }
+    
+    if (!eventTypeInput.value) {
+        alert('Veuillez sélectionner un type d\'événement');
+        return;
+    }
+    
+    // Submit form if validation passes
+    this.submit();
+});
+
+        // Rating stars interaction
+        document.querySelectorAll('.rating-star').forEach(star => {
+            star.addEventListener('click', function() {
+                const value = this.getAttribute('data-value');
+                document.getElementById('ratingInput').value = value;
+                
+                // Update stars display
+                document.querySelectorAll('.rating-star').forEach(s => {
+                    if (s.getAttribute('data-value') <= value) {
+                        s.classList.add('fas');
+                        s.classList.add('fa-star');
+                        s.classList.remove('far');
+                    } else {
+                        s.classList.remove('fas');
+                        s.classList.add('far');
+                    }
+                });
+            });
+        });
+
+        // Submit review
+        function submitReview() {
+            const rating = document.getElementById('ratingInput').value;
+            if (rating == 0) {
+                alert('Veuillez donner une note');
+                return;
+            }
+            
+            alert('Merci pour votre avis !');
+            const modal = bootstrap.Modal.getInstance(document.getElementById('reviewModal'));
+            modal.hide();
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+    const bookingForm = document.getElementById('bookingForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const formMessage = document.getElementById('formMessage');
+
+    bookingForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        // Validation côté client
+        if (!bookingForm.checkValidity()) {
+            bookingForm.classList.add('was-validated');
+            return;
+        }
+
+        // Désactiver le bouton pendant le traitement
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Traitement...';
+
+        try {
+            const formData = new FormData(bookingForm);
+            const response = await fetch(bookingForm.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Accept': 'application/json'
+                }
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                // Succès
+                formMessage.innerHTML = `
+                    <div class="alert alert-success">
+                        ${result.message || 'Réservation effectuée avec succès!'}
+                    </div>
+                `;
+                bookingForm.reset();
+                bookingForm.classList.remove('was-validated');
+                
+                // Redirection après 2 secondes
+                setTimeout(() => {
+                }, 2000);
+            } else {
+                // Erreur
+                formMessage.innerHTML = `
+                    <div class="alert alert-danger">
+                        ${result.message || 'Une erreur est survenue lors de la réservation.'}
+                    </div>
+                `;
+            }
+        } catch (error) {
+            formMessage.innerHTML = `
+                <div class="alert alert-danger">
+                    Erreur réseau: ${error.message}
+                </div>
+            `;
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-calendar-plus me-2"></i> Réserver maintenant';
+        }
+    });
+});
+    </script>
+<!-- OpenRouteService Maps Integration -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="anonymous"></script>
+<style>
+#map { height: 400px; width: 100%; border-radius: 8px; margin-bottom: 30px; }
+</style>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const map = L.map('map').setView([36.8065, 10.1815], 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    const apiKey = '5b3ce3597851110001cf6248215ca5eaf6354c12be798042e76b3e0a';
+    const locationInput = '{{ lieu.location }}';
+
+    fetch(`https://api.openrouteservice.org/geocode/search?api_key=${apiKey}&text=${encodeURIComponent(locationInput)}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.features && data.features.length > 0) {
+                const coordinates = data.features[0].geometry.coordinates;
+                const marker = L.marker([coordinates[1], coordinates[0]]).addTo(map);
+                map.setView([coordinates[1], coordinates[0]], 15);
+                marker.bindPopup(`<b>{{ lieu.name }}</b><br>{{ lieu.location }}`).openPopup();
+            }
+        })
+        .catch(error => console.error('Erreur de géocodage:', error));
+});
+</script>
+        // Ajout du script pour la conversion de devise -->
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const apiKey = 'f43d95965f40837e335d9584';
+                const priceElement = document.getElementById('lieu-price');
+                const currencySelector = document.getElementById('currency-selector');
+                let basePrice = parseFloat(priceElement.getAttribute('data-base-price'));
+                let rates = { EUR: 1, TND: null, USD: null };
+        
+                function updatePriceDisplay(currency) {
+                    let converted = basePrice;
+                    if (currency !== 'EUR' && rates[currency]) {
+                        converted = basePrice * rates[currency];
+                    }
+                    let symbol = currency === 'EUR' ? '€' : (currency === 'USD' ? '$' : 'TND');
+                    priceElement.textContent = converted.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' ' + symbol;
+                }
+        
+                function fetchRates() {
+                    fetch(`https://v6.exchangerate-api.com/v6/${apiKey}/latest/EUR`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.result === 'success') {
+                                rates.USD = data.conversion_rates.USD;
+                                rates.TND = data.conversion_rates.TND;
+                            }
+                        })
+                        .catch(() => {});
+                }
+        
+                currencySelector.addEventListener('change', function() {
+                    const selected = this.value;
+                    if (selected === 'EUR' || (rates[selected] && rates[selected] !== null)) {
+                        updatePriceDisplay(selected);
+                    } else {
+                        fetchRates();
+                        setTimeout(() => updatePriceDisplay(selected), 500);
+                    }
+                });
+        
+                // Initial fetch for rates
+                fetchRates();
+            });
+        </script>
+
+    <script>
+    // Fonction pour copier le lien dans le presse-papiers
+    function copyToClipboard(text) {
+        navigator.clipboard.writeText(text).then(function() {
+            // Afficher une notification de succès
+            const notification = document.createElement('div');
+            notification.className = 'alert alert-success position-fixed top-0 end-0 m-3';
+            notification.style.zIndex = '9999';
+            notification.innerHTML = '<i class="fas fa-check-circle me-2"></i>Lien copié dans le presse-papiers!';
+            document.body.appendChild(notification);
+            
+            // Supprimer la notification après 3 secondes
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }).catch(function(err) {
+            console.error('Erreur lors de la copie: ', err);
+        });
+    }
+
+    // Ajouter le bouton de partage natif pour les appareils mobiles
+    document.addEventListener('DOMContentLoaded', function() {
+        if (navigator.share) {
+            const shareButtons = document.querySelector('.social-share-buttons');
+            const nativeShareButton = document.createElement('button');
+            nativeShareButton.className = 'btn btn-outline-primary social-share';
+            nativeShareButton.innerHTML = '<i class="fas fa-share-alt"></i>';
+            nativeShareButton.onclick = function() {
+                navigator.share({
+                    title: '{{ lieu.name }}',
+                    text: 'Découvrez ce magnifique lieu pour vos événements',
+                    url: '{{ absolute_url(path('app_lieu_details', {'id': lieu.id})) }}'
+                }).catch(console.error);
+            };
+            shareButtons.insertBefore(nativeShareButton, shareButtons.firstChild);
+        }
+    });
+    </script>
+
+    <script>
+    function shareContent(title, text, url) {
+        // ... existing code ...
+    }
+    </script>
+
+    <style>
+    // ... existing code ...
+    </style>
+</body>
+</html>

@@ -1,0 +1,290 @@
+
+
+
+
+{% extends 'front.html.twig' %}
+
+{% block title %}Draft Events{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        /* Improved Sorting Dropdown Styles */
+        .sorting-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .sort-label {
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 0;
+        }
+        
+        .custom-select-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .custom-select {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            padding: 8px 35px 8px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            background-color: white;
+            font-size: 14px;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 180px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .custom-select:hover {
+            border-color: #FFD700;
+        }
+        
+        .custom-select:focus {
+            outline: none;
+            border-color: #FFD700;
+            box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.2);
+        }
+        
+        .custom-select-wrapper::after {
+            content: "▼";
+            font-size: 10px;
+            color: #777;
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+        }
+        
+        /* Pagination Improvements */
+        .th-pagination ul {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .th-pagination li a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 1px solid #e0e0e0;
+            color: #555;
+            transition: all 0.3s ease;
+        }
+        
+        .th-pagination li a:hover {
+            background-color: #FFD700;
+            color: white;
+            border-color: #FFD700;
+        }
+        
+        .th-pagination li.active a {
+            background-color: #FFD700;
+            color: white;
+            border-color: #FFD700;
+            font-weight: bold;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 767px) {
+            .th-sort-bar .row {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .sorting-container {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .custom-select {
+                min-width: 160px;
+            }
+        }
+
+        .product-img {
+    position: relative;
+    overflow: hidden;
+}
+
+.event-type-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: rgba(255, 215, 0, 0.9);
+    color: #000;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+.event-card:hover .event-type-badge {
+    background: rgba(255, 215, 0, 1);
+    transform: translateY(-2px);
+}
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="custom-content">
+ <section class="space-top space-extra-bottom">
+    <div class="container">
+        <div class="row justify-content-center">
+            <input type="hidden" name="_token" value="{{ csrf_token('add_to_cart') }}">
+
+            <!-- Main Content -->
+            <div class="col-lg-10 col-xl-8 mx-auto">
+                <div class="th-sort-bar mb-4">
+                    <div class="row justify-content-between align-items-center">
+                        <div class="col-md-auto mb-3 mb-md-0">
+                            <p class="woocommerce-result-count mb-0">
+                                Résultats {{ ((currentPage - 1) * pageSize + 1 )}} à {{ min(currentPage * pageSize, totalItems) }} sur {{ totalItems }} affichés
+                            </p>
+                        </div>
+                       <div class="col-md-auto">
+    <div class="sorting-container">
+        <span class="sort-label">Trier par:</span>
+ <div class="custom-select-wrapper">
+    <form class="woocommerce-ordering" method="get">
+        <input type="hidden" name="page" value="1">
+        <select name="orderby" class="custom-select" aria-label="Sort order" onchange="this.form.submit()">
+            <option value="date" {{ app.request.query.get('orderby') == 'date' and app.request.query.get('sort') == 'DESC' ? 'selected' }}>Date (Plus récent)</option>
+            <option value="date" {{ app.request.query.get('orderby') == 'date' and app.request.query.get('sort') == 'ASC' ? 'selected' }}>Date (Plus ancien)</option>
+            <option value="name" {{ app.request.query.get('orderby') == 'name' and app.request.query.get('sort') == 'ASC' ? 'selected' }}>Nom (A-Z)</option>
+            <option value="name" {{ app.request.query.get('orderby') == 'name' and app.request.query.get('sort') == 'DESC' ? 'selected' }}>Nom (Z-A)</option>
+            <option value="category" {{ app.request.query.get('orderby') == 'category' and app.request.query.get('sort') == 'ASC' ? 'selected' }}>Catégorie (A-Z)</option>
+            <option value="category" {{ app.request.query.get('orderby') == 'category' and app.request.query.get('sort') == 'DESC' ? 'selected' }}>Catégorie (Z-A)</option>
+        </select>
+        <input type="hidden" name="sort" id="sortDirection" value="{{ app.request.query.get('sort', 'DESC') }}">
+        {% for key, value in app.request.query.all %}
+            {% if key not in ['orderby', 'page', 'sort'] %}
+                <input type="hidden" name="{{ key }}" value="{{ value }}">
+            {% endif %}
+        {% endfor %}
+    </form>
+</div>
+    </div>
+</div>
+                    </div>
+                </div>
+
+                <div class="row gy-40 justify-content-center">
+                {% for event in events %}
+    <div class="col-md-6 col-lg-4">
+     <a href="
+    {% set firstPack = event.packs|first %}
+    {% if event.type == 'PACK' and firstPack is not null %}
+        {{ path('app_pack_shop_details', {'id': firstPack.id}) }}
+    {% else %}
+        {{ path('event_show', {'id': event.id}) }}
+    {% endif %}" 
+   class="text-decoration-none">
+            <div class="th-product event-card" 
+                 data-event-id="{{ event.id }}"
+                 data-categorie="{{ event.categorie.value }}"
+                 data-date="{{ event.date|date('Y-m-d') }}">
+                <div class="product-img">
+                    {% if event.photo %}
+                        <img src="{{ asset('uploads/packs/' ~ event.photo) }}" class="img-fluid" alt="{{ event.nom }}">
+                    {% else %}
+                        <img src="{{ asset('assets/img/placeholder.jpg') }}" class="img-fluid" alt="No image">
+                    {% endif %}
+                    <div class="event-type-badge">
+                        {{ event.type|capitalize }}
+                    </div>
+                </div>
+    
+           <div class="product-content">
+        <h3 class="product-title">{{ event.nom }}</h3>
+        <div class="d-flex justify-content-between align-items-center">
+            <span class="price">
+                {% if event.isPack %}
+                   {{ event.displayDate|date('d M Y') }}
+                {% else %}
+                    {{ event.displayDate|date('d M Y') }}
+                {% endif %}
+            </span>
+            <span class="event-category">
+                {{ categoryLabels[event.categorie.value] ?? 'Général' }}
+            </span>
+        </div>
+    </div>
+            </div>
+        </a>
+    </div>
+{% endfor %}
+                </div>
+
+                {% if totalPages > 1 %}
+                <div class="th-pagination text-center pt-50">
+                    <ul class="justify-content-center">
+                        {% if currentPage > 1 %}
+                            <li>
+                                <a href="{{ path('app_draft_events', app.request.query.all|merge({'page': currentPage - 1})) }}">
+                                    <i class="far fa-arrow-left"></i>
+                                </a>
+                            </li>
+                        {% endif %}
+
+                        {% for page in 1..totalPages %}
+                            <li class="{{ currentPage == page ? 'active' }}">
+                                <a href="{{ path('app_draft_events', app.request.query.all|merge({'page': page})) }}">{{ page }}</a>
+                            </li>
+                        {% endfor %}
+
+                        {% if currentPage < totalPages %}
+                            <li>
+                                <a href="{{ path('app_draft_events', app.request.query.all|merge({'page': currentPage + 1})) }}">
+                                    <i class="far fa-arrow-right"></i>
+                                </a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+</div>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+ document.addEventListener('DOMContentLoaded', function() {
+    const sortSelect = document.querySelector('select[name="orderby"]');
+    const sortDirectionInput = document.getElementById('sortDirection');
+    
+    sortSelect.addEventListener('change', function() {
+        // Get the selected option text to determine the sort direction
+        const selectedText = this.options[this.selectedIndex].text;
+        
+        // Set sort direction based on the option text
+        if (selectedText.includes('(Plus récent)') || 
+            selectedText.includes('(A-Z)') || 
+            selectedText.includes('(Plus ancien)')) {
+            sortDirectionInput.value = selectedText.includes('(Plus ancien)') ? 'ASC' : 'DESC';
+        } else if (selectedText.includes('(Z-A)')) {
+            sortDirectionInput.value = 'DESC';
+        }
+        
+        this.form.submit();
+    });
+});
+    </script>
+{% endblock %}

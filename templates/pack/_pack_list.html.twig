@@ -1,0 +1,89 @@
+<div class="row gy-40">
+    {% if packs|length == 0 %}
+        <div class="col-12">
+            <div class="alert alert-warning">Aucun pack trouvé pour votre recherche.</div>
+        </div>
+    {% else %}
+        {% for pack in packs %}
+        <div class="col-xl-4 col-sm-6">
+            <div class="th-product">
+                <div class="product-img">
+                    {% if pack.getPhoto() %}
+                        <img src="{{ asset('uploads/packs/' ~ pack.getPhoto()) }}" alt="{{ pack.getNom() }}">
+                    {% else %}
+                        <img src="{{ asset('Front/img/placeholder.jpg') }}" alt="Image du pack">
+                    {% endif %}
+                    <div class="actions">
+                        <a href="{{ path('app_pack_shop_details', {'id': pack.id}) }}" class="icon-btn"><i class="far fa-eye"></i></a>
+                        <a href="{{ path('app_pack_booking', {'id': pack.id}) }}" class="icon-btn"><i class="far fa-cart-plus"></i></a>
+                        <a href="#" class="icon-btn"><i class="far fa-heart"></i></a>
+                    </div>
+                </div>
+                <div class="product-content">
+                    {% set avis = pack.avis is defined ? pack.avis : [] %}
+                    {% set review_count = avis|length %}
+                    {% set total_rating = 0 %}
+                    {% for review in avis %}
+                        {% set total_rating = total_rating + review.note %}
+                    {% endfor %}
+                    {% set average_rating = review_count > 0 ? (total_rating / review_count)|round(2) : 0 %}
+                    <div class="star-rating" role="img" aria-label="Rated {{ average_rating }} out of 5 based on {{ review_count }} customer rating{{ review_count == 1 ? '' : 's' }}">
+                        <span style="width:{{ (average_rating / 5 * 100)|number_format(0) }}%">
+                            Rated <strong class="rating">{{ average_rating }}</strong> out of 5 based on <span class="rating">{{ review_count }}</span> customer rating{{ review_count == 1 ? '' : 's' }}
+                        </span>
+                    </div>
+                    <a href="#reviews" class="woocommerce-review-link">(<span class="count">{{ review_count }}</span> customer review{{ review_count == 1 ? '' : 's' }})</a>
+                    <h3 class="product-title"><a href="{{ path('app_pack_shop_details', {'id': pack.id}) }}">{{ pack.nom }}</a></h3>
+                    <div class="pack-meta">
+                        <span class="price">{{ pack.getPrix()|number_format(2, '.', '') }}&nbsp;€</span>
+                        <span class="pack-capacity"><i class="fas fa-users"></i> {{ pack.capacite }} personnes</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% endif %}
+</div>
+
+<div class="th-pagination text-center pt-50">
+    <ul>
+        {% if packs.pageCount is defined and packs.pageCount > 1 %}
+            {% if packs.currentPageNumber is defined and packs.currentPageNumber != 1 %}
+                <li>
+                    <a href="{{ path('app_pack_index', {
+                        'page': packs.currentPageNumber - 1,
+                        'category': selectedCategory,
+                        'minPrice': minPrice,
+                        'maxPrice': maxPrice
+                    }) }}">
+                        <i class="far fa-arrow-left"></i>
+                    </a>
+                </li>
+            {% endif %}
+
+            {% for i in 1..packs.pageCount %}
+                <li{% if i == packs.currentPageNumber %} class="active"{% endif %}>
+                    <a href="{{ path('app_pack_index', {
+                        'page': i,
+                        'category': selectedCategory,
+                        'minPrice': minPrice,
+                        'maxPrice': maxPrice
+                    }) }}">{{ i }}</a>
+                </li>
+            {% endfor %}
+
+            {% if packs.currentPageNumber is defined and packs.currentPageNumber != packs.pageCount %}
+                <li>
+                    <a href="{{ path('app_pack_index', {
+                        'page': packs.currentPageNumber + 1,
+                        'category': selectedCategory,
+                        'minPrice': minPrice,
+                        'maxPrice': maxPrice
+                    }) }}">
+                        <i class="far fa-arrow-right"></i>
+                    </a>
+                </li>
+            {% endif %}
+        {% endif %}
+    </ul>
+</div>
