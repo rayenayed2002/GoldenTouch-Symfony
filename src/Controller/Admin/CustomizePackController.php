@@ -244,7 +244,7 @@ class CustomizePackController extends AbstractController
         }
 
         // Update pack status
-        $demandePack->setStatut('CONFIRMÉ');
+        $demandePack->setStatut('EN_ATTENTE_CONFIRMATION_UTILISATEUR');
         
         // Calculate total price based on selections
         $totalPrice = $this->calculateTotalPrice($data);
