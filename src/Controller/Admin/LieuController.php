@@ -459,11 +459,10 @@ public function index(): Response
     {
         $projectDir = $this->getParameter('kernel.project_dir');
         $fullUploadPath = $projectDir . '/public/uploads/lieux/Images';
-        $webPath = '/uploads/lieux/Images';
 
         if ($file && $file instanceof UploadedFile && $file->isValid()) {
             if ($lieu->getImageUrl()) {
-                $oldImagePath = $projectDir . '/public' . $lieu->getImageUrl();
+                $oldImagePath = $projectDir . '/public/uploads/lieux/' . $lieu->getImageUrl();
                 if (file_exists($oldImagePath)) {
                     unlink($oldImagePath);
                 }
@@ -478,7 +477,7 @@ public function index(): Response
             $newFilename = $safeFilename . '-' . uniqid() . '.' . $file->guessExtension();
 
             $file->move($fullUploadPath, $newFilename);
-            $lieu->setImageUrl($webPath . '/' . $newFilename);
+            $lieu->setImageUrl('Images/' . $newFilename);
         }
     }
 

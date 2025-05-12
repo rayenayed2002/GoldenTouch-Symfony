@@ -74,8 +74,7 @@ final class PersoController extends AbstractController
                 if ($imageFile) {
                     $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
                     $safeFilename = $slugger->slug($originalFilename);
-                    $newFilename = $safeFilename.'-'.uniqid().'.'.$imageFile->guessExtension();
-    
+                    $newFilename = $safeFilename . '.' . $imageFile->guessExtension();    
                     try {
                         $imageFile->move(
                             $this->getParameter('personnel_images_directory'),
@@ -85,7 +84,7 @@ final class PersoController extends AbstractController
                         $this->addFlash('warning', 'Une erreur est survenue lors du téléchargement de l\'image.');
                     }
     
-                    $personnel->setImageUrl($newFilename);
+                    $personnel->setImageUrl('Images/' . $newFilename);
                 }
     
                 $entityManager->persist($personnel);
@@ -141,8 +140,7 @@ final class PersoController extends AbstractController
     
                     $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
                     $safeFilename = $slugger->slug($originalFilename);
-                    $newFilename = $safeFilename.'-'.uniqid().'.'.$imageFile->guessExtension();
-    
+                    $newFilename = $safeFilename . '.' . $imageFile->guessExtension();    
                     try {
                         $imageFile->move(
                             $this->getParameter('personnel_images_directory'),
@@ -152,7 +150,7 @@ final class PersoController extends AbstractController
                         $this->addFlash('warning', 'Une erreur est survenue lors du téléchargement de l\'image.');
                     }
     
-                    $personnel->setImageUrl($newFilename);
+                    $personnel->setImageUrl('Images/' . $newFilename);
                 }
     
                 $entityManager->flush();
@@ -265,6 +263,12 @@ final class PersoController extends AbstractController
                     ]
                 ];
             }
+        }
+        
+        // Update image path to use 'Images/' prefix
+        $imageUrl = $personnel->getImageUrl();
+        if ($imageUrl && strpos($imageUrl, 'Images/') === false) {
+            $personnel->setImageUrl('Images/' . $imageUrl);
         }
         
         return $this->render('perso/show.html.twig', [

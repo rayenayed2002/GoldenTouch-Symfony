@@ -1300,9 +1300,15 @@
                                 </button>
                             </form>
                         </div>
+
+                        
                         
                         {% if personnel.imageUrl %}
-                        <img src="{{ asset('uploads/personnel/' ~ personnel.imageUrl) }}" class="profile-cover" alt="{{ personnel.nomP }}">
+                       <img 
+  src="{{ asset('uploads/personnel/' ~ (personnel.imageUrl|replace({'Images/': ''}))) }}" 
+  class="pack-image" 
+  alt="{{ personnel.nomP }} {{ personnel.prenomP }}"
+>
                         {% else %}
                         <div class="profile-cover bg-secondary d-flex align-items-center justify-content-center">
                             <i class="ti ti-user text-white" style="font-size: 5rem;"></i>

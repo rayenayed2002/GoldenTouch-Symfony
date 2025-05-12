@@ -28,7 +28,7 @@
                     <div class="card favori-card h-100">
                         <div class="position-relative">
                             {% if favori.lieu.imageUrl %}
-                                <img src="{{ asset(favori.lieu.imageUrl|replace({'uploads/': ''}) ) }}" 
+                                <img  src="{{ asset('uploads/lieux/Images/' ~ favori.lieu.imageUrl|replace({'/Images/': '', 'Images/': ''})) }}"
                                      class="card-img-top" 
                                      alt="{{ favori.lieu.name }}"
                                      style="height: 200px; object-fit: cover;">

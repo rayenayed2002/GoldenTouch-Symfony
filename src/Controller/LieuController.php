@@ -71,7 +71,8 @@ class LieuController extends AbstractController
             // Gestion de l'image si nécessaire
             $imageFile = $form->get('imageUrl')->getData();
             if ($imageFile) {
-                $newFilename = uniqid().'.'.$imageFile->guessExtension();
+                $safeFilename = uniqid();
+                $newFilename = $safeFilename . '.' . $imageFile->guessExtension();
                 // Déplacer le fichier vers le répertoire de stockage
                 $imageFile->move(
                     $this->getParameter('lieu_images_directory'),

@@ -207,7 +207,7 @@ class EventController extends AbstractController
             ->andWhere('dp.user = :user')
             ->andWhere('p.id IS NULL')
             ->andWhere('dc.id IS NULL')
-            ->setParameter('statutConfirme', 'CONFIRMÉ')
+            ->setParameter('statutConfirme', 'EN_ATTENTE_CONFIRMATION_UTILISATEUR')
             ->setParameter('user', $user);
 
         $eventsDemande = $qbDemande->getQuery()->getResult();
@@ -443,7 +443,7 @@ class EventController extends AbstractController
             // Check if there's a confirmed demande for this pack
             $demande = $entityManager->getRepository(DemandePack::class)->findOneBy([
                 'pack' => $pack,
-                'statut' => 'CONFIRMÉ'
+                'statut' => 'EN_ATTENTE_CONFIRMATION_UTILISATEUR'
             ]);
             
             if (!$demande) {
@@ -647,6 +647,24 @@ class EventController extends AbstractController
                             $logger->info('Persisted detail payment', [
                                 'detail_id' => $detail->getId()
                             ]);
+                            
+                            // Update DemandePack status for pack items
+                            if ($panier->getTypeEvent() === 'pack') {
+                                $pack = $em->getRepository(Pack::class)->findOneBy(['event' => $event]);
+                                if ($pack) {
+                                    $demandePack = $em->getRepository(DemandePack::class)->findOneBy([
+                                        'pack' => $pack,
+                                        'statut' => 'EN_ATTENTE_CONFIRMATION_UTILISATEUR'
+                                    ]);
+                                    if ($demandePack) {
+                                        $demandePack->setStatut('CONFIRME');
+                                        $em->persist($demandePack);
+                                        $logger->info('Updated DemandePack status to CONFIRME', [
+                                            'demande_id' => $demandePack->getId()
+                                        ]);
+                                    }
+                                }
+                            }
                         }
                     }
                 
