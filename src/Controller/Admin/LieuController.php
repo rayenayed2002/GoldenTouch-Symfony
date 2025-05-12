@@ -16,6 +16,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 // Add this at the top of your controller file
 use App\Repository\ReserverLieuRepository;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use App\Repository\UserRepository;
 #[Route('/admin/lieu', name: 'admin_lieu_')]
 class LieuController extends AbstractController
@@ -588,8 +589,6 @@ public function index(): Response
     {
         try {
             $query = $request->query->get('query');
-            $ville = $request->query->get('ville');
-            $capacity = $request->query->get('capacity');
             $category = $request->query->get('category');
             $minPrice = $request->query->get('minPrice');
             $maxPrice = $request->query->get('maxPrice');
@@ -601,16 +600,6 @@ public function index(): Response
             if ($query) {
                 $queryBuilder->andWhere('l.name LIKE :query OR l.description LIKE :query')
                     ->setParameter('query', '%' . $query . '%');
-            }
-
-            if ($ville) {
-                $queryBuilder->andWhere('l.ville LIKE :ville')
-                    ->setParameter('ville', '%' . $ville . '%');
-            }
-
-            if ($capacity) {
-                $queryBuilder->andWhere('l.capacity = :capacity')
-                    ->setParameter('capacity', (int)$capacity);
             }
 
             if ($category) {
@@ -662,8 +651,31 @@ public function index(): Response
         } catch (\Exception $e) {
             return new JsonResponse([
                 'success' => false,
-                'message' => $e->getMessage()
+                'message' => 'Une erreur est survenue lors de la recherche: ' . $e->getMessage()
             ], 500);
         }
+    }
+
+    #[Route('/{id}/calendar', name: 'calendar', methods: ['GET'])]
+    public function calendar(Lieu $lieu, ReserverLieuRepository $reserverLieuRepository): Response
+    {
+        // Récupérer les réservations pour ce lieu
+        $reservations = $reserverLieuRepository->findBy(['lieu' => $lieu]);
+        
+        // Formater les réservations pour le calendrier
+        $events = array_map(function($reservation) {
+            return [
+                'id' => $reservation->getId(),
+                'title' => 'Réservé', // Vous pouvez personnaliser le titre
+                'start' => $reservation->getDate_reservation()->format('Y-m-d'),
+                'end' => $reservation->getDate_reservation()->format('Y-m-d'),
+                'status' => $reservation->getStatus()
+            ];
+        }, $reservations);
+
+        return $this->render('admin/lieu/calendar.html.twig', [
+            'lieu' => $lieu,
+            'events' => json_encode($events)
+        ]);
     }
 }

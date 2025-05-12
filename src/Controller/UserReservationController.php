@@ -21,7 +21,7 @@ class UserReservationController extends AbstractController
         $this->entityManager = $entityManager;
     }
 
-    #[Route('/user/reservations', name: 'app_user_reservations')]
+    #[Route('/admin/user/reservations', name: 'admin_user_reservations')]
     public function index(
         Request $request,
         UtilisateurRepository $utilisateurRepository,

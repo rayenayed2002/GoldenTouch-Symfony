@@ -361,6 +361,119 @@
             color: white;
         }
     </style>
+
+    <style>
+        .price-filter {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-left: 1rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+        }
+
+        .price-slider {
+            width: 250px;
+            height: 6px;
+            -webkit-appearance: none;
+            background: linear-gradient(to right, #FFC107 0%, #FFE082 100%);
+            border-radius: 10px;
+            outline: none;
+            opacity: 0.9;
+            transition: opacity 0.2s;
+        }
+
+        .price-slider:hover {
+            opacity: 1;
+        }
+
+        .price-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #FFC107;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .price-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.1);
+            background: #FFD54F;
+        }
+
+        .price-slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: #FFC107;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .price-slider::-moz-range-thumb:hover {
+            transform: scale(1.1);
+            background: #FFD54F;
+        }
+
+        .price-slider::-webkit-slider-runnable-track {
+            height: 6px;
+            border-radius: 10px;
+            background: #e9ecef;
+        }
+
+        .price-slider::-moz-range-track {
+            height: 6px;
+            border-radius: 10px;
+            background: #e9ecef;
+        }
+
+        #priceValue {
+            min-width: 100px;
+            font-size: 1rem;
+            color: #495057;
+            font-weight: 500;
+            background: #fff;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            text-align: center;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .sort-label {
+            font-weight: 500;
+            color: #495057;
+            font-size: 0.95rem;
+            margin-bottom: 0;
+            white-space: nowrap;
+        }
+
+        @media (max-width: 768px) {
+            .price-filter {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 1rem;
+                padding: 0.8rem;
+            }
+
+            .price-slider {
+                width: 100%;
+            }
+
+            #priceValue {
+                align-self: center;
+            }
+        }
+    </style>
 </head>
 
 <body>
@@ -789,7 +902,7 @@
                     {% if lieux.hasPreviousPage %}
                         <li class="page-item">
                             <a class="page-link" 
-                               href="{{ path('app_user_reservations', {page: lieux.currentPage - 1}) }}">
+                               href="{{ path('app_lieu_user_reservations', {page: lieux.currentPage - 1}) }}">
                                 &laquo; Précédent
                             </a>
                         </li>
@@ -798,14 +911,14 @@
                     {% for i in 1..lieux.lastPage %}
                         <li class="page-item {% if i == lieux.currentPage %}active{% endif %}">
                             <a class="page-link" 
-                               href="{{ path('app_user_reservations', {page: i}) }}">{{ i }}</a>
+                               href="{{ path('app_lieu_user_reservations', {page: i}) }}">{{ i }}</a>
                         </li>
                     {% endfor %}
                     
                     {% if lieux.hasNextPage %}
                         <li class="page-item">
                             <a class="page-link" 
-                               href="{{ path('app_user_reservations', {page: lieux.currentPage + 1}) }}">
+                               href="{{ path('app_lieu_user_reservations', {page: lieux.currentPage + 1}) }}">
                                 Suivant &raquo;
                             </a>
                         </li>
@@ -868,7 +981,7 @@
                                 <div class="th-product">
                                     <div class="product-img">
                                         {% if lieu.imageUrl %}
-                                            <img src="{{ asset(lieu.imageUrl|replace({'uploads/': ''}) ) }}" alt="{{ lieu.name }}" class="img-fluid">
+                                            <img src="{{ asset(lieu.imageUrl) }}" alt="{{ lieu.name }}" class="img-fluid">
                                         {% else %}
                                             <img src="{{ asset('Front/img/placeholder.jpg') }}" alt="Lieu Image" class="img-fluid">
                                         {% endif %}
@@ -909,7 +1022,8 @@
                                 
                                 {% for i in 1..lieux.lastPage %}
                                     <li class="{% if i == lieux.currentPage %}active{% endif %}">
-                                        <a href="{{ path('app_lieu_index', {'page': i, 'filter': currentFilter, 'search': searchTerm ?? ''}) }}">{{ i }}</a>
+                                        <a class="page-link" 
+                                           href="{{ path('app_lieu_index', {'page': i, 'filter': currentFilter, 'search': searchTerm ?? ''}) }}">{{ i }}</a>
                                     </li>
                                 {% endfor %}
                                 
@@ -948,38 +1062,112 @@
     .price-filter {
         display: flex;
         align-items: center;
-        gap: 1rem;
+        gap: 1.5rem;
         margin-left: 1rem;
+        padding: 1rem;
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        border: 1px solid rgba(0, 0, 0, 0.08);
     }
 
     .price-slider {
-        width: 200px;
-        height: 8px;
+        width: 250px;
+        height: 6px;
         -webkit-appearance: none;
-        background: #e9ecef;
-        border-radius: 4px;
+        background: linear-gradient(to right, #FFC107 0%, #FFE082 100%);
+        border-radius: 10px;
         outline: none;
+        opacity: 0.9;
+        transition: opacity 0.2s;
+    }
+
+    .price-slider:hover {
+        opacity: 1;
     }
 
     .price-slider::-webkit-slider-thumb {
         -webkit-appearance: none;
         appearance: none;
-        width: 18px;
-        height: 18px;
+        width: 20px;
+        height: 20px;
         background: #FFC107;
+        border: 2px solid #fff;
         border-radius: 50%;
         cursor: pointer;
-        transition: background 0.2s;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        transition: all 0.3s ease;
     }
 
     .price-slider::-webkit-slider-thumb:hover {
+        transform: scale(1.1);
         background: #FFD54F;
     }
 
+    .price-slider::-moz-range-thumb {
+        width: 20px;
+        height: 20px;
+        background: #FFC107;
+        border: 2px solid #fff;
+        border-radius: 50%;
+        cursor: pointer;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        transition: all 0.3s ease;
+    }
+
+    .price-slider::-moz-range-thumb:hover {
+        transform: scale(1.1);
+        background: #FFD54F;
+    }
+
+    .price-slider::-webkit-slider-runnable-track {
+        height: 6px;
+        border-radius: 10px;
+        background: #e9ecef;
+    }
+
+    .price-slider::-moz-range-track {
+        height: 6px;
+        border-radius: 10px;
+        background: #e9ecef;
+    }
+
     #priceValue {
-        min-width: 80px;
-        font-size: 0.9rem;
+        min-width: 100px;
+        font-size: 1rem;
         color: #495057;
+        font-weight: 500;
+        background: #fff;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        text-align: center;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .sort-label {
+        font-weight: 500;
+        color: #495057;
+        font-size: 0.95rem;
+        margin-bottom: 0;
+        white-space: nowrap;
+    }
+
+    @media (max-width: 768px) {
+        .price-filter {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 1rem;
+            padding: 0.8rem;
+        }
+
+        .price-slider {
+            width: 100%;
+        }
+
+        #priceValue {
+            align-self: center;
+        }
     }
     </style>
     <script>

@@ -108,7 +108,7 @@ document.querySelectorAll('.reserve-btn').forEach(button => {
         const confirmation = confirm(`Confirmez-vous la réservation de ce personnel pour l'événement sélectionné ?`);
         
         if (confirmation) {
-            window.location.href = `/reservation/perso/new/${personnelId}/${selectedEventId}`;
+            window.location.href = `/reservationn/perso/new/${personnelId}/${selectedEventId}`;
         }
     });
 });
@@ -123,7 +123,7 @@ document.querySelectorAll('.cancel-btn').forEach(button => {
         try {
             this.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-2"></i> Vérification...';
             
-            const response = await fetch(`/reservation/perso/check-cancel/${reservationId}/${selectedEventId}`);
+            const response = await fetch(`/reservationn/perso/check-cancel/${reservationId}/${selectedEventId}`);
             
             if (!response.ok) {
                 throw new Error('Erreur réseau');

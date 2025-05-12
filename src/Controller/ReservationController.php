@@ -238,7 +238,7 @@ class ReservationController extends AbstractController
         return $this->redirectToRoute('app_reservation_index', [], Response::HTTP_SEE_OTHER);
     }
 
-    #[Route('/mes-reservations', name: 'app_user_reservations')]
+    #[Route('/mes-reservations-materiels', name: 'app_materiel_user_reservations')]
     public function indexUserReservations(Request $request, PaginatorInterface $paginator): Response
     {
         // ID utilisateur statique (à remplacer par l'utilisateur connecté)
@@ -271,6 +271,6 @@ class ReservationController extends AbstractController
             $this->addFlash('error', 'Impossible d\'annuler cette réservation');
         }
         
-        return $this->redirectToRoute('app_user_reservations');
+        return $this->redirectToRoute('app_lieu_user_reservations');
     }
 }

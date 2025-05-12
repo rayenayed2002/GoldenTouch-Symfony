@@ -218,7 +218,7 @@
     <div class="layout-wrapper layout-content-navbar">
         <div class="layout-container">
             <!-- Menu -->
-            <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
+<aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
                 <div class="app-brand demo">
                     <a href="index.html" class="app-brand-link">
                         <span class="app-brand-logo demo">
@@ -265,13 +265,13 @@
                     </li>
 
                     <!-- Gestion Événements -->
-                    <li class="menu-item">
-                        <a href="{{ path('app_events_admin') }}" class="menu-link menu-toggle">
+                    <li class="menu-item ">
+                        <a href="{{ path('app_events_admin') }}" class="menu-link ">
                             <i class="menu-icon tf-icons ti ti-calendar-event"></i>
                             <div data-i18n="Gestion Événements">Gestion Événements</div>
                         </a>
                         <ul class="menu-sub">
-                            <li class="menu-item ">
+                            <li class="menu-item">
                                 <a href="{{ path('app_add_event') }}" class="menu-link">
                                     <i class="menu-icon tf-icons ti ti-circle"></i>
                                     <div data-i18n="Ajouter Événement">Ajouter Événement</div>
@@ -287,74 +287,36 @@
                     </li>
 
                     <!-- Gestion Matérielle -->
-                    <li class="menu-item ">
-                        <a href="{{ path('app_materielss') }}" class="menu-link menu-toggle">
-                            <i class="menu-icon tf-icons ti ti-tools"></i>
-                            <div data-i18n="Gestion Matérielle">Gestion Matérielle</div>
-                        </a>
-                        <ul class="menu-sub">
-                            <li class="menu-item">
-                                <a href="ajouter-materiel.html" class="menu-link">
-                                    <i class="menu-icon tf-icons ti ti-circle"></i>
-                                    <div data-i18n="Ajouter Matériel">Ajouter Matériel</div>
-                                </a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="liste-materiel.html" class="menu-link">
-                                    <i class="menu-icon tf-icons ti ti-circle"></i>
-                                    <div data-i18n="Liste Matériel">Liste Matériel</div>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
+                    
 
-                    <!-- Gestion Lieu -->
-                    <li class="menu-item active">
-                        <a href="{{ path('admin_lieu_index') }}" class="menu-link menu-toggle">
-                            <i class="menu-icon tf-icons ti ti-map-pin"></i>
-                            <div data-i18n="Gestion Lieu">Gestion Lieu</div>
+ <li class="menu-item  ">
+                        <a href="{{ path('app_materielss') }}" class="menu-link">
+                            <i class="menu-icon tf-icons ti ti-package"></i>
+                            <div data-i18n="Packs">Gestion Matérielle</div>
                         </a>
-                        <ul class="menu-sub">
-                            <li class="menu-item">
-                                <a href="ajouter-lieu.html" class="menu-link">
-                                    <i class="menu-icon tf-icons ti ti-circle"></i>
-                                    <div data-i18n="Ajouter Lieu">Ajouter Lieu</div>
-                                </a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="liste-lieux.html" class="menu-link">
-                                    <i class="menu-icon tf-icons ti ti-circle"></i>
-                                    <div data-i18n="Liste Lieux">Liste Lieux</div>
-                                </a>
-                            </li>
-                        </ul>
+                    </li>
+                    <!-- Gestion Lieu -->
+                    
+
+                         <li class="menu-item active">
+                        <a href="{{ path('admin_lieu_index') }}" class="menu-link">
+                            <i class="menu-icon tf-icons ti ti-package"></i>
+                            <div data-i18n="Packs">Gestion Lieux</div>
+                        </a>
                     </li>
 
                     <!-- Gestion Personnels -->
-                    <li class="menu-item">
-                        <a href="{{ path('app_perso_index') }}" class="menu-link menu-toggle">
-                            <i class="menu-icon tf-icons ti ti-users"></i>
-                            <div data-i18n="Gestion Personnels">Gestion Personnels</div>
+                     <li class="menu-item  ">
+                        <a href="{{ path('app_perso_index') }}" class="menu-link">
+                            <i class="menu-icon tf-icons ti ti-package"></i>
+                            <div data-i18n="Packs">Gestion Personnels</div>
                         </a>
-                        <ul class="menu-sub">
-                            <li class="menu-item">
-                                <a href="ajouter-personnel.html" class="menu-link">
-                                    <i class="menu-icon tf-icons ti ti-circle"></i>
-                                    <div data-i18n="Ajouter Personnel">Ajouter Personnel</div>
-                                </a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="liste-personnels.html" class="menu-link">
-                                    <i class="menu-icon tf-icons ti ti-circle"></i>
-                                    <div data-i18n="Liste Personnels">Liste Personnels</div>
-                                </a>
-                            </li>
-                        </ul>
                     </li>
+
 
                     <!-- Gestion Commandes -->
                     <li class="menu-item">
-                        <a href="{{ path('app_my_Commandes_admin') }}" class="menu-link menu-toggle">
+                        <a href="{{ path('app_my_Commandes_admin') }}" class="menu-link ">
                             <i class="menu-icon tf-icons ti ti-shopping-cart"></i>
                             <div data-i18n="Gestion Commandes">Gestion Commandes</div>
                         </a>
@@ -1042,13 +1004,11 @@
         // Fonction pour récupérer tous les paramètres de recherche
         function getSearchParams() {
             return {
-                query: $('#searchQuery').val().trim(),
-                ville: $('#searchVille').val().trim(),
-                capacity: $('#searchCapacity').val() || null,
+                query: $('#searchInput').val().trim(),
                 category: $('#categoryFilter').val() || '',
-                minPrice: $('#minPrice').val() || null,
-                maxPrice: $('#maxPrice').val() || null,
-                minCapacity: $('#capacityFilter').val() || null,
+                minPrice: $('#minPrice').val() || '',
+                maxPrice: $('#maxPrice').val() || '',
+                minCapacity: $('#capacityFilter').val() || '',
                 villeFilter: $('#villeFilter').val().trim()
             };
         }
@@ -1061,20 +1021,10 @@
             $('.gallery-view').addClass('opacity-50');
             
             // Construire l'URL avec les paramètres
-            const queryString = new URLSearchParams({
-                query: params.query || '',
-                ville: params.ville || '',
-                capacity: params.capacity || '',
-                category: params.category || '',
-                minPrice: params.minPrice || '',
-                maxPrice: params.maxPrice || '',
-                minCapacity: params.minCapacity || '',
-                villeFilter: params.villeFilter || ''
-            }).toString();
+            const queryString = new URLSearchParams(params).toString();
 
             // Effectuer la requête AJAX
-            const searchUrl = "{{ path('admin_lieu_search') }}";
-            fetch(`${searchUrl}?${queryString}`, {
+            fetch(`/admin/lieu/search?${queryString}`, {
                 method: 'GET',
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest',
@@ -1083,9 +1033,7 @@
             })
             .then(response => {
                 if (!response.ok) {
-                    return response.text().then(text => {
-                        throw new Error(`Erreur serveur: ${text}`);
-                    });
+                    throw new Error('Erreur réseau');
                 }
                 return response.json();
             })
@@ -1097,10 +1045,12 @@
                 }
             })
             .catch(error => {
-                console.error('Erreur détaillée:', error);
-                // Afficher l'erreur dans l'interface utilisateur
-                document.getElementById('searchResults').innerHTML = 
-                    `<div class="alert alert-danger">Erreur: ${error.message}</div>`;
+                console.error('Erreur:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erreur',
+                    text: error.message
+                });
             })
             .finally(() => {
                 $('.gallery-view').removeClass('opacity-50');
@@ -1108,7 +1058,7 @@
         }
 
         // Gestionnaire d'événements pour tous les champs de recherche
-        $('#searchQuery, #searchVille, #searchCapacity, #categoryFilter, #minPrice, #maxPrice, #capacityFilter, #villeFilter').on('input change', function() {
+        $('#searchInput, #categoryFilter, #minPrice, #maxPrice, #capacityFilter, #villeFilter').on('input change', function() {
             clearTimeout(searchTimeout);
             searchTimeout = setTimeout(performSearch, searchDelay);
         });
@@ -1122,6 +1072,7 @@
 
         // Réinitialiser les filtres
         $('#resetFilters').click(function() {
+            $('#searchInput').val('');
             $('#categoryFilter').val('');
             $('#minPrice').val('');
             $('#maxPrice').val('');
@@ -1146,15 +1097,17 @@
 
             let html = '';
             results.forEach(lieu => {
+                const imageUrl = lieu.imageUrl ? lieu.imageUrl : '/img/placeholder.jpg';
                 html += `
                     <div class="col-md-4 col-lg-3">
                         <div class="card location-card" data-id="${lieu.id}">
-                            ${lieu.imageUrl ? 
-                                `<img src="${lieu.imageUrl}" class="location-image" alt="${lieu.name}">` : 
-                                `<div class="location-image d-flex align-items-center justify-content-center bg-light">
-                                    <i class="ti ti-photo text-muted" style="font-size: 3rem;"></i>
-                                </div>`
-                            }
+                            <img src="${imageUrl}" class="location-image" alt="${lieu.name}">
+                            
+                            ${lieu.capacity < 5 ? `
+                                <div class="location-badge">
+                                    <span class="badge bg-danger">Limited Capacity!</span>
+                                </div>
+                            ` : ''}
                             
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-start mb-2">
@@ -1167,7 +1120,7 @@
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div class="location-price">${lieu.price}€</div>
                                     <div class="location-capacity">
-                                        <i class="ti ti-map-pin"></i> ${lieu.ville}
+                                        <i class="ti ti-map-pin"></i> ${lieu.ville || 'N/A'}
                                     </div>
                                 </div>
                             </div>
@@ -1175,15 +1128,15 @@
                             <div class="location-stats">
                                 <div class="row g-0 text-center">
                                     <div class="col">
-                                        <div class="h6 mb-0">${lieu.location}</div>
+                                        <div class="h6 mb-0">${lieu.location || 'N/A'}</div>
                                         <small>Address</small>
                                     </div>
                                     <div class="col">
-                                        <div class="h6 mb-0">${lieu.ville}</div>
+                                        <div class="h6 mb-0">${lieu.ville || 'N/A'}</div>
                                         <small>City</small>
                                     </div>
                                     <div class="col">
-                                        <div class="h6 mb-0">${lieu.category}</div>
+                                        <div class="h6 mb-0">${lieu.category || 'N/A'}</div>
                                         <small>Category</small>
                                     </div>
                                 </div>
@@ -1216,10 +1169,8 @@
             $('[data-bs-toggle="tooltip"]').tooltip();
         }
 
-        // Initialiser la recherche au chargement de la page
-        $(document).ready(function() {
-            performSearch();
-        });
+        // Effectuer une recherche initiale au chargement de la page
+        performSearch();
     });
 
     // Edit location function
