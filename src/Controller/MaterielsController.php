@@ -87,12 +87,18 @@ public function new(Request $request, EntityManagerInterface $entityManager, Slu
 
             $originalFilename = pathinfo($photoFile->getClientOriginalName(), PATHINFO_FILENAME);
             $safeFilename = $slugger->slug($originalFilename);
-            $newFilename = $safeFilename . '-' . uniqid() . '.' . $photoFile->guessExtension();
+            $newFilename = 'Images/' . $safeFilename . '.' . $photoFile->guessExtension();
+
+            // Vérifier si le dossier Images existe, sinon le créer
+            $uploadDir = $this->getParameter('kernel.project_dir').'/public/uploads/materiels/Images';
+            if (!file_exists($uploadDir)) {
+                mkdir($uploadDir, 0777, true);
+            }
 
             try {
                 $photoFile->move(
-                    $this->getParameter('materiel_directory'),
-                    $newFilename
+                    $uploadDir,
+                    $safeFilename . '.' . $photoFile->guessExtension()
                 );
             } catch (\Symfony\Component\HttpFoundation\File\Exception\FileException $e) {
                 throw new \Exception('Erreur lors de l\'upload du fichier.');
