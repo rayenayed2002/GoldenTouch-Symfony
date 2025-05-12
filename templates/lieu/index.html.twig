@@ -981,7 +981,7 @@
                                 <div class="th-product">
                                     <div class="product-img">
                                         {% if lieu.imageUrl %}
-                                            <img src="{{ asset(lieu.imageUrl) }}" alt="{{ lieu.name }}" class="img-fluid">
+                                            <img src="{{ asset('uploads/lieux/Images/' ~ lieu.imageUrl|replace({'/Images/': '', 'Images/': ''})) }}" alt="{{ lieu.name }}" class="img-fluid">
                                         {% else %}
                                             <img src="{{ asset('Front/img/placeholder.jpg') }}" alt="Lieu Image" class="img-fluid">
                                         {% endif %}

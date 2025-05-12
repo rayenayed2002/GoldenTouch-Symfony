@@ -123,14 +123,20 @@ class WeatherForecast {
     }
 
     findForecastForDate(forecastList, targetDate) {
-        const targetDay = targetDate.getDate();
-        const targetMonth = targetDate.getMonth();
+        // Convertir la date cible en timestamp pour une comparaison plus précise
+        const targetTimestamp = targetDate.getTime();
         
-        return forecastList.find(forecast => {
+        // Trouver la prévision la plus proche de la date cible
+        return forecastList.reduce((closest, forecast) => {
             const forecastDate = new Date(forecast.dt * 1000);
-            return forecastDate.getDate() === targetDay && 
-                   forecastDate.getMonth() === targetMonth;
-        });
+            const forecastTimestamp = forecastDate.getTime();
+            const currentDiff = Math.abs(forecastTimestamp - targetTimestamp);
+            
+            if (!closest || currentDiff < Math.abs(new Date(closest.dt * 1000).getTime() - targetTimestamp)) {
+                return forecast;
+            }
+            return closest;
+        }, null);
     }
 
     getOrCreateWeatherContainer() {
@@ -261,8 +267,10 @@ class WeatherForecast {
     showWeatherUnavailable() {
         const container = this.getOrCreateWeatherContainer();
         container.innerHTML = `
-            <div class="alert alert-info" role="alert">
-                Weather forecast is only available for dates within the next 5 days.
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle me-2"></i>
+                Les prévisions météorologiques ne sont disponibles que pour les 5 prochains jours. 
+                Pour une meilleure planification, veuillez choisir une date plus proche.
             </div>
         `;
     }
