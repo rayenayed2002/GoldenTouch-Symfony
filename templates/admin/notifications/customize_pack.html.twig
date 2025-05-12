@@ -1005,14 +1005,14 @@
             {% for materiel in materielles %}
                 <div class="col-md-4 mb-3">
                     <div class="card h-100">
-                        <img src="{% if materiel.photo_mat starts with '/uploads/' %}{{ materiel.photo_mat }}{% else %}{{ asset('uploads/packs/' ~ materiel.photo_mat|replace({'/Images/': ''}) ) }}{% endif %}" class="card-img-top" alt="{{ materiel.nom_mat }}">
+                        <img src="{% if materiel.photo_mat starts with '/uploads/' %}{{ materiel.photo_mat }}{% else %}{{ asset('uploads/materiels/' ~ materiel.photo_mat|replace({'/Images/': ''}) ) }}{% endif %}" class="card-img-top" alt="{{ materiel.nom_mat }}">
                         <div class="card-body">
                             <h5 class="card-title">{{ materiel.nom_mat }}</h5>
                             <p class="card-text">
                                 <strong>Description:</strong> {{ materiel.description_mat }}<br>
                                 <strong>Quantité disponible:</strong> {{ materiel.quantite_mat }}<br>
                                 <strong>Prix:</strong> {{ materiel.prix_mat }}€<br>
-                                <strong>Catégorie:</strong> {{ materiel.categorie_mat }}
+                                <strong>Catégorie:</strong> {{ materiel.categorie ? materiel.categorie.nom_cat : 'Non catégorisé' }}
                             </p>
                             <div class="input-group mb-3">
                                 <input type="number" class="form-control quantity-input" 
@@ -1071,7 +1071,7 @@
             {% for location in locations %}
                 <div class="col-md-4 mb-3">
                     <div class="card h-100">
-                        <img src="{{ asset('uploads/packs/' ~ location.imageUrl) }}" class="card-img-top" alt="{{ location.name }}">
+                        <img src="{{ asset('' ~ location.imageUrl) }}" class="card-img-top" alt="{{ location.name }}">
                         <div class="card-body">
                             <h5 class="card-title">{{ location.name }}</h5>
                             <p class="card-text">

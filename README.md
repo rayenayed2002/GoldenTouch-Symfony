@@ -1,142 +1,168 @@
-# 🎉 GoldenTouch Event Planner
+# 🎉 GoldenTouch Planificateur d'Événements
 
-GoldenTouch is a comprehensive event planning application built with **Symfony 6.4**. It facilitates seamless collaboration between **clients**, **personnel**, and **administrators** to organize and manage events efficiently.
+GoldenTouch est une application complète de planification d'événements développée avec **Symfony 6.4**. Elle facilite la collaboration fluide entre les **clients**, **personnels** et **administrateurs** pour organiser et gérer efficacement des événements.
 
 ---
 
-## 📚 Table of Contents
+## 📚 Table des Matières
 
-- [✨ Features](#-features)  
+- [✨ Fonctionnalités](#-fonctionnalités)  
 - [🛠️ Installation](#-installation)  
-- [🚀 Usage](#-usage)  
-- [👥 User Roles](#-user-roles)  
-- [🧰 Technologies Used](#-technologies-used)  
-- [🤝 Contributing](#-contributing)  
-- [📄 License](#-license)  
+- [🚀 Utilisation](#-utilisation)  
+- [👥 Rôles Utilisateurs](#-rôles-utilisateurs)  
+- [🧰 Technologies Utilisées](#-technologies-utilisées)  
+- [🤝 Contribution](#-contribution)  
+- [👥 Contributeurs](#-contributeurs)  
+- [🏫 École](#-école)  
+- [📄 Licence](#-licence)  
 
 ---
 
-## ✨ Features
+## ✨ Fonctionnalités
 
-✅ Event creation with materials, venues, and personnel  
-✅ Reservation and package management  
-✅ Shopping cart with Stripe payment integration  
-✅ Automatic invoice generation  
-✅ Personnel scheduling system  
-✅ Admin dashboard with full control  
-✅ Client feedback and review system  
-✅ ✨ Gemini AI integration for auto-generated event details  
-✅ ☁️ Weather forecasts for event dates  
-✅ 🎫 QR Code & Barcode generation for tickets and materials  
-✅ 🗓️ Google Calendar sync  
-✅ 📧 Email notifications for updates  
-✅ 🗺️ Map integration for event locations  
-✅ 🔍 Advanced search & filtering  
-✅ 🚫 Content moderation via Bad Words API  
+✅ Création d'événements avec gestion des matériaux, lieux et personnel  
+✅ Gestion des réservations et des forfaits  
+✅ Panier avec intégration de paiement via Stripe  
+✅ Génération automatique de factures  
+✅ Système de planification du personnel  
+✅ Tableau de bord administrateur complet  
+✅ Système de retours et d’avis clients  
+✅ ✨ Intégration de Gemini AI pour génération automatique de détails  
+✅ ☁️ Prévisions météo pour les dates d'événements  
+✅ 🎫 Génération de QR codes & codes-barres pour billets et matériaux  
+✅ 🗓️ Synchronisation avec Google Calendar  
+✅ 📧 Notifications par email  
+✅ 🗺️ Intégration de cartes pour les lieux  
+✅ 🔍 Recherche et filtrage avancés  
+✅ 🚫 Modération de contenu via l’API Bad Words  
 
 ---
 
 ## 🛠️ Installation
 
-### Prerequisites
+### Prérequis
 
 - PHP >= 8.1  
 - Composer  
-- Symfony CLI (optional but recommended)  
-- MySQL or PostgreSQL  
+- Symfony CLI (optionnel mais recommandé)  
+- MySQL ou PostgreSQL  
 
-### Steps
+### Étapes
 
 ```bash
-# 1. Clone the repository
+# 1. Cloner le dépôt
 git clone https://github.com/rayenayed2002/GoldenTouch-Symfony.git
 cd GoldenTouch-Symfony
 
-# 2. Install PHP dependencies
+# 2. Installer les dépendances PHP
 composer install
 
-# 3. Copy environment variables and configure
+# 3. Copier et configurer les variables d’environnement
 cp .env.example .env
-# Edit .env with your DB and API keys
+# Modifier .env avec votre configuration DB et vos clés API
 
-# 4. Set up the database
+# 4. Créer la base de données
 php bin/console doctrine:database:create
 php bin/console doctrine:migrations:migrate
 
-# 5. Run the server
+# 5. Lancer le serveur
 symfony server:start
+
 ```
 
 ---
 
-## 🚀 Usage
+## 🚀 Utilisation
 
-Visit the app at: [http://localhost:8000](http://localhost:8000)
+Accédez à l’application sur: [http://localhost:8000](http://localhost:8000)
 
-You can register and log in as:
+Vous pouvez vous inscrire et vous connecter en tant que :
 
 - **Client**
 - **Personnel**
-- **Admin**
+- **Administrateur**
 
-Explore the application based on your assigned role.
+Explorez l’application selon votre rôle attribué.
 
 ---
 
-## 👥 User Roles
+## 👥 Rôles Utilisateurs
 
 ### 👤 Client
 
-- Create/manage events  
-- Add venues, materials, and personnel  
-- View packages & reservations  
-- Leave feedback  
-- Checkout via Stripe  
+- Créer et gérer des événements  
+- Ajouter des lieux, matériaux, et personnel  
+- Voir les forfaits et réservations 
+- Laisser des avis
+- Paiement via Stripe
 
 ### 👨‍🔧 Personnel
 
-- View assigned events & schedules  
+- Consulter les événements et plannings assignés 
 
 ### 👨‍💼 Administrator
 
-- Manage all system entities (events, packages, materials, etc.)  
-- Moderate content & oversee users  
+- Gérer toutes les entités (événements, forfaits, matériaux, etc.) 
+- Modérer le contenu et superviser les utilisateurs
 
 ---
 
-## 🧰 Technologies Used
+## 🧰 Technologies Utilisées
 
 | Category        | Technology                                                       |
 |----------------|-------------------------------------------------------------------|
 | **Framework**   | Symfony 6.4                                                      |
-| **Languages**   | PHP, JavaScript                                                  |
+| **Langages**   | PHP, JavaScript                                                  |
 | **Frontend**    | Twig, Stimulus                                                   |
-| **Database**    | Doctrine ORM                                                     |
+| **Base de Données**    | Doctrine ORM                                                     |
 | **APIs**        | Gemini AI, Stripe, Google Calendar, Weather, Maps, Bad Words API |
-| **Other Tools** | QR/Barcode Generators, Email Notifications, Advanced Search      |
+| **Outils Divers** | QR/Barcode Generators, Email Notifications, Advanced Search      |
 
 ---
 
-## 🤝 Contributing
+## 🤝 contribution
 
-1. Fork the repository  
-2. Create your feature branch:  
+1. Forkez le dépôt  
+2. Créez une branche pour votre fonctionnalité : 
    ```bash
    git checkout -b feature/my-feature
    ```
-3. Commit your changes:  
+3. Validez vos modifications : 
    ```bash
    git commit -m "Add my feature"
    ```
-4. Push to the branch:  
+4. Poussez vers votre branche :  
    ```bash
    git push origin feature/my-feature
    ```
-5. Submit a pull request ✅
+5. Ouvrez une pull request ✅
 
 ---
 
+---
+
+## 👥 Contributeurs
+
+| Nom              | Profile  Github                                            |
+|-------------------|--------------------------------------------------------------|
+| [Souhe Lekhlifi](https://github.com/souhekh)         | 🔗 |
+| [Rayen Ayed](https://github.com/rayenayed2002)       | 🔗 |
+| [Nassim Maaoui](https://github.com/iborntowin)       | 🔗 |
+| [Malik Gachar](https://github.com/MalikGACHAR)       | 🔗 |
+| [Khalil Limem](https://github.com/Khalil-Lm)         | 🔗 |
+| [Fatma Boubakri](https://github.com/Boubakrifatma)   | 🔗 |
+| **Coach:** [Ghada Benkhalifa](https://github.com/BenKhalifaGHADA) | 🔗 |
+
+---
+
+## 🏫 École
+
+**ESPRIT - École Supérieure Privée d'Ingénierie et de Technologies**
+
+![Logo ESPRIT](public/uploads/esprit.jpg)
+
+
 ## 📄 License
 
-This project is licensed under a **proprietary license**.  
-Contact the author for more details.
+Ce projet est soumis à une licence propriétaire.
+Veuillez contacter l’auteur pour plus d’informations.

@@ -555,7 +555,6 @@
               </div>
             </div>
             <div class="quick-actions"><div class="btn-group shadow">
-              <button type='button' class='btn btn-primary btn-sm' onclick='editPack(${pack.id})'><i class='ti ti-edit'></i></button>
               <button type='button' class='btn btn-primary btn-sm' onclick='viewPackDetails(${pack.id})'><i class='ti ti-eye'></i></button>
               <button type='button' class='btn btn-danger btn-sm' onclick='deletePack(${pack.id})'><i class='ti ti-trash'></i></button>
             </div></div>
@@ -578,7 +577,6 @@
           <td>${pack.duree}h</td>
           <td>${pack.endDate ? (new Date(pack.endDate)).toLocaleDateString('fr-FR') : ''}</td>
           <td><div class='d-flex gap-2'>
-            <button type='button' class='btn btn-sm btn-icon btn-primary' onclick='editPack(${pack.id})' data-bs-toggle='tooltip' data-bs-placement='top' title='Modifier'><i class='ti ti-edit'></i></button>
             <button type='button' class='btn btn-sm btn-icon btn-danger' onclick='deletePack(${pack.id})' data-bs-toggle='tooltip' data-bs-placement='top' title='Supprimer'><i class='ti ti-trash'></i></button>
           </div></td>
         </tr>`;
@@ -1118,9 +1116,7 @@ document.getElementById('refresh-inspiration-btn').addEventListener('click', loa
                                         
                                         <div class="quick-actions">
                                             <div class="btn-group shadow">
-                                                <button type="button" class="btn btn-primary btn-sm" onclick="editPack({{ pack.id }})">
-                                                    <i class="ti ti-edit"></i>
-                                                </button>
+                                                
                                                 <button type="button" class="btn btn-primary btn-sm" onclick="viewPackDetails({{ pack.id }})">
                                                     <i class="ti ti-eye"></i>
                                                 </button>
@@ -1199,13 +1195,7 @@ document.getElementById('refresh-inspiration-btn').addEventListener('click', loa
                                             <td>{{ pack.endDate ? pack.endDate|date('d/m/Y') : '' }}</td>
                                             <td>
                                                 <div class="d-flex gap-2">
-                                                    <button type="button" class="btn btn-sm btn-icon btn-primary" 
-                                                            onclick="editPack({{ pack.id }})"
-                                                            data-bs-toggle="tooltip" 
-                                                            data-bs-placement="top" 
-                                                            title="Modifier">
-                                                        <i class="ti ti-edit"></i>
-                                                    </button>
+                                                    
                                                     <button type="button" class="btn btn-sm btn-icon btn-danger"
                                                             onclick="deletePack({{ pack.id }})"
                                                             data-bs-toggle="tooltip"
@@ -1227,78 +1217,61 @@ document.getElementById('refresh-inspiration-btn').addEventListener('click', loa
         </div>
     </div>
 </div>
-
-<!-- Modal Création/Modification de pack -->
-<div class="modal fade" id="packModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalTitle">Créer un nouveau pack</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
-            </div>
-            {{ form_start(form, {
-                'attr': {
-                    'id': 'packForm',
-                    'class': 'needs-validation',
-                    'novalidate': 'novalidate',
-                    'action': path('admin_pack_create'),
-                    'method': 'POST'
-                }
-            }) }}
-                <div class="modal-body">
-    <div id="inspiration-copied-alert" class="alert alert-success d-none" role="alert">
-        Suggestion copiée !
-    </div>
-                    
-                    <div class="mb-3">
-                        <label class="form-label" for="{{ form.event.vars.id }}">Événement</label>
-                        {{ form_widget(form.event, {'attr': {'class': 'form-select', 'required': 'required'}}) }}
-                        <div class="invalid-feedback">Veuillez sélectionner un événement.</div>
-                        {{ form_errors(form.event) }}
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label" for="{{ form.description.vars.id }}">Description</label>
-                        {{ form_widget(form.description, {'attr': {'class': 'form-control', 'required': 'required'}}) }}
-                        <div class="invalid-feedback">Veuillez fournir une description.</div>
-                        {{ form_errors(form.description) }}
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label" for="{{ form.prix.vars.id }}">Prix</label>
-                            <div class="input-group">
-                                <span class="input-group-text">€</span>
-                                {{ form_widget(form.prix, {'attr': {'class': 'form-control', 'required': 'required', 'step': '0.01', 'min': '0'}}) }}
-                            </div>
-                            <div class="invalid-feedback">Veuillez fournir un prix valide.</div>
-                            {{ form_errors(form.prix) }}
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label" for="{{ form.capacite.vars.id }}">Capacité</label>
-                            {{ form_widget(form.capacite, {'attr': {'class': 'form-control', 'required': 'required', 'min': '1'}}) }}
-                            <div class="invalid-feedback">Veuillez fournir une capacité valide.</div>
-                            {{ form_errors(form.capacite) }}
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label" for="{{ form.duree.vars.id }}">Durée (heures)</label>
-                            {{ form_widget(form.duree, {'attr': {'class': 'form-control', 'required': 'required', 'min': '1'}}) }}
-                            <div class="invalid-feedback">Veuillez fournir une durée valide.</div>
-                            {{ form_errors(form.duree) }}
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label" for="{{ form.endDate.vars.id }}">Date de fin</label>
-                            {{ form_widget(form.endDate, {'attr': {'class': 'form-control flatpickr'}}) }}
-                            <div class="invalid-feedback">Veuillez fournir une date valide.</div>
-                            {{ form_errors(form.endDate) }}
-                        </div>
-                    </div>
+<!-- Create/Edit Pack Modal -->
+    <div class="modal fade" id="packModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">Create New Pack</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                
-            {{ form_end(form) }}
+                <form id="packForm" onsubmit="handlePackSubmit(event)">
+                    <div class="modal-body">
+                        <input type="hidden" id="packId" name="id">
+                        <div class="mb-3">
+                            <label class="form-label" for="event">Event</label>
+                            <select class="form-select" id="event" name="event" required>
+                                {% for event in events %}
+                                    <option value="{{ event.id }}">{{ event.nom }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="description">Description</label>
+                            <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label" for="prix">Price</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    <input type="number" class="form-control" id="prix" name="prix" step="0.01" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label" for="capacite">Capacity</label>
+                                <input type="number" class="form-control" id="capacite" name="capacite" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label" for="duree">Duration (hours)</label>
+                                <input type="number" class="form-control" id="duree" name="duree" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label" for="endDate">End Date</label>
+                                <input type="text" class="form-control flatpickr" id="endDate" name="endDate">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
-</div>
 
     <!-- Pack Inspiration Script -->
     <script>
@@ -1448,151 +1421,38 @@ document.getElementById('refresh-inspiration-btn').addEventListener('click', loa
             });
         });
 
-        // Submit form
-        document.getElementById('packForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            const form = e.target;
-            const formData = new FormData(form);
-            // Show loading state
-            form.classList.add('was-validated');
-            const submitButton = form.querySelector('button[type="submit"]');
-            submitButton.disabled = true;
-            submitButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...';
-
-            // Send the request to the form's action (usually /admin/pack/create)
-            fetch(form.action, {
-                method: 'POST',
-                body: formData,
+        // Edit pack function
+        function editPack(id) {
+            // Fetch pack data using GET request
+            fetch(`{{ path('admin_pack_edit', {'id': 'PACK_ID'}) }}`.replace('PACK_ID', id), {
+                method: 'GET',
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest'
-                },
-                credentials: 'same-origin'
-            })
-            .then(response => response.json())
-            .then(response => {
-                if (response.success) {
-                    // Show success message
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Success!',
-                        text: response.message,
-                        showConfirmButton: false,
-                        timer: 1500
-                    });
-
-                    // Close modal and refresh the page
-                    const modal = bootstrap.Modal.getInstance(document.getElementById('packModal'));
-                    modal.hide();
-                    window.location.reload();
-                } else {
-                    // Show error message with detailed debug info
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error!',
-                        html: `
-                            <div>${response.message}</div>
-                            ${response.debug ? `
-                            <div class="mt-3">
-                                <h6>Debug Information:</h6>
-                                <pre>${JSON.stringify(response.debug, null, 2)}</pre>
-                            </div>
-                            ` : ''}
-                        `,
-                        confirmButtonText: 'OK'
-                    });
                 }
-            })
-            .catch(error => {
-                console.error('Network error:', error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Network Error!',
-                    text: 'An error occurred while submitting the form. Please try again.',
-                    confirmButtonText: 'OK'
-                });
-            })
-            .finally(() => {
-                // Reset form state
-                form.classList.remove('was-validated');
-                submitButton.disabled = false;
-                submitButton.innerHTML = 'Save changes';
-            });
-        });
-
-        // Edit pack
-        function editPack(id) {
-            fetch(`{{ path('admin_pack_edit', {'id': 'PACK_ID'}) }}`.replace('PACK_ID', id))
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        const pack = data.pack;
-                        document.getElementById('modalTitle').textContent = 'Modifier le pack';
-                        document.getElementById('packId').value = pack.id;
-                        
-                        // Get form elements using their names
-                        const eventSelect = document.querySelector('select[name="pack[event]"]');
-                        const descriptionInput = document.querySelector('textarea[name="pack[description]"]');
-                        const prixInput = document.querySelector('input[name="pack[prix]"]');
-                        const capaciteInput = document.querySelector('input[name="pack[capacite]"]');
-                        const dureeInput = document.querySelector('input[name="pack[duree]"]');
-                        const endDateInput = document.querySelector('input[name="pack[endDate]"]');
-
-                        // Set values
-                        eventSelect.value = pack.event.id;
-                        descriptionInput.value = pack.description;
-                        prixInput.value = pack.prix;
-                        capaciteInput.value = pack.capacite;
-                        dureeInput.value = pack.duree;
-                        endDateInput.value = pack.endDate;
-                        
-                        const modal = new bootstrap.Modal(document.getElementById('packModal'));
-                        modal.show();
-                    } else {
-                        throw new Error(data.message);
-                    }
-                })
-                .catch(error => {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error!',
-                        text: error.message,
-                        confirmButtonText: 'OK'
-                    });
-                });
-        }
-
-        // Supprimer un pack
-function deletePack(id) {
-    Swal.fire({
-        title: 'Êtes-vous sûr ?',
-        text: "Cette action est irréversible !",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Oui, supprimer !',
-        cancelButtonText: 'Annuler',
-        customClass: {
-            confirmButton: 'btn btn-danger me-3',
-            cancelButton: 'btn btn-label-secondary'
-        },
-        buttonsStyling: false
-    }).then((result) => {
-        if (result.isConfirmed) {
-            fetch(`{{ path('admin_pack_delete', {'id': 'PACK_ID'}) }}`.replace('PACK_ID', id), {
-                method: 'DELETE'
             })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Supprimé !',
-                        text: data.message,
-                        showConfirmButton: false,
-                        timer: 1500
-                    }).then(() => {
-                        location.reload();
-                    });
+                    const pack = data.pack;
+                    // Show modal
+                    const modal = new bootstrap.Modal(document.getElementById('packModal'));
+                    document.getElementById('modalTitle').textContent = 'Edit Pack';
+                    document.getElementById('packId').value = pack.id;
+                    document.getElementById('event').value = pack.event.id;
+                    document.getElementById('description').value = pack.description;
+                    document.getElementById('prix').value = pack.prix;
+                    document.getElementById('capacite').value = pack.capacite;
+                    document.getElementById('duree').value = pack.duree;
+                    if (pack.endDate) {
+                        document.getElementById('endDate').value = pack.endDate.split('T')[0];
+                    }
+                    
+                    // Set form to edit mode
+                    const form = document.getElementById('packForm');
+                    form.setAttribute('data-edit', 'true');
+                    form.setAttribute('data-pack-id', id);
+                    
+                    modal.show();
                 } else {
                     throw new Error(data.message);
                 }
@@ -1600,14 +1460,137 @@ function deletePack(id) {
             .catch(error => {
                 Swal.fire({
                     icon: 'error',
-                    title: 'Erreur !',
-                    text: error.message,
+                    title: 'Error!',
+                    text: error.message || 'Failed to load pack details',
                     confirmButtonText: 'OK'
                 });
             });
         }
-    });
-}
+
+        // Handle pack form submission
+        function handlePackSubmit(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            const submitButton = form.querySelector('button[type="submit"]');
+            const isEdit = form.getAttribute('data-edit') === 'true';
+            const packId = form.getAttribute('data-pack-id');
+
+            // Show loading state
+            submitButton.disabled = true;
+            submitButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...';
+
+            // Determine the correct URL
+            const url = isEdit 
+                ? `{{ path('admin_pack_edit', {'id': 'PACK_ID'}) }}`.replace('PACK_ID', packId)
+                : '{{ path('admin_pack_create') }}';
+
+            fetch(url, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: isEdit ? 'Pack updated successfully!' : 'Pack created successfully!',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                } else {
+                    throw new Error(data.message || 'Operation failed');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: error.message || 'An error occurred while saving the pack',
+                    confirmButtonText: 'OK'
+                });
+            })
+            .finally(() => {
+                submitButton.disabled = false;
+                submitButton.innerHTML = 'Save changes';
+            });
+        }
+
+        // Reset form when modal is closed
+        document.getElementById('packModal').addEventListener('hidden.bs.modal', function () {
+            const form = document.getElementById('packForm');
+            form.reset();
+            form.removeAttribute('data-edit');
+            form.removeAttribute('data-pack-id');
+            document.getElementById('modalTitle').textContent = 'Create New Pack';
+        });
+
+        // Initialize flatpickr for date inputs
+        document.addEventListener('DOMContentLoaded', function() {
+            flatpickr(".flatpickr", {
+                dateFormat: "Y-m-d",
+                minDate: "today"
+            });
+        });
+
+        // Supprimer un pack
+        function deletePack(id) {
+            Swal.fire({
+                title: 'Êtes-vous sûr ?',
+                text: "Cette action est irréversible !",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Oui, supprimer !',
+                cancelButtonText: 'Annuler',
+                customClass: {
+                    confirmButton: 'btn btn-danger me-3',
+                    cancelButton: 'btn btn-label-secondary'
+                },
+                buttonsStyling: false
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch(`{{ path('admin_pack_delete', {'id': 'PACK_ID'}) }}`.replace('PACK_ID', id), {
+                        method: 'DELETE'
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Supprimé !',
+                                text: data.message,
+                                showConfirmButton: false,
+                                timer: 1500
+                            }).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            throw new Error(data.message);
+                        }
+                    })
+                    .catch(error => {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Erreur !',
+                            text: error.message,
+                            confirmButtonText: 'OK'
+                        });
+                    });
+                }
+            });
+        }
         
         // View pack details function
         function viewPackDetails(id) {
